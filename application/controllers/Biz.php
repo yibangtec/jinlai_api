@@ -25,7 +25,8 @@
 			'name', 'brief_name', 'description', 'url_logo', 'slogan', 'description',
 'notification',
 			'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
-			'bank_name', 'bank_account', 'url_image_license', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_produce', 'url_image_retail',
+			'code_license', 'code_ssn_owner',  'code_ssn_auth',
+			'bank_name', 'bank_account', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
 			'freight', 'freight_free_subtotal', 'freight_free_count', 'min_order_subtotal', 'delivery_time_start', 'delivery_time_end', 'longitude', 'latitude', 'country', 'province', 'city', 'county', 'detail', 'url_web', 'url_weibo', 'url_taobao', 'url_wechat',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
@@ -35,19 +36,17 @@
 		 */
 		protected $names_create_required = array(
 			'user_id',
-			'name', 'brief_name', 'description',
-			'tel_public', 'tel_protected_biz',
-			'bank_name', 'bank_account',
-			'url_image_license', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_produce', 'url_image_retail'
+			'name', 'brief_name', 'tel_public', 'tel_protected_biz',
 		);
-		
+
 		/**
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
 			'name', 'brief_name', 'url_name', 'url_logo', 'slogan', 'description', 'notification',
 			'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
-			'bank_name', 'bank_account', 'url_image_license', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_produce', 'url_image_retail',
+			'code_license', 'code_ssn_owner',  'code_ssn_auth',
+			'bank_name', 'bank_account', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
 			'freight', 'freight_free_subtotal', 'freight_free_count', 'min_order_subtotal', 'delivery_time_start', 'delivery_time_end', 'longitude', 'latitude', 'country', 'province', 'city', 'county', 'detail', 'url_web', 'url_weibo', 'url_taobao', 'url_wechat',
 		);
 
@@ -56,10 +55,7 @@
 		 */
 		protected $names_edit_required = array(
 			'user_id', 'id',
-			'description',
-			'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
-			'bank_name', 'bank_account',
-			'url_image_license', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_produce', 'url_image_retail',
+			'tel_public', 'tel_protected_biz',
 		);
 
 		/**
@@ -242,17 +238,22 @@
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('name', '商家全称', 'trim|required|min_length[7]|max_length[30]|is_unique[biz.name]');
 			$this->form_validation->set_rules('brief_name', '商家简称', 'trim|required|max_length[10]|is_unique[biz.brief_name]');
-			$this->form_validation->set_rules('description', '简介', 'trim|required|max_length[200]');
+			$this->form_validation->set_rules('description', '简介', 'trim|max_length[200]');
 			$this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]|is_unique[biz.tel_public]');
 			$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|required|is_natural|exact_length[11]|is_unique[biz.tel_protected_biz]');
 
-			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|required|min_length[3]|max_length[20]');
-			$this->form_validation->set_rules('bank_account', '开户行账号', 'trim|required|max_length[30]|is_unique[biz.bank_account]');
-			$this->form_validation->set_rules('url_image_license', '营业执照正/副本照片', 'trim|required|max_length[255]');
-			$this->form_validation->set_rules('url_image_auth_id', '授权人身份证照片', 'trim|required|max_length[255]');
+			$this->form_validation->set_rules('code_license', '统一社会信用代码', 'trim|required|exact_length[18]|is_unique[biz.code_license]');
+			$this->form_validation->set_rules('code_ssn_owner', '法人身份证号', 'trim|required|exact_length[18]|is_unique[biz.code_ssn_owner]');
+			$this->form_validation->set_rules('code_ssn_auth', '授权人身份证号', 'trim|exact_length[18]|is_unique[biz.code_ssn_auth]');
+			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|min_length[3]|max_length[20]');
+			$this->form_validation->set_rules('bank_account', '开户行账号', 'trim|max_length[30]|is_unique[biz.bank_account]');
+			$this->form_validation->set_rules('url_image_license', '营业执照正/副本照片', 'trim|max_length[255]');
+			$this->form_validation->set_rules('url_image_owner_id', '法人身份证照片', 'trim|max_length[255]');
+			$this->form_validation->set_rules('url_image_auth_id', '授权人身份证照片', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_image_auth_doc', '授权书照片', 'trim|required|max_length[255]');
-			$this->form_validation->set_rules('url_image_produce', '工厂/产地照片', 'trim|required|max_length[255]');
-			$this->form_validation->set_rules('url_image_retail', '门店/柜台照片', 'trim|required|max_length[255]');
+			$this->form_validation->set_rules('url_image_product', '产品照片', 'trim|max_length[255]');
+			$this->form_validation->set_rules('url_image_produce', '工厂/产地照片', 'trim|max_length[255]');
+			$this->form_validation->set_rules('url_image_retail', '门店/柜台照片', 'trim|max_length[255]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
