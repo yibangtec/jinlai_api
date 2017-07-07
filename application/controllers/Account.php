@@ -46,7 +46,7 @@
 			if ( !empty($user_info) ):
 				// 更新最后登录信息
 				@$this->basic_model->edit($user_info['user_id'], $login_info);
-				
+
 				// 非客户端登录时，检查该用户是否为员工
 				if ($this->app_type !== 'client'):
 					$stuff = $this->check_stuff( $user_info['user_id'] );
@@ -61,9 +61,9 @@
 						// 不允许管理员工登录非管理端
 						elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
 							$this->result['status'] = 415;
-							$this->result['content']['error']['message'] = '该用户并非商户端员工';
+							$this->result['content']['error']['message'] = '该用户是管理端员工';
 							exit();
-						
+
 						else:
 							$user_info['biz_id'] = $stuff['biz_id'];
 							$user_info['role'] = $stuff['role'];

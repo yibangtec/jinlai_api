@@ -1,7 +1,7 @@
 <?php
 	$this->form_validation->set_rules('url_logo', 'LOGO/图标', 'trim|max_length[255]');
 	$this->form_validation->set_rules('slogan', '说明', 'trim|max_length[20]');
-	$this->form_validation->set_rules('description', '简介', 'trim|required|max_length[200]');
+	$this->form_validation->set_rules('description', '简介', 'trim|max_length[200]');
 	$this->form_validation->set_rules('notification', '公告', 'trim|max_length[100]');
 	$this->form_validation->set_rules('url_web', '官方网站', 'trim|max_length[255]|valid_url');
 	$this->form_validation->set_rules('url_weibo', '官方微博', 'trim|max_length[255]|valid_url');
