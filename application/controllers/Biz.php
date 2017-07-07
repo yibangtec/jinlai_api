@@ -37,6 +37,9 @@
 		protected $names_create_required = array(
 			'user_id',
 			'name', 'brief_name', 'tel_public', 'tel_protected_biz',
+			'description', 'bank_name', 'bank_account', 'code_license', 'code_ssn_owner', 'code_ssn_auth',
+			'url_image_license', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_produce', 'url_image_retail',
+			'url_image_owner_id', 'url_image_product',
 		);
 
 		/**
@@ -244,13 +247,13 @@
 
 			$this->form_validation->set_rules('code_license', '统一社会信用代码', 'trim|required|exact_length[18]|is_unique[biz.code_license]');
 			$this->form_validation->set_rules('code_ssn_owner', '法人身份证号', 'trim|required|exact_length[18]|is_unique[biz.code_ssn_owner]');
-			$this->form_validation->set_rules('code_ssn_auth', '授权人身份证号', 'trim|exact_length[18]|is_unique[biz.code_ssn_auth]');
+			$this->form_validation->set_rules('code_ssn_auth', '经办人身份证号', 'trim|exact_length[18]|is_unique[biz.code_ssn_auth]');
 			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|min_length[3]|max_length[20]');
 			$this->form_validation->set_rules('bank_account', '开户行账号', 'trim|max_length[30]|is_unique[biz.bank_account]');
-			$this->form_validation->set_rules('url_image_license', '营业执照正/副本照片', 'trim|max_length[255]');
-			$this->form_validation->set_rules('url_image_owner_id', '法人身份证照片', 'trim|max_length[255]');
-			$this->form_validation->set_rules('url_image_auth_id', '授权人身份证照片', 'trim|max_length[255]');
-			$this->form_validation->set_rules('url_image_auth_doc', '授权书照片', 'trim|required|max_length[255]');
+			$this->form_validation->set_rules('url_image_license', '营业执照正/副本照片', 'trim|required|max_length[255]');
+			$this->form_validation->set_rules('url_image_owner_id', '法人身份证照片', 'trim|required|max_length[255]');
+			$this->form_validation->set_rules('url_image_auth_id', '经办人身份证照片', 'trim|max_length[255]');
+			$this->form_validation->set_rules('url_image_auth_doc', '授权书照片', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_image_product', '产品照片', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_image_produce', '工厂/产地照片', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_image_retail', '门店/柜台照片', 'trim|max_length[255]');
@@ -383,44 +386,11 @@
 			if ($this->app_type === 'admin'):
 				$this->form_validation->set_rules('name', '商家全称', 'trim|required|min_length[7]|max_length[30]');
 				$this->form_validation->set_rules('brief_name', '商家简称', 'trim|required|max_length[10]');
-				$this->form_validation->set_rules('url_name', '店铺URL', 'trim|max_length[20]|alpha_dash');
+				$this->form_validation->set_rules('url_name', '店铺域名', 'trim|max_length[20]|alpha_dash');
 				$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|required|exact_length[11]|is_natural');
 			endif;
-			$this->form_validation->set_rules('url_logo', '商家LOGO', 'trim|max_length[255]');
-			$this->form_validation->set_rules('slogan', '说明', 'trim|max_length[20]');
-			$this->form_validation->set_rules('description', '简介', 'trim|required|max_length[200]');
-			$this->form_validation->set_rules('notification', '公告', 'trim|max_length[100]');
-			$this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]');
-			$this->form_validation->set_rules('tel_protected_fiscal', '财务联系手机号', 'trim|required|exact_length[11]|is_natural');
-			$this->form_validation->set_rules('tel_protected_order', '订单通知手机号', 'trim|required|exact_length[11]|is_natural');
-
-			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|required|min_length[3]|max_length[20]');
-			$this->form_validation->set_rules('bank_account', '开户行账号', 'trim|required|max_length[30]');
-			$this->form_validation->set_rules('url_image_license', '营业执照正/副本照片', 'trim|required|max_length[255]');
-			$this->form_validation->set_rules('url_image_auth_id', '授权人身份证照片', 'trim|required|max_length[255]');
-			$this->form_validation->set_rules('url_image_auth_doc', '授权书照片', 'trim|required|max_length[255]');
-			$this->form_validation->set_rules('url_image_produce', '工厂/产地照片', 'trim|required|max_length[255]');
-			$this->form_validation->set_rules('url_image_retail', '门店/柜台照片', 'trim|required|max_length[255]');
-
-			$this->form_validation->set_rules('freight', '每笔订单运费', 'trim|decimal|greater_than_equal_to[0.00]|less_than_equal_to[99.99]');
-			$this->form_validation->set_rules('freight_free_subtotal', '免邮费起始金额', 'trim|decimal|greater_than_equal_to[0.00]|less_than_equal_to[99.99]');
-			$this->form_validation->set_rules('freight_free_count', '免邮费起始份数', 'trim|is_natural|greater_than_equal_to[0]|less_than_equal_to[100]');
-			$this->form_validation->set_rules('min_order_subtotal', '订单最低金额', 'trim|decimal|greater_than_equal_to[1.00]|less_than_equal_to[99.99]');
-			$this->form_validation->set_rules('delivery_time_start', '配送起始时间', 'trim|is_natural|greater_than_equal_to[0]|less_than_equal_to[23]');
-			$this->form_validation->set_rules('delivery_time_end', '配送结束时间', 'trim|is_natural_no_zero|greater_than_equal_to[0]|less_than_equal_to[23]');
-			$this->form_validation->set_rules('longitude', '经度', 'trim|min_length[7]|decimal');
-			$this->form_validation->set_rules('latitude', '纬度', 'trim|min_length[7]|decimal');
-
-			$this->form_validation->set_rules('country', '国家', 'trim|max_length[10]');
-			$this->form_validation->set_rules('province', '省级行政区', 'trim|max_length[10]');
-			$this->form_validation->set_rules('city', '地市级行政区', 'trim|max_length[10]');
-			$this->form_validation->set_rules('county', '区县级行政区', 'trim|max_length[10]');
-			$this->form_validation->set_rules('detail', '详细地址；小区名、路名、门牌号等', 'trim|max_length[50]');
-
-			$this->form_validation->set_rules('url_web', '官方网站', 'trim|max_length[255]|valid_url');
-			$this->form_validation->set_rules('url_weibo', '官方微博', 'trim|max_length[255]|valid_url');
-			$this->form_validation->set_rules('url_taobao', '淘宝/天猫店铺网址', 'trim|max_length[255]|valid_url');
-			$this->form_validation->set_rules('url_wechat', '微信二维码图片', 'trim|max_length[255]');
+			//TODO 载入验证规则
+			require_once(APP_PATH.'libraries/form_rules/Biz.php');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -527,41 +497,8 @@
 				$this->form_validation->set_rules('url_name', '店铺域名', 'trim|max_length[20]|alpha_dash');
 				$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|exact_length[11]|is_natural');
 			endif;
-			$this->form_validation->set_rules('url_logo', '商家LOGO', 'trim|max_length[255]');
-			$this->form_validation->set_rules('slogan', '宣传语', 'trim|max_length[20]');
-			$this->form_validation->set_rules('description', '简介', 'trim|max_length[200]');
-			$this->form_validation->set_rules('notification', '公告', 'trim|max_length[100]');
-			$this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|min_length[10]|max_length[13]');
-			$this->form_validation->set_rules('tel_protected_fiscal', '财务联系手机号', 'trim|exact_length[11]|is_natural');
-			$this->form_validation->set_rules('tel_protected_order', '订单通知手机号', 'trim|exact_length[11]|is_natural');
-
-			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|min_length[3]|max_length[20]');
-			$this->form_validation->set_rules('bank_account', '开户行账号', 'trim|max_length[30]');
-			$this->form_validation->set_rules('url_image_license', '营业执照正/副本照片', 'trim|max_length[255]');
-			$this->form_validation->set_rules('url_image_auth_id', '授权人身份证照片', 'trim|max_length[255]');
-			$this->form_validation->set_rules('url_image_auth_doc', '授权书照片', 'trim|max_length[255]');
-			$this->form_validation->set_rules('url_image_produce', '工厂/产地照片', 'trim|max_length[255]');
-			$this->form_validation->set_rules('url_image_retail', '门店/柜台照片', 'trim|max_length[255]');
-
-			$this->form_validation->set_rules('freight', '每笔订单运费', 'trim|decimal|greater_than_equal_to[0.00]|less_than_equal_to[99.99]');
-			$this->form_validation->set_rules('freight_free_subtotal', '免邮费起始金额', 'trim|decimal|greater_than_equal_to[0.00]|less_than_equal_to[99.99]');
-			$this->form_validation->set_rules('freight_free_count', '免邮费起始份数', 'trim|is_natural|greater_than_equal_to[0]|less_than_equal_to[100]');
-			$this->form_validation->set_rules('min_order_subtotal', '订单最低金额', 'trim|decimal|greater_than_equal_to[1.00]|less_than_equal_to[99.99]');
-			$this->form_validation->set_rules('delivery_time_start', '配送起始时间', 'trim|is_natural|greater_than_equal_to[0]|less_than_equal_to[23]');
-			$this->form_validation->set_rules('delivery_time_end', '配送结束时间', 'trim|is_natural_no_zero|greater_than_equal_to[0]|less_than_equal_to[23]');
-			$this->form_validation->set_rules('longitude', '经度', 'trim|min_length[7]|decimal');
-			$this->form_validation->set_rules('latitude', '纬度', 'trim|min_length[7]|decimal');
-
-			$this->form_validation->set_rules('country', '国家', 'trim|max_length[10]');
-			$this->form_validation->set_rules('province', '省级行政区', 'trim|max_length[10]');
-			$this->form_validation->set_rules('city', '地市级行政区', 'trim|max_length[10]');
-			$this->form_validation->set_rules('county', '区县级行政区', 'trim|max_length[10]');
-			$this->form_validation->set_rules('detail', '详细地址；小区名、路名、门牌号等', 'trim|max_length[50]');
-
-			$this->form_validation->set_rules('url_web', '官方网站', 'trim|max_length[255]|valid_url');
-			$this->form_validation->set_rules('url_weibo', '官方微博', 'trim|max_length[255]|valid_url');
-			$this->form_validation->set_rules('url_taobao', '淘宝/天猫店铺网址', 'trim|max_length[255]|valid_url');
-			$this->form_validation->set_rules('url_wechat', '微信二维码图片', 'trim|max_length[255]');
+			//TODO 载入验证规则
+			require_once(APP_PATH.'libraries/form_rules/Biz.php');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
