@@ -4,9 +4,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 // 允许响应指定URL的跨域请求
 $origin = isset($_SERVER['HTTP_ORIGIN'])? $_SERVER['HTTP_ORIGIN']: NULL;
 $allow_origin = array(
-    'http://biz.517ybang.com',
-    'http://www.517ybang.com',
-	'http://admin.517ybang.com',
+    'https://biz.517ybang.com',
+    'https://www.517ybang.com',
+	'https://admin.517ybang.com',
 );
 if ( in_array($origin, $allow_origin) ):
     header('Access-Control-Allow-Origin:'.$origin);

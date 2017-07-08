@@ -156,7 +156,7 @@
 
 			// 需要发送的短信内容
 			$content = $this->input->post('content')? $this->input->post('content'): NULL;
-			
+
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
@@ -244,7 +244,7 @@
 
 			$this->result['status'] = 200;
 			$this->result['content']['sms_id'] = $result;
-			$this->result['content']['message'] = '单条发送短信成功';
+			$this->result['content']['message'] = '短信发送成功';
 			$this->result['content']['time_expire'] = $this->time_expire;
 		} // save
 
