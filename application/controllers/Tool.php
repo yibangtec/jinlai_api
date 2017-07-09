@@ -103,6 +103,34 @@
 
 			endif; //end 检查必要参数是否已传入
 		} // end sign_generate
+		
+		// 导出数据库结构
+		public function table_structure()
+		{
+			// 表名
+			$table_name = $this->input->post('table_name');
+
+			$this->db->select('COLUMN_NAME as name,COLUMN_TYPE as type,IS_NULLABLE as allow_null, COLUMN_DEFAULT as default,COLUMN_COMMENT as comment');
+			$this->db->where('table_name', $table_name);
+			$query = $this->db->get('information_schema.COLUMNS');
+
+			$result = $query->result_array();
+			
+			if ( !empty($result) ):
+				$this->result['status'] = 200;
+				$this->result['content'] = array(
+					'names' => '',
+					'comments' => '',
+				);
+				foreach ($result as $column):
+					$this->result['content']['names'] .= $column['name'].',';
+					$this->result['content']['comments'] .= $column['comment'].',';
+				endforeach;
+			else:
+				$this->result['status'] = 400;
+				$this->result['content'] = '该表不存在或不含有任何字段';
+			endif;
+		} // end table_columns
 
 	}
 
