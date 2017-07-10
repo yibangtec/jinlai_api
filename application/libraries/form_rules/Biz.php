@@ -12,9 +12,9 @@
 	$this->form_validation->set_rules('tel_protected_fiscal', '财务联系手机号', 'trim|exact_length[11]|is_natural');
 	$this->form_validation->set_rules('tel_protected_order', '订单通知手机号', 'trim|exact_length[11]|is_natural');
 
-	$this->form_validation->set_rules('code_license', '统一社会信用代码', 'trim|required|exact_length[18]|is_unique[biz.code_license]');
-	$this->form_validation->set_rules('code_ssn_owner', '法人身份证号', 'trim|required|exact_length[18]|is_unique[biz.code_ssn_owner]');
-	$this->form_validation->set_rules('code_ssn_auth', '经办人身份证号', 'trim|exact_length[18]|is_unique[biz.code_ssn_auth]');
+	$this->form_validation->set_rules('code_license', '统一社会信用代码', 'trim|required|exact_length[18]');
+	$this->form_validation->set_rules('code_ssn_owner', '法人身份证号', 'trim|required|exact_length[18]');
+	$this->form_validation->set_rules('code_ssn_auth', '经办人身份证号', 'trim|exact_length[18]');
 
 	$this->form_validation->set_rules('url_image_license', '营业执照正/副本', 'trim|required|max_length[255]');
 	$this->form_validation->set_rules('url_image_owner_id', '法人身份证照片', 'trim|required|max_length[255]');
