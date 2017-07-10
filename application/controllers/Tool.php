@@ -105,26 +105,52 @@
 		} // end sign_generate
 		
 		// 导出数据库结构
-		public function table_structure()
+		public function table_info()
 		{
-			// 表名
-			$table_name = $this->input->post('table_name');
+			// 检查必要参数是否已传入
+			$required_params = array('class_name', 'class_name_cn', 'table_name', 'id_name');
+			foreach ($required_params as $param):
+				${$param} = $this->input->post($param);
+				if ( empty( ${$param} ) ):
+					$this->result['status'] = 400;
+					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+					exit();
+				endif;
+			endforeach;
 
 			$this->db->select('COLUMN_NAME as name,COLUMN_TYPE as type,IS_NULLABLE as allow_null, COLUMN_DEFAULT as default,COLUMN_COMMENT as comment');
 			$this->db->where('table_name', $table_name);
 			$query = $this->db->get('information_schema.COLUMNS');
 
 			$result = $query->result_array();
-			
 			if ( !empty($result) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = array(
-					'names' => '',
-					'comments' => '',
+					'names_list' => '', // 字段CSV
+					'form_data' => '', // 用于接口测试的key-value值，可用于Postman等工具
+					'rules' => '', // 验证规则
+					'params_request' => '', // 请求参数（生成文档用）
+					'params_respond' => '<tr><td>'.$id_name.'</td><td>string</td><td>详见“返回示例”，下同</td><td>'.$class_name_cn.'ID</td></tr>'. "\n", // 响应参数（生成文档用）
+					'elements' => '', // 主要视图元素（生成文档用）
 				);
 				foreach ($result as $column):
-					$this->result['content']['names'] .= $column['name'].',';
-					$this->result['content']['comments'] .= $column['comment'].',';
+					// 预赋值部分待用数据为变量
+					$name = $column['name'];
+					$comment = $column['comment'];
+					$type = $column['type'];
+
+					$this->result['content']['names_list'] .= "'$name', ";
+					$this->result['content']['form_data'] .= $name. ':'. "\n";
+					$this->result['content']['rules'] .= "\t\t\t". '$this->form_validation->set_rules('. "'$name', '$comment', 'trim|required');". "\n";
+					$this->result['content']['params_request'] .= '<tr><td>'. $name. '</td><td>'.$type.'</td><td>否</td><td>示例</td><td>'.$comment.'</td></tr>'. "\n";
+
+					// 对于部分信息，去除字段备注中全角分号之后的部分
+					$length_to_end = strpos($comment, '；');
+					if ( $length_to_end !== FALSE ):
+						$comment = substr($comment, 0, $length_to_end);
+					endif;
+					$this->result['content']['params_respond'] .= '<tr><td>'. $name. '</td><td>'.$type.'</td><td>详见返回示例</td><td>'.$comment.'</td></tr>'. "\n";
+					$this->result['content']['elements'] .= '<tr><td>┣'. $name. '</td><td>1</td><td>文本</td><td>'.$comment.'</td></tr>'. "\n";
 				endforeach;
 			else:
 				$this->result['status'] = 400;

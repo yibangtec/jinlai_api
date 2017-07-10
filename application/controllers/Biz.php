@@ -48,7 +48,7 @@
 		protected $names_edit_allowed = array(
 			'name', 'brief_name', 'url_name', 'url_logo', 'slogan', 'description', 'notification',
 			'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
-			'code_license', 'code_ssn_owner',  'code_ssn_auth',
+			'code_license', 'code_ssn_owner', 'code_ssn_auth',
 			'bank_name', 'bank_account', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
 			'freight', 'freight_free_subtotal', 'freight_free_count', 'min_order_subtotal', 'delivery_time_start', 'delivery_time_end', 'longitude', 'latitude', 'country', 'province', 'city', 'county', 'detail', 'url_web', 'url_weibo', 'url_taobao', 'url_wechat',
 		);
@@ -58,7 +58,7 @@
 		 */
 		protected $names_edit_required = array(
 			'user_id', 'id',
-			'tel_public', 'tel_protected_biz',
+			'tel_public', 'tel_protected_biz', 'code_license', 'code_ssn_owner', 'url_image_license', 'url_image_owner_id',
 		);
 
 		/**
