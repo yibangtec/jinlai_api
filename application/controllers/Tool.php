@@ -132,6 +132,10 @@
 					'params_request' => '', // 请求参数（生成文档用）
 					'params_respond' => '<tr><td>'.$id_name.'</td><td>string</td><td>详见“返回示例”，下同</td><td>'.$class_name_cn.'ID</td></tr>'. "\n", // 响应参数（生成文档用）
 					'elements' => '', // 主要视图元素（生成文档用）
+
+					'create' => '', // 创建页字段
+					'edit' => '', // 编辑页字段
+					'detail' => '', // 详情页字段
 				);
 				foreach ($result as $column):
 					// 预赋值部分待用数据为变量
@@ -144,18 +148,36 @@
 					$this->result['content']['form_data'] .= $name. ':'. "\n";
 					$this->result['content']['params_request'] .= '<tr><td>'. $name. '</td><td>'.$type.'</td><td>'.($allow_null === 'YES'? '是': '否').'</td><td>示例</td><td>'.$comment.'</td></tr>'. "\n";
 
-					// 对于部分信息，去除字段备注中全角分号之后的部分
+					// 对于其它信息，去除字段备注中全角分号之后的部分
 					$length_to_end = strpos($comment, '；');
 					if ( $length_to_end !== FALSE ):
 						$comment = substr($comment, 0, $length_to_end);
 					endif;
+
 					$this->result['content']['rules'] .= "\t\t\t". '$this->form_validation->set_rules('. "'$name', '$comment', 'trim|".($allow_null === 'YES'? 'required': NULL)."');". "\n";
 					$this->result['content']['params_respond'] .= '<tr><td>'. $name. '</td><td>'.$type.'</td><td>详见返回示例</td><td>'.$comment.'</td></tr>'. "\n";
 					$this->result['content']['elements'] .= '<tr><td>┣'. $name. '</td><td>1</td><td>文本</td><td>'.$comment.'</td></tr>'. "\n";
+					$this->result['content']['create'] .=
+						"<div class=form-group>
+							<label for=$name class=\"col-sm-2 control-label\">$comment</label>
+							<div class=col-sm-10>
+								<input class=form-control name=$name type=text value=\"<?php echo set_value('$name') ?>\" placeholder=\"$comment\" required>
+							</div>
+						</div>". "\n";
+					$this->result['content']['edit'] .=
+						"<div class=form-group>
+							<label for=$name class=\"col-sm-2 control-label\">$comment</label>
+							<div class=col-sm-10>
+								<input class=form-control name=$name type=text value=\"<?php echo ".'$item'."['$name'] ?>\" placeholder=\"$comment\" required>
+							</div>
+						</div>". "\n";
+					$this->result['content']['detail'] .= '<dt>'.$comment.'</dt>'. "\n".'<dd><?php echo $item'."['$name']".' ?></dd>'. "\n";
 				endforeach;
+
 			else:
 				$this->result['status'] = 400;
 				$this->result['content'] = '该表不存在或不含有任何字段';
+
 			endif;
 		} // end table_columns
 

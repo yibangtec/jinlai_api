@@ -14,20 +14,18 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'nickname', 'lastname', 'firstname', 'gender', 'dob',
+			'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob',
 			'mobile', 'email', 'wechat_union_id', 'address_id',
-			'balance_credit', 'balance_fund',
-			'time_create', 'last_login_timestamp', 'last_login_ip', 'operator_id',
+			'time_create', 'time_edit', 'last_login_timestamp', 'operator_id',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'nickname', 'lastname', 'firstname', 'gender', 'dob', 'avatar',
+			'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob', 'avatar',
 			'mobile', 'email', 'wechat_union_id', 'address_id',
-			'balance_credit', 'balance_fund',
-			'time_create', 'last_login_timestamp', 'last_login_ip', 'operator_id',
+			'time_create', 'time_edit', 'last_login_timestamp', 'last_login_ip', 'operator_id',
 		);
 
 		/**
@@ -41,7 +39,7 @@
 		 * 完整编辑单行时必要的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'nickname', 'lastname', 'firstname', 'gender', 'dob', 'avatar',
+			'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob', 'avatar',
 			'mobile', 'email', 'wechat_union_id', 'address_id',
 		);
 
@@ -87,8 +85,8 @@
 				$this->result['content']['count'] = $count;
 
 			else:
-				$this->result['status'] = 400;
-				$this->result['content'] = NULL;
+				$this->result['status'] = 414;
+				$this->result['content']['error']['message'] = '没有符合条件的数据';
 
 			endif;
 		} // end count
@@ -131,8 +129,8 @@
 
 			else:
 				$this->result['status'] = 414;
-				$this->result['content']['error']['message'] = NULL;
-			
+				$this->result['content']['error']['message'] = '没有符合条件的数据';
+
 			endif;
 		}
 
@@ -155,77 +153,15 @@
 			// 获取特定项；默认可获取已删除项
 			$item = $this->basic_model->select_by_id($id);
 			if ( !empty($item) ):
-				// 不返回真实密码信息
-				if ( !empty($item['password']) ) $item['password'] = 'set';
-
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
 
 			else:
 				$this->result['status'] = 414;
-				$this->result['content']['error']['message'] = NULL;
+				$this->result['content']['error']['message'] = '没有符合条件的数据';
 
 			endif;
 		} // end detail
-
-		/**
-		 * 3 创建
-		 */
-		public function create()
-		{
-			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
-			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
-			$min_version = '0.0.1'; // 最低版本要求
-			$this->client_check($type_allowed, $platform_allowed, $min_version);
-
-			// 管理类客户端操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
-
-			// 检查必要参数是否已传入
-			$required_params = $this->names_create_required;
-			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
-				if ( empty( ${$param} ) ):
-					$this->result['status'] = 400;
-					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-					exit();
-				endif;
-			endforeach;
-
-			// 初始化并配置表单验证库
-			$this->load->library('form_validation');
-			$this->form_validation->set_error_delimiters('', '');
-			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('mobile', '手机号', 'trim|required|is_natural|exact_length[11]|is_unique[user.mobile]');
-
-			// 若表单提交不成功
-			if ($this->form_validation->run() === FALSE):
-				$this->result['status'] = 401;
-				$this->result['content']['error']['message'] = validation_errors();
-
-			else:
-				// 需要创建的数据；逐一赋值需特别处理的字段
-				$data_to_create = array();
-				// 自动生成无需特别处理的数据
-				$data_need_no_prepare = $this->names_create_required;
-				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
-
-				$result = $this->basic_model->create($data_to_create);
-				if ($result !== FALSE):
-					$this->result['status'] = 200;
-					$this->result['content'] = '创建'.$this->class_name_cn.'成功';
-
-				else:
-					$this->result['status'] = 424;
-					$this->result['content']['error']['message'] = '创建'.$this->class_name_cn.'失败';
-
-				endif;
-			endif;
-		} // end create
 
 		/**
 		 * 4 编辑特定字段
@@ -233,10 +169,8 @@
 		public function edit_certain()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
-			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
-			$min_version = '0.0.1'; // 最低版本要求
-			$this->client_check($type_allowed, $platform_allowed, $min_version);
+			$type_allowed = array('client'); // 客户端类型
+			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -247,7 +181,7 @@
 			$required_params = $this->names_edit_certain_required;
 			foreach ($required_params as $param):
 				${$param} = $this->input->post($param);
-				if ( empty( ${$param} ) ):
+				if ( $param !== 'value' && empty( ${$param} ) ): // value 可以为空；必要字段会在字段验证中另行检查
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();
@@ -270,10 +204,12 @@
 			$this->form_validation->set_rules('nickname', '昵称', 'trim|max_length[12]');
 			$this->form_validation->set_rules('lastname', '姓', 'trim|max_length[9]');
 			$this->form_validation->set_rules('firstname', '名', 'trim|max_length[6]');
+			$this->form_validation->set_rules('code_ssn', '身份证号', 'trim|exact_length[18]');
+			$this->form_validation->set_rules('url_image_id', '身份证照片', 'trim|max_length[255]');
 			$this->form_validation->set_rules('gender', '性别', 'trim|max_length[1]|in_list[男,女]');
 			$this->form_validation->set_rules('dob', '生日', 'trim|max_length[10]');
 			$this->form_validation->set_rules('avatar', '头像图片URL', 'trim|max_length[255]');
-			$this->form_validation->set_rules('mobile', '手机号', 'trim|exact_length[11]|is_natural_no_zero|is_unique[user.mobile]');
+			$this->form_validation->set_rules('mobile', '手机号', 'trim|exact_length[11]|is_natural_no_zero');
 			$this->form_validation->set_rules('email', 'Email', 'trim|max_length[40]|valid_email');
 			$this->form_validation->set_rules('wechat_union_id', '微信union_id', 'trim|max_length[28]');
 			$this->form_validation->set_rules('address_id', '默认地址ID', 'trim|is_natural_no_zero');
@@ -286,7 +222,7 @@
 			else:
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit['operator_id'] = $user_id;
-				$data_to_edit[$name] = $this->input->post($value);
+				$data_to_edit[$name] = $value;
 
 				// 获取ID
 				$id = $this->input->post('id');
@@ -294,15 +230,101 @@
 
 				if ($result !== FALSE):
 					$this->result['status'] = 200;
-					$this->result['content'] = '编辑'.$this->class_name_cn.'成功';
+					$this->result['content']['message'] = '编辑成功';
 
 				else:
 					$this->result['status'] = 434;
-					$this->result['content']['error']['message'] = '编辑'.$this->class_name_cn.'失败';
+					$this->result['content']['error']['message'] = '编辑失败';
 
 				endif;
 			endif;
 		} // end edit_certain
+		
+		/**
+		 * 6 编辑多行数据特定字段
+		 *
+		 * 修改多行数据的单一字段值
+		 */
+		public function edit_bulk()
+		{
+			// 操作可能需要检查客户端及设备信息
+			$type_allowed = array('admin'); // 客户端类型
+			$this->client_check($type_allowed);
+
+			// 管理类客户端操作可能需要检查操作权限
+			//$role_allowed = array('管理员', '经理'); // 角色要求
+			//$min_level = 10; // 级别要求
+			//$this->permission_check($role_allowed, $min_level);
+
+			// 检查必要参数是否已传入
+			$required_params = $this->names_edit_bulk_required;
+			foreach ($required_params as $param):
+				${$param} = $this->input->post($param);
+				if ( empty( ${$param} ) ):
+					$this->result['status'] = 400;
+					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+					exit();
+				endif;
+			endforeach;
+
+			// 初始化并配置表单验证库
+			$this->load->library('form_validation');
+			$this->form_validation->set_error_delimiters('', '');
+			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
+			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore]');
+			$this->form_validation->set_rules('operator_id', '操作者ID', 'trim|required|is_natural_no_zero');
+			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
+
+			// 验证表单值格式
+			if ($this->form_validation->run() === FALSE):
+				$this->result['status'] = 401;
+				$this->result['content']['error']['message'] = validation_errors();
+				exit();
+
+			elseif ($this->operator_check() !== TRUE):
+				$this->result['status'] = 453;
+				$this->result['content']['error']['message'] = '与该ID及类型对应的操作者不存在，或操作密码错误';
+				exit();
+
+			else:
+				// 需要编辑的数据；逐一赋值需特别处理的字段
+				$data_to_edit['operator_id'] = $user_id;
+				// 自动生成无需特别处理的数据
+				$data_need_no_prepare = array('operator_id');
+				foreach ($data_need_no_prepare as $name)
+					$data_to_edit[$name] = $this->input->post($name);
+
+				// 根据待执行的操作赋值待编辑数据
+				switch ( $this->input->post('operation') ):
+					case 'delete':
+						$data_to_edit['time_delete'] = date('Y-m-d H:i:s');
+						break;
+					case 'restore':
+						$data_to_edit['time_delete'] = NULL;
+						break;
+				endswitch;
+
+				// 依次操作数据并输出操作结果
+				// 将待操作行ID们的CSV格式字符串，转换为待操作行的ID数组
+				$ids = explode(',', $ids);
+
+				// 默认批量处理全部成功，若有任一处理失败则将处理失败行进行记录
+				$this->result['status'] = 200;
+				foreach ($ids as $id):
+					$result = $this->basic_model->edit($id, $data_to_edit);
+					if ($result === FALSE):
+						$this->result['status'] = 434;
+						$this->result['content']['row_failed'][] = $id;
+					endif;
+
+				endforeach;
+
+				// 添加全部操作成功后的提示
+				if ($this->result['status'] = 200)
+					$this->result['content'] = '全部操作成功';
+
+			endif;
+		} // end edit_bulk
 
 	}
 
