@@ -37,9 +37,8 @@
 		protected $names_create_required = array(
 			'user_id',
 			'name', 'brief_name', 'tel_public', 'tel_protected_biz',
-			'description', 'bank_name', 'bank_account', 'code_license', 'code_ssn_owner', 'code_ssn_auth',
-			'url_image_license', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_produce', 'url_image_retail',
-			'url_image_owner_id', 'url_image_product',
+			'code_license', 'code_ssn_owner',
+			'url_image_license', 'url_image_owner_id',
 		);
 
 		/**
