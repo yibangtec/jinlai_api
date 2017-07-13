@@ -239,8 +239,8 @@
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('name', '商家全称', 'trim|required|min_length[7]|max_length[30]|is_unique[biz.name]');
-			$this->form_validation->set_rules('brief_name', '商家简称', 'trim|required|max_length[10]|is_unique[biz.brief_name]');
+			$this->form_validation->set_rules('name', '全称', 'trim|required|min_length[7]|max_length[30]|is_unique[biz.name]');
+			$this->form_validation->set_rules('brief_name', '简称', 'trim|required|max_length[10]|is_unique[biz.brief_name]');
 			$this->form_validation->set_rules('description', '简介', 'trim|max_length[200]');
 			$this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]|is_unique[biz.tel_public]');
 			$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|required|is_natural|exact_length[11]|is_unique[biz.tel_protected_biz]');
@@ -248,15 +248,18 @@
 			$this->form_validation->set_rules('code_license', '统一社会信用代码', 'trim|required|exact_length[18]|is_unique[biz.code_license]');
 			$this->form_validation->set_rules('code_ssn_owner', '法人身份证号', 'trim|required|exact_length[18]|is_unique[biz.code_ssn_owner]');
 			$this->form_validation->set_rules('code_ssn_auth', '经办人身份证号', 'trim|exact_length[18]|is_unique[biz.code_ssn_auth]');
+			
+			$this->form_validation->set_rules('url_image_license', '营业执照', 'trim|required|max_length[255]');
+			$this->form_validation->set_rules('url_image_owner_id', '法人身份证', 'trim|required|max_length[255]');
+			$this->form_validation->set_rules('url_image_auth_id', '经办人身份证', 'trim|max_length[255]');
+			$this->form_validation->set_rules('url_image_auth_doc', '授权书', 'trim|max_length[255]');
+			
 			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|min_length[3]|max_length[20]');
 			$this->form_validation->set_rules('bank_account', '开户行账号', 'trim|max_length[30]|is_unique[biz.bank_account]');
-			$this->form_validation->set_rules('url_image_license', '营业执照正/副本照片', 'trim|required|max_length[255]');
-			$this->form_validation->set_rules('url_image_owner_id', '法人身份证照片', 'trim|required|max_length[255]');
-			$this->form_validation->set_rules('url_image_auth_id', '经办人身份证照片', 'trim|max_length[255]');
-			$this->form_validation->set_rules('url_image_auth_doc', '授权书照片', 'trim|max_length[255]');
-			$this->form_validation->set_rules('url_image_product', '产品照片', 'trim|max_length[255]');
-			$this->form_validation->set_rules('url_image_produce', '工厂/产地照片', 'trim|max_length[255]');
-			$this->form_validation->set_rules('url_image_retail', '门店/柜台照片', 'trim|max_length[255]');
+
+			$this->form_validation->set_rules('url_image_product', '产品', 'trim|max_length[255]');
+			$this->form_validation->set_rules('url_image_produce', '工厂/产地', 'trim|max_length[255]');
+			$this->form_validation->set_rules('url_image_retail', '门店/柜台', 'trim|max_length[255]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):

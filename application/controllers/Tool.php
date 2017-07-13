@@ -158,20 +158,22 @@
 					$this->result['content']['params_respond'] .= '<tr><td>'. $name. '</td><td>'.$type.'</td><td>详见返回示例</td><td>'.$comment.'</td></tr>'. "\n";
 					$this->result['content']['elements'] .= '<tr><td>┣'. $name. '</td><td>1</td><td>文本</td><td>'.$comment.'</td></tr>'. "\n";
 					$this->result['content']['create'] .=
-						"<div class=form-group>
+						"\t\t\t\t\t\t"."<div class=form-group>
 							<label for=$name class=\"col-sm-2 control-label\">$comment</label>
 							<div class=col-sm-10>
 								<input class=form-control name=$name type=text value=\"<?php echo set_value('$name') ?>\" placeholder=\"$comment\" required>
 							</div>
 						</div>". "\n";
 					$this->result['content']['edit'] .=
-						"<div class=form-group>
+						"\t\t\t\t\t\t"."<div class=form-group>
 							<label for=$name class=\"col-sm-2 control-label\">$comment</label>
 							<div class=col-sm-10>
 								<input class=form-control name=$name type=text value=\"<?php echo ".'$item'."['$name'] ?>\" placeholder=\"$comment\" required>
 							</div>
 						</div>". "\n";
-					$this->result['content']['detail'] .= '<dt>'.$comment.'</dt>'. "\n".'<dd><?php echo $item'."['$name']".' ?></dd>'. "\n";
+					$this->result['content']['detail'] .=
+						"\t\t".'<dt>'.$comment.'</dt>'. "\n".
+						"\t\t".'<dd><?php echo $item'."['$name']".' ?></dd>'. "\n";
 				endforeach;
 
 			else:
@@ -181,7 +183,7 @@
 			endif;
 		} // end table_columns
 
-	}
+	} // end Tool
 
 /* End of file Tool.php */
 /* Location: ./application/controllers/Tool.php */
