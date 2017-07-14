@@ -38,7 +38,6 @@
 			'user_id',
 			'name', 'brief_name', 'tel_public', 'tel_protected_biz',
 			'code_license', 'code_ssn_owner',
-			'url_image_license', 'url_image_owner_id',
 		);
 
 		/**
@@ -104,7 +103,7 @@
 					$condition[$sorter] = $this->input->post($sorter);
 			endforeach;
 
-			// 获取列表；默认不获取已删除项
+			// 获取列表；默认可获取已删除项
 			$count = $this->basic_model->count($condition);
 
 			if ($count !== FALSE):
@@ -153,8 +152,8 @@
 			if ($this->app_type === 'client')
 				$this->db->select( implode(',', $this->names_to_return) );
 
-			// 获取列表；默认不获取已删除项
-			$items = $this->basic_model->select($condition, $order_by, FALSE, FALSE);
+			// 获取列表；默认可获取已删除项
+			$items = $this->basic_model->select($condition, $order_by);
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
@@ -238,7 +237,7 @@
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('name', '全称', 'trim|required|min_length[7]|max_length[30]|is_unique[biz.name]');
+			$this->form_validation->set_rules('name', '商家名称', 'trim|required|min_length[7]|max_length[30]|is_unique[biz.name]');
 			$this->form_validation->set_rules('brief_name', '简称', 'trim|required|max_length[10]|is_unique[biz.brief_name]');
 			$this->form_validation->set_rules('description', '简介', 'trim|max_length[200]');
 			$this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]|is_unique[biz.tel_public]');
@@ -248,8 +247,8 @@
 			$this->form_validation->set_rules('code_ssn_owner', '法人身份证号', 'trim|required|exact_length[18]|is_unique[biz.code_ssn_owner]');
 			$this->form_validation->set_rules('code_ssn_auth', '经办人身份证号', 'trim|exact_length[18]|is_unique[biz.code_ssn_auth]');
 			
-			$this->form_validation->set_rules('url_image_license', '营业执照', 'trim|required|max_length[255]');
-			$this->form_validation->set_rules('url_image_owner_id', '法人身份证', 'trim|required|max_length[255]');
+			$this->form_validation->set_rules('url_image_license', '营业执照', 'trim|max_length[255]');
+			$this->form_validation->set_rules('url_image_owner_id', '法人身份证', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_image_auth_id', '经办人身份证', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_image_auth_doc', '授权书', 'trim|max_length[255]');
 			
@@ -386,7 +385,7 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			if ($this->app_type === 'admin'):
-				$this->form_validation->set_rules('name', '商家全称', 'trim|required|min_length[7]|max_length[30]');
+				$this->form_validation->set_rules('name', '商家名称', 'trim|required|min_length[7]|max_length[30]');
 				$this->form_validation->set_rules('brief_name', '商家简称', 'trim|required|max_length[10]');
 				$this->form_validation->set_rules('url_name', '店铺域名', 'trim|max_length[20]|alpha_dash');
 				$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|required|exact_length[11]|is_natural');
@@ -495,7 +494,7 @@
 			$data_to_validate["{$name}"] = $value;
 			$this->form_validation->set_data($data_to_validate);
 			if ($this->app_type === 'admin'):
-				$this->form_validation->set_rules('name', '商家全称', 'trim|min_length[7]|max_length[30]');
+				$this->form_validation->set_rules('name', '商家名称', 'trim|min_length[7]|max_length[30]');
 				$this->form_validation->set_rules('brief_name', '商家简称', 'trim|max_length[10]');
 				$this->form_validation->set_rules('url_name', '店铺域名', 'trim|max_length[20]|alpha_dash');
 				$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|exact_length[11]|is_natural');
@@ -601,7 +600,7 @@
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
 			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore]');
-			$this->form_validation->set_rules('operator_id', '操作者ID', 'trim|required|is_natural_no_zero');
+			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
 
 			// 验证表单值格式
@@ -618,10 +617,6 @@
 			else:
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit['operator_id'] = $user_id;
-				// 自动生成无需特别处理的数据
-				$data_need_no_prepare = array('operator_id');
-				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = $this->input->post($name);
 
 				// 根据待执行的操作赋值待编辑数据
 				switch ( $this->input->post('operation') ):

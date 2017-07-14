@@ -18,15 +18,15 @@
 		 */
 		protected $names_to_sort = array(
 			'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'status',
-			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'time_create', 'time_delete', 'time_publish', 'time_suspend', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'item_id', 'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'note_admin', 'status',
-			'creator_id', 'operator_id',
+			'item_id', 'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id',
+			'time_create', 'time_delete', 'time_publish', 'time_suspend', 'time_edit', 'creator_id', 'operator_id', 'note_admin', 'status',
 		);
 
 		/**
@@ -34,7 +34,7 @@
 		 */
 		protected $names_create_required = array(
 			'user_id',
-			'category_id', 'biz_id', 'url_image_main', 'name', 'tag_price', 'price', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate',
+			'category_id', 'biz_id', 'url_image_main', 'name', 'price', 'stocks',
 		);
 
 		/**
@@ -49,7 +49,7 @@
 		 */
 		protected $names_edit_required = array(
 			'user_id', 'id',
-			'url_image_main', 'name', 'tag_price', 'price', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate',
+			'url_image_main', 'name', 'price', 'stocks',
 		);
 
 		/**
@@ -106,7 +106,7 @@
 				endif;
 			endforeach;
 
-			// 获取列表；默认不获取已删除项
+			// 获取列表；默认可获取已删除项
 			$count = $this->basic_model->count($condition);
 
 			if ($count !== FALSE):
@@ -154,8 +154,8 @@
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );
 
-			// 获取列表；默认不获取已删除项
-			$items = $this->basic_model->select($condition, $order_by, FALSE, FALSE);
+			// 获取列表；默认可获取已删除项
+			$items = $this->basic_model->select($condition, $order_by);
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
@@ -235,19 +235,19 @@
 			$this->form_validation->set_rules('figure_video_urls', '形象视频', 'trim|max_length[255]');
 			$this->form_validation->set_rules('name', '商品名称', 'trim|required|max_length[30]');
 			$this->form_validation->set_rules('slogan', '商品宣传语/卖点', 'trim|max_length[30]');
-			$this->form_validation->set_rules('description', '商品描述', 'trim|max_length[5000]');
-			$this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|required|less_than_equal_to[99999.99]');
+			$this->form_validation->set_rules('description', '商品描述', 'trim|max_length[20000]');
+			$this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('price', '商城价/现价（元）', 'trim|required|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('unit_name', '销售单位', 'trim|max_length[10]');
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('stocks', '库存量（份）', 'trim|required|less_than_equal_to[65535]');
-			$this->form_validation->set_rules('quantity_max', '每单最高限量（份）', 'trim|required|less_than_equal_to[99]');
-			$this->form_validation->set_rules('quantity_min', '每单最低限量（份）', 'trim|required|less_than_equal_to[99]');
-			$this->form_validation->set_rules('coupon_allowed', '是否可用优惠券', 'trim|required|in_list[0,1]');
-			$this->form_validation->set_rules('discount_credit', '积分抵扣率', 'trim|required|less_than_equal_to[0.5]');
-			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|required|less_than_equal_to[0.5]');
+			$this->form_validation->set_rules('quantity_max', '每单最高限量（份）', 'trim|less_than_equal_to[99]');
+			$this->form_validation->set_rules('quantity_min', '每单最低限量（份）', 'trim|less_than_equal_to[99]');
+			$this->form_validation->set_rules('coupon_allowed', '是否可用优惠券', 'trim|in_list[0,1]');
+			$this->form_validation->set_rules('discount_credit', '积分抵扣率', 'trim|less_than_equal_to[0.5]');
+			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
 			$this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
 			$this->form_validation->set_rules('promotion_id', '参与的营销活动ID', 'trim|is_natural_no_zero');
@@ -319,19 +319,19 @@
 			$this->form_validation->set_rules('figure_video_urls', '形象视频', 'trim|max_length[255]');
 			$this->form_validation->set_rules('name', '商品名称', 'trim|required|max_length[30]');
 			$this->form_validation->set_rules('slogan', '商品宣传语/卖点', 'trim|max_length[30]');
-			$this->form_validation->set_rules('description', '商品描述', 'trim|max_length[5000]');
-			$this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|required|less_than_equal_to[99999.99]');
+			$this->form_validation->set_rules('description', '商品描述', 'trim|max_length[20000]');
+			$this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('price', '商城价/现价（元）', 'trim|required|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('unit_name', '销售单位', 'trim|max_length[10]');
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('stocks', '库存量（份）', 'trim|required|less_than_equal_to[65535]');
-			$this->form_validation->set_rules('quantity_max', '每单最高限量（份）', 'trim|required|less_than_equal_to[99]');
-			$this->form_validation->set_rules('quantity_min', '每单最低限量（份）', 'trim|required|less_than_equal_to[99]');
-			$this->form_validation->set_rules('coupon_allowed', '是否可用优惠券', 'trim|required|in_list[0,1]');
-			$this->form_validation->set_rules('discount_credit', '积分抵扣率', 'trim|required|less_than_equal_to[0.5]');
-			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|required|less_than_equal_to[0.5]');
+			$this->form_validation->set_rules('quantity_max', '每单最高限量（份）', 'trim|less_than_equal_to[99]');
+			$this->form_validation->set_rules('quantity_min', '每单最低限量（份）', 'trim|less_than_equal_to[99]');
+			$this->form_validation->set_rules('coupon_allowed', '是否可用优惠券', 'trim|in_list[0,1]');
+			$this->form_validation->set_rules('discount_credit', '积分抵扣率', 'trim|less_than_equal_to[0.5]');
+			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
 			$this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
 			$this->form_validation->set_rules('promotion_id', '参与的营销活动ID', 'trim|is_natural_no_zero');
@@ -349,7 +349,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id'
+					'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -417,7 +417,7 @@
 			$this->form_validation->set_rules('figure_video_urls', '形象视频', 'trim|max_length[255]');
 			$this->form_validation->set_rules('name', '商品名称', 'trim|max_length[30]');
 			$this->form_validation->set_rules('slogan', '商品宣传语/卖点', 'trim|max_length[30]');
-			$this->form_validation->set_rules('description', '商品描述', 'trim|max_length[5000]');
+			$this->form_validation->set_rules('description', '商品描述', 'trim|max_length[20000]');
 			$this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('price', '商城价/现价（元）', 'trim|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('unit_name', '销售单位', 'trim|max_length[10]');
@@ -492,7 +492,7 @@
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
 			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore]');
-			$this->form_validation->set_rules('operator_id', '操作者ID', 'trim|required|is_natural_no_zero');
+			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
 
 			// 验证表单值格式
@@ -509,10 +509,6 @@
 			else:
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit['operator_id'] = $user_id;
-				// 自动生成无需特别处理的数据
-				$data_need_no_prepare = array('operator_id');
-				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = $this->input->post($name);
 
 				// 根据待执行的操作赋值待编辑数据
 				switch ( $this->input->post('operation') ):
@@ -545,44 +541,6 @@
 
 			endif;
 		} // end edit_bulk
-		
-
-		// 类方法
-		public function stock_change()
-		{
-
-		} // end stock_change
-
-		// 类方法
-		public function edit_quick()
-		{
-
-		} // end edit_quick
-
-		// 类方法
-		public function price_change()
-		{
-
-		} // end price_change
-
-		// 类方法
-		public function deliver()
-		{
-
-		} // end deliver
-
-		// 类方法
-		public function refuse()
-		{
-
-		} // end refuse
-
-		// 类方法
-		public function refund()
-		{
-
-		} // end refund
-
 	}
 
 /* End of file Item.php */

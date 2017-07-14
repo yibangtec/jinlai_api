@@ -71,7 +71,7 @@
 		 * @param boolean $include_deleted 是否计算被标记为已删除状态的行
 		 * @return int 满足条件的行的数量
 		 */
-		public function count($condition = NULL, $include_deleted = FALSE)
+		public function count($condition = NULL, $include_deleted = TRUE)
 		{
 			// 若存在统计条件，则按条件统计数量
 			if ($condition !== NULL):
@@ -102,7 +102,7 @@
 		 * @param bool $allow_deleted 是否在返回结果中包含被标注为删除状态的行；默认为FALSE
 		 * @return array 结果数组（默认为多维数组，$return_ids为TRUE时返回一维数组）
 		 */
-		public function select($condition = NULL, $order_by = NULL, $return_ids = FALSE, $allow_deleted = FALSE)
+		public function select($condition = NULL, $order_by = NULL, $return_ids = FALSE, $allow_deleted = TRUE)
 		{
 			$limit = $this->input->get_post('limit')? $this->input->get_post('limit'): NULL; // 需要从数据库获取的数据行数
 			$offset = $this->input->get_post('offset')? $this->input->get_post('offset'): NULL; // 需要从数据库获取的数据起始行数（与$limit配合可用于分页等功能）

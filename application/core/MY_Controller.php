@@ -22,7 +22,7 @@
 			), // 接收到的请求参数
 			'timestamp' => null, // 返回时时间戳
 			'datetime' => null, // 返回时可读日期
-			'timezone' => null, // 服务器本地市区
+			'timezone' => null, // 服务器本地时区
 			'elapsed_time' => null, // 处理业务请求时间
 		);
 
@@ -278,16 +278,14 @@
 		 */
 		public function operator_check()
 		{
-			$table_name = $this->input->post('operator_type');
-
 			// 设置数据库参数
-			$this->basic_model->table_name = $table_name;
-			$this->basic_model->id_name = $table_name.'_id';
-			
+			$this->basic_model->table_name = 'user';
+			$this->basic_model->id_name = 'user_id';
+
 			// 尝试获取复合条件的数据
 			$data_to_search = array(
-				$table_name.'_id' => $this->input->post('operator_id'),
-				'password' => $this->input->post('password'),
+				'user_id' => $this->input->post('user_id'),
+				'password' => sha1($this->input->post('password')),
 			);
 			$result = $this->basic_model->match($data_to_search);
 
