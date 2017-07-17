@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Item_category_biz 商家商品分类类
+	 * Coupon_template 优惠券模板类
 	 *
 	 * 以API服务形式返回数据列表、详情、创建、单行编辑、单/多行编辑（删除、恢复）等功能提供了常见功能的示例代码
 	 * CodeIgniter官方网站 https://www.codeigniter.com/user_guide/
@@ -11,13 +11,13 @@
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
 	 * @copyright ICBG <www.bingshankeji.com>
 	 */
-	class Item_category_biz extends MY_Controller
+	class Coupon_template extends MY_Controller
 	{
 		/**
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'category_id', 'system_category_id', 'biz_id', 'parent_id', 'name', 'url_image',
+			'template_id', 'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'min_subtotal', 'amount', 'period', 'time_start', 'time_end', 
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -25,23 +25,21 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'category_id', 'system_category_id', 'biz_id', 'parent_id', 'name', 'url_image',
-			 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'template_id', 'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'min_subtotal', 'amount', 'period', 'time_start', 'time_end', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id',
-			'system_category_id', 'biz_id', 'name',
+			'name', 'amount',
 		);
 
 		/**
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'system_category_id', 'parent_id', 'name', 'url_image',
+			'category_id', 'category_biz_id', 'item_id', 'name', 'min_subtotal', 'amount', 'period', 'time_start', 'time_end',
 		);
 
 		/**
@@ -49,15 +47,7 @@
 		 */
 		protected $names_edit_required = array(
 			'user_id', 'id',
-			'system_category_id', 'name',
-		);
-
-		/**
-		 * 编辑单行特定字段时必要的字段名
-		 */
-		protected $names_edit_certain_required = array(
-			'user_id', 'id',
-			'name', 'value',
+			'name', 'amount',
 		);
 
 		/**
@@ -73,9 +63,9 @@
 			parent::__construct();
 
 			// 设置主要数据库信息
-			$this->table_name = 'item_category_biz'; // 这里……
-			$this->id_name = 'category_id'; // 这里……
-			$this->names_to_return[] = 'category_id'; // 还有这里，OK，这就可以了
+			$this->table_name = 'coupon_template'; // 这里……
+			$this->id_name = 'template_id'; // 这里……
+			$this->names_to_return[] = 'template_id'; // 还有这里，OK，这就可以了
 
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
@@ -201,7 +191,9 @@
 		{
 			// 操作可能需要检查客户端及设备信息
 			$type_allowed = array('admin', 'biz',); // 客户端类型
-			$this->client_check($type_allowed);
+			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
+			$min_version = '0.0.1'; // 最低版本要求
+			$this->client_check($type_allowed, $platform_allowed, $min_version);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -223,10 +215,22 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('system_category_id', '系统商品分类', 'trim|required|is_natural_no_zero');
-			$this->form_validation->set_rules('parent_id', '商家商品分类', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('name', '名称', 'trim|required');
-			$this->form_validation->set_rules('url_image', '图片URL', 'trim');
+			$this->form_validation->set_rules('template_id', '模板ID', 'trim|');
+			$this->form_validation->set_rules('biz_id', '所属商家ID', 'trim|');
+			$this->form_validation->set_rules('category_id', '限用系统级商品分类ID', 'trim|required');
+			$this->form_validation->set_rules('category_biz_id', '限用商家级商品分类ID', 'trim|required');
+			$this->form_validation->set_rules('item_id', '限用商品ID', 'trim|required');
+			$this->form_validation->set_rules('name', '名称', 'trim|');
+			$this->form_validation->set_rules('min_subtotal', '最低订单小计（元）', 'trim|required');
+			$this->form_validation->set_rules('amount', '面额（元）', 'trim|');
+			$this->form_validation->set_rules('period', '自领取时起有效期（秒）', 'trim|required');
+			$this->form_validation->set_rules('time_start', '开始时间', 'trim|required');
+			$this->form_validation->set_rules('time_end', '结束时间', 'trim|required');
+			$this->form_validation->set_rules('time_create', '创建时间', 'trim|');
+			$this->form_validation->set_rules('time_delete', '删除时间', 'trim|required');
+			$this->form_validation->set_rules('time_edit', '最后操作时间', 'trim|');
+			$this->form_validation->set_rules('creator_id', '创建者ID', 'trim|required');
+			$this->form_validation->set_rules('operator_id', '最后操作者ID', 'trim|required');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -237,10 +241,11 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
+					//'name' => $this->input->post('name')),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'system_category_id', 'biz_id', 'parent_id', 'name', 'url_image',
+					'template_id', 'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'min_subtotal', 'amount', 'period', 'time_start', 'time_end', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -266,7 +271,9 @@
 		{
 			// 操作可能需要检查客户端及设备信息
 			$type_allowed = array('admin', 'biz',); // 客户端类型
-			$this->client_check($type_allowed);
+			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
+			$min_version = '0.0.1'; // 最低版本要求
+			$this->client_check($type_allowed, $platform_allowed, $min_version);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -287,10 +294,22 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('system_category_id', '系统商品分类', 'trim|required|is_natural_no_zero');
-			$this->form_validation->set_rules('parent_id', '商家商品分类', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('name', '名称', 'trim|required');
-			$this->form_validation->set_rules('url_image', '图片URL', 'trim');
+			$this->form_validation->set_rules('template_id', '模板ID', 'trim|');
+			$this->form_validation->set_rules('biz_id', '所属商家ID', 'trim|');
+			$this->form_validation->set_rules('category_id', '限用系统级商品分类ID', 'trim|required');
+			$this->form_validation->set_rules('category_biz_id', '限用商家级商品分类ID', 'trim|required');
+			$this->form_validation->set_rules('item_id', '限用商品ID', 'trim|required');
+			$this->form_validation->set_rules('name', '名称', 'trim|');
+			$this->form_validation->set_rules('min_subtotal', '最低订单小计（元）', 'trim|required');
+			$this->form_validation->set_rules('amount', '面额（元）', 'trim|');
+			$this->form_validation->set_rules('period', '自领取时起有效期（秒）', 'trim|required');
+			$this->form_validation->set_rules('time_start', '开始时间', 'trim|required');
+			$this->form_validation->set_rules('time_end', '结束时间', 'trim|required');
+			$this->form_validation->set_rules('time_create', '创建时间', 'trim|');
+			$this->form_validation->set_rules('time_delete', '删除时间', 'trim|required');
+			$this->form_validation->set_rules('time_edit', '最后操作时间', 'trim|');
+			$this->form_validation->set_rules('creator_id', '创建者ID', 'trim|required');
+			$this->form_validation->set_rules('operator_id', '最后操作者ID', 'trim|required');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
 				// ...
@@ -305,10 +324,11 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
+					//'name' => $this->input->post('name')),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'system_category_id', 'parent_id', 'name', 'url_image',
+					'template_id', 'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'min_subtotal', 'amount', 'period', 'time_start', 'time_end', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -341,7 +361,9 @@
 		{
 			// 操作可能需要检查客户端及设备信息
 			$type_allowed = array('admin', 'biz',); // 客户端类型
-			$this->client_check($type_allowed);
+			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
+			$min_version = '0.0.1'; // 最低版本要求
+			$this->client_check($type_allowed, $platform_allowed, $min_version);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -362,10 +384,10 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
-			$this->form_validation->set_rules('operation', '待执行操作', 'trim|in_list[delete,restore]');
-			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('password', '密码', 'trim|min_length[6]|max_length[20]');
+			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
+			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore]');
+			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
+			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):
@@ -413,9 +435,8 @@
 
 			endif;
 		} // end edit_bulk
-		
 
 	}
 
-/* End of file Item_category_biz.php */
-/* Location: ./application/controllers/Item_category_biz.php */
+/* End of file Coupon_template.php */
+/* Location: ./application/controllers/Coupon_template.php */

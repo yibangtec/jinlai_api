@@ -17,7 +17,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'user_id', 'biz_id', 'role', 'level', 'status', 
+			'stuff_id', 'user_id', 'biz_id', 'fullname', 'mobile', 'password', 'role', 'level', 'status',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -25,7 +25,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'user_id', 'biz_id', 'role', 'level', 'status',
+			'stuff_id', 'user_id', 'biz_id', 'fullname', 'mobile', 'password', 'role', 'level', 'status',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -33,14 +33,15 @@
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id', 'biz_id', 
+			'user_id',
+			'biz_id', 'mobile', 'role', 'level',// 使用手机号作为创建员工关系的唯一信息
 		);
 
 		/**
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'role', 'level', 'status', 
+			'role', 'level', 'status',
 		);
 
 		/**
@@ -48,21 +49,23 @@
 		 */
 		protected $names_edit_required = array(
 			'user_id', 'id',
-			'role', 'level', 'status', 
+			'role', 'level',
 		);
 
 		/**
 		 * 编辑单行特定字段时必要的字段名
 		 */
 		protected $names_edit_certain_required = array(
-			'user_id', 'id', 'name', 'value',
+			'user_id', 'id',
+			'name', 'value',
 		);
 
 		/**
 		 * 编辑多行特定字段时必要的字段名
 		 */
 		protected $names_edit_bulk_required = array(
-			'user_id', 'ids', 'operation', 'password',
+			'user_id', 'ids',
+			'operation', 'password',
 		);
 
 		public function __construct()
@@ -103,7 +106,7 @@
 				endif;
 			endforeach;
 
-			// 获取列表；默认不获取已删除项
+			// 获取列表；默认可获取已删除项
 			$count = $this->basic_model->count($condition);
 
 			if ($count !== FALSE):
@@ -149,8 +152,8 @@
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );
 
-			// 获取列表；默认不获取已删除项
-			$items = $this->basic_model->select($condition, $order_by, FALSE, FALSE);
+			// 获取列表；默认可获取已删除项
+			$items = $this->basic_model->select($condition, $order_by);
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
@@ -169,8 +172,7 @@
 		{
 			// 检查必要参数是否已传入
 			$id = $this->input->post('id');
-			$user_id = $this->input->post('user_id');
-			if ( empty($id) && empty($user_id) ):
+			if ( empty($id) ):
 				$this->result['status'] = 400;
 				$this->result['content']['error']['message'] = '必要的请求参数未传入';
 				exit();
@@ -180,11 +182,7 @@
 			$this->db->select( implode(',', $this->names_to_return) );
 			
 			// 获取特定项；默认可获取已删除项
-			if ( !empty($id) ):
-				$item = $this->basic_model->select_by_id($id); // 根据ID获取
-			else:
-				$item = $this->basic_model->find('user_id', $user_id); // 根据user_id获取
-			endif;
+			$item = $this->basic_model->select_by_id($id);
 			if ( !empty($item) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
@@ -202,7 +200,7 @@
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz'); // 客户端类型
+			$type_allowed = array('admin', 'biz',); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -225,11 +223,10 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('user_id', '用户ID', 'trim|required');
-			$this->form_validation->set_rules('biz_id', '商家ID', 'trim|required');
-			$this->form_validation->set_rules('role', '权限', 'trim|required');
-			$this->form_validation->set_rules('level', '级别', 'trim|required');
-			$this->form_validation->set_rules('status', '状态', 'trim|required');
+			$this->form_validation->set_rules('mobile', '手机号', 'trim|exact_length[11]|is_natural_no_zero');
+			$this->form_validation->set_rules('biz_id', '所属商家', 'trim|required|is_natural_no_zero');
+			$this->form_validation->set_rules('role', '角色', 'trim|required');
+			$this->form_validation->set_rules('level', '0暂不授权，1普通员工，10门店级，20品牌级，30企业级', 'trim|required|is_natural');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -237,28 +234,49 @@
 				$this->result['content']['error']['message'] = validation_errors();
 
 			else:
-				// 需要创建的数据；逐一赋值需特别处理的字段
-				$data_to_create = array(
-					'creator_id' => $user_id,
-					//'name' => $this->input->post('name')),
-				);
-				// 自动生成无需特别处理的数据
-				$data_need_no_prepare = array(
-					'user_id', 'biz_id', 'role', 'level', 'status'
-				);
-				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
-
-				$result = $this->basic_model->create($data_to_create);
-				if ($result !== FALSE):
-					$this->result['status'] = 200;
-					$this->result['content'] = '创建成功';
+				// 根据手机号获取是否有相应的用户
+				$this->basic_model->table_name = 'user';
+				$user_info = $this->basic_model->find('mobile', $mobile);
+				$this->basic_model->table_name = $this->table_name;
+				
+				if ( empty($user_info) ):
+					$this->result['status'] = 401;
+					$this->result['content']['error']['message'] = '没有以该手机号注册过的用户，请先使用该手机号进行短信登录。';
 
 				else:
-					$this->result['status'] = 424;
-					$this->result['content']['error']['message'] = '创建失败';
+					// 需要创建的数据；逐一赋值需特别处理的字段
+					$data_to_create = array(
+						'creator_id' => $user_id,
+						'user_id' => $user_info['user_id'],
+						'mobile' => $mobile,
+						'fullname' => $user_info['lastname'].$user_info['firstname'],
+						'password' => SHA1( substr($mobile, -6) ), // 默认操作密码为手机号后6位
+						//'name' => $this->input->post('name')),
+					);
+					// 自动生成无需特别处理的数据
+					$data_need_no_prepare = array(
+						'biz_id', 'role', 'level', 'status',
+					);
+					foreach ($data_need_no_prepare as $name)
+						$data_to_create[$name] = $this->input->post($name);
 
+					$result = $this->basic_model->create($data_to_create, TRUE);
+					if ($result !== FALSE):
+						$this->result['status'] = 200;
+						$this->result['content']['id'] = $result;
+						$this->result['content']['message'] = '创建成功';
+						
+						// 发送短信进行提醒
+						$content = '您已获得进来商城商家的员工权限，可以使用当前手机号登录进来商城商家中心；如果您未授权该商家为您开通权限，可通过400-882-0532进行申诉。';
+						@$this->sms_send($mobile, $content); // 容忍发送失败
+
+					else:
+						$this->result['status'] = 424;
+						$this->result['content']['error']['message'] = '创建失败';
+
+					endif;
 				endif;
+				
 			endif;
 		} // end create
 
@@ -268,7 +286,7 @@
 		public function edit()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz'); // 客户端类型
+			$type_allowed = array('admin', 'biz',); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -290,10 +308,9 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('role', '权限', 'trim|required');
-			$this->form_validation->set_rules('level', '级别', 'trim|required');
-			$this->form_validation->set_rules('status', '状态', 'trim|required');
-
+			$this->form_validation->set_rules('role', '角色', 'trim|required');
+			$this->form_validation->set_rules('level', '0暂不授权，1普通员工，10门店级，20品牌级，30企业级', 'trim|required');
+			$this->form_validation->set_rules('status', '状态', 'trim');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
 				// ...
@@ -312,7 +329,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'role', 'level', 'status', 
+					'role', 'level', 'status',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -322,13 +339,11 @@
 					//unset($data_to_edit['name']);
 				endif;
 
-				// 获取ID
-				$id = $this->input->post('id');
+				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);
-
 				if ($result !== FALSE):
 					$this->result['status'] = 200;
-					$this->result['content'] = '编辑成功';
+					$this->result['content']['message'] = '编辑成功';
 
 				else:
 					$this->result['status'] = 434;
@@ -337,76 +352,6 @@
 				endif;
 			endif;
 		} // end edit
-		
-		/**
-		 * 5 编辑单行数据特定字段
-		 *
-		 * 修改单行数据的单一字段值
-		 */
-		public function edit_certain()
-		{
-			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz'); // 客户端类型
-			$this->client_check($type_allowed);
-
-			// 管理类客户端操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
-
-			// 检查必要参数是否已传入
-			$required_params = $this->names_edit_certain_required;
-			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
-				if ( empty( ${$param} ) ):
-					$this->result['status'] = 400;
-					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-					exit();
-				endif;
-			endforeach;
-			
-			// 检查目标字段是否可编辑
-			if ( ! in_array($name, $this->names_edit_allowed) ):
-				$this->result['status'] = 431;
-				$this->result['content']['error']['message'] = '该字段不可被修改';
-				exit();
-			endif;
-			
-			// 初始化并配置表单验证库
-			$this->load->library('form_validation');
-			$this->form_validation->set_error_delimiters('', '');
-			// 动态设置待验证字段名及字段值
-			$data_to_validate["{$name}"] = $value;
-			$this->form_validation->set_data($data_to_validate);
-			$this->form_validation->set_rules('role', '权限', 'trim|required');
-			$this->form_validation->set_rules('level', '级别', 'trim|required');
-			$this->form_validation->set_rules('status', '状态', 'trim|required');
-			
-			// 若表单提交不成功
-			if ($this->form_validation->run() === FALSE):
-				$this->result['status'] = 401;
-				$this->result['content']['error']['message'] = validation_errors();
-
-			else:
-				// 需要编辑的数据；逐一赋值需特别处理的字段
-				$data_to_edit['operator_id'] = $user_id;
-				$data_to_edit[$name] = $this->input->post($value);
-
-				// 获取ID
-				$id = $this->input->post('id');
-				$result = $this->basic_model->edit($id, $data_to_edit);
-
-				if ($result !== FALSE):
-					$this->result['status'] = 200;
-					$this->result['content'] = '编辑成功';
-
-				else:
-					$this->result['status'] = 434;
-					$this->result['content']['error']['message'] = '编辑失败';
-
-				endif;
-			endif;
-		} // end edit_certain
 
 		/**
 		 * 6 编辑多行数据特定字段
@@ -416,7 +361,7 @@
 		public function edit_bulk()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz'); // 客户端类型
+			$type_allowed = array('admin', 'biz',); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -435,11 +380,13 @@
 				endif;
 			endforeach;
 
+			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('role', '权限', 'trim|required');
-			$this->form_validation->set_rules('level', '级别', 'trim|required');
-			$this->form_validation->set_rules('status', '状态', 'trim|required');
+			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
+			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore]');
+			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
+			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):
@@ -455,13 +402,9 @@
 			else:
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit['operator_id'] = $user_id;
-				// 自动生成无需特别处理的数据
-				$data_need_no_prepare = array('operator_id');
-				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = $this->input->post($name);
 
 				// 根据待执行的操作赋值待编辑数据
-				switch ( $this->input->post('operation') ):
+				switch ( $operation ):
 					case 'delete':
 						$data_to_edit['time_delete'] = date('Y-m-d H:i:s');
 						break;
@@ -487,12 +430,22 @@
 
 				// 添加全部操作成功后的提示
 				if ($this->result['status'] = 200)
-					$this->result['content'] = '全部操作成功';
+					$this->result['content']['message'] = '全部操作成功';
 
 			endif;
 		} // end edit_bulk
+		
+		// 发送短信
+		private function sms_send($mobile, $content)
+		{
+			// 为短信内容添加后缀签名
+			$content .= '【进来商城】';
 
-	}
+			$this->load->library('luosimao');
+			$result = $this->luosimao->send($mobile, $content);
+		} // end test_sms
+
+	} // end class Stuff
 
 /* End of file Stuff.php */
 /* Location: ./application/controllers/Stuff.php */

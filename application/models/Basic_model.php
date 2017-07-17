@@ -73,11 +73,15 @@
 		 */
 		public function count($condition = NULL, $include_deleted = TRUE)
 		{
-			// 若存在统计条件，则按条件统计数量
+			// 拆分筛选条件（若有）
 			if ($condition !== NULL):
-				foreach($condition as $name => $value):
-					if ($value === 'IS NOT NULL'):
+				foreach ($condition as $name => $value):
+					if ($value === 'NULL'):
+						$this->db->where("$name IS NULL");
+
+					elseif ($value === 'IS NOT NULL'):
 						$this->db->where("$name IS NOT NULL");
+					
 					else:
 						$this->db->where($name, $value);
 					endif;
@@ -110,8 +114,12 @@
 			// 拆分筛选条件（若有）
 			if ($condition !== NULL):
 				foreach ($condition as $name => $value):
-					if ($value === 'IS NOT NULL'):
+					if ($value === 'NULL'):
+						$this->db->where("$name IS NULL");
+
+					elseif ($value === 'IS NOT NULL'):
 						$this->db->where("$name IS NOT NULL");
+					
 					else:
 						$this->db->where($name, $value);
 					endif;

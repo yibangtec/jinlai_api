@@ -154,7 +154,7 @@
 						$comment = substr($comment, 0, $length_to_end);
 					endif;
 
-					$this->result['content']['rules'] .= "\t\t\t". '$this->form_validation->set_rules('. "'$name', '$comment', 'trim|".($allow_null === 'YES'? 'required': NULL)."');". "\n";
+					$this->result['content']['rules'] .= "\t\t\t". '$this->form_validation->set_rules('. "'$name', '$comment', 'trim|".($allow_null === 'NO'? 'required': NULL)."');". "\n";
 					$this->result['content']['params_respond'] .= '<tr><td>'. $name. '</td><td>'.$type.'</td><td>详见返回示例</td><td>'.$comment.'</td></tr>'. "\n";
 					$this->result['content']['elements'] .= '<tr><td>┣'. $name. '</td><td>1</td><td>文本</td><td>'.$comment.'</td></tr>'. "\n";
 					$this->result['content']['create'] .=

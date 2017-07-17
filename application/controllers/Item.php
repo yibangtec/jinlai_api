@@ -233,7 +233,7 @@
 			$this->form_validation->set_rules('url_image_main', '主图', 'trim|required|max_length[255]');
 			$this->form_validation->set_rules('figure_image_urls', '形象图', 'trim|max_length[255]');
 			$this->form_validation->set_rules('figure_video_urls', '形象视频', 'trim|max_length[255]');
-			$this->form_validation->set_rules('name', '商品名称', 'trim|required|max_length[30]');
+			$this->form_validation->set_rules('name', '商品名称', 'trim|required|max_length[40]');
 			$this->form_validation->set_rules('slogan', '商品宣传语/卖点', 'trim|max_length[30]');
 			$this->form_validation->set_rules('description', '商品描述', 'trim|max_length[20000]');
 			$this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|less_than_equal_to[99999.99]');
@@ -261,7 +261,6 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
-					//'name' => $this->input->post('name')),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
@@ -269,6 +268,9 @@
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
+
+				// 若非定时上架商品，则将当前时间作为上架时间
+				if ( empty($data_to_create['time_to_publish']) ) $data_to_create['time_publish'] = time();
 
 				$result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):
@@ -317,7 +319,7 @@
 			$this->form_validation->set_rules('url_image_main', '主图', 'trim|required|max_length[255]');
 			$this->form_validation->set_rules('figure_image_urls', '形象图', 'trim|max_length[255]');
 			$this->form_validation->set_rules('figure_video_urls', '形象视频', 'trim|max_length[255]');
-			$this->form_validation->set_rules('name', '商品名称', 'trim|required|max_length[30]');
+			$this->form_validation->set_rules('name', '商品名称', 'trim|required|max_length[40]');
 			$this->form_validation->set_rules('slogan', '商品宣传语/卖点', 'trim|max_length[30]');
 			$this->form_validation->set_rules('description', '商品描述', 'trim|max_length[20000]');
 			$this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|less_than_equal_to[99999.99]');
@@ -415,7 +417,7 @@
 			$this->form_validation->set_rules('url_image_main', '主图', 'trim|max_length[255]');
 			$this->form_validation->set_rules('figure_image_urls', '形象图', 'trim|max_length[255]');
 			$this->form_validation->set_rules('figure_video_urls', '形象视频', 'trim|max_length[255]');
-			$this->form_validation->set_rules('name', '商品名称', 'trim|max_length[30]');
+			$this->form_validation->set_rules('name', '商品名称', 'trim|max_length[40]');
 			$this->form_validation->set_rules('slogan', '商品宣传语/卖点', 'trim|max_length[30]');
 			$this->form_validation->set_rules('description', '商品描述', 'trim|max_length[20000]');
 			$this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|less_than_equal_to[99999.99]');
@@ -491,7 +493,7 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
-			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore]');
+			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore,suspend,publish]');
 			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
 
@@ -512,6 +514,14 @@
 
 				// 根据待执行的操作赋值待编辑数据
 				switch ( $this->input->post('operation') ):
+					case 'publish':
+						$data_to_edit['time_publish'] = time();
+						$data_to_edit['time_suspend'] = NULL;
+						break;
+					case 'suspend':
+						$data_to_edit['time_publish'] = NULL;
+						$data_to_edit['time_suspend'] = time();
+						break;
 					case 'delete':
 						$data_to_edit['time_delete'] = date('Y-m-d H:i:s');
 						break;
