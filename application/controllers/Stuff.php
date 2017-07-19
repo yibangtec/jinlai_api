@@ -223,7 +223,7 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('mobile', '手机号', 'trim|exact_length[11]|is_natural_no_zero');
+			$this->form_validation->set_rules('mobile', '手机号', 'trim|required|exact_length[11]|is_natural_no_zero');
 			$this->form_validation->set_rules('biz_id', '所属商家', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('role', '角色', 'trim|required');
 			$this->form_validation->set_rules('level', '0暂不授权，1普通员工，10门店级，20品牌级，30企业级', 'trim|required|is_natural');
@@ -255,7 +255,7 @@
 					);
 					// 自动生成无需特别处理的数据
 					$data_need_no_prepare = array(
-						'biz_id', 'role', 'level', 'status',
+						'role', 'level', 'status',
 					);
 					foreach ($data_need_no_prepare as $name)
 						$data_to_create[$name] = $this->input->post($name);

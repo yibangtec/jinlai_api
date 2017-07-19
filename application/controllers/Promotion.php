@@ -200,10 +200,8 @@
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
-			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
-			$min_version = '0.0.1'; // 最低版本要求
-			$this->client_check($type_allowed, $platform_allowed, $min_version);
+			$type_allowed = array('admin');
+			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -225,7 +223,6 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('promotion_id', '营销活动ID', 'trim|required');
 			$this->form_validation->set_rules('name', '名称', 'trim|required');
 			$this->form_validation->set_rules('description', '说明', 'trim|');
 			$this->form_validation->set_rules('url_images', '形象图URL们', 'trim|');
@@ -236,11 +233,6 @@
 			$this->form_validation->set_rules('time_start', '开始时间', 'trim|');
 			$this->form_validation->set_rules('time_end', '结束时间', 'trim|');
 			$this->form_validation->set_rules('note_stuff', '员工备注', 'trim|');
-			$this->form_validation->set_rules('time_create', '创建时间', 'trim|required');
-			$this->form_validation->set_rules('time_delete', '删除时间', 'trim|');
-			$this->form_validation->set_rules('time_edit', '最后操作时间', 'trim|required');
-			$this->form_validation->set_rules('creator_id', '创建者ID', 'trim|');
-			$this->form_validation->set_rules('operator_id', '最后操作者ID', 'trim|');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -255,7 +247,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'promotion_id', 'name', 'description', 'url_images', 'url_web', 'brand_ids', 'biz_ids', 'item_ids', 'time_start', 'time_end', 'note_stuff',
+					'name', 'description', 'url_images', 'url_web', 'brand_ids', 'biz_ids', 'item_ids', 'time_start', 'time_end', 'note_stuff',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -280,10 +272,8 @@
 		public function edit()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
-			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
-			$min_version = '0.0.1'; // 最低版本要求
-			$this->client_check($type_allowed, $platform_allowed, $min_version);
+			$type_allowed = array('admin');
+			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -304,7 +294,6 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('promotion_id', '营销活动ID', 'trim|required');
 			$this->form_validation->set_rules('name', '名称', 'trim|required');
 			$this->form_validation->set_rules('description', '说明', 'trim|');
 			$this->form_validation->set_rules('url_images', '形象图URL们', 'trim|');
@@ -315,11 +304,6 @@
 			$this->form_validation->set_rules('time_start', '开始时间', 'trim|');
 			$this->form_validation->set_rules('time_end', '结束时间', 'trim|');
 			$this->form_validation->set_rules('note_stuff', '员工备注', 'trim|');
-			$this->form_validation->set_rules('time_create', '创建时间', 'trim|required');
-			$this->form_validation->set_rules('time_delete', '删除时间', 'trim|');
-			$this->form_validation->set_rules('time_edit', '最后操作时间', 'trim|required');
-			$this->form_validation->set_rules('creator_id', '创建者ID', 'trim|');
-			$this->form_validation->set_rules('operator_id', '最后操作者ID', 'trim|');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
 				// ...
@@ -338,7 +322,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'promotion_id', 'name', 'description', 'url_images', 'url_web', 'brand_ids', 'biz_ids', 'item_ids', 'time_start', 'time_end', 'note_stuff',
+					'name', 'description', 'url_images', 'url_web', 'brand_ids', 'biz_ids', 'item_ids', 'time_start', 'time_end', 'note_stuff',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -370,10 +354,8 @@
 		public function edit_certain()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
-			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
-			$min_version = '0.0.1'; // 最低版本要求
-			$this->client_check($type_allowed, $platform_allowed, $min_version);
+			$type_allowed = array('admin');
+			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -417,7 +399,6 @@
 			// 动态设置待验证字段名及字段值
 			$data_to_validate["{$name}"] = $value;
 			$this->form_validation->set_data($data_to_validate);
-			$this->form_validation->set_rules('promotion_id', '营销活动ID', 'trim|required');
 			$this->form_validation->set_rules('name', '名称', 'trim|required');
 			$this->form_validation->set_rules('description', '说明', 'trim|');
 			$this->form_validation->set_rules('url_images', '形象图URL们', 'trim|');
@@ -428,11 +409,6 @@
 			$this->form_validation->set_rules('time_start', '开始时间', 'trim|');
 			$this->form_validation->set_rules('time_end', '结束时间', 'trim|');
 			$this->form_validation->set_rules('note_stuff', '员工备注', 'trim|');
-			$this->form_validation->set_rules('time_create', '创建时间', 'trim|required');
-			$this->form_validation->set_rules('time_delete', '删除时间', 'trim|');
-			$this->form_validation->set_rules('time_edit', '最后操作时间', 'trim|required');
-			$this->form_validation->set_rules('creator_id', '创建者ID', 'trim|');
-			$this->form_validation->set_rules('operator_id', '最后操作者ID', 'trim|');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -468,10 +444,8 @@
 		public function edit_bulk()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
-			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
-			$min_version = '0.0.1'; // 最低版本要求
-			$this->client_check($type_allowed, $platform_allowed, $min_version);
+			$type_allowed = array('admin');
+			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求

@@ -26,6 +26,7 @@
 		 */
 		protected $names_to_return = array(
 			'sku_id', 'biz_id', 'item_id', 'url_image', 'name_first', 'name_second', 'name_third', 'price', 'stocks', 'weight_net', 'weight_gross', 'weight_volume',
+			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -33,7 +34,7 @@
 		 */
 		protected $names_create_required = array(
 			'user_id',
-			'item_id', 'url_image', 'name_first', 'name_second', 'name_third', 'price', 'stocks', 'weight_net', 'weight_gross', 'weight_volume',
+			'biz_id', 'item_id', 'url_image', 'name_first', 'name_second', 'name_third', 'price', 'stocks', 'weight_net', 'weight_gross', 'weight_volume',
 		);
 
 		/**
@@ -199,10 +200,8 @@
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
-			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
-			$min_version = '0.0.1'; // 最低版本要求
-			$this->client_check($type_allowed, $platform_allowed, $min_version);
+			$type_allowed = array('biz',); // 客户端类型
+			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -224,8 +223,6 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('sku_id', 'SKU ID', 'trim|');
-			$this->form_validation->set_rules('biz_id', '所属商家ID', 'trim|');
 			$this->form_validation->set_rules('item_id', '所属商品ID', 'trim|');
 			$this->form_validation->set_rules('url_image', '图片URL', 'trim|required');
 			$this->form_validation->set_rules('name_first', '名称第一部分', 'trim|');
@@ -236,11 +233,6 @@
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|required');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|required');
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|required');
-			$this->form_validation->set_rules('time_create', '创建时间', 'trim|');
-			$this->form_validation->set_rules('time_delete', '删除时间', 'trim|required');
-			$this->form_validation->set_rules('time_edit', '最后操作时间', 'trim|');
-			$this->form_validation->set_rules('creator_id', '创建者ID', 'trim|required');
-			$this->form_validation->set_rules('operator_id', '最后操作者ID', 'trim|required');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -280,10 +272,8 @@
 		public function edit()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
-			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
-			$min_version = '0.0.1'; // 最低版本要求
-			$this->client_check($type_allowed, $platform_allowed, $min_version);
+			$type_allowed = array('biz',); // 客户端类型
+			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -371,10 +361,8 @@
 		public function edit_certain()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
-			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
-			$min_version = '0.0.1'; // 最低版本要求
-			$this->client_check($type_allowed, $platform_allowed, $min_version);
+			$type_allowed = array('biz',); // 客户端类型
+			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
