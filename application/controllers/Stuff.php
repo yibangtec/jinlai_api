@@ -34,14 +34,14 @@
 		 */
 		protected $names_create_required = array(
 			'user_id',
-			'biz_id', 'mobile', 'role', 'level',// 使用手机号作为创建员工关系的唯一信息
+			'biz_id', 'mobile', 'fullname', 'role', 'level',// 使用手机号作为创建员工关系的唯一信息
 		);
 
 		/**
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'role', 'level', 'status',
+			'fullname', 'role', 'level', 'status',
 		);
 
 		/**
@@ -49,7 +49,7 @@
 		 */
 		protected $names_edit_required = array(
 			'user_id', 'id',
-			'role', 'level',
+			'fullname', 'role', 'level',
 		);
 
 		/**
@@ -172,7 +172,8 @@
 		{
 			// 检查必要参数是否已传入
 			$id = $this->input->post('id');
-			if ( empty($id) ):
+			$user_id = $this->input->post('user_id');
+			if ( empty($id) && empty($user_id) ):
 				$this->result['status'] = 400;
 				$this->result['content']['error']['message'] = '必要的请求参数未传入';
 				exit();
@@ -180,9 +181,13 @@
 
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );
-			
+
 			// 获取特定项；默认可获取已删除项
-			$item = $this->basic_model->select_by_id($id);
+			if ( !empty($user_id) ):
+				$item = $this->basic_model->find('user_id', $user_id);
+			else:
+				$item = $this->basic_model->select_by_id($id);
+			endif;
 			if ( !empty($item) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
@@ -224,9 +229,9 @@
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
 			$this->form_validation->set_rules('mobile', '手机号', 'trim|required|exact_length[11]|is_natural_no_zero');
-			$this->form_validation->set_rules('biz_id', '所属商家', 'trim|required|is_natural_no_zero');
+			$this->form_validation->set_rules('fullname', '姓名', 'trim|required');
 			$this->form_validation->set_rules('role', '角色', 'trim|required');
-			$this->form_validation->set_rules('level', '0暂不授权，1普通员工，10门店级，20品牌级，30企业级', 'trim|required|is_natural');
+			$this->form_validation->set_rules('level', '等级', 'trim|required');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -251,11 +256,10 @@
 						'mobile' => $mobile,
 						'fullname' => $user_info['lastname'].$user_info['firstname'],
 						'password' => SHA1( substr($mobile, -6) ), // 默认操作密码为手机号后6位
-						//'name' => $this->input->post('name')),
 					);
 					// 自动生成无需特别处理的数据
 					$data_need_no_prepare = array(
-						'role', 'level', 'status',
+						'fullname', 'role', 'level', 'status',
 					);
 					foreach ($data_need_no_prepare as $name)
 						$data_to_create[$name] = $this->input->post($name);
@@ -308,9 +312,10 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
+			$this->form_validation->set_rules('fullname', '姓名', 'trim|required');
 			$this->form_validation->set_rules('role', '角色', 'trim|required');
-			$this->form_validation->set_rules('level', '0暂不授权，1普通员工，10门店级，20品牌级，30企业级', 'trim|required');
-			$this->form_validation->set_rules('status', '状态', 'trim');
+			$this->form_validation->set_rules('level', '等级', 'trim|required');
+			$this->form_validation->set_rules('status', '状态', 'trim|required');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
 				// ...
@@ -325,11 +330,10 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
-					//'name' => $this->input->post('name')),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'role', 'level', 'status',
+					'fullname', 'role', 'level', 'status',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);

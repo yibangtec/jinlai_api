@@ -237,7 +237,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_id', 'category_biz_id', 'item_id', 'name', 'max_amount', 'min_subtotal', 'amount', 'period', 'time_start', 'time_end',
+					'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'max_amount', 'min_subtotal', 'amount', 'period', 'time_start', 'time_end',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);

@@ -256,11 +256,11 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
-					//'name' => $this->input->post('name')),
+					'dob' => !empty($this->input->post('dob'))? $this->input->post('dob'): NULL,
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob', 'avatar', 'email', 'address_id', 'bank_name', 'bank_account',
+					'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'avatar', 'email', 'address_id', 'bank_name', 'bank_account',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);

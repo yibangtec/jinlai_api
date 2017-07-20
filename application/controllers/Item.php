@@ -444,7 +444,7 @@
 			else:
 				// 需要编辑的数据
 				$data_to_edit['operator_id'] = $user_id;
-				$data_to_edit[$name] = $this->input->post($value);
+				$data_to_edit[$name] = $value;
 
 				// 获取ID
 				$id = $this->input->post('id');

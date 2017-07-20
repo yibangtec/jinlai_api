@@ -283,14 +283,15 @@
 					$this->result['content']['biz_id'] = $biz_id;
 					$this->result['content']['message'] = '创建商家成功，我们将尽快受理您的入驻申请';
 
+					$mobile = $tel_protected_biz;
+
 					// 创建员工
-					$stuff_id = $this->stuff_create($user_id, $biz_id);
+					$stuff_id = $this->stuff_create($user_id, $biz_id, $mobile);
 					if ($stuff_id !== FALSE):
 						$this->result['content']['message'] .= '，您已成为该商家的管理员';
 					endif;
 
 					// 发送商家通知短信
-					$mobile = $tel_protected_biz;
 					$content = '恭喜您成功创建商家，我们已自动为您生成入驻申请并安排事务最少的同事进行受理，敬请稍候。';
 					@$this->sms_send($mobile, $content); // 容忍发送失败
 
@@ -324,7 +325,7 @@
 		} // end stuff_exist
 		
 		// 创建员工
-		private function stuff_create($user_id, $biz_id)
+		private function stuff_create($user_id, $biz_id, $mobile)
 		{
 			// 更改数据库信息
 			$this->basic_model->table_name = 'stuff';
@@ -334,6 +335,7 @@
 			$data_to_create = array(
 				'user_id' => $user_id,
 				'biz_id' => $biz_id,
+				'mobile' => $mobile,
 				'role' => '管理员',
 				'level' => '100',
 				'creator_id' => $user_id,
