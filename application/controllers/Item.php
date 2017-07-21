@@ -17,7 +17,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'status',
+			'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id', 'status',
 			'time_create', 'time_delete', 'time_publish', 'time_suspend', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -25,7 +25,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'item_id', 'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id',
+			'item_id', 'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id', 'status',
 			'time_create', 'time_delete', 'time_publish', 'time_suspend', 'time_edit', 'creator_id', 'operator_id', 'note_admin', 'status',
 		);
 
@@ -34,14 +34,14 @@
 		 */
 		protected $names_create_required = array(
 			'user_id',
-			'category_id', 'biz_id', 'url_image_main', 'name', 'price', 'stocks',
+			'category_id', 'biz_id', 'url_image_main', 'name', 'price', 'stocks', 'freight_template_id',
 		);
 
 		/**
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id',
+			'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id', 'status',
 		);
 
 		/**
@@ -49,7 +49,7 @@
 		 */
 		protected $names_edit_required = array(
 			'user_id', 'id',
-			'url_image_main', 'name', 'price', 'stocks',
+			'url_image_main', 'name', 'price', 'stocks', 'freight_template_id',
 		);
 
 		/**
@@ -239,9 +239,9 @@
 			$this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('price', '商城价/现价（元）', 'trim|required|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('unit_name', '销售单位', 'trim|max_length[10]');
-			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|less_than_equal_to[999.99]');
-			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|less_than_equal_to[999.99]');
-			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|less_than_equal_to[999.99]');
+			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|less_than_equal_to[9999]');
 			$this->form_validation->set_rules('stocks', '库存量（份）', 'trim|required|less_than_equal_to[65535]');
 			$this->form_validation->set_rules('quantity_max', '每单最高限量（份）', 'trim|less_than_equal_to[99]');
 			$this->form_validation->set_rules('quantity_min', '每单最低限量（份）', 'trim|less_than_equal_to[99]');
@@ -250,7 +250,8 @@
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
 			$this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
-			$this->form_validation->set_rules('promotion_id', '参与的营销活动ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('promotion_id', '店内活动ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('freight_template_id', '商家运费模板ID', 'trim|required|is_natural_no_zero');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -264,7 +265,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id',
+					'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -325,9 +326,9 @@
 			$this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('price', '商城价/现价（元）', 'trim|required|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('unit_name', '销售单位', 'trim|max_length[10]');
-			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|less_than_equal_to[999.99]');
-			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|less_than_equal_to[999.99]');
-			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|less_than_equal_to[999.99]');
+			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|less_than_equal_to[9999]');
 			$this->form_validation->set_rules('stocks', '库存量（份）', 'trim|required|less_than_equal_to[65535]');
 			$this->form_validation->set_rules('quantity_max', '每单最高限量（份）', 'trim|less_than_equal_to[99]');
 			$this->form_validation->set_rules('quantity_min', '每单最低限量（份）', 'trim|less_than_equal_to[99]');
@@ -336,7 +337,8 @@
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
 			$this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
-			$this->form_validation->set_rules('promotion_id', '参与的营销活动ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('promotion_id', '店内活动ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('freight_template_id', '商家运费模板ID', 'trim|required|is_natural_no_zero');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -347,11 +349,10 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
-					//'name' => $this->input->post('name')),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id',
+					'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -423,9 +424,9 @@
 			$this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('price', '商城价/现价（元）', 'trim|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('unit_name', '销售单位', 'trim|max_length[10]');
-			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|less_than_equal_to[999.99]');
-			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|less_than_equal_to[999.99]');
-			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|less_than_equal_to[999.99]');
+			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|less_than_equal_to[9999]');
 			$this->form_validation->set_rules('stocks', '库存量（份）', 'trim|less_than_equal_to[65535]');
 			$this->form_validation->set_rules('quantity_max', '每单最高限量（份）', 'trim|less_than_equal_to[99]');
 			$this->form_validation->set_rules('quantity_min', '每单最低限量（份）', 'trim|less_than_equal_to[99]');
@@ -434,7 +435,8 @@
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
 			$this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
-			$this->form_validation->set_rules('promotion_id', '参与的营销活动ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('promotion_id', '店内活动ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('freight_template_id', '商家运费模板ID', 'trim|is_natural_no_zero');
 			
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
