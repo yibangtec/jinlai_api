@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Item_category_biz 商家商品分类类
+	 * Item_category_biz 商品分类类
 	 *
 	 * 以API服务形式返回数据列表、详情、创建、单行编辑、单/多行编辑（删除、恢复）等功能提供了常见功能的示例代码
 	 * CodeIgniter官方网站 https://www.codeigniter.com/user_guide/
@@ -17,7 +17,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'category_id', 'system_category_id', 'biz_id', 'parent_id', 'name', 'url_image',
+			'category_id', 'biz_id', 'parent_id', 'name', 'url_image',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -25,7 +25,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'category_id', 'system_category_id', 'biz_id', 'parent_id', 'name', 'url_image',
+			'category_id', 'biz_id', 'parent_id', 'name', 'url_image',
 			 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -34,14 +34,14 @@
 		 */
 		protected $names_create_required = array(
 			'user_id',
-			'system_category_id', 'biz_id', 'name',
+			'biz_id', 'name',
 		);
 
 		/**
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'system_category_id', 'parent_id', 'name', 'url_image',
+			'parent_id', 'name', 'url_image',
 		);
 
 		/**
@@ -49,7 +49,7 @@
 		 */
 		protected $names_edit_required = array(
 			'user_id', 'id',
-			'system_category_id', 'name',
+			'name',
 		);
 
 		/**
@@ -92,7 +92,7 @@
 			//$condition['name'] = 'value';
 
 			// （可选）遍历筛选条件
-			foreach ($this->sorter_names as $sorter):
+			foreach ($this->names_to_sort as $sorter):
 				if ( !empty($this->input->post_get($sorter)) ):
 					// 对时间范围做限制
 					if ($sorter === 'start_time'):
@@ -223,9 +223,9 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('system_category_id', '系统商品分类', 'trim|required|is_natural_no_zero');
-			$this->form_validation->set_rules('parent_id', '商家商品分类', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('name', '名称', 'trim|required');
+			
+			$this->form_validation->set_rules('parent_id', '商品分类', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
 			$this->form_validation->set_rules('url_image', '图片URL', 'trim');
 
 			// 若表单提交不成功
@@ -240,7 +240,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'system_category_id', 'biz_id', 'parent_id', 'name', 'url_image',
+					'biz_id', 'parent_id', 'name', 'url_image',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -287,10 +287,9 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('system_category_id', '系统商品分类', 'trim|required|is_natural_no_zero');
-			$this->form_validation->set_rules('parent_id', '商家商品分类', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('name', '名称', 'trim|required');
-			$this->form_validation->set_rules('url_image', '图片URL', 'trim');
+			$this->form_validation->set_rules('parent_id', '商品分类', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
+			$this->form_validation->set_rules('url_image', '分类图片', 'trim');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
 				// ...
@@ -308,7 +307,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'system_category_id', 'parent_id', 'name', 'url_image',
+					'parent_id', 'name', 'url_image',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);

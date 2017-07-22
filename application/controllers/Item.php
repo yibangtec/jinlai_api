@@ -34,7 +34,7 @@
 		 */
 		protected $names_create_required = array(
 			'user_id',
-			'category_id', 'biz_id', 'url_image_main', 'name', 'price', 'stocks', 'freight_template_id',
+			'category_id', 'biz_id', 'url_image_main', 'name', 'price', 'stocks',
 		);
 
 		/**
@@ -49,7 +49,7 @@
 		 */
 		protected $names_edit_required = array(
 			'user_id', 'id',
-			'url_image_main', 'name', 'price', 'stocks', 'freight_template_id',
+			'url_image_main', 'name', 'price', 'stocks',
 		);
 
 		/**
@@ -92,7 +92,7 @@
 			//$condition['name'] = 'value';
 
 			// （可选）遍历筛选条件
-			foreach ($this->sorter_names as $sorter):
+			foreach ($this->names_to_sort as $sorter):
 				if ( !empty($this->input->post_get($sorter)) ):
 					// 对时间范围做限制
 					if ($sorter === 'start_time'):
@@ -225,10 +225,10 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('category_id', '所属系统分类ID', 'trim|required|is_natural_no_zero');
-			$this->form_validation->set_rules('brand_id', '所属品牌ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('category_id', '系统分类', 'trim|required|is_natural_no_zero');
+			$this->form_validation->set_rules('brand_id', '品牌', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('biz_id', '所属商家ID', 'trim|required|is_natural_no_zero');
-			$this->form_validation->set_rules('category_biz_id', '所属商家分类ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('category_biz_id', '商家分类', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('code_biz', '商家自定义商品编码', 'trim|max_length[20]');
 			$this->form_validation->set_rules('url_image_main', '主图', 'trim|required|max_length[255]');
 			$this->form_validation->set_rules('figure_image_urls', '形象图', 'trim|max_length[255]');
@@ -250,8 +250,8 @@
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
 			$this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
-			$this->form_validation->set_rules('promotion_id', '店内活动ID', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('freight_template_id', '商家运费模板ID', 'trim|required|is_natural_no_zero');
+			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|required|is_natural_no_zero');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -315,7 +315,7 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('category_biz_id', '所属商家分类ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('category_biz_id', '商家分类', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('code_biz', '商家自定义商品编码', 'trim|max_length[20]');
 			$this->form_validation->set_rules('url_image_main', '主图', 'trim|required|max_length[255]');
 			$this->form_validation->set_rules('figure_image_urls', '形象图', 'trim|max_length[255]');
@@ -337,8 +337,8 @@
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
 			$this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
-			$this->form_validation->set_rules('promotion_id', '店内活动ID', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('freight_template_id', '商家运费模板ID', 'trim|required|is_natural_no_zero');
+			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|required|is_natural_no_zero');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -413,7 +413,7 @@
 			// 动态设置待验证字段名及字段值
 			$data_to_validate["{$name}"] = $value;
 			$this->form_validation->set_data($data_to_validate);
-			$this->form_validation->set_rules('category_biz_id', '所属商家分类ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('category_biz_id', '商家分类', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('code_biz', '商家自定义商品编码', 'trim|max_length[20]');
 			$this->form_validation->set_rules('url_image_main', '主图', 'trim|max_length[255]');
 			$this->form_validation->set_rules('figure_image_urls', '形象图', 'trim|max_length[255]');
@@ -435,8 +435,8 @@
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
 			$this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
-			$this->form_validation->set_rules('promotion_id', '店内活动ID', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('freight_template_id', '商家运费模板ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
 			
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):

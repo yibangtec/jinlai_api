@@ -42,7 +42,7 @@
 			// 获取用户/检查用户是否存在
 			$user_info = $this->check_mobile( $this->input->post('mobile') );
 
-			// 若用户存在，返回用户信息；若用户不存在，创建用户。
+			// 若用户存在，返回用户信息；若用户未注册，创建用户。
 			if ( !empty($user_info) ):
 				// 更新最后登录信息
 				@$this->basic_model->edit($user_info['user_id'], $login_info);
@@ -139,7 +139,7 @@
 				if ( empty($user_info) ):
 					// 若已设置密码，则进行提示
 					$this->result['status'] = 414;
-					$this->result['content']['error']['message'] = '用户不存在';
+					$this->result['content']['error']['message'] = '用户未注册';
 
 				elseif ( !empty($user_info['password']) ):
 					// 若已设置密码，则进行提示
@@ -208,7 +208,7 @@
 				if ( empty($user_info) ):
 					// 若已设置密码，则进行提示
 					$this->result['status'] = 414;
-					$this->result['content']['error']['message'] = '用户不存在';
+					$this->result['content']['error']['message'] = '用户未注册';
 
 				elseif ( empty($user_info['password']) ):
 					// 若未设置密码，则进行提示
@@ -344,7 +344,7 @@
 
 				else:
 					$this->result['status'] = 414;
-					$this->result['content']['error']['message'] = '用户不存在';
+					$this->result['content']['error']['message'] = '用户未注册';
 
 				endif;
 
@@ -380,7 +380,7 @@
 				// 获取用户/检查用户是否存在
 				$user_info = $this->check_mobile( $this->input->post('mobile') );
 
-				// 若用户存在，更新用户密码；若用户不存在，创建用户。
+				// 若用户存在，更新用户密码；若用户未注册，创建用户。
 				// 同时更新最后登录信息
 				if ( !empty($user_info) ):
 					$login_info['password'] = sha1($this->input->post('password'));

@@ -91,7 +91,7 @@
 			//$condition['name'] = 'value';
 
 			// （可选）遍历筛选条件
-			foreach ($this->sorter_names as $sorter):
+			foreach ($this->names_to_sort as $sorter):
 				if ( !empty($this->input->post_get($sorter)) ):
 					// 对时间范围做限制
 					if ($sorter === 'start_time'):
