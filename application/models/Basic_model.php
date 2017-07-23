@@ -89,7 +89,7 @@
 			endif;
 
 			// 默认不计算被标记为已删除状态的行
-			if ($include_deleted === TRUE)
+			if ($include_deleted === FALSE)
 				$this->db->where("`time_delete` IS NOT NULL");
 
 			return $this->db->count_all_results($this->table_name);

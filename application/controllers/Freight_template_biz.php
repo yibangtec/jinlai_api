@@ -17,14 +17,14 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'template_id', 'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'type_actual', 'time_latest_deliver', 'max_count', 'max_net', 'max_gross', 'max_volume', 'fee_count_start', 'fee_net_start', 'fee_gross_start', 'fee_volumn_start', 'fee_count_amount', 'fee_net_amount', 'fee_gross_amount', 'fee_volumn_amount', 'fee_count', 'fee_net', 'fee_gross', 'fee_volume', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'template_id', 'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'type_actual', 'time_latest_deliver', 'max_amount', 'start_amount', 'fee_start', 'fee_unit', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'template_id', 'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'type_actual', 'time_latest_deliver', 'max_count', 'max_net', 'max_gross', 'max_volume', 'fee_count_start', 'fee_net_start', 'fee_gross_start', 'fee_volumn_start', 'fee_count_amount', 'fee_net_amount', 'fee_gross_amount', 'fee_volumn_amount', 'fee_count', 'fee_net', 'fee_gross', 'fee_volume', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'template_id', 'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'type_actual', 'time_latest_deliver', 'max_amount', 'start_amount', 'fee_start', 'fee_unit', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -39,7 +39,7 @@
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'name', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'type_actual', 'time_latest_deliver', 'max_count', 'max_net', 'max_gross', 'max_volume', 'fee_count_start', 'fee_net_start', 'fee_gross_start', 'fee_volumn_start', 'fee_count_amount', 'fee_net_amount', 'fee_gross_amount', 'fee_volumn_amount', 'fee_count', 'fee_net', 'fee_gross', 'fee_volume',
+			'name', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'type_actual', 'time_latest_deliver', 'max_amount', 'start_amount', 'fee_start', 'fee_unit',
 		);
 
 		/**
@@ -225,26 +225,14 @@
 			$this->form_validation->set_rules('type', '类型', 'trim|required');
 			$this->form_validation->set_rules('time_valid_from', '有效期起始时间', 'trim');
 			$this->form_validation->set_rules('time_valid_end', '有效期结束时间', 'trim');
-			$this->form_validation->set_rules('period_valid', '有效期', 'trim');
+			$this->form_validation->set_rules('period_valid', '有效期（天）', 'trim');
 			$this->form_validation->set_rules('expire_refund_rate', '过期退款比例', 'trim');
-			$this->form_validation->set_rules('type_actual', '物流配送类型', 'trim');
+			$this->form_validation->set_rules('type_actual', '运费计算方式', 'trim');
 			$this->form_validation->set_rules('time_latest_deliver', '最晚发货时间', 'trim');
-			$this->form_validation->set_rules('max_count', '每单最高件数（件）', 'trim');
-			$this->form_validation->set_rules('max_net', '每单最高净重（KG）', 'trim');
-			$this->form_validation->set_rules('max_gross', '每单最高毛重（KG）', 'trim');
-			$this->form_validation->set_rules('max_volume', '每单最高体积重（KG）', 'trim');
-			$this->form_validation->set_rules('fee_count_start', '计件起始运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_net_start', '净重起始运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_gross_start', '毛重起始运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_volumn_start', '体积重起始运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_count_amount', '计件起始量（KG）', 'trim');
-			$this->form_validation->set_rules('fee_net_amount', '净重起始量（KG）', 'trim');
-			$this->form_validation->set_rules('fee_gross_amount', '毛重起始量（KG）', 'trim');
-			$this->form_validation->set_rules('fee_volumn_amount', '体积重起始量（KG）', 'trim');
-			$this->form_validation->set_rules('fee_count', '每件运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_net', '每KG净重运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_gross', '每KG毛重运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_volume', '每KG体积重运费（元）', 'trim');
+			$this->form_validation->set_rules('max_amount', '每单最高配送量', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('start_amount', '起始量', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('fee_start', '起始量运费', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('fee_unit', '超出后运费', 'trim|less_than_equal_to[9999]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -255,11 +243,13 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
-					//'name' => $this->input->post('name'),
+					'period_valid' => !empty('period_valid')? $this->input->post('period_valid'): 31622400, // 默认366天
+					'expire_refund_rate' => !empty('expire_refund_rate')? $this->input->post('expire_refund_rate'): 1, // 默认全额退款
+					'time_latest_deliver' => !empty('time_latest_deliver')? $this->input->post('time_latest_deliver'): 259200, // 默认3自然日
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'type_actual', 'time_latest_deliver', 'max_count', 'max_net', 'max_gross', 'max_volume', 'fee_count_start', 'fee_net_start', 'fee_gross_start', 'fee_volumn_start', 'fee_count_amount', 'fee_net_amount', 'fee_gross_amount', 'fee_volumn_amount', 'fee_count', 'fee_net', 'fee_gross', 'fee_volume',
+					'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'type_actual', 'max_amount', 'start_amount', 'fee_start', 'fee_unit',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -309,26 +299,14 @@
 			$this->form_validation->set_rules('name', '名称', 'trim|required');
 			$this->form_validation->set_rules('time_valid_from', '有效期起始时间', 'trim');
 			$this->form_validation->set_rules('time_valid_end', '有效期结束时间', 'trim');
-			$this->form_validation->set_rules('period_valid', '有效期', 'trim');
+			$this->form_validation->set_rules('period_valid', '有效期（天）', 'trim');
 			$this->form_validation->set_rules('expire_refund_rate', '过期退款比例', 'trim');
-			$this->form_validation->set_rules('type_actual', '物流配送类型', 'trim');
+			$this->form_validation->set_rules('type_actual', '运费计算方式', 'trim');
 			$this->form_validation->set_rules('time_latest_deliver', '最晚发货时间', 'trim');
-			$this->form_validation->set_rules('max_count', '每单最高件数（件）', 'trim');
-			$this->form_validation->set_rules('max_net', '每单最高净重（KG）', 'trim');
-			$this->form_validation->set_rules('max_gross', '每单最高毛重（KG）', 'trim');
-			$this->form_validation->set_rules('max_volume', '每单最高体积重（KG）', 'trim');
-			$this->form_validation->set_rules('fee_count_start', '计件起始运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_net_start', '净重起始运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_gross_start', '毛重起始运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_volumn_start', '体积重起始运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_count_amount', '计件起始量（KG）', 'trim');
-			$this->form_validation->set_rules('fee_net_amount', '净重起始量（KG）', 'trim');
-			$this->form_validation->set_rules('fee_gross_amount', '毛重起始量（KG）', 'trim');
-			$this->form_validation->set_rules('fee_volumn_amount', '体积重起始量（KG）', 'trim');
-			$this->form_validation->set_rules('fee_count', '每件运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_net', '每KG净重运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_gross', '每KG毛重运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_volume', '每KG体积重运费（元）', 'trim');
+			$this->form_validation->set_rules('max_amount', '每单最高配送量', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('start_amount', '起始量', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('fee_start', '起始量运费', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('fee_unit', '超出后运费', 'trim|less_than_equal_to[9999]');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
 				// ...
@@ -343,11 +321,13 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
-					//'name' => $this->input->post('name'),
+					'period_valid' => !empty('period_valid')? $this->input->post('period_valid'): 31622400, // 默认366天
+					'expire_refund_rate' => !empty('expire_refund_rate')? $this->input->post('expire_refund_rate'): 1, // 默认全额退款
+					'time_latest_deliver' => !empty('time_latest_deliver')? $this->input->post('time_latest_deliver'): 259200, // 默认3自然日
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'type_actual', 'time_latest_deliver', 'max_count', 'max_net', 'max_gross', 'max_volume', 'fee_count_start', 'fee_net_start', 'fee_gross_start', 'fee_volumn_start', 'fee_count_amount', 'fee_net_amount', 'fee_gross_amount', 'fee_volumn_amount', 'fee_count', 'fee_net', 'fee_gross', 'fee_volume',
+					'name', 'time_valid_from', 'time_valid_end', 'type_actual', 'max_amount', 'start_amount', 'fee_start', 'fee_unit',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -427,26 +407,14 @@
 			$this->form_validation->set_rules('name', '名称', 'trim');
 			$this->form_validation->set_rules('time_valid_from', '有效期起始时间', 'trim');
 			$this->form_validation->set_rules('time_valid_end', '有效期结束时间', 'trim');
-			$this->form_validation->set_rules('period_valid', '有效期', 'trim');
+			$this->form_validation->set_rules('period_valid', '有效期（天）', 'trim');
 			$this->form_validation->set_rules('expire_refund_rate', '过期退款比例', 'trim');
-			$this->form_validation->set_rules('type_actual', '物流配送类型', 'trim');
+			$this->form_validation->set_rules('type_actual', '运费计算方式', 'trim');
 			$this->form_validation->set_rules('time_latest_deliver', '最晚发货时间', 'trim');
-			$this->form_validation->set_rules('max_count', '每单最高件数（件）', 'trim');
-			$this->form_validation->set_rules('max_net', '每单最高净重（KG）', 'trim');
-			$this->form_validation->set_rules('max_gross', '每单最高毛重（KG）', 'trim');
-			$this->form_validation->set_rules('max_volume', '每单最高体积重（KG）', 'trim');
-			$this->form_validation->set_rules('fee_count_start', '计件起始运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_net_start', '净重起始运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_gross_start', '毛重起始运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_volumn_start', '体积重起始运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_count_amount', '计件起始量（KG）', 'trim');
-			$this->form_validation->set_rules('fee_net_amount', '净重起始量（KG）', 'trim');
-			$this->form_validation->set_rules('fee_gross_amount', '毛重起始量（KG）', 'trim');
-			$this->form_validation->set_rules('fee_volumn_amount', '体积重起始量（KG）', 'trim');
-			$this->form_validation->set_rules('fee_count', '每件运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_net', '每KG净重运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_gross', '每KG毛重运费（元）', 'trim');
-			$this->form_validation->set_rules('fee_volume', '每KG体积重运费（元）', 'trim');
+			$this->form_validation->set_rules('max_amount', '每单最高配送量', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('start_amount', '起始量', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('fee_start', '起始量运费', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('fee_unit', '超出后运费', 'trim|less_than_equal_to[9999]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
