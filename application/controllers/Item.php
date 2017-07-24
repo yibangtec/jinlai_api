@@ -251,7 +251,7 @@
 			$this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
 			$this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
 			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|required|is_natural_no_zero');
+			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -338,7 +338,7 @@
 			$this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
 			$this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
 			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|required|is_natural_no_zero');
+			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
