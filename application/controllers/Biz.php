@@ -271,7 +271,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'brief_name', 'tel_public',
+					'name', 'brief_name', 'tel_public', 'tel_protected_biz',
 					'description', 'bank_name', 'bank_account', 'code_license', 'code_ssn_owner', 'code_ssn_auth',
 					'url_image_license', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_produce', 'url_image_retail',
 					'url_image_owner_id', 'url_image_product',
@@ -285,7 +285,7 @@
 				$biz_id = $this->basic_model->create($data_to_create, TRUE);
 				if ($biz_id !== FALSE):
 					$this->result['status'] = 200;
-					$this->result['content']['id'] = $result;
+					$this->result['content']['id'] = $biz_id;
 					$this->result['content']['message'] = '创建商家成功，我们将尽快受理您的入驻申请';
 
 					$mobile = $tel_protected_biz;
