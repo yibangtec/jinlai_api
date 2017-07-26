@@ -17,7 +17,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'template_id', 'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'max_amount', 'min_subtotal', 'amount', 'period', 'time_start', 'time_end', 
+			'template_id', 'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'description', 'max_amount', 'min_subtotal', 'amount', 'period', 'time_start', 'time_end', 
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -25,7 +25,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'template_id', 'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'max_amount', 'min_subtotal', 'amount', 'period', 'time_start', 'time_end',
+			'template_id', 'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'description', 'max_amount', 'min_subtotal', 'amount', 'period', 'time_start', 'time_end',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -33,6 +33,7 @@
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
+			'user_id',
 			'biz_id', 'name', 'amount',
 		);
 
@@ -40,7 +41,7 @@
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'category_id', 'category_biz_id', 'item_id', 'name', 'max_amount', 'min_subtotal', 'amount', 'period', 'time_start', 'time_end',
+			'category_id', 'category_biz_id', 'item_id', 'name', 'description', 'max_amount', 'min_subtotal', 'amount', 'period', 'time_start', 'time_end',
 		);
 
 		/**
@@ -214,16 +215,17 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
+			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
+			$this->form_validation->set_rules('description', '说明', 'trim|max_length[30]');
+			$this->form_validation->set_rules('amount', '面值（元）', 'trim|required|less_than_equal_to[999]');
+			$this->form_validation->set_rules('max_amount', '限量', 'trim|less_than_equal_to[999999]');
+			$this->form_validation->set_rules('min_subtotal', '最低订单小计（元）', 'trim|less_than_equal_to[9999]');
 			$this->form_validation->set_rules('category_id', '限用系统商品分类', 'trim');
 			$this->form_validation->set_rules('category_biz_id', '限用商家商品分类', 'trim');
 			$this->form_validation->set_rules('item_id', '限用商品', 'trim');
-			$this->form_validation->set_rules('name', '名称', 'trim|required');
-			$this->form_validation->set_rules('amount', '面值（元）', 'trim|required');
-			$this->form_validation->set_rules('max_amount', '限量', 'trim');
-			$this->form_validation->set_rules('min_subtotal', '最低订单小计（元）', 'trim');
-			$this->form_validation->set_rules('period', '自领取时起有效期（秒）', 'trim');
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim');
+			$this->form_validation->set_rules('period', '有效期', 'trim');
+			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]');
+			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -234,10 +236,11 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
+					'period' => empty($this->input->post('period'))? '2592000': $this->input->post('period'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'max_amount', 'min_subtotal', 'amount', 'period', 'time_start', 'time_end',
+					'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'description', 'max_amount', 'min_subtotal', 'amount', 'time_start', 'time_end',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -284,16 +287,17 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
+			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
+			$this->form_validation->set_rules('description', '说明', 'trim|max_length[30]');
+			$this->form_validation->set_rules('amount', '面值（元）', 'trim|required|less_than_equal_to[999]');
+			$this->form_validation->set_rules('max_amount', '限量', 'trim|less_than_equal_to[999999]');
+			$this->form_validation->set_rules('min_subtotal', '最低订单小计（元）', 'trim|less_than_equal_to[9999]');
 			$this->form_validation->set_rules('category_id', '限用系统商品分类', 'trim');
 			$this->form_validation->set_rules('category_biz_id', '限用商家商品分类', 'trim');
 			$this->form_validation->set_rules('item_id', '限用商品', 'trim');
-			$this->form_validation->set_rules('name', '名称', 'trim|required');
-			$this->form_validation->set_rules('amount', '面值（元）', 'trim|required');
-			$this->form_validation->set_rules('max_amount', '限量', 'trim');
-			$this->form_validation->set_rules('min_subtotal', '最低订单小计（元）', 'trim');
-			$this->form_validation->set_rules('period', '自领取时起有效期（秒）', 'trim');
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim');
+			$this->form_validation->set_rules('period', '有效期', 'trim');
+			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]');
+			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
 				// ...
@@ -308,10 +312,11 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
+					'period' => empty($this->input->post('period'))? '2592000': $this->input->post('period'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_id', 'category_biz_id', 'item_id', 'name', 'max_amount', 'min_subtotal', 'amount', 'period', 'time_start', 'time_end',
+					'category_id', 'category_biz_id', 'item_id', 'name', 'description', 'max_amount', 'min_subtotal', 'amount', 'time_start', 'time_end',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);

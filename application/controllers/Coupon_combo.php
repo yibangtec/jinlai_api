@@ -17,7 +17,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'combo_id', 'biz_id', 'name', 'template_ids', 'max_amount', 'time_start', 'time_end',
+			'combo_id', 'biz_id', 'name', 'description', 'template_ids', 'max_amount', 'time_start', 'time_end',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -25,7 +25,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'combo_id', 'biz_id', 'name', 'template_ids', 'max_amount', 'time_start', 'time_end',
+			'combo_id', 'biz_id', 'name', 'description', 'template_ids', 'max_amount', 'time_start', 'time_end',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -41,7 +41,7 @@
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'name', 'template_ids', 'max_amount', 'time_start', 'time_end',
+			'name', 'description', 'template_ids', 'max_amount', 'time_start', 'time_end',
 		);
 
 		/**
@@ -215,11 +215,12 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('name', '名称', 'trim|required');
+			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
+			$this->form_validation->set_rules('description', '说明', 'trim|max_length[30]');
 			$this->form_validation->set_rules('template_ids', '优惠券模板', 'trim|required');
 			$this->form_validation->set_rules('max_amount', '限量', 'trim');
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim');
+			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]');
+			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -233,7 +234,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'biz_id', 'name', 'template_ids', 'max_amount', 'time_start', 'time_end', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+					'biz_id', 'name', 'description', 'template_ids', 'max_amount', 'time_start', 'time_end',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -280,10 +281,11 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('name', '名称', 'trim|');
-			$this->form_validation->set_rules('template_ids', '优惠券模板ID们', 'trim|');
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim|required');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim|required');
+			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
+			$this->form_validation->set_rules('description', '说明', 'trim|max_length[30]');
+			$this->form_validation->set_rules('template_ids', '优惠券模板', 'trim');
+			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]');
+			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
 				// ...
@@ -302,7 +304,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'template_ids', 'max_amount', 'time_start', 'time_end', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+					'name', 'description', 'template_ids', 'max_amount', 'time_start', 'time_end',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
