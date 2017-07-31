@@ -218,14 +218,16 @@
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
 			$this->form_validation->set_rules('description', '说明', 'trim|max_length[30]');
 			$this->form_validation->set_rules('amount', '面值（元）', 'trim|required|less_than_equal_to[999]');
-			$this->form_validation->set_rules('max_amount', '限量', 'trim|less_than_equal_to[999999]');
 			$this->form_validation->set_rules('min_subtotal', '最低订单小计（元）', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('max_amount', '限量', 'trim|less_than_equal_to[999999]');
 			$this->form_validation->set_rules('category_id', '限用系统商品分类', 'trim');
 			$this->form_validation->set_rules('category_biz_id', '限用商家商品分类', 'trim');
 			$this->form_validation->set_rules('item_id', '限用商品', 'trim');
 			$this->form_validation->set_rules('period', '有效期', 'trim');
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]');
+			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]|callback_time_start');
+			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]|callback_time_end');
+			$this->form_validation->set_message('time_start', '开始时间需详细到分，且晚于当前时间1分钟后');
+			$this->form_validation->set_message('time_end', '结束时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -236,7 +238,7 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
-					'period' => empty($this->input->post('period'))? '2592000': $this->input->post('period'),
+					'period' => empty($this->input->post('period'))? '2592000': $this->input->post('period'), // 有效期默认为30个自然日
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
@@ -290,14 +292,16 @@
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
 			$this->form_validation->set_rules('description', '说明', 'trim|max_length[30]');
 			$this->form_validation->set_rules('amount', '面值（元）', 'trim|required|less_than_equal_to[999]');
-			$this->form_validation->set_rules('max_amount', '限量', 'trim|less_than_equal_to[999999]');
 			$this->form_validation->set_rules('min_subtotal', '最低订单小计（元）', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('max_amount', '限量', 'trim|less_than_equal_to[999999]');
 			$this->form_validation->set_rules('category_id', '限用系统商品分类', 'trim');
 			$this->form_validation->set_rules('category_biz_id', '限用商家商品分类', 'trim');
 			$this->form_validation->set_rules('item_id', '限用商品', 'trim');
 			$this->form_validation->set_rules('period', '有效期', 'trim');
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]');
+			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]|callback_time_start');
+			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]|callback_time_end');
+			$this->form_validation->set_message('time_start', '开始时间需详细到分，且晚于当前时间1分钟后');
+			$this->form_validation->set_message('time_end', '结束时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
 				// ...
@@ -312,7 +316,7 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
-					'period' => empty($this->input->post('period'))? '2592000': $this->input->post('period'),
+					'period' => empty($this->input->post('period'))? '2592000': $this->input->post('period'), // 有效期默认为30个自然日
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
@@ -421,8 +425,54 @@
 
 			endif;
 		} // end edit_bulk
+		
+		// 检查起始时间
+		public function time_start($value)
+		{
+			if ( empty($value) ):
+				return true;
 
-	}
+			elseif (strlen($value) !== 10):
+				return false;
+
+			else:
+				// 该时间不可早于当前时间一分钟以内
+				if ($value <= time() + 60):
+					return false;
+				else:
+					return true;
+				endif;
+
+			endif;
+		} // end time_start
+
+		// 检查结束时间
+		public function time_end($value)
+		{
+			if ( empty($value) ):
+				return true;
+
+			elseif (strlen($value) !== 10):
+				return false;
+
+			else:
+				// 该时间不可早于当前时间一分钟以内
+				if ($value <= time() + 60):
+					return false;
+
+				// 若已设置开始时间，不可早于开始时间一分钟以内
+				elseif ( !empty($this->input->post('time_start')) && $value <= $this->input->post('time_start') + 60):
+					return false;
+
+				else:
+					return true;
+
+				endif;
+
+			endif;
+		} // end time_end
+
+	} // end class Coupon_template
 
 /* End of file Coupon_template.php */
 /* Location: ./application/controllers/Coupon_template.php */

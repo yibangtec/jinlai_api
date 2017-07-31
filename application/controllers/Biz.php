@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'freight', 'freight_free_subtotal', 'freight_free_count', 'min_order_subtotal', 'delivery_time_start', 'delivery_time_end', 'longitude', 'latitude', 'country', 'province', 'city', 'county',
+			'freight', 'freight_free_subtotal', 'freight_free_count', 'min_order_subtotal', 'delivery_time_start', 'delivery_time_end', 'longitude', 'latitude', 'nation', 'province', 'city', 'county',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
@@ -27,7 +27,7 @@
 			'code_license', 'code_ssn_owner',  'code_ssn_auth',
 			'bank_name', 'bank_account',
 			'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
-			'min_order_subtotal', 'delivery_time_start', 'delivery_time_end', 'longitude', 'latitude', 'country', 'province', 'city', 'county', 'detail', 'url_web', 'url_weibo', 'url_wechat',
+			'min_order_subtotal', 'delivery_time_start', 'delivery_time_end', 'longitude', 'latitude', 'nation', 'province', 'city', 'county', 'street', 'url_web', 'url_weibo', 'url_wechat',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
@@ -48,7 +48,7 @@
 			'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
 			'code_license', 'code_ssn_owner', 'code_ssn_auth',
 			'bank_name', 'bank_account', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
-			'freight', 'freight_free_subtotal', 'freight_free_count', 'min_order_subtotal', 'delivery_time_start', 'delivery_time_end', 'longitude', 'latitude', 'country', 'province', 'city', 'county', 'detail', 'url_web', 'url_weibo', 'url_taobao', 'url_wechat',
+			'freight', 'freight_free_subtotal', 'freight_free_count', 'min_order_subtotal', 'delivery_time_start', 'delivery_time_end', 'longitude', 'latitude', 'nation', 'province', 'city', 'county', 'street', 'url_web', 'url_weibo', 'url_taobao', 'url_wechat',
 		);
 
 		/**
@@ -411,7 +411,7 @@
 				$data_to_edit = array(
 					'operator_id' => $user_id,
 					'url_name' => strtolower( $this->input->post('url_name') ),
-					'country' => empty($this->input->post('country'))? '中国': $this->input->post('country'),
+					'nation' => empty($this->input->post('nation'))? '中国': $this->input->post('nation'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
@@ -419,7 +419,8 @@
 					'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
 					'code_license', 'code_ssn_owner',  'code_ssn_auth',
 					'bank_name', 'bank_account', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
-					'min_order_subtotal', 'delivery_time_start', 'delivery_time_end', 'longitude', 'latitude', 'province', 'city', 'county', 'detail', 'url_web', 'url_weibo', 'url_wechat',
+					'province', 'city', 'county', 'street', 'longitude', 'latitude',
+					'url_web', 'url_weibo', 'url_wechat',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -534,15 +535,11 @@
 			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|min_length[3]|max_length[20]');
 			$this->form_validation->set_rules('bank_account', '开户行账号', 'trim|max_length[30]');
 
-			$this->form_validation->set_rules('min_order_subtotal', '订单最低金额', 'trim|decimal|greater_than_equal_to[1.00]|less_than_equal_to[99.99]');
-			$this->form_validation->set_rules('delivery_time_start', '配送起始时间', 'trim|is_natural|greater_than_equal_to[0]|less_than_equal_to[23]');
-			$this->form_validation->set_rules('delivery_time_end', '配送结束时间', 'trim|is_natural_no_zero|greater_than_equal_to[0]|less_than_equal_to[23]');
-
-			$this->form_validation->set_rules('country', '国家', 'trim|max_length[10]');
+			$this->form_validation->set_rules('nation', '国家', 'trim|max_length[10]');
 			$this->form_validation->set_rules('province', '省', 'trim|max_length[10]');
 			$this->form_validation->set_rules('city', '市', 'trim|max_length[10]');
 			$this->form_validation->set_rules('county', '区/县', 'trim|max_length[10]');
-			$this->form_validation->set_rules('detail', '详细地址；小区名、路名、门牌号等', 'trim|max_length[50]');
+			$this->form_validation->set_rules('street', '具体地址；小区名、路名、门牌号等', 'trim|max_length[50]');
 			$this->form_validation->set_rules('longitude', '经度', 'trim|min_length[7]|max_length[10]|decimal');
 			$this->form_validation->set_rules('latitude', '纬度', 'trim|min_length[7]|max_length[10]|decimal');
 
@@ -654,7 +651,7 @@
 			endif;
 		} // end edit_bulk
 
-	}
+	} // end class Biz
 
 /* End of file Biz.php */
 /* Location: ./application/controllers/Biz.php */

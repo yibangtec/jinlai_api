@@ -262,6 +262,7 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
+					'time_publish' => empty($this->input->post('time_to_publish'))? time(): NULL, // 若未预订上架时间，则直接上架
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
@@ -349,6 +350,7 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
+					'time_publish' => empty($this->input->post('time_to_publish'))? time(): NULL, // 若未预订上架时间，则直接上架
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
@@ -516,13 +518,15 @@
 
 				// 根据待执行的操作赋值待编辑数据
 				switch ( $this->input->post('operation') ):
-					case 'publish':
+					case 'publish': // 上架
 						$data_to_edit['time_publish'] = time();
 						$data_to_edit['time_suspend'] = NULL;
+						$data_to_edit['time_to_suspend'] = $data_to_edit['time_to_publish'] = NULL; // 若手动上架，则取消上下架计划
 						break;
-					case 'suspend':
+					case 'suspend': // 下架
 						$data_to_edit['time_publish'] = NULL;
 						$data_to_edit['time_suspend'] = time();
+						$data_to_edit['time_to_suspend'] = $data_to_edit['time_to_publish'] = NULL; // 若手动下架，则取消上下架计划
 						break;
 					case 'delete':
 						$data_to_edit['time_delete'] = date('Y-m-d H:i:s');
@@ -553,7 +557,54 @@
 
 			endif;
 		} // end edit_bulk
-	}
+		
+		// 检查起始时间
+		public function time_start($value)
+		{
+			if ( empty($value) ):
+				return true;
+
+			elseif (strlen($value) !== 10):
+				return false;
+
+			else:
+				// 该时间不可早于当前时间一分钟以内
+				if ($value <= time() + 60):
+					return false;
+				else:
+					return true;
+				endif;
+
+			endif;
+		} // end time_start
+
+		// 检查结束时间
+		public function time_end($value)
+		{
+			if ( empty($value) ):
+				return true;
+
+			elseif (strlen($value) !== 10):
+				return false;
+
+			else:
+				// 该时间不可早于当前时间一分钟以内
+				if ($value <= time() + 60):
+					return false;
+
+				// 若已设置开始时间，不可早于开始时间一分钟以内
+				elseif ( !empty($this->input->post('time_to_publish')) && $value <= strtotime($this->input->post('time_to_publish')) + 60):
+					return false;
+
+				else:
+					return true;
+
+				endif;
+
+			endif;
+		} // end time_end
+
+	} // end class Item
 
 /* End of file Item.php */
 /* Location: ./application/controllers/Item.php */

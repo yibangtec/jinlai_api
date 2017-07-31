@@ -217,10 +217,12 @@
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
 			$this->form_validation->set_rules('description', '说明', 'trim|max_length[30]');
-			$this->form_validation->set_rules('template_ids', '优惠券模板', 'trim|required');
+			$this->form_validation->set_rules('template_ids', '所含优惠券', 'trim|required');
 			$this->form_validation->set_rules('max_amount', '限量', 'trim');
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]');
+			$this->form_validation->set_rules('time_start', '开始领取时间', 'trim|exact_length[10]|callback_time_start');
+			$this->form_validation->set_rules('time_end', '结束领取时间', 'trim|exact_length[10]|callback_time_end');
+			$this->form_validation->set_message('time_start', '开始时间需详细到分，且晚于当前时间1分钟后');
+			$this->form_validation->set_message('time_end', '结束时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -283,9 +285,11 @@
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
 			$this->form_validation->set_rules('description', '说明', 'trim|max_length[30]');
-			$this->form_validation->set_rules('template_ids', '优惠券模板', 'trim');
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]');
+			$this->form_validation->set_rules('template_ids', '所含优惠券', 'trim');
+			$this->form_validation->set_rules('time_start', '开始领取时间', 'trim|exact_length[10]|callback_time_start');
+			$this->form_validation->set_rules('time_end', '结束领取时间', 'trim|exact_length[10]|callback_time_end');
+			$this->form_validation->set_message('time_start', '开始时间需详细到分，且晚于当前时间1分钟后');
+			$this->form_validation->set_message('time_end', '结束时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
 				// ...
@@ -409,8 +413,54 @@
 
 			endif;
 		} // end edit_bulk
+		
+		// 检查起始时间
+		public function time_start($value)
+		{
+			if ( empty($value) ):
+				return true;
 
-	}
+			elseif (strlen($value) !== 10):
+				return false;
+
+			else:
+				// 该时间不可早于当前时间一分钟以内
+				if ($value <= time() + 60):
+					return false;
+				else:
+					return true;
+				endif;
+
+			endif;
+		} // end time_start
+
+		// 检查结束时间
+		public function time_end($value)
+		{
+			if ( empty($value) ):
+				return true;
+
+			elseif (strlen($value) !== 10):
+				return false;
+
+			else:
+				// 该时间不可早于当前时间一分钟以内
+				if ($value <= time() + 60):
+					return false;
+
+				// 若已设置开始时间，不可早于开始时间一分钟以内
+				elseif ( !empty($this->input->post('time_start')) && $value <= $this->input->post('time_start') + 60):
+					return false;
+
+				else:
+					return true;
+
+				endif;
+
+			endif;
+		} // end time_end
+
+	} // end class Coupon_combo
 
 /* End of file Coupon_combo.php */
 /* Location: ./application/controllers/Coupon_combo.php */

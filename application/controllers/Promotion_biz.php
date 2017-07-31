@@ -17,7 +17,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'promotion_id', 'biz_id', 'type', 'name', 'time_start', 'time_end', 'description', 'url_image', 'url_image_wide', 'fold_allowed', 'discount', 'present_trigger_amount', 'present_trigger_count', 'present', 'reduction_trigger_amount', 'reduction_amount', 'reduction_discount', 'coupon_id', 'coupon_combo_id', 'deposit', 'balance', 'time_book_start', 'time_book_end', 'time_complete_start', 'time_complete_end', 'groupbuy_order_amount', 'groupbuy_quantity_max',
+			'promotion_id', 'biz_id', 'type', 'name', 'time_start', 'time_end', 'description', 'url_image', 'url_image_wide', 'fold_allowed', 'discount', 'present_trigger_amount', 'present_trigger_count', 'present', 'reduction_trigger_amount', 'reduction_trigger_count', 'reduction_amount', 'reduction_amount_time', 'reduction_discount', 'coupon_id', 'coupon_combo_id', 'deposit', 'balance', 'time_book_start', 'time_book_end', 'time_complete_start', 'time_complete_end', 'groupbuy_order_amount', 'groupbuy_quantity_max',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -25,7 +25,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'promotion_id', 'biz_id', 'type', 'name', 'time_start', 'time_end', 'description', 'url_image', 'url_image_wide', 'fold_allowed', 'discount', 'present_trigger_amount', 'present_trigger_count', 'present', 'reduction_trigger_amount', 'reduction_amount', 'reduction_discount', 'coupon_id', 'coupon_combo_id', 'deposit', 'balance', 'time_book_start', 'time_book_end', 'time_complete_start', 'time_complete_end', 'groupbuy_order_amount', 'groupbuy_quantity_max',
+			'promotion_id', 'biz_id', 'type', 'name', 'time_start', 'time_end', 'description', 'url_image', 'url_image_wide', 'fold_allowed', 'discount', 'present_trigger_amount', 'present_trigger_count', 'present', 'reduction_trigger_amount', 'reduction_trigger_count', 'reduction_amount', 'reduction_amount_time', 'reduction_discount', 'coupon_id', 'coupon_combo_id', 'deposit', 'balance', 'time_book_start', 'time_book_end', 'time_complete_start', 'time_complete_end', 'groupbuy_order_amount', 'groupbuy_quantity_max',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -57,7 +57,7 @@
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'name', 'time_start', 'time_end', 'description', 'url_image', 'url_image_wide', 'fold_allowed', 'discount', 'present_trigger_amount', 'present_trigger_count', 'present', 'reduction_trigger_amount', 'reduction_amount', 'reduction_discount', 'coupon_id', 'coupon_combo_id', 'deposit', 'balance', 'time_book_start', 'time_book_end', 'time_complete_start', 'time_complete_end', 'groupbuy_order_amount', 'groupbuy_quantity_max',
+			'name', 'time_start', 'time_end', 'description', 'url_image', 'url_image_wide', 'fold_allowed', 'discount', 'present_trigger_amount', 'present_trigger_count', 'present', 'reduction_trigger_amount', 'reduction_trigger_count', 'reduction_amount', 'reduction_amount_time', 'reduction_discount', 'coupon_id', 'coupon_combo_id', 'deposit', 'balance', 'time_book_start', 'time_book_end', 'time_complete_start', 'time_complete_end', 'groupbuy_order_amount', 'groupbuy_quantity_max',
 		);
 
 		/**
@@ -244,7 +244,9 @@
 			$this->form_validation->set_rules('present_trigger_count', '赠品触发份数（份）', 'trim');
 			$this->form_validation->set_rules('present', '赠品信息', 'trim');
 			$this->form_validation->set_rules('reduction_trigger_amount', '满减触发金额（元）', 'trim');
+			$this->form_validation->set_rules('reduction_trigger_count', '满减触发件数（件）', 'trim');
 			$this->form_validation->set_rules('reduction_amount', '减免金额（元）', 'trim');
+			$this->form_validation->set_rules('reduction_amount_time', '最高减免次数（次）', 'trim');
 			$this->form_validation->set_rules('reduction_discount', '减免比例', 'trim');
 			$this->form_validation->set_rules('coupon_id', '赠送优惠券模板', 'trim');
 			$this->form_validation->set_rules('coupon_combo_id', '赠送优惠券套餐', 'trim');
@@ -269,7 +271,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'biz_id', 'type', 'name', 'time_start', 'time_end', 'description', 'url_image', 'url_image_wide', 'fold_allowed', 'discount', 'present_trigger_amount', 'present_trigger_count', 'present', 'reduction_trigger_amount', 'reduction_amount', 'reduction_discount', 'coupon_id', 'coupon_combo_id', 'deposit', 'balance', 'time_book_start', 'time_book_end', 'time_complete_start', 'time_complete_end', 'groupbuy_order_amount', 'groupbuy_quantity_max',
+					'biz_id', 'type', 'name', 'time_start', 'time_end', 'description', 'url_image', 'url_image_wide', 'fold_allowed', 'discount', 'present_trigger_amount', 'present_trigger_count', 'present', 'reduction_trigger_amount', 'reduction_trigger_count', 'reduction_amount', 'reduction_amount_time', 'reduction_discount', 'coupon_id', 'coupon_combo_id', 'deposit', 'balance', 'time_book_start', 'time_book_end', 'time_complete_start', 'time_complete_end', 'groupbuy_order_amount', 'groupbuy_quantity_max',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -328,7 +330,9 @@
 			$this->form_validation->set_rules('present_trigger_count', '赠品触发份数（份）', 'trim');
 			$this->form_validation->set_rules('present', '赠品信息', 'trim');
 			$this->form_validation->set_rules('reduction_trigger_amount', '满减触发金额（元）', 'trim');
+			$this->form_validation->set_rules('reduction_trigger_count', '满减触发件数（件）', 'trim');
 			$this->form_validation->set_rules('reduction_amount', '减免金额（元）', 'trim');
+			$this->form_validation->set_rules('reduction_amount_time', '最高减免次数（次）', 'trim');
 			$this->form_validation->set_rules('reduction_discount', '减免比例', 'trim');
 			$this->form_validation->set_rules('coupon_id', '赠送优惠券模板', 'trim');
 			$this->form_validation->set_rules('coupon_combo_id', '赠送优惠券套餐', 'trim');
@@ -358,7 +362,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'time_start', 'time_end', 'description', 'url_image', 'url_image_wide', 'fold_allowed', 'discount', 'present_trigger_amount', 'present_trigger_count', 'present', 'reduction_trigger_amount', 'reduction_amount', 'reduction_discount', 'coupon_id', 'coupon_combo_id', 'deposit', 'balance', 'time_book_start', 'time_book_end', 'time_complete_start', 'time_complete_end', 'groupbuy_order_amount', 'groupbuy_quantity_max',
+					'name', 'time_start', 'time_end', 'description', 'url_image', 'url_image_wide', 'fold_allowed', 'discount', 'present_trigger_amount', 'present_trigger_count', 'present', 'reduction_trigger_amount', 'reduction_trigger_count', 'reduction_amount', 'reduction_amount_time', 'reduction_discount', 'coupon_id', 'coupon_combo_id', 'deposit', 'balance', 'time_book_start', 'time_book_end', 'time_complete_start', 'time_complete_end', 'groupbuy_order_amount', 'groupbuy_quantity_max',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -465,7 +469,7 @@
 		} // end edit_bulk
 		
 
-	}
+	} // end class Promotion_biz
 
 /* End of file Promotion_biz.php */
 /* Location: ./application/controllers/Promotion_biz.php */
