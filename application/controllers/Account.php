@@ -214,12 +214,12 @@
 					// 若未设置密码，则进行提示
 					$this->result['status'] = 411;
 					$this->result['content']['error']['message'] = '该用户未设置过密码，如需设置应通过“密码设置”进行操作';
-					
+
 				elseif ( $user_info['password'] !== SHA1($password_current) ):
 					// 若原密码输入错误，则进行提示
 					$this->result['status'] = 401;
 					$this->result['content']['error']['message'] = '原密码错误';
-				
+
 				elseif ( $user_info['password'] === SHA1($password) ):
 					// 若新密码与原密码相同，则进行提示
 					$this->result['status'] = 401;
@@ -245,7 +245,7 @@
 
 					endif;
 				endif;
-				
+
 			endif;
 		} // end password_change
 		

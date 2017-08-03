@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'freight', 'freight_free_subtotal', 'freight_free_count', 'min_order_subtotal', 'delivery_time_start', 'delivery_time_end', 'longitude', 'latitude', 'nation', 'province', 'city', 'county',
+			'longitude', 'latitude', 'nation', 'province', 'city', 'county',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
@@ -24,10 +24,11 @@
 		protected $names_to_return = array(
 			'name', 'brief_name', 'url_name', 'url_logo', 'slogan', 'description', 'notification',
 			'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
+			'fullname_owner', 'fullname_auth',
 			'code_license', 'code_ssn_owner',  'code_ssn_auth',
 			'bank_name', 'bank_account',
 			'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
-			'min_order_subtotal', 'delivery_time_start', 'delivery_time_end', 'longitude', 'latitude', 'nation', 'province', 'city', 'county', 'street', 'url_web', 'url_weibo', 'url_wechat',
+			'longitude', 'latitude', 'nation', 'province', 'city', 'county', 'street', 'url_web', 'url_weibo', 'url_wechat',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
@@ -37,7 +38,7 @@
 		protected $names_create_required = array(
 			'user_id',
 			'name', 'brief_name', 'tel_public', 'tel_protected_biz',
-			'code_license', 'code_ssn_owner',
+			'fullname_owner', 'code_license', 'code_ssn_owner',
 		);
 
 		/**
@@ -46,9 +47,10 @@
 		protected $names_edit_allowed = array(
 			'name', 'brief_name', 'url_name', 'url_logo', 'slogan', 'description', 'notification',
 			'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
+			'fullname_owner', 'fullname_auth',
 			'code_license', 'code_ssn_owner', 'code_ssn_auth',
 			'bank_name', 'bank_account', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
-			'freight', 'freight_free_subtotal', 'freight_free_count', 'min_order_subtotal', 'delivery_time_start', 'delivery_time_end', 'longitude', 'latitude', 'nation', 'province', 'city', 'county', 'street', 'url_web', 'url_weibo', 'url_taobao', 'url_wechat',
+			'longitude', 'latitude', 'nation', 'province', 'city', 'county', 'street', 'url_web', 'url_weibo', 'url_taobao', 'url_wechat',
 		);
 
 		/**
@@ -56,7 +58,7 @@
 		 */
 		protected $names_edit_required = array(
 			'user_id', 'id',
-			'tel_public', 'code_license', 'code_ssn_owner',
+			'tel_public', 'fullname_owner', 'code_license', 'code_ssn_owner',
 		);
 
 		/**
@@ -243,6 +245,9 @@
 			$this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]|is_unique[biz.tel_public]');
 			$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|required|is_natural|exact_length[11]|is_unique[biz.tel_protected_biz]');
 
+			$this->form_validation->set_rules('fullname_owner', '法人姓名', 'trim|required|max_length[15]');
+			$this->form_validation->set_rules('fullname_auth', '经办人姓名', 'trim|max_length[15]');
+
 			$this->form_validation->set_rules('code_license', '统一社会信用代码', 'trim|required|exact_length[18]|is_unique[biz.code_license]');
 			$this->form_validation->set_rules('code_ssn_owner', '法人身份证号', 'trim|required|exact_length[18]|is_unique[biz.code_ssn_owner]');
 			$this->form_validation->set_rules('code_ssn_auth', '经办人身份证号', 'trim|exact_length[18]|is_unique[biz.code_ssn_auth]');
@@ -272,7 +277,9 @@
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
 					'name', 'brief_name', 'tel_public', 'tel_protected_biz',
-					'description', 'bank_name', 'bank_account', 'code_license', 'code_ssn_owner', 'code_ssn_auth',
+					'description', 'bank_name', 'bank_account',
+					'fullname_owner', 'fullname_auth',
+					'code_license', 'code_ssn_owner', 'code_ssn_auth',
 					'url_image_license', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_produce', 'url_image_retail',
 					'url_image_owner_id', 'url_image_product',
 				);
@@ -353,7 +360,7 @@
 
 			return $result;
 		} // end stuff_create
-		
+
 		// 发送短信
 		private function sms_send($mobile, $content)
 		{
@@ -417,6 +424,7 @@
 				$data_need_no_prepare = array(
 					'name', 'brief_name', 'url_name', 'url_logo', 'slogan', 'description', 'notification',
 					'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
+					'fullname_owner', 'fullname_auth',
 					'code_license', 'code_ssn_owner',  'code_ssn_auth',
 					'bank_name', 'bank_account', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
 					'province', 'city', 'county', 'street', 'longitude', 'latitude',
@@ -448,7 +456,7 @@
 				endif;
 			endif;
 		} // end edit
-		
+
 		/**
 		 * 5 编辑单行数据特定字段
 		 *
@@ -520,6 +528,9 @@
 			$this->form_validation->set_rules('tel_protected_fiscal', '财务联系手机号', 'trim|exact_length[11]|is_natural');
 			$this->form_validation->set_rules('tel_protected_order', '订单通知手机号', 'trim|exact_length[11]|is_natural');
 
+			$this->form_validation->set_rules('fullname_owner', '法人姓名', 'trim|required|max_length[15]');
+			$this->form_validation->set_rules('fullname_auth', '经办人姓名', 'trim|max_length[15]');
+
 			$this->form_validation->set_rules('code_license', '统一社会信用代码', 'trim|exact_length[18]|is_unique[biz.code_license]');
 			$this->form_validation->set_rules('code_ssn_owner', '法人身份证号', 'trim|exact_length[18]|is_unique[biz.code_ssn_owner]');
 			$this->form_validation->set_rules('code_ssn_auth', '经办人身份证号', 'trim|exact_length[18]|is_unique[biz.code_ssn_auth]');
@@ -527,7 +538,7 @@
 			$this->form_validation->set_rules('url_image_license', '营业执照正/副本', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_image_owner_id', '法人身份证照片', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_image_auth_id', '经办人身份证', 'trim|max_length[255]');
-			$this->form_validation->set_rules('url_image_auth_doc', '授权书', 'trim|max_length[255]');
+			$this->form_validation->set_rules('url_image_auth_doc', '经办人授权书', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_image_product', '产品', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_image_produce', '工厂/产地', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_image_retail', '门店/柜台', 'trim|max_length[255]');
