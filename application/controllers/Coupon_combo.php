@@ -218,7 +218,7 @@
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
 			$this->form_validation->set_rules('description', '说明', 'trim|max_length[30]');
 			$this->form_validation->set_rules('template_ids', '所含优惠券', 'trim|required');
-			$this->form_validation->set_rules('max_amount', '限量', 'trim');
+			$this->form_validation->set_rules('max_amount', '总限量', 'trim|greater_than_equal_to[0]|less_than_equal_to[999999]');
 			$this->form_validation->set_rules('time_start', '开始领取时间', 'trim|exact_length[10]|callback_time_start');
 			$this->form_validation->set_rules('time_end', '结束领取时间', 'trim|exact_length[10]|callback_time_end');
 			$this->form_validation->set_message('time_start', '开始时间需详细到分，且晚于当前时间1分钟后');
@@ -286,6 +286,7 @@
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
 			$this->form_validation->set_rules('description', '说明', 'trim|max_length[30]');
 			$this->form_validation->set_rules('template_ids', '所含优惠券', 'trim');
+			$this->form_validation->set_rules('max_amount', '总限量', 'trim|greater_than_equal_to[0]|less_than_equal_to[999999]');
 			$this->form_validation->set_rules('time_start', '开始领取时间', 'trim|exact_length[10]|callback_time_start');
 			$this->form_validation->set_rules('time_end', '结束领取时间', 'trim|exact_length[10]|callback_time_end');
 			$this->form_validation->set_message('time_start', '开始时间需详细到分，且晚于当前时间1分钟后');
