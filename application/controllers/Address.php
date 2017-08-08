@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Branch 门店类
+	 * Address 地址类
 	 *
 	 * 以API服务形式返回数据列表、详情、创建、单行编辑、单/多行编辑（删除、恢复）等功能提供了常见功能的示例代码
 	 * CodeIgniter官方网站 https://www.codeigniter.com/user_guide/
@@ -11,20 +11,20 @@
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
 	 * @copyright ICBG <www.bingshankeji.com>
 	 */
-	class Branch extends MY_Controller
+	class Address extends MY_Controller
 	{
 		/**
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'branch_id', 'biz_id', 'name', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_order', 'day_rest', 'time_open', 'time_close', 'url_image_main', 'figure_image_urls', 'nation', 'province', 'city', 'county', 'street', 'region_id', 'region', 'poi_id', 'poi', 'longitude', 'latitude', 'range_deliver', 'status', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'address_id', 'user_id', 'brief', 'fullname', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'zipcode', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'branch_id', 'biz_id', 'name', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_order', 'day_rest', 'time_open', 'time_close', 'url_image_main', 'figure_image_urls', 'nation', 'province', 'city', 'county', 'street', 'region_id', 'region', 'poi_id', 'poi', 'longitude', 'latitude', 'range_deliver', 'status', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'address_id', 'user_id', 'brief', 'fullname', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'zipcode', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -32,14 +32,14 @@
 		 */
 		protected $names_create_required = array(
 			'user_id',
-			'biz_id', 'name', 'province', 'city', 'street',
+			'fullname', 'mobile', 'province', 'city', 'street',
 		);
 
 		/**
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'name', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_order', 'day_rest', 'time_open', 'time_close', 'url_image_main', 'figure_image_urls', 'nation', 'province', 'city', 'county', 'street', 'region_id', 'poi_id', 'longitude', 'latitude', 'range_deliver',
+			'brief', 'fullname', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'zipcode',
 		);
 
 		/**
@@ -47,7 +47,7 @@
 		 */
 		protected $names_edit_required = array(
 			'user_id', 'id',
-			'name', 'province', 'city', 'street',
+			'fullname', 'mobile', 'province', 'city', 'street',
 		);
 
 		/**
@@ -71,9 +71,9 @@
 			parent::__construct();
 
 			// 设置主要数据库信息
-			$this->table_name = 'branch'; // 这里……
-			$this->id_name = 'branch_id'; // 这里……
-			$this->names_to_return[] = 'branch_id'; // 还有这里，OK，这就可以了
+			$this->table_name = 'address'; // 这里……
+			$this->id_name = 'address_id'; // 这里……
+			$this->names_to_return[] = 'address_id'; // 还有这里，OK，这就可以了
 
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
@@ -142,7 +142,7 @@
 				if ( !empty($this->input->post($sorter)) )
 					$condition[$sorter] = $this->input->post($sorter);
 			endforeach;
-			
+
 			// 排序条件
 			$order_by = NULL;
 			//$order_by['name'] = 'value';
@@ -198,13 +198,8 @@
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz',); // 客户端类型
+			$type_allowed = array('client'); // 客户端类型
 			$this->client_check($type_allowed);
-
-			// 管理类客户端操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
 
 			// 检查必要参数是否已传入
 			$required_params = $this->names_create_required;
@@ -221,16 +216,9 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('name', '名称', 'trim|required');
-			$this->form_validation->set_rules('description', '说明', 'trim');
-			$this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|min_length[10]|max_length[13]|is_natural');
-			$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|exact_length[11]|is_natural');
-			$this->form_validation->set_rules('tel_protected_order', '订单通知手机号', 'trim|exact_length[11]|is_natural');
-			$this->form_validation->set_rules('day_rest', '休息日', 'trim');
-			$this->form_validation->set_rules('time_open', '开放时间', 'trim|greater_than_equal_to[0]|less_than_equal_to[22]');
-			$this->form_validation->set_rules('time_close', '结束时间', 'trim|greater_than_equal_to[1]|less_than_equal_to[23]');
-			$this->form_validation->set_rules('url_image_main', '主图', 'trim');
-			$this->form_validation->set_rules('figure_image_urls', '形象图', 'trim');
+			$this->form_validation->set_rules('brief', '简称', 'trim|max_length[10]');
+			$this->form_validation->set_rules('fullname', '姓名', 'trim|required|max_length[15]');
+			$this->form_validation->set_rules('mobile', '手机号', 'trim|required|exact_length[11]|is_natural');
 			$this->form_validation->set_rules('nation', '国别', 'trim');
 			$this->form_validation->set_rules('province', '省', 'trim|required|max_length[10]');
 			$this->form_validation->set_rules('city', '市', 'trim|required|max_length[10]');
@@ -238,9 +226,7 @@
 			$this->form_validation->set_rules('street', '具体地址；小区名、路名、门牌号等', 'trim|required|max_length[50]');
 			$this->form_validation->set_rules('longitude', '经度', 'trim|min_length[7]|max_length[10]|decimal');
 			$this->form_validation->set_rules('latitude', '纬度', 'trim|min_length[7]|max_length[10]|decimal');
-			$this->form_validation->set_rules('region_id', '地区', 'trim');
-			$this->form_validation->set_rules('poi_id', '兴趣点', 'trim');
-			$this->form_validation->set_rules('range_deliver', '配送范围', 'trim|greater_than_equal_to[0]|less_than_equal_to[99]');
+			$this->form_validation->set_rules('zipcode', '邮政编码', 'trim|integer|max_length[6]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -253,12 +239,10 @@
 					'creator_id' => $user_id,
 					//'nation' => empty($this->input->post('nation'))? '中国': $this->input->post('nation'),
 					'nation' => '中国', // 暂时只支持中国
-					'time_open' => empty($this->input->post('time_open'))? '08': $this->input->post('time_open'),
-					'time_close' => empty($this->input->post('time_close'))? '18': $this->input->post('time_close'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'biz_id', 'name', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_order', 'day_rest', 'url_image_main', 'figure_image_urls', 'province', 'city', 'county', 'street', 'region_id', 'poi_id', 'longitude', 'latitude', 'range_deliver',
+					'brief', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'zipcode',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -283,13 +267,8 @@
 		public function edit()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz',); // 客户端类型
+			$type_allowed = array('client'); // 客户端类型
 			$this->client_check($type_allowed);
-
-			// 管理类客户端操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
 
 			// 检查必要参数是否已传入
 			$required_params = $this->names_edit_required;
@@ -305,16 +284,9 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('name', '名称', 'trim|required');
-			$this->form_validation->set_rules('description', '说明', 'trim');
-			$this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|min_length[10]|max_length[13]|is_natural');
-			$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|exact_length[11]|is_natural');
-			$this->form_validation->set_rules('tel_protected_order', '订单通知手机号', 'trim|exact_length[11]|is_natural');
-			$this->form_validation->set_rules('day_rest', '休息日', 'trim');
-			$this->form_validation->set_rules('time_open', '开放时间', 'trim|greater_than_equal_to[0]|less_than_equal_to[22]');
-			$this->form_validation->set_rules('time_close', '结束时间', 'trim|greater_than_equal_to[1]|less_than_equal_to[23]');
-			$this->form_validation->set_rules('url_image_main', '主图', 'trim');
-			$this->form_validation->set_rules('figure_image_urls', '形象图', 'trim');
+			$this->form_validation->set_rules('brief', '简称', 'trim|max_length[10]');
+			$this->form_validation->set_rules('fullname', '姓名', 'trim|required|max_length[15]');
+			$this->form_validation->set_rules('mobile', '手机号', 'trim|required|exact_length[11]|is_natural');
 			$this->form_validation->set_rules('nation', '国别', 'trim');
 			$this->form_validation->set_rules('province', '省', 'trim|required|max_length[10]');
 			$this->form_validation->set_rules('city', '市', 'trim|required|max_length[10]');
@@ -322,9 +294,7 @@
 			$this->form_validation->set_rules('street', '具体地址；小区名、路名、门牌号等', 'trim|required|max_length[50]');
 			$this->form_validation->set_rules('longitude', '经度', 'trim|min_length[7]|max_length[10]|decimal');
 			$this->form_validation->set_rules('latitude', '纬度', 'trim|min_length[7]|max_length[10]|decimal');
-			$this->form_validation->set_rules('region_id', '地区', 'trim');
-			$this->form_validation->set_rules('poi_id', '兴趣点', 'trim');
-			$this->form_validation->set_rules('range_deliver', '配送范围', 'trim|greater_than_equal_to[0]|less_than_equal_to[99]');
+			$this->form_validation->set_rules('zipcode', '邮政编码', 'trim|integer|max_length[6]');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
 				// ...
@@ -341,12 +311,10 @@
 					'operator_id' => $user_id,
 					//'nation' => empty($this->input->post('nation'))? '中国': $this->input->post('nation'),
 					'nation' => '中国', // 暂时只支持中国
-					'time_open' => empty($this->input->post('time_open'))? '08': $this->input->post('time_open'),
-					'time_close' => empty($this->input->post('time_close'))? '18': $this->input->post('time_close'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_order', 'day_rest', 'url_image_main', 'figure_image_urls', 'province', 'city', 'county', 'street', 'region_id', 'poi_id', 'longitude', 'latitude', 'range_deliver',
+					'brief', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'zipcode',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -378,13 +346,8 @@
 		public function edit_bulk()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz',); // 客户端类型
+			$type_allowed = array('client'); // 客户端类型
 			$this->client_check($type_allowed);
-
-			// 管理类客户端操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
 
 			// 检查必要参数是否已传入
 			$required_params = $this->names_edit_bulk_required;
@@ -452,7 +415,7 @@
 			endif;
 		} // end edit_bulk
 
-	} // end class Branch
+	} // end class Address
 
-/* End of file Branch.php */
-/* Location: ./application/controllers/Branch.php */
+/* End of file Address.php */
+/* Location: ./application/controllers/Address.php */

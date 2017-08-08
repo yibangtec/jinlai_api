@@ -230,9 +230,9 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('nickname', '昵称', 'trim');
-			$this->form_validation->set_rules('lastname', '姓氏', 'trim');
-			$this->form_validation->set_rules('firstname', '名', 'trim');
+			$this->form_validation->set_rules('nickname', '昵称', 'trim|max_length[12]');
+			$this->form_validation->set_rules('lastname', '姓氏', 'trim|max_length[9]');
+			$this->form_validation->set_rules('firstname', '名', 'trim|max_length[6]');
 			$this->form_validation->set_rules('code_ssn', '身份证号', 'trim|exact_length[18]');
 			$this->form_validation->set_rules('url_image_id', '身份证照片', 'trim');
 			$this->form_validation->set_rules('gender', '性别', 'trim');
@@ -240,7 +240,7 @@
 			$this->form_validation->set_rules('avatar', '头像', 'trim');
 			$this->form_validation->set_rules('email', '电子邮件地址', 'trim');
 			$this->form_validation->set_rules('address_id', '默认地址', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim');
+			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|min_length[3]');
 			$this->form_validation->set_rules('bank_account', '开户行账号', 'trim');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
@@ -337,9 +337,9 @@
 			// 动态设置待验证字段名及字段值
 			$data_to_validate["{$name}"] = $value;
 			$this->form_validation->set_data($data_to_validate);
-			$this->form_validation->set_rules('nickname', '昵称', 'trim');
-			$this->form_validation->set_rules('lastname', '姓氏', 'trim');
-			$this->form_validation->set_rules('firstname', '名', 'trim');
+			$this->form_validation->set_rules('nickname', '昵称', 'trim|max_length[12]');
+			$this->form_validation->set_rules('lastname', '姓氏', 'trim|max_length[9]');
+			$this->form_validation->set_rules('firstname', '名', 'trim|max_length[6]');
 			$this->form_validation->set_rules('code_ssn', '身份证号', 'trim|exact_length[18]');
 			$this->form_validation->set_rules('url_image_id', '身份证照片', 'trim');
 			$this->form_validation->set_rules('gender', '性别', 'trim');

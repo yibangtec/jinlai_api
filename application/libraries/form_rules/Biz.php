@@ -14,7 +14,7 @@
 	$this->form_validation->set_rules('fullname_owner', '法人姓名', 'trim|required|max_length[15]');
 	$this->form_validation->set_rules('fullname_auth', '经办人姓名', 'trim|max_length[15]');
 	
-	$this->form_validation->set_rules('code_license', '营业执照号', 'trim|required|min_length[15]|max_length[18]');
+	$this->form_validation->set_rules('code_license', '工商注册号', 'trim|required|min_length[15]|max_length[18]');
 	$this->form_validation->set_rules('code_ssn_owner', '法人身份证号', 'trim|required|exact_length[18]');
 	$this->form_validation->set_rules('code_ssn_auth', '经办人身份证号', 'trim|exact_length[18]');
 

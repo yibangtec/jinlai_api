@@ -124,7 +124,7 @@
 		 * 1 列表/基本搜索
 		 */
 		public function index()
-		{	
+		{
 			// 检查必要参数是否已传入
 			$required_params = array();
 			foreach ($required_params as $param):
@@ -141,8 +141,17 @@
 			//$condition['name'] = 'value';
 			// （可选）遍历筛选条件
 			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post($sorter)) )
-					$condition[$sorter] = $this->input->post($sorter);
+				if ( !empty($this->input->post_get($sorter)) ):
+					// 对时间范围做限制
+					if ($sorter === 'start_time'):
+						$condition['time_create >='] = $this->input->post_get($sorter);
+					elseif ($sorter === 'end_time'):
+						$condition['time_create <='] = $this->input->post_get($sorter);
+					else:
+						$condition[$sorter] = $this->input->post_get($sorter);
+					endif;
+
+				endif;
 			endforeach;
 
 			// 排序条件
@@ -263,15 +272,18 @@
 				$data_to_create = array(
 					'creator_id' => $user_id,
 					'tag_price' => empty($this->input->post('tag_price'))? '0.00': $this->input->post('tag_price'),
+					'unit_name' => empty($this->input->post('unit_name'))? '份': $this->input->post('unit_name'),
 					'quantity_max' => empty($this->input->post('quantity_max'))? '0': $this->input->post('quantity_max'),
 					'quantity_min' => empty($this->input->post('quantity_min'))? '1': $this->input->post('quantity_min'),
 					'discount_credit' => empty($this->input->post('discount_credit'))? '0.00': $this->input->post('discount_credit'),
 					'commission_rate' => empty($this->input->post('commission_rate'))? '0.00': $this->input->post('commission_rate'),
+					'time_to_publish' => empty($this->input->post('time_to_publish'))? NULL: $this->input->post('time_to_publish'),
+					'time_to_suspend' => empty($this->input->post('time_to_suspend'))? NULL: $this->input->post('time_to_suspend'),
 					'time_publish' => empty($this->input->post('time_to_publish'))? time(): NULL, // 若未预订上架时间，则直接上架
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'coupon_allowed', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id',
+					'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'price', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'coupon_allowed', 'promotion_id', 'freight_template_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -356,15 +368,18 @@
 				$data_to_edit = array(
 					'operator_id' => $user_id,
 					'tag_price' => empty($this->input->post('tag_price'))? '0.00': $this->input->post('tag_price'),
+					'unit_name' => empty($this->input->post('unit_name'))? '份': $this->input->post('unit_name'),
 					'quantity_max' => empty($this->input->post('quantity_max'))? '0': $this->input->post('quantity_max'),
 					'quantity_min' => empty($this->input->post('quantity_min'))? '1': $this->input->post('quantity_min'),
 					'discount_credit' => empty($this->input->post('discount_credit'))? '0.00': $this->input->post('discount_credit'),
 					'commission_rate' => empty($this->input->post('commission_rate'))? '0.00': $this->input->post('commission_rate'),
+					'time_to_publish' => empty($this->input->post('time_to_publish'))? NULL: $this->input->post('time_to_publish'),
+					'time_to_suspend' => empty($this->input->post('time_to_suspend'))? NULL: $this->input->post('time_to_suspend'),
 					'time_publish' => empty($this->input->post('time_to_publish'))? time(): NULL, // 若未预订上架时间，则直接上架
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'coupon_allowed', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id',
+					'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'price', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'coupon_allowed', 'promotion_id', 'freight_template_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);

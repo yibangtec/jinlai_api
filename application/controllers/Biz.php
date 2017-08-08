@@ -248,7 +248,7 @@
 			$this->form_validation->set_rules('fullname_owner', '法人姓名', 'trim|required|max_length[15]');
 			$this->form_validation->set_rules('fullname_auth', '经办人姓名', 'trim|max_length[15]');
 
-			$this->form_validation->set_rules('code_license', '营业执照号', 'trim|required|min_length[15]|max_length[18]|is_unique[biz.code_license]');
+			$this->form_validation->set_rules('code_license', '工商注册号', 'trim|required|min_length[15]|max_length[18]|is_unique[biz.code_license]');
 			$this->form_validation->set_rules('code_ssn_owner', '法人身份证号', 'trim|required|exact_length[18]|is_unique[biz.code_ssn_owner]');
 			$this->form_validation->set_rules('code_ssn_auth', '经办人身份证号', 'trim|exact_length[18]|is_unique[biz.code_ssn_auth]');
 
@@ -418,7 +418,8 @@
 				$data_to_edit = array(
 					'operator_id' => $user_id,
 					'url_name' => strtolower( $this->input->post('url_name') ),
-					'nation' => empty($this->input->post('nation'))? '中国': $this->input->post('nation'),
+					//'nation' => empty($this->input->post('nation'))? '中国': $this->input->post('nation'),
+					'nation' => '中国', // 暂时只支持中国
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
@@ -531,7 +532,7 @@
 			$this->form_validation->set_rules('fullname_owner', '法人姓名', 'trim|max_length[15]');
 			$this->form_validation->set_rules('fullname_auth', '经办人姓名', 'trim|max_length[15]');
 
-			$this->form_validation->set_rules('code_license', '营业执照号', 'trim|required|min_length[15]|max_length[18]|is_unique[biz.code_license]');
+			$this->form_validation->set_rules('code_license', '工商注册号', 'trim|min_length[15]|max_length[18]|is_unique[biz.code_license]');
 			$this->form_validation->set_rules('code_ssn_owner', '法人身份证号', 'trim|exact_length[18]|is_unique[biz.code_ssn_owner]');
 			$this->form_validation->set_rules('code_ssn_auth', '经办人身份证号', 'trim|exact_length[18]|is_unique[biz.code_ssn_auth]');
 
