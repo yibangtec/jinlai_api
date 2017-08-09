@@ -137,9 +137,10 @@
 
 			// 筛选条件
 			$condition = NULL;
+
 			// 客户端仅获取状态为‘正常’的商家
-			if ($this->app_type === 'client')
-				$condition['status'] = '正常';
+			//if ($this->app_type === 'client') $condition['status'] = '正常';
+
 			// （可选）遍历筛选条件
 			foreach ($this->names_to_sort as $sorter):
 				if ( !empty($this->input->post($sorter)) ):
@@ -180,11 +181,12 @@
 				$this->result['content']['error']['message'] = '必要的请求参数未传入';
 				exit();
 			endif;
+			
+			$this->db->select( implode(',', $this->names_to_return) );
 
-			// 限制可返回的字段和商家状态
+			// 客户端仅获取状态为‘正常’的商家
 			if ($this->app_type === 'client'):
-				$this->db->select( implode(',', $this->names_to_return) );
-				$this->db->where('status', '正常');
+				//$this->db->where('status', '正常');
 			endif;
 
 			// 获取特定项；默认可获取已删除项
