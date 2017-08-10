@@ -83,11 +83,13 @@
 		/**
 		 * 0 计数
 		 */
-		public function count()
+		public function count($condition = NULL)
 		{
 			// 筛选条件
-			$condition = NULL;
-			//$condition['name'] = 'value';
+			if ( empty($condition) ):
+				$condition = NULL;
+				//$condition['name'] = 'value';
+			endif;
 
 			// （可选）遍历筛选条件
 			foreach ($this->names_to_sort as $sorter):
@@ -237,6 +239,7 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
+					'user_id' => $user_id,
 					//'nation' => empty($this->input->post('nation'))? '中国': $this->input->post('nation'),
 					'nation' => '中国', // 暂时只支持中国
 				);
@@ -252,6 +255,27 @@
 					$this->result['status'] = 200;
 					$this->result['content']['id'] = $result;
 					$this->result['content']['message'] = '创建成功';
+					
+					// 获取已创建的地址ID
+					$id = $result;
+
+					// 获取当前用户的地址数量，若仅有1个未删除地址，则更新当前地址为该用户的默认地址
+					$condition = array(
+						'user_id' => $user_id,
+						'time_delete' => 'NULL',
+					);
+					$this->count($condition);
+					if ( $this->result['content']['count'] === 1):
+						$this->basic_model->table_name = 'user';
+						$this->basic_model->id_name = 'user_id';
+
+						$data_to_edit = array('address_id' => $id);
+						$update_result = $this->basic_model->edit($user_id, $data_to_edit);
+						if ( $update_result !== FALSE ):
+							$this->result['content']['address_id'] = $id; // 通知前端更新本地默认地址
+							$this->result['content']['message'] .= '，已设置为默认地址';
+						endif;
+					endif;
 
 				else:
 					$this->result['status'] = 424;
@@ -309,6 +333,7 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
+					'user_id' => $user_id,
 					//'nation' => empty($this->input->post('nation'))? '中国': $this->input->post('nation'),
 					'nation' => '中国', // 暂时只支持中国
 				);
@@ -329,6 +354,24 @@
 				if ($result !== FALSE):
 					$this->result['status'] = 200;
 					$this->result['content']['message'] = '编辑成功';
+
+					// 获取当前用户的地址数量，若仅有1个未删除地址，则更新当前地址为该用户的默认地址
+					$condition = array(
+						'user_id' => $user_id,
+						'time_delete' => 'NULL',
+					);
+					$this->count($condition);
+					if ( $this->result['content']['count'] === 1):
+						$this->basic_model->table_name = 'user';
+						$this->basic_model->id_name = 'user_id';
+
+						$data_to_edit = array('address_id' => $id);
+						$update_result = $this->basic_model->edit($user_id, $data_to_edit);
+						if ( $update_result !== FALSE ):
+							$this->result['content']['address_id'] = $id; // 通知前端更新本地默认地址
+							$this->result['content']['message'] .= '，已设置为默认地址';
+						endif;
+					endif;
 
 				else:
 					$this->result['status'] = 434;
