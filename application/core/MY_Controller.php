@@ -299,4 +299,33 @@
 				return FALSE;
 			endif;
 		}
+
+		/**
+		 * 高德地图 将地址文字转换为经纬度
+		 *
+		 * http://lbs.amap.com/api/webservice/guide/api/georegeo
+		 */
+		public function amap_geocode($address, $city = '青岛')
+		{
+			$api_key = AMAP_KEY_SERVER; // 高德key
+			$api_url = 'http://restapi.amap.com/v3/geocode/geo?key='. $api_key. '&address='.urlencode($address). '&city='.urlencode($city);
+			$params = NULL;
+
+			// 获取经纬度信息
+			$this->load->library('curl');
+			$result = $this->curl->go($api_url, $params, 'array', 'get');
+			if ( $result['status'] === '1'):
+				$location_set = $result['geocodes'][0]['location'];
+
+				// 拆分经纬度信息文本为数组
+				$location_set = explode(',', $location_set);
+				list($location['longitude'], $location['latitude']) = $location_set;
+
+				return $location;
+
+			else:
+				return FALSE;
+
+			endif;
+		}
 	}

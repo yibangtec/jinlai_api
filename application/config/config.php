@@ -26,6 +26,9 @@ define('SESSION_TABLE', NULL); // 用于session存储的数据库表名
 define('SESSION_PERIOD', 2592000); // session有效期秒数，此处设为30天，即60秒*60分*24小时*30天
 define('ENCRYPTION_KEY', ''); // 秘钥用于加密相关功能，可为空
 
+/* 第三方功能相关常量 */
+define('AMAP_KEY_SERVER', '6bfd6c2aed6dedf602dc22b2fe3cee4b'); // 高德地图服务端API key
+
 /* 以下是为下一个版本将要增加的功能预留的参数 */
 // 微信公众平台参数
 define('WECHAT_APP_ID', '');

@@ -82,6 +82,7 @@
 			else:
 				// 创建用户
 				$data_to_create['mobile'] = $this->input->post('mobile');
+				$data_to_create['nickname'] = 'user'. substr(time(), 2, 8); // 设置默认昵称
 				$data_to_create = array_merge($data_to_create, $login_info);
 				$result = $this->user_create($data_to_create);
 				if ( !empty($result) ):
@@ -399,6 +400,7 @@
 					$data_to_create = array(
 						'mobile' => $this->input->post('mobile'),
 						'password' => sha1($this->input->post('password')),
+						'nickname' => 'user'. substr(time(), 2, 8), // 设置默认昵称
 					);
 					$data_to_create = array_merge($data_to_create, $login_info);
 

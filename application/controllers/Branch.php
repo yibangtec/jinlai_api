@@ -256,9 +256,24 @@
 					'time_open' => empty($this->input->post('time_open'))? '08': $this->input->post('time_open'),
 					'time_close' => empty($this->input->post('time_close'))? '18': $this->input->post('time_close'),
 				);
+				
+				// 若已传入经纬度，直接进行设置；若未设置经纬度，则通过地址（若有）借助高德地图相关API转换获取
+				if ( !empty($this->input->post('longitude')) && !empty($this->input->post('latitude')) ):
+					$data_to_edit['latitude'] = $this->input->post('latitude');
+					$data_to_edit['longitude'] = $this->input->post('longitude');
+				elseif ( !empty($this->input->post('province')) && !empty($this->input->post('city')) && !empty($this->input->post('street')) ):
+					// 拼合待转换地址（省、市、区/县（可为空）、具体地址）
+					$address = $this->input->post('province'). $this->input->post('city'). $this->input->post('county'). $this->input->post('street');
+					$location = $this->amap_geocode($address, $this->input->post('city'));
+					if ( $location !== FALSE ):
+						$data_to_edit['latitude'] = $location['latitude'];
+						$data_to_edit['longitude'] = $location['longitude'];
+					endif;
+				endif;
+				
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'biz_id', 'name', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_order', 'day_rest', 'url_image_main', 'figure_image_urls', 'province', 'city', 'county', 'street', 'region_id', 'poi_id', 'longitude', 'latitude', 'range_deliver',
+					'biz_id', 'name', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_order', 'day_rest', 'url_image_main', 'figure_image_urls', 'province', 'city', 'county', 'street', 'region_id', 'poi_id', 'range_deliver',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -344,9 +359,24 @@
 					'time_open' => empty($this->input->post('time_open'))? '08': $this->input->post('time_open'),
 					'time_close' => empty($this->input->post('time_close'))? '18': $this->input->post('time_close'),
 				);
+				
+				// 若已传入经纬度，直接进行设置；若未设置经纬度，则通过地址（若有）借助高德地图相关API转换获取
+				if ( !empty($this->input->post('longitude')) && !empty($this->input->post('latitude')) ):
+					$data_to_edit['latitude'] = $this->input->post('latitude');
+					$data_to_edit['longitude'] = $this->input->post('longitude');
+				elseif ( !empty($this->input->post('province')) && !empty($this->input->post('city')) && !empty($this->input->post('street')) ):
+					// 拼合待转换地址（省、市、区/县（可为空）、具体地址）
+					$address = $this->input->post('province'). $this->input->post('city'). $this->input->post('county'). $this->input->post('street');
+					$location = $this->amap_geocode($address, $this->input->post('city'));
+					if ( $location !== FALSE ):
+						$data_to_edit['latitude'] = $location['latitude'];
+						$data_to_edit['longitude'] = $location['longitude'];
+					endif;
+				endif;
+				
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_order', 'day_rest', 'url_image_main', 'figure_image_urls', 'province', 'city', 'county', 'street', 'region_id', 'poi_id', 'longitude', 'latitude', 'range_deliver',
+					'name', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_order', 'day_rest', 'url_image_main', 'figure_image_urls', 'province', 'city', 'county', 'street', 'region_id', 'poi_id', 'range_deliver',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);

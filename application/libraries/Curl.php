@@ -19,7 +19,7 @@
 		* @param string $return 需返回的数据格式；默认为数组格式，可传入'object'以设置为以对象格式返回
 		* @return object|array 返回的CURL请求结果
 		*/
-		public function go($url, $method = 'get', $params = NULL, $return = 'array')
+		public function go($url, $params = NULL, $return = 'array', $method = 'post')
 		{
 		    $curl = curl_init();
 		    curl_setopt($curl, CURLOPT_URL, $url);
@@ -30,12 +30,16 @@
 			
 			// 需要通过POST方式发送的数据
 			if ($method === 'post'):
+				$params['app_type'] = 'biz'; // 应用类型默认为biz
 				curl_setopt($curl, CURLOPT_POST, count($params));
 				curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
 			endif;
 			
 		    // 运行cURL，请求API
 			$result = curl_exec($curl);
+			
+			// 输出CURL请求头以便调试
+			//var_dump(curl_getinfo($curl));
 
 			// 关闭URL请求
 		    curl_close($curl);

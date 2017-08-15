@@ -423,14 +423,29 @@
 					//'nation' => empty($this->input->post('nation'))? '中国': $this->input->post('nation'),
 					'nation' => '中国', // 暂时只支持中国
 				);
+
+				// 若已传入经纬度，直接进行设置；若未设置经纬度，则通过地址（若有）借助高德地图相关API转换获取
+				if ( !empty($this->input->post('longitude')) && !empty($this->input->post('latitude')) ):
+					$data_to_edit['latitude'] = $this->input->post('latitude');
+					$data_to_edit['longitude'] = $this->input->post('longitude');
+				elseif ( !empty($this->input->post('province')) && !empty($this->input->post('city')) && !empty($this->input->post('street')) ):
+					// 拼合待转换地址（省、市、区/县（可为空）、具体地址）
+					$address = $this->input->post('province'). $this->input->post('city'). $this->input->post('county'). $this->input->post('street');
+					$location = $this->amap_geocode($address, $this->input->post('city'));
+					if ( $location !== FALSE ):
+						$data_to_edit['latitude'] = $location['latitude'];
+						$data_to_edit['longitude'] = $location['longitude'];
+					endif;
+				endif;
+
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'brief_name', 'url_name', 'url_logo', 'slogan', 'description', 'notification',
+					'name', 'brief_name', 'url_logo', 'slogan', 'description', 'notification',
 					'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
 					'fullname_owner', 'fullname_auth',
 					'code_license', 'code_ssn_owner',  'code_ssn_auth',
 					'bank_name', 'bank_account', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
-					'province', 'city', 'county', 'street', 'longitude', 'latitude',
+					'province', 'city', 'county', 'street',
 					'url_web', 'url_weibo', 'url_wechat',
 				);
 				foreach ($data_need_no_prepare as $name)
