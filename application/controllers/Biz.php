@@ -259,6 +259,7 @@
 			$this->form_validation->set_rules('url_image_auth_id', '经办人身份证', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_image_auth_doc', '经办人授权书', 'trim|max_length[255]');
 
+			$this->form_validation->set_rules('tel_protected_fiscal', '财务联系手机号', 'trim|exact_length[11]|is_natural');
 			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|min_length[3]|max_length[20]');
 			$this->form_validation->set_rules('bank_account', '开户行账号', 'trim|max_length[30]|is_unique[biz.bank_account]');
 
@@ -282,8 +283,8 @@
 					'description', 'bank_name', 'bank_account',
 					'fullname_owner', 'fullname_auth',
 					'code_license', 'code_ssn_owner', 'code_ssn_auth',
-					'url_image_license', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_produce', 'url_image_retail',
-					'url_image_owner_id', 'url_image_product',
+					'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc',
+					'url_image_produce', 'url_image_retail', 'url_image_product',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);

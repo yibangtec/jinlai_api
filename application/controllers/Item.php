@@ -223,7 +223,7 @@
 			$required_params = $this->names_create_required;
 			foreach ($required_params as $param):
 				${$param} = $this->input->post($param);
-				if ( empty( ${$param} ) ):
+				if ( !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();
@@ -271,6 +271,9 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
+
+					'figure_image_urls' => trim($this->input->post('figure_image_urls'), ','),
+					'figure_video_urls' => trim($this->input->post('figure_video_urls'), ','),
 					'tag_price' => empty($this->input->post('tag_price'))? '0.00': $this->input->post('tag_price'),
 					'unit_name' => empty($this->input->post('unit_name'))? '份': $this->input->post('unit_name'),
 					'quantity_max' => empty($this->input->post('quantity_max'))? '0': $this->input->post('quantity_max'),
@@ -283,7 +286,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'price', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'coupon_allowed', 'promotion_id', 'freight_template_id',
+					'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'url_image_main', 'name', 'slogan', 'description', 'price', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'coupon_allowed', 'promotion_id', 'freight_template_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -323,7 +326,7 @@
 			$required_params = $this->names_edit_required;
 			foreach ($required_params as $param):
 				${$param} = $this->input->post($param);
-				if ( empty( ${$param} ) ):
+				if ( !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();
@@ -367,6 +370,9 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
+					
+					'figure_image_urls' => trim($this->input->post('figure_image_urls'), ','),
+					'figure_video_urls' => trim($this->input->post('figure_video_urls'), ','),
 					'tag_price' => empty($this->input->post('tag_price'))? '0.00': $this->input->post('tag_price'),
 					'unit_name' => empty($this->input->post('unit_name'))? '份': $this->input->post('unit_name'),
 					'quantity_max' => empty($this->input->post('quantity_max'))? '0': $this->input->post('quantity_max'),
@@ -379,7 +385,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'price', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'coupon_allowed', 'promotion_id', 'freight_template_id',
+					'category_biz_id', 'code_biz', 'url_image_main', 'name', 'slogan', 'description', 'price', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'coupon_allowed', 'promotion_id', 'freight_template_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);

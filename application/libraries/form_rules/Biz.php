@@ -19,7 +19,7 @@
 	$this->form_validation->set_rules('code_ssn_auth', '经办人身份证号', 'trim|exact_length[18]');
 
 	$this->form_validation->set_rules('url_image_license', '营业执照正/副本', 'trim|max_length[255]');
-	$this->form_validation->set_rules('url_image_owner_id', '法人身份证照片', 'trim|max_length[255]');
+	$this->form_validation->set_rules('url_image_owner_id', '法人身份证', 'trim|max_length[255]');
 	$this->form_validation->set_rules('url_image_auth_id', '经办人身份证', 'trim|max_length[255]');
 	$this->form_validation->set_rules('url_image_auth_doc', '经办人授权书', 'trim|max_length[255]');
 	$this->form_validation->set_rules('url_image_product', '产品', 'trim|max_length[255]');
