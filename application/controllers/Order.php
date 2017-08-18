@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Order 商品订单类
+	 * Order 订单类
 	 *
 	 * 以API服务形式返回数据列表、详情、创建、单行编辑、单/多行编辑（删除、恢复）等功能提供了常见功能的示例代码
 	 * CodeIgniter官方网站 https://www.codeigniter.com/user_guide/
@@ -17,30 +17,30 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'order_id', 'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_credit', 'freight', 'total', 'discount_teller', 'teller_id', 'total_payed', 'total_refund', 'addressee_fullname', 'addressee_mobile', 'addressee_province', 'addressee_city', 'addressee_county', 'addressee_address', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission_rate', 'commission', 'promoter_id',
-			'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
+			'order_id', 'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_credit', 'freight', 'discount_reprice', 'repricer_id', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'order_id', 'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_credit', 'freight', 'total', 'discount_teller', 'teller_id', 'total_payed', 'total_refund', 'addressee_fullname', 'addressee_mobile', 'addressee_province', 'addressee_city', 'addressee_county', 'addressee_address', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission_rate', 'commission', 'promoter_id',
-			'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
+			'order_id', 'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_credit', 'freight', 'discount_reprice', 'repricer_id', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
 		);
 
 		/**
-		 * TODO 创建时必要的字段名
+		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id', 'items',
+			'user_id',
+			'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_credit', 'freight', 'total', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'note_user', 'commission', 'promoter_id',
 		);
 
 		/**
-		 * TODO 可被编辑的字段名
+		 * 完整编辑单行时必要的字段名
 		 */
-		protected $names_edit_allowed = array(
-			'coupon_id', 'discount_teller', 'total_refund', 'note_stuff',
+		protected $names_edit_required = array(
+			'user_id', 'id',
+			'order_id', 'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_credit', 'freight', 'discount_reprice', 'repricer_id', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
 		);
 
 		/**
@@ -58,6 +58,9 @@
 			'user_id', 'ids',
 			'operation', 'password',
 		);
+		
+		// 订单信息（订单创建）
+		private $order_data = array();
 
 		public function __construct()
 		{
@@ -71,6 +74,12 @@
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
+
+			// （可选）某些用于此类的自定义函数
+		    function function_name($parameter)
+			{
+				//...
+		    }
 		}
 
 		/**
@@ -120,7 +129,7 @@
 			$required_params = array();
 			foreach ($required_params as $param):
 				${$param} = $this->input->post($param);
-				if ( empty( ${$param} ) ):
+				if ( !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();
@@ -186,7 +195,7 @@
 		} // end detail
 
 		/**
-		 * 3 创建
+		 * 3 TODO 创建
 		 */
 		public function create()
 		{
@@ -194,16 +203,11 @@
 			$type_allowed = array('client'); // 客户端类型
 			$this->client_check($type_allowed);
 
-			// 管理类客户端操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
-
 			// 检查必要参数是否已传入
 			$required_params = $this->names_create_required;
 			foreach ($required_params as $param):
 				${$param} = $this->input->post($param);
-				if ( empty( ${$param} ) ):
+				if ( !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();
@@ -214,35 +218,20 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('biz_id', '商户ID', 'trim');
-			$this->form_validation->set_rules('user_id', '用户ID', 'trim');
+			$this->form_validation->set_rules('biz_id', '商户ID', 'trim|required');
+			$this->form_validation->set_rules('user_id', '用户ID', 'trim|required');
 			$this->form_validation->set_rules('user_ip', '用户下单IP地址', 'trim');
-			$this->form_validation->set_rules('subtotal', '小计（元）', 'trim');
 			$this->form_validation->set_rules('promotion_id', '营销活动ID', 'trim');
-			$this->form_validation->set_rules('discount_promotion', '优惠活动折抵金额（元）', 'trim');
-			$this->form_validation->set_rules('coupon_id', '优惠券ID', 'trim');
-			$this->form_validation->set_rules('discount_coupon', '优惠券折抵金额（元）', 'trim');
-			$this->form_validation->set_rules('credit_id', '积分流水ID', 'trim');
-			$this->form_validation->set_rules('discount_credit', '积分折抵金额（元）', 'trim');
-			$this->form_validation->set_rules('freight', '运费（元）', 'trim');
-			$this->form_validation->set_rules('total', '应支付金额（元）', 'trim');
-			$this->form_validation->set_rules('discount_teller', '改价折抵金额（元）', 'trim');
-			$this->form_validation->set_rules('teller_id', '改价操作者ID', 'trim');
-			$this->form_validation->set_rules('total_payed', '实际支付金额（元）', 'trim');
-			$this->form_validation->set_rules('total_refund', '实际退款金额（元）', 'trim');
-			$this->form_validation->set_rules('addressee_fullname', '收件人全名', 'trim');
-			$this->form_validation->set_rules('addressee_mobile', '收件人手机号', 'trim');
-			$this->form_validation->set_rules('addressee_province', '收件人省份', 'trim');
-			$this->form_validation->set_rules('addressee_city', '收件人城市', 'trim');
-			$this->form_validation->set_rules('addressee_county', '收件人区/县', 'trim');
-			$this->form_validation->set_rules('addressee_address', '收件人详细地址', 'trim');
-			$this->form_validation->set_rules('payment_type', '付款方式', 'trim');
-			$this->form_validation->set_rules('payment_account', '付款账号', 'trim');
-			$this->form_validation->set_rules('payment_id', '付款流水号', 'trim');
-			$this->form_validation->set_rules('note_user', '用户留言', 'trim');
-			$this->form_validation->set_rules('note_stuff', '员工留言', 'trim');
-			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim');
-			$this->form_validation->set_rules('commission', '佣金（元）', 'trim');
+			$this->form_validation->set_rules('fullname', '姓名', 'trim|required|min_length[2]|max_length[15]');
+			$this->form_validation->set_rules('code_ssn', '身份证号', 'trim|exact_length[18]');
+			$this->form_validation->set_rules('mobile', '手机号', 'trim|required|exact_length[11]|is_natural');
+			$this->form_validation->set_rules('province', '省', 'trim|required|max_length[10]');
+			$this->form_validation->set_rules('city', '市', 'trim|required|max_length[10]');
+			$this->form_validation->set_rules('county', '区/县', 'trim|max_length[10]');
+			$this->form_validation->set_rules('street', '具体地址；小区名、路名、门牌号等', 'trim|required|max_length[50]');
+			$this->form_validation->set_rules('longitude', '经度', 'trim|min_length[7]|max_length[10]|decimal');
+			$this->form_validation->set_rules('latitude', '纬度', 'trim|min_length[7]|max_length[10]|decimal');
+			$this->form_validation->set_rules('note_user', '用户留言', 'trim|max_length[255]');
 			$this->form_validation->set_rules('promoter_id', '推广者ID', 'trim');
 
 			// 若表单提交不成功
@@ -251,14 +240,23 @@
 				$this->result['content']['error']['message'] = validation_errors();
 
 			else:
+				// 根据传入的参数生成订单数据
+				if ( !empty($this->input->post('cart_string')) ):
+					$this->generate_cart_order( $this->input->post('cart_string') );
+				elseif( !empty($this->input->post('item_id')) && !empty($this->input->post('count')) ):
+					$this->generate_quick_order( $this->input->post('item_id'), $this->input->post('sku_id'), $this->input->post('count') );
+				endif;
+
+				// TODO
+
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
-					'creator_id' => $user_id,
-					//'name' => $this->input->post('name')),
+					'time_create' => time(),
+					//'name' => $this->input->post('name'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'biz_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_credit', 'freight', 'total', 'discount_teller', 'teller_id', 'total_payed', 'total_refund', 'addressee_fullname', 'addressee_mobile', 'addressee_province', 'addressee_city', 'addressee_county', 'addressee_address', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission_rate', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'invoice_status',
+					'biz_id', 'user_id', 'user_ip', 'promotion_id', 'fullname', 'code_ssn', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'note_user', 'promoter_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -276,6 +274,144 @@
 				endif;
 			endif;
 		} // end create
+
+		/**
+		 * TODO 从商品详情页生成订单
+		 *
+		 * @params varchar/int $item_id 商品ID；商家ID需要从商品资料中获取
+		 * @params varchar/int $sku_id 规格ID
+		 * @params int $count 份数；默认为1，但有每单最低限量的情况下允许传入count
+		 */
+		private function generate_quick_order($item_id, $sku_id = NULL, $count = 1)
+		{
+			// 获取商品信息
+			$this->basic_model->table_name = 'item';
+			$this->basic_model->id_name = 'item_id';
+			$item = $this->basic_model->select_by_id($item_id);
+			
+			// 获取规格信息
+			if ( !empty($sku_id) ):
+				$this->basic_model->table_name = 'sku';
+				$this->basic_model->id_name = 'sku_id';
+				$sku = $this->basic_model->select_by_id($sku_id);
+			endif;
+			
+			// 重置数据库参数
+			$this->basic_model->table_name = $this->table_name;
+			$this->basic_model->id_name = $this->id_name;
+
+			// 生成订单信息
+			$this->order_data = array(
+				'biz_id' => $item['biz_id'],
+				'item_id' => $item_id,
+				'sku_id' => $sku_id,
+			);
+
+			// 创建订单并获取订单ID
+
+			// 存储订单商品信息
+		}
+
+		/**
+		 * TODO 从购物车生成订单
+		 */
+		private function generate_cart_order($cart_string)
+		{
+
+		}
+
+		/**
+		 * 4 编辑单行数据
+		 */
+		public function edit()
+		{
+			// 操作可能需要检查客户端及设备信息
+			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
+			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
+			$min_version = '0.0.1'; // 最低版本要求
+			$this->client_check($type_allowed, $platform_allowed, $min_version);
+
+			// 管理类客户端操作可能需要检查操作权限
+			//$role_allowed = array('管理员', '经理'); // 角色要求
+			//$min_level = 10; // 级别要求
+			//$this->permission_check($role_allowed, $min_level);
+
+			// 检查必要参数是否已传入
+			$required_params = $this->names_edit_required;
+			foreach ($required_params as $param):
+				${$param} = $this->input->post($param);
+				if ( !isset( ${$param} ) ):
+					$this->result['status'] = 400;
+					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+					exit();
+				endif;
+			endforeach;
+
+			// 初始化并配置表单验证库
+			$this->load->library('form_validation');
+			$this->form_validation->set_error_delimiters('', '');
+			$this->form_validation->set_rules('subtotal', '小计（元）', 'trim|required');
+			$this->form_validation->set_rules('promotion_id', '营销活动ID', 'trim|');
+			$this->form_validation->set_rules('discount_promotion', '营销活动折抵金额（元）', 'trim|');
+			$this->form_validation->set_rules('coupon_id', '优惠券ID', 'trim|');
+			$this->form_validation->set_rules('discount_coupon', '优惠券折抵金额（元）', 'trim|');
+			$this->form_validation->set_rules('credit_id', '积分流水ID', 'trim|');
+			$this->form_validation->set_rules('discount_credit', '积分折抵金额（元）', 'trim|');
+			$this->form_validation->set_rules('freight', '运费（元）', 'trim|');
+			$this->form_validation->set_rules('discount_reprice', '改价折抵金额（元）', 'trim|');
+			$this->form_validation->set_rules('total', '应支付金额（元）', 'trim|required');
+			$this->form_validation->set_rules('total_payed', '实际支付金额（元）', 'trim|');
+			$this->form_validation->set_rules('total_refund', '实际退款金额（元）', 'trim|');
+			$this->form_validation->set_rules('fullname', '姓名', 'trim|required');
+			$this->form_validation->set_rules('mobile', '手机号', 'trim|required');
+			$this->form_validation->set_rules('province', '省份', 'trim|required');
+			$this->form_validation->set_rules('city', '城市', 'trim|required');
+			$this->form_validation->set_rules('county', '区/县', 'trim|required');
+			$this->form_validation->set_rules('street', '具体地址', 'trim|required');
+			$this->form_validation->set_rules('longitude', '经度', 'trim|');
+			$this->form_validation->set_rules('latitude', '纬度', 'trim|');
+			$this->form_validation->set_rules('note_stuff', '员工留言', 'trim|');
+			// 针对特定条件的验证规则
+			if ($this->app_type === '管理员'):
+				// ...
+			endif;
+
+			// 若表单提交不成功
+			if ($this->form_validation->run() === FALSE):
+				$this->result['status'] = 401;
+				$this->result['content']['error']['message'] = validation_errors();
+
+			else:
+				// 需要编辑的数据；逐一赋值需特别处理的字段
+				$data_to_edit = array(
+					'operator_id' => $user_id,
+					//'name' => $this->input->post('name'),
+				);
+				// 自动生成无需特别处理的数据
+				$data_need_no_prepare = array(
+					'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_credit', 'freight', 'discount_reprice', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'note_stuff',
+				);
+				foreach ($data_need_no_prepare as $name)
+					$data_to_edit[$name] = $this->input->post($name);
+
+				// 根据客户端类型等条件筛选可操作的字段名
+				if ($this->app_type !== 'admin'):
+					//unset($data_to_edit['name']);
+				endif;
+
+				// 进行修改
+				$result = $this->basic_model->edit($id, $data_to_edit);
+				if ($result !== FALSE):
+					$this->result['status'] = 200;
+					$this->result['content']['message'] = '编辑成功';
+
+				else:
+					$this->result['status'] = 434;
+					$this->result['content']['error']['message'] = '编辑失败';
+
+				endif;
+			endif;
+		} // end edit
 		
 		/**
 		 * 5 编辑单行数据特定字段
@@ -285,8 +421,10 @@
 		public function edit_certain()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz',); // 客户端类型
-			$this->client_check($type_allowed);
+			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
+			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
+			$min_version = '0.0.1'; // 最低版本要求
+			$this->client_check($type_allowed, $platform_allowed, $min_version);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -297,7 +435,7 @@
 			$required_params = $this->names_edit_certain_required;
 			foreach ($required_params as $param):
 				${$param} = $this->input->post($param);
-				if ( $param !== 'value' && empty( ${$param} ) ): // value 可以为空；必要字段会在字段验证中另行检查
+				if ( $param !== 'value' && !isset( ${$param} ) ): // value 可以为空；必要字段会在字段验证中另行检查
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();
@@ -330,7 +468,27 @@
 			// 动态设置待验证字段名及字段值
 			$data_to_validate["{$name}"] = $value;
 			$this->form_validation->set_data($data_to_validate);
-			$this->form_validation->set_rules('note_stuff', '员工留言', 'trim');
+			$this->form_validation->set_rules('subtotal', '小计（元）', 'trim|required');
+			$this->form_validation->set_rules('promotion_id', '营销活动ID', 'trim|');
+			$this->form_validation->set_rules('discount_promotion', '营销活动折抵金额（元）', 'trim|');
+			$this->form_validation->set_rules('coupon_id', '优惠券ID', 'trim|');
+			$this->form_validation->set_rules('discount_coupon', '优惠券折抵金额（元）', 'trim|');
+			$this->form_validation->set_rules('credit_id', '积分流水ID', 'trim|');
+			$this->form_validation->set_rules('discount_credit', '积分折抵金额（元）', 'trim|');
+			$this->form_validation->set_rules('freight', '运费（元）', 'trim|');
+			$this->form_validation->set_rules('discount_reprice', '改价折抵金额（元）', 'trim|');
+			$this->form_validation->set_rules('total', '应支付金额（元）', 'trim|required');
+			$this->form_validation->set_rules('total_payed', '实际支付金额（元）', 'trim|');
+			$this->form_validation->set_rules('total_refund', '实际退款金额（元）', 'trim|');
+			$this->form_validation->set_rules('fullname', '姓名', 'trim|required');
+			$this->form_validation->set_rules('mobile', '手机号', 'trim|required');
+			$this->form_validation->set_rules('province', '省份', 'trim|required');
+			$this->form_validation->set_rules('city', '城市', 'trim|required');
+			$this->form_validation->set_rules('county', '区/县', 'trim|required');
+			$this->form_validation->set_rules('street', '具体地址', 'trim|required');
+			$this->form_validation->set_rules('longitude', '经度', 'trim|');
+			$this->form_validation->set_rules('latitude', '纬度', 'trim|');
+			$this->form_validation->set_rules('note_stuff', '员工留言', 'trim|');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -343,7 +501,6 @@
 				$data_to_edit[$name] = $value;
 
 				// 获取ID
-				$id = $this->input->post('id');
 				$result = $this->basic_model->edit($id, $data_to_edit);
 
 				if ($result !== FALSE):
@@ -366,8 +523,10 @@
 		public function edit_bulk()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz',); // 客户端类型
-			$this->client_check($type_allowed);
+			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
+			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
+			$min_version = '0.0.1'; // 最低版本要求
+			$this->client_check($type_allowed, $platform_allowed, $min_version);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -378,7 +537,7 @@
 			$required_params = $this->names_edit_bulk_required;
 			foreach ($required_params as $param):
 				${$param} = $this->input->post($param);
-				if ( empty( ${$param} ) ):
+				if ( !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();
@@ -388,10 +547,10 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
-			$this->form_validation->set_rules('operation', '待执行操作', 'trim|in_list[delete,restore]');
-			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('password', '密码', 'trim|min_length[6]|max_length[20]');
+			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
+			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore]');
+			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
+			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):
@@ -440,8 +599,73 @@
 			endif;
 		} // end edit_bulk
 		
+		/**
+		 * 用户取消
+		 *
+		 * time_cancel、status
+		 */
+		public function cancel()
+		{
+			$data_to_edit = array(
+				'time_cancel' => time(),
+				'status' => '已取消',
+			);
+		} // end cancel
+		
+		/**
+		 * 商家拒绝
+		 *
+		 * time_refuse、status
+		 */
+		public function refuse()
+		{
+			$data_to_edit = array(
+				'time_refuse' => time(),
+				'status' => '已拒绝',
+			);
+		} // end refuse
+		
+		/**
+		 * 商家接单
+		 *
+		 * time_accept、status
+		 */
+		public function accept()
+		{
+			$data_to_edit = array(
+				'time_accept' => time(),
+				'status' => '待发货',
+			);
+		} // end accept
+		
+		/**
+		 * 商家发货
+		 *
+		 * time_deliver、status
+		 */
+		public function deliver()
+		{
+			$data_to_edit = array(
+				'time_deliver' => time(),
+				'status' => '待收货',
+			);
+		} // end deliver
+		
+		/**
+		 * 用户确认
+		 *
+		 * time_confirm、status
+		 */
+		public function confirm()
+		{
+			$data_to_edit = array(
+				'time_confirm' => time(),
+				'status' => '待评价',
+			);
+			
+		} // end confirm
 
-	}
+	} // end class Order
 
 /* End of file Order.php */
 /* Location: ./application/controllers/Order.php */
