@@ -17,14 +17,14 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'order_id', 'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_credit', 'freight', 'discount_reprice', 'repricer_id', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
+			'order_id', 'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_payed', 'freight', 'discount_reprice', 'repricer_id', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'order_id', 'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_credit', 'freight', 'discount_reprice', 'repricer_id', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
+			'order_id', 'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_payed', 'freight', 'discount_reprice', 'repricer_id', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
 		);
 
 		/**
@@ -32,7 +32,7 @@
 		 */
 		protected $names_create_required = array(
 			'user_id',
-			'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_credit', 'freight', 'total', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'note_user', 'commission', 'promoter_id',
+			'address_id',
 		);
 
 		/**
@@ -40,7 +40,7 @@
 		 */
 		protected $names_edit_required = array(
 			'user_id', 'id',
-			'order_id', 'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_credit', 'freight', 'discount_reprice', 'repricer_id', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
+			'order_id', 'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_payed', 'freight', 'discount_reprice', 'repricer_id', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
 		);
 
 		/**
@@ -58,9 +58,12 @@
 			'user_id', 'ids',
 			'operation', 'password',
 		);
-		
+
 		// 订单信息（订单创建）
 		private $order_data = array();
+
+		// 订单相关商品信息（订单创建）
+		private $order_items = array();
 
 		public function __construct()
 		{
@@ -80,6 +83,14 @@
 			{
 				//...
 		    }
+		}
+		
+		/**
+		 * 截止3.1.3为止，CI_Controller类无析构函数，所以无需继承相应方法
+		 */
+		public function __destruct()
+		{
+			$this->output->enable_profiler(TRUE);
 		}
 
 		/**
@@ -218,48 +229,44 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('biz_id', '商户ID', 'trim|required');
 			$this->form_validation->set_rules('user_id', '用户ID', 'trim|required');
 			$this->form_validation->set_rules('user_ip', '用户下单IP地址', 'trim');
-			$this->form_validation->set_rules('promotion_id', '营销活动ID', 'trim');
-			$this->form_validation->set_rules('fullname', '姓名', 'trim|required|min_length[2]|max_length[15]');
-			$this->form_validation->set_rules('code_ssn', '身份证号', 'trim|exact_length[18]');
-			$this->form_validation->set_rules('mobile', '手机号', 'trim|required|exact_length[11]|is_natural');
-			$this->form_validation->set_rules('province', '省', 'trim|required|max_length[10]');
-			$this->form_validation->set_rules('city', '市', 'trim|required|max_length[10]');
-			$this->form_validation->set_rules('county', '区/县', 'trim|max_length[10]');
-			$this->form_validation->set_rules('street', '具体地址；小区名、路名、门牌号等', 'trim|required|max_length[50]');
-			$this->form_validation->set_rules('longitude', '经度', 'trim|min_length[7]|max_length[10]|decimal');
-			$this->form_validation->set_rules('latitude', '纬度', 'trim|min_length[7]|max_length[10]|decimal');
+			$this->form_validation->set_rules('address_id', '收件地址', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('note_user', '用户留言', 'trim|max_length[255]');
-			$this->form_validation->set_rules('promoter_id', '推广者ID', 'trim');
+			// 仅单品订单涉及以下字段
+			$this->form_validation->set_rules('item_id', '商品ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('sku_id', '规格ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('count', '份数', 'trim|is_natural_no_zero|less_than_equal_to[99]');
+			// 仅购物车订单涉及以下字段
+			$this->form_validation->set_rules('cart_string', '购物车内容', 'trim|max_length[255]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
 				$this->result['status'] = 401;
 				$this->result['content']['error']['message'] = validation_errors();
 
+			// 若订单数据生成失败
+			elseif ($this->generate_order_data() === FALSE):
+				var_dump($this->result);
+				$this->result['status'] = 401;
+				$this->result['content']['error']['message'] = $this->order_data['content']['error']['message'];
+
 			else:
-				// 根据传入的参数生成订单数据
-				if ( !empty($this->input->post('cart_string')) ):
-					$this->generate_cart_order( $this->input->post('cart_string') );
-				elseif( !empty($this->input->post('item_id')) && !empty($this->input->post('count')) ):
-					$this->generate_quick_order( $this->input->post('item_id'), $this->input->post('sku_id'), $this->input->post('count') );
-				endif;
-
-				// TODO
-
-				// 需要创建的数据；逐一赋值需特别处理的字段
+				var_dump($this->order_items);
+				var_dump($this->order_data);
+				// 通用订单数据
 				$data_to_create = array(
 					'time_create' => time(),
-					//'name' => $this->input->post('name'),
+					'user_id' => $user_id,
+					'user_ip' => empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'), // 优先检查请求是否来自APP
+					'user_note' => $this->input->post('user_note'),
 				);
-				// 自动生成无需特别处理的数据
-				$data_need_no_prepare = array(
-					'biz_id', 'user_id', 'user_ip', 'promotion_id', 'fullname', 'code_ssn', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'note_user', 'promoter_id',
-				);
-				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+
+				//TODO 以商家为单位生成订单
+				// 合并通用订单及每笔订单数据
+				$data_to_create = array_merge($data_to_create, $this->order_data);
+				var_dump($data_to_create);
+				exit();
 
 				$result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):
@@ -274,50 +281,105 @@
 				endif;
 			endif;
 		} // end create
+		
+		// TODO 生成订单数据
+		private function generate_order_data()
+		{
+			// 只要传入了商品ID，即视为单品订单
+			if ( !empty($this->input->post('item_id')) ):
+				$this->generate_single_item();
+				// 重置数据库参数
+				$this->basic_model->table_name = $this->table_name;
+				$this->basic_model->id_name = $this->id_name;
+
+			// 生成多品订单
+			elseif ( !empty($this->input->post('cart_string')) ):
+				$this->generate_multiple_items();
+				// 重置数据库参数
+				$this->basic_model->table_name = $this->table_name;
+				$this->basic_model->id_name = $this->id_name;
+
+			else:
+				return FALSE;
+
+			endif;
+		}
 
 		/**
-		 * TODO 从商品详情页生成订单
+		 * TODO 生成单品订单
 		 *
 		 * @params varchar/int $item_id 商品ID；商家ID需要从商品资料中获取
 		 * @params varchar/int $sku_id 规格ID
 		 * @params int $count 份数；默认为1，但有每单最低限量的情况下允许传入count
 		 */
-		private function generate_quick_order($item_id, $sku_id = NULL, $count = 1)
+		private function generate_single_item()
 		{
+			$item_id = $this->input->post('item_id');
+			$sku_id = empty($this->input->post('count'))? NULL: $this->input->post('sku_id');
+			$count = empty($this->input->post('count'))? 1: $this->input->post('count');
+
 			// 获取商品信息
 			$this->basic_model->table_name = 'item';
 			$this->basic_model->id_name = 'item_id';
 			$item = $this->basic_model->select_by_id($item_id);
-			
+
 			// 获取规格信息
 			if ( !empty($sku_id) ):
 				$this->basic_model->table_name = 'sku';
 				$this->basic_model->id_name = 'sku_id';
 				$sku = $this->basic_model->select_by_id($sku_id);
 			endif;
-			
-			// 重置数据库参数
-			$this->basic_model->table_name = $this->table_name;
-			$this->basic_model->id_name = $this->id_name;
 
-			// 生成订单信息
-			$this->order_data = array(
+			//TODO 计算单品优惠活动折抵
+			//TODO 计算单品优惠券折抵
+			//TODO 计算单品运费
+			// 生成订单商品信息
+			$this->order_items[] = array(
 				'biz_id' => $item['biz_id'],
 				'item_id' => $item_id,
 				'sku_id' => $sku_id,
+				'price' => $item['price'],
+				'count' => $count,
+
+				//'promotion_id' => $item['promotion_id'], // 营销活动ID
+				//'discount_promotion' => $discount_promotion, // 营销活动折抵金额
+
+				//'coupon_id' => $item['coupon_id'], // 优惠券ID
+				//'discount_coupon' => $discount_coupon, // 优惠券折抵金额
 			);
 
-			// 创建订单并获取订单ID
+			//TODO 计算商家优惠活动折抵
+			//TODO 计算商家优惠券折抵
+			//TODO 计算商家运费
+			// 生成订单信息
+			$this->order_data[] = array(
+				'biz_id' => $item['biz_id'],
+				'subtotal' => $item['price'],
 
-			// 存储订单商品信息
+				//'promotion_id' => $item['promotion_id'], // 营销活动ID
+				//'discount_promotion' => $discount_promotion, // 营销活动折抵金额
+
+				//'coupon_id' => $item['coupon_id'], // 优惠券ID
+				//'discount_coupon' => $discount_coupon, // 优惠券折抵金额
+
+				//'freight' => $freight,
+				'total' => $item['price'],
+			);
 		}
 
 		/**
-		 * TODO 从购物车生成订单
+		 * TODO 生成多品订单
 		 */
-		private function generate_cart_order($cart_string)
+		private function generate_multiple_items()
 		{
+			$cart_string = $this->input->post('cart_string');
 
+			//TODO 检查是否有相同商家的商品
+			if ( !array_key_exists($item['biz_id'], $this->order_data) ):
+				NULL;
+			else:
+				NULL;
+			endif;
 		}
 
 		/**
@@ -356,20 +418,12 @@
 			$this->form_validation->set_rules('coupon_id', '优惠券ID', 'trim|');
 			$this->form_validation->set_rules('discount_coupon', '优惠券折抵金额（元）', 'trim|');
 			$this->form_validation->set_rules('credit_id', '积分流水ID', 'trim|');
-			$this->form_validation->set_rules('discount_credit', '积分折抵金额（元）', 'trim|');
+			$this->form_validation->set_rules('discount_payed', '积分折抵金额（元）', 'trim|');
 			$this->form_validation->set_rules('freight', '运费（元）', 'trim|');
 			$this->form_validation->set_rules('discount_reprice', '改价折抵金额（元）', 'trim|');
 			$this->form_validation->set_rules('total', '应支付金额（元）', 'trim|required');
 			$this->form_validation->set_rules('total_payed', '实际支付金额（元）', 'trim|');
 			$this->form_validation->set_rules('total_refund', '实际退款金额（元）', 'trim|');
-			$this->form_validation->set_rules('fullname', '姓名', 'trim|required');
-			$this->form_validation->set_rules('mobile', '手机号', 'trim|required');
-			$this->form_validation->set_rules('province', '省份', 'trim|required');
-			$this->form_validation->set_rules('city', '城市', 'trim|required');
-			$this->form_validation->set_rules('county', '区/县', 'trim|required');
-			$this->form_validation->set_rules('street', '具体地址', 'trim|required');
-			$this->form_validation->set_rules('longitude', '经度', 'trim|');
-			$this->form_validation->set_rules('latitude', '纬度', 'trim|');
 			$this->form_validation->set_rules('note_stuff', '员工留言', 'trim|');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
@@ -389,7 +443,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_credit', 'freight', 'discount_reprice', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'note_stuff',
+					'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_payed', 'freight', 'discount_reprice', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'note_stuff',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -474,7 +528,7 @@
 			$this->form_validation->set_rules('coupon_id', '优惠券ID', 'trim|');
 			$this->form_validation->set_rules('discount_coupon', '优惠券折抵金额（元）', 'trim|');
 			$this->form_validation->set_rules('credit_id', '积分流水ID', 'trim|');
-			$this->form_validation->set_rules('discount_credit', '积分折抵金额（元）', 'trim|');
+			$this->form_validation->set_rules('discount_payed', '积分折抵金额（元）', 'trim|');
 			$this->form_validation->set_rules('freight', '运费（元）', 'trim|');
 			$this->form_validation->set_rules('discount_reprice', '改价折抵金额（元）', 'trim|');
 			$this->form_validation->set_rules('total', '应支付金额（元）', 'trim|required');

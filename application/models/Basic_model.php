@@ -243,8 +243,10 @@
 		 */
 		public function create($data, $return_id = FALSE)
 		{
-			// 更新创建时间为当前时间，创建者和最后操作者为当前用户
-			$data['time_create'] = date('Y-m-d H:i:s');
+			// 未传入创建时间时，默认创建时间为当前时间，创建者和最后操作者为当前用户
+			if ( !isset($data['time_create']) ):
+				$data['time_create'] = date('Y-m-d H:i:s');
+			endif;
 
 			// 尝试写入
 			$insert_result = $this->db->insert($this->table_name, $data);

@@ -270,7 +270,7 @@
 					$this->result['status'] = 200;
 					$this->result['content']['id'] = $result;
 					$this->result['content']['message'] = '创建成功';
-					
+
 					// 获取已创建的地址ID
 					$id = $result;
 
@@ -279,8 +279,7 @@
 						'user_id' => $user_id,
 						'time_delete' => 'NULL',
 					);
-					$this->count($condition);
-					if ( $this->result['content']['count'] === 1):
+					if ( $this->basic_model->count($condition) === 1):
 						$this->basic_model->table_name = 'user';
 						$this->basic_model->id_name = 'user_id';
 
