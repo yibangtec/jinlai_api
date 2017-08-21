@@ -37,7 +37,7 @@
 		 */
 		protected $names_edit_bulk_required = array(
 			'user_id', 'ids',
-			'operation', 'password',
+			'operation',
 		);
 
 		public function __construct()
@@ -180,19 +180,29 @@
 				// 检查是否有重复项
 				$result = $this->basic_model->match($data_to_create);
 				if ( !empty($result) ):
-					$this->result['status'] = 414;
-					$this->result['content']['error']['message'] = '已经收藏过了';
+					// 若已关注过且被删除，则恢复
+					if ($result['time_delete'] !== NULL):
+						$data_to_edit['time_delete'] = NULL;
+						@$result = $this->basic_model->edit($result['record_id'], $data_to_edit);
+
+						$this->result['status'] = 200;
+						$this->result['content']['id'] = $result['record_id'];
+						$this->result['content']['message'] = '关注成功';
+					else:
+						$this->result['status'] = 414;
+						$this->result['content']['error']['message'] = '已经关注过了';
+					endif;
 					
 				else:
 					$result = $this->basic_model->create($data_to_create, TRUE);
 					if ($result !== FALSE):
 						$this->result['status'] = 200;
 						$this->result['content']['id'] = $result;
-						$this->result['content']['message'] = '收藏成功';
+						$this->result['content']['message'] = '关注成功';
 
 					else:
 						$this->result['status'] = 424;
-						$this->result['content']['error']['message'] = '收藏失败';
+						$this->result['content']['error']['message'] = '关注失败';
 
 					endif;
 
@@ -229,17 +239,11 @@
 			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
 			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore]');
 			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
-			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):
 				$this->result['status'] = 401;
 				$this->result['content']['error']['message'] = validation_errors();
-				exit();
-
-			elseif ($this->operator_check() !== TRUE):
-				$this->result['status'] = 453;
-				$this->result['content']['error']['message'] = '与该ID及类型对应的操作者不存在，或操作密码错误';
 				exit();
 
 			else:
