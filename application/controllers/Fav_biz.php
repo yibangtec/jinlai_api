@@ -14,14 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'record_id', 'user_id', 'biz_id', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
-		);
-
-		/**
-		 * 可作为查询结果返回的字段名
-		 */
-		protected $names_to_return = array(
-			'record_id', 'user_id', 'biz_id', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'record_id', 'user_id', 'biz_id', 'time_create', 'time_edit',
 		);
 
 		/**
@@ -110,22 +103,13 @@
 
 			// 筛选条件
 			$condition = NULL;
-			//$condition['name'] = 'value';
-			// （可选）遍历筛选条件
-			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post($sorter)) )
-					$condition[$sorter] = $this->input->post($sorter);
-			endforeach;
 			
 			// 排序条件
 			$order_by = NULL;
-			//$order_by['name'] = 'value';
-
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
 
 			// 获取列表；默认可获取已删除项
-			$items = $this->basic_model->select($condition, $order_by);
+			$this->load->model('fav_biz_model');
+			$items = $this->fav_biz_model->select($condition, $order_by);
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;

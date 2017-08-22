@@ -4,9 +4,6 @@
 	/**
 	 * Fav_item 商品收藏类
 	 *
-	 * 以API服务形式返回数据列表、详情、创建、单行编辑、单/多行编辑（删除、恢复）等功能提供了常见功能的示例代码
-	 * CodeIgniter官方网站 https://www.codeigniter.com/user_guide/
-	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
 	 * @copyright ICBG <www.bingshankeji.com>
@@ -17,14 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'record_id', 'user_id', 'item_id', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
-		);
-
-		/**
-		 * 可作为查询结果返回的字段名
-		 */
-		protected $names_to_return = array(
-			'record_id', 'user_id', 'item_id', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'record_id', 'user_id', 'item_id', 'time_create', 'time_edit',
 		);
 
 		/**
@@ -113,22 +103,13 @@
 
 			// 筛选条件
 			$condition = NULL;
-			//$condition['name'] = 'value';
-			// （可选）遍历筛选条件
-			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post($sorter)) )
-					$condition[$sorter] = $this->input->post($sorter);
-			endforeach;
 			
 			// 排序条件
 			$order_by = NULL;
-			//$order_by['name'] = 'value';
-
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
 
 			// 获取列表；默认可获取已删除项
-			$items = $this->basic_model->select($condition, $order_by);
+			$this->load->model('fav_item_model');
+			$items = $this->fav_item_model->select($condition, $order_by);
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;

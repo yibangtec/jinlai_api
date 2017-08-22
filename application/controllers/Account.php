@@ -79,7 +79,8 @@
 			else:
 				// 创建用户
 				$data_to_create['mobile'] = $this->input->post('mobile');
-				$data_to_create['nickname'] = 'user'. substr(time(), 2, 8); // 设置默认昵称
+				$data_to_create['wechat_union_id'] = $this->input->post('wechat_union_id'); // 微信union_id
+				$data_to_create['nickname'] = 'user'. substr(time(), 2, 8); // 生成默认昵称
 				$data_to_create = array_merge($data_to_create, $login_info);
 				$result = $this->user_create($data_to_create);
 				if ( !empty($result) ):
@@ -99,7 +100,7 @@
 
 			endif;
 		} // end login_sms
-		
+
 		/**
 		 * ACT2 密码设置
 		 */
@@ -263,12 +264,12 @@
 				exit();
 			endif;
 
-			// 手机号及Email须至少传入一项
+			// 手机号、Email须至少传入一项
 			$mobile = $this->input->post('mobile');
 			$email = $this->input->post('email');
 			if ( empty($mobile) && empty($email) ):
 				$this->result['status'] = 400;
-				$this->result['content']['error']['message'] = '手机号及Email须至少传入一项';
+				$this->result['content']['error']['message'] = '手机号、Email须至少传入一项';
 				exit();
 			endif;
 
@@ -301,7 +302,7 @@
 						$login_info['last_login_ip'] = empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'); // 优先检查请求是否来自APP
 						$login_info['last_login_timestamp'] = time();
 						@$this->basic_model->edit($user_info['user_id'], $login_info);
-						
+
 						// 非客户端登录时，检查该用户是否为员工
 						if ($this->app_type !== 'client'):
 							$stuff = $this->check_stuff( $user_info['user_id'] );
@@ -414,6 +415,141 @@
 
 			endif;
 		} // end password_reset
+
+		/**
+		 * ACT6 用户存在性
+		 */
+		public function user_exist()
+		{
+			// 手机号及Email须至少传入一项
+			$mobile = $this->input->post('mobile');
+			$email = $this->input->post('email');
+			$wechat_union_id = $this->input->post('wechat_union_id');
+			if ( empty($mobile) && empty($email) && empty($wechat_union_id) ):
+				$this->result['status'] = 400;
+				$this->result['content']['error']['message'] = '手机号、Email及微信UnionID须至少传入一项';
+				exit();
+			endif;
+
+			// 初始化并配置表单验证库
+			$this->load->library('form_validation');
+			$this->form_validation->set_error_delimiters('', '');
+			// 待验证的表单项
+			$this->form_validation->set_rules('mobile', '手机号', 'trim|exact_length[11]|is_natural_no_zero');
+			$this->form_validation->set_rules('email', 'Email', 'trim|max_length[40]|valid_email');
+			$this->form_validation->set_rules('wechat_union_id', '微信UnionID', 'trim|max_length[29]');
+
+			// 若表单提交不成功
+			if ($this->form_validation->run() === FALSE):
+				$this->result['status'] = 401;
+				$this->result['content']['error']['message'] = validation_errors();
+				exit();
+
+			else:
+				// 获取用户/检查用户是否存在
+				if ( !empty($mobile) ):
+					$user_info = $this->check_mobile($mobile);
+				elseif ( !empty($wechat_union_id) ):
+				$user_info = $this->check_wechat($wechat_union_id);
+				else:
+					$user_info = $this->check_email($email);
+				endif;
+
+				// 返回检查结果
+				if ( !empty($user_info) ):
+					$this->result['status'] = 200;
+					$this->result['content']['is_exist'] = TRUE;
+					$this->result['content']['status'] = $user_info['status'];
+					
+				else:
+					$this->result['status'] = 414;
+					$this->result['content']['error']['message'] = '用户不存在';
+				endif;
+			endif;
+		} // end user_exist
+		
+		/**
+		 * ACT7 微信登录
+		 *
+		 * 使用微信UnionID免密码登录
+		 *
+		 * @params string $mobile 手机号
+		 */
+		public function login_wechat()
+		{
+			// 必须传入微信UnionID
+			$wechat_union_id = $this->input->post('wechat_union_id');
+			if ( empty($wechat_union_id) ):
+				$this->result['status'] = 400;
+				$this->result['content']['error']['message'] = '须传入微信UnionID';
+				exit();
+			endif;
+
+			// 初始化并配置表单验证库
+			$this->load->library('form_validation');
+			$this->form_validation->set_error_delimiters('', '');
+			// 待验证的表单项
+			$this->form_validation->set_rules('wechat_union_id', '微信UnionID', 'trim|max_length[29]');
+
+			// 若表单提交不成功
+			if ($this->form_validation->run() === FALSE):
+				$this->result['status'] = 401;
+				$this->result['content']['error']['message'] = validation_errors();
+				exit();
+
+			else:
+				// 获取用户/检查用户是否存在
+				if ( !empty($wechat_union_id) ):
+					$user_info = $this->check_wechat($wechat_union_id);
+				endif;
+
+				// 若用户存在，返回用户信息
+				if ( !empty($user_info) ):
+					// 更新最后登录信息
+					$login_info['last_login_ip'] = empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'); // 优先检查请求是否来自APP
+					$login_info['last_login_timestamp'] = time();
+					@$this->basic_model->edit($user_info['user_id'], $login_info);
+
+					// 非客户端登录时，检查该用户是否为员工
+					if ($this->app_type !== 'client'):
+						$stuff = $this->check_stuff( $user_info['user_id'] );
+
+						if ( !empty($stuff) ):
+							// 不允许商家员工登录管理端
+							if ($this->app_type === 'admin' && !empty($stuff['biz_id']) ):
+								$this->result['status'] = 415;
+								$this->result['content']['error']['message'] = '该用户并非管理端员工';
+								exit();
+
+							// 不允许管理员工登录非管理端
+							elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
+								$this->result['status'] = 415;
+								$this->result['content']['error']['message'] = '该用户并非商户端员工';
+								exit();
+							
+							else:
+								$user_info['biz_id'] = $stuff['biz_id'];
+								$user_info['role'] = $stuff['role'];
+								$user_info['level'] = $stuff['level'];
+
+							endif;
+						endif;
+					endif;
+
+					// 不返回真实密码信息
+					if ( !empty($user_info['password']) ) $user_info['password'] = 'set';
+
+					$this->result['status'] = 200;
+					$this->result['content'] = array_merge($user_info, $login_info);
+
+				else:
+					$this->result['status'] = 414;
+					$this->result['content']['error']['message'] = '用户未注册';
+
+				endif;
+
+			endif;
+		} // end login_wechat
 
 		/**
 		 * 短信验证
@@ -537,6 +673,24 @@
 				return ( empty($result) )? FALSE: TRUE;
 			endif;
 		} // end check_email
+		
+		/**
+		 * 检查是否已经有以相应微信UnionID注册的账户
+		 *
+		 * @params string $wechat_union_id 需要检查的微信UnionID
+		 * @params boolean $return_boolean 是否需要以布尔值形式返回
+		 */
+		private function check_wechat($wechat_union_id, $return_boolean = FALSE)
+		{
+			$data_to_search['wechat_union_id'] = $wechat_union_id;
+			$result = $this->basic_model->match($data_to_search);
+
+			if ($return_boolean === FALSE):
+				return $result;
+			else:
+				return ( empty($result) )? FALSE: TRUE;
+			endif;
+		} // end check_wechat
 
 		// 检查是否已经有与相应user_id相关的员工记录
 		private function check_stuff($user_id, $return_boolean = FALSE)
@@ -556,7 +710,7 @@
 			else:
 				return ( empty($result) )? FALSE: TRUE;
 			endif;
-		} // check_stuff
+		} // end check_stuff
 
 	} // end class Account
 
