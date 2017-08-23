@@ -35,6 +35,8 @@
 			// 准备最后登录信息
 			$login_info['last_login_ip'] = empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'); // 优先检查请求是否来自APP
 			$login_info['last_login_timestamp'] = time();
+			// 检查是否传入了微信UnionID
+			$login_info['wechat_union_id'] = $this->input->post('wechat_union_id'); // 微信UnionID
 
 			// 获取用户/检查用户是否存在
 			$user_info = $this->check_mobile( $this->input->post('mobile') );
@@ -79,7 +81,6 @@
 			else:
 				// 创建用户
 				$data_to_create['mobile'] = $this->input->post('mobile');
-				$data_to_create['wechat_union_id'] = $this->input->post('wechat_union_id'); // 微信union_id
 				$data_to_create['nickname'] = 'user'. substr(time(), 2, 8); // 生成默认昵称
 				$data_to_create = array_merge($data_to_create, $login_info);
 				$result = $this->user_create($data_to_create);
@@ -460,9 +461,10 @@
 					$this->result['status'] = 200;
 					$this->result['content']['is_exist'] = TRUE;
 					$this->result['content']['status'] = $user_info['status'];
-					
+
 				else:
 					$this->result['status'] = 414;
+					$this->result['content']['is_exist'] = FALSE;
 					$this->result['content']['error']['message'] = '用户不存在';
 				endif;
 			endif;
