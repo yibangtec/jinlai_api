@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Fav_item 商品收藏类
+	 * Fav_item FVI 商品收藏类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
@@ -103,6 +103,11 @@
 
 			// 筛选条件
 			$condition = NULL;
+			// （可选）遍历筛选条件
+			foreach ($this->names_to_sort as $sorter):
+				if ( !empty($this->input->post($sorter)) )
+					$condition[$sorter] = $this->input->post($sorter);
+			endforeach;
 			
 			// 排序条件
 			$order_by = NULL;
@@ -156,7 +161,6 @@
 			else:
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
-					'creator_id' => $user_id,
 					'user_id' => $this->input->post('user_id'),
 					'item_id' => $this->input->post('item_id'),
 				);

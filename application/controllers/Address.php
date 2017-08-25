@@ -2,10 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Address 地址类
-	 *
-	 * 以API服务形式返回数据列表、详情、创建、单行编辑、单/多行编辑（删除、恢复）等功能提供了常见功能的示例代码
-	 * CodeIgniter官方网站 https://www.codeigniter.com/user_guide/
+	 * Address ADR 地址类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
@@ -246,15 +243,15 @@
 
 				// 若已传入经纬度，直接进行设置；若未设置经纬度，则通过地址（若有）借助高德地图相关API转换获取
 				if ( !empty($this->input->post('longitude')) && !empty($this->input->post('latitude')) ):
-					$data_to_edit['latitude'] = $this->input->post('latitude');
-					$data_to_edit['longitude'] = $this->input->post('longitude');
+					$data_to_create['latitude'] = $this->input->post('latitude');
+					$data_to_create['longitude'] = $this->input->post('longitude');
 				elseif ( !empty($this->input->post('province')) && !empty($this->input->post('city')) && !empty($this->input->post('street')) ):
 					// 拼合待转换地址（省、市、区/县（可为空）、具体地址）
 					$address = $this->input->post('province'). $this->input->post('city'). $this->input->post('county'). $this->input->post('street');
 					$location = $this->amap_geocode($address, $this->input->post('city'));
 					if ( $location !== FALSE ):
-						$data_to_edit['latitude'] = $location['latitude'];
-						$data_to_edit['longitude'] = $location['longitude'];
+						$data_to_create['latitude'] = $location['latitude'];
+						$data_to_create['longitude'] = $location['longitude'];
 					endif;
 				endif;
 

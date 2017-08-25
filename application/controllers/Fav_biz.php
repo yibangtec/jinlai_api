@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Fav_biz 商家收藏类
+	 * Fav_biz FVB 商家收藏类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
@@ -103,7 +103,12 @@
 
 			// 筛选条件
 			$condition = NULL;
-			
+			// （可选）遍历筛选条件
+			foreach ($this->names_to_sort as $sorter):
+				if ( !empty($this->input->post($sorter)) )
+					$condition[$sorter] = $this->input->post($sorter);
+			endforeach;
+
 			// 排序条件
 			$order_by = NULL;
 
@@ -117,7 +122,7 @@
 			else:
 				$this->result['status'] = 414;
 				$this->result['content']['error']['message'] = '没有符合条件的数据';
-			
+
 			endif;
 		} // end index
 
@@ -156,7 +161,6 @@
 			else:
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
-					'creator_id' => $user_id,
 					'user_id' => $this->input->post('user_id'),
 					'biz_id' => $this->input->post('biz_id'),
 				);
