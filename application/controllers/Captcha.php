@@ -2,16 +2,16 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * CPT 图片验证码类
+	 * Captcha/CPT 验证码类
 	 *
-	 * 图片验证码相关功能
+	 * 验证码相关功能
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
 	 * @copyright ICBG <www.bingshankeji.com>
 	 */
 	class Captcha extends MY_Controller
-	{	
+	{
 		// 验证码字符数量
 		protected $length = 4; // 最多6个字符
 		
@@ -104,7 +104,8 @@
 
 			endif;
 		} // end verify
-	}
+
+	} // end class Captcha
 
 /* End of file Captcha.php */
 /* Location: ./application/controllers/Captcha.php */

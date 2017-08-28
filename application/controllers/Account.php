@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * ACT 账户类
+	 * Account/ACT 账户类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
@@ -31,12 +31,13 @@
 		{
 			// 验证短信正确性
 			$this->verify_sms();
+			
+			// 检查是否传入了微信UnionID
+			$login_info['wechat_union_id'] = $this->input->post('wechat_union_id'); // 微信UnionID
 
 			// 准备最后登录信息
 			$login_info['last_login_ip'] = empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'); // 优先检查请求是否来自APP
 			$login_info['last_login_timestamp'] = time();
-			// 检查是否传入了微信UnionID
-			$login_info['wechat_union_id'] = $this->input->post('wechat_union_id'); // 微信UnionID
 
 			// 获取用户/检查用户是否存在
 			$user_info = $this->check_mobile( $this->input->post('mobile') );
@@ -81,7 +82,7 @@
 			else:
 				// 创建用户
 				$data_to_create['mobile'] = $this->input->post('mobile');
-				$data_to_create['nickname'] = 'user'. substr(time(), 2, 8); // 生成默认昵称
+				$data_to_create['nickname'] = 'user'. substr(time(), 2, 8); // 生成默认昵称（允许重复）
 				$data_to_create = array_merge($data_to_create, $login_info);
 				$result = $this->user_create($data_to_create);
 				if ( !empty($result) ):

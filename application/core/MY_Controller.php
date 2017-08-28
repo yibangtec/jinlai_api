@@ -12,6 +12,20 @@
 	 */
 	class MY_Controller extends CI_Controller
 	{
+		/**
+		 * 编辑单行特定字段时必要的字段名
+		 */
+		protected $names_edit_certain_required = array(
+			'user_id', 'id', 'name', 'value',
+		);
+
+		/**
+		 * 编辑多行特定字段时必要的字段名
+		 */
+		protected $names_edit_bulk_required = array(
+			'user_id', 'ids', 'operation', 'password',
+		);
+		
 		// 初始化返回结果
 		public $result = array(
 			'status' => null, // 请求响应状态

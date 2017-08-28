@@ -2,10 +2,9 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Item_category 商品分类（系统级）类
+	 * Item_category/ITK 系统分类类
 	 *
-	 * 以API服务形式返回数据列表、详情、创建、单行编辑、单/多行编辑（删除、恢复）等功能提供了常见功能的示例代码
-	 * CodeIgniter官方网站 https://www.codeigniter.com/user_guide/
+	 * 系统级商品分类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>

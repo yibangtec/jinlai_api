@@ -2,10 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Order 订单类
-	 *
-	 * 以API服务形式返回数据列表、详情、创建、单行编辑、单/多行编辑（删除、恢复）等功能提供了常见功能的示例代码
-	 * CodeIgniter官方网站 https://www.codeigniter.com/user_guide/
+	 * Order/ODR 订单类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
@@ -17,14 +14,14 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'order_id', 'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_payed', 'freight', 'discount_reprice', 'repricer_id', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
+			'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'freight', 'discount_reprice', 'repricer_id', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'order_id', 'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_payed', 'freight', 'discount_reprice', 'repricer_id', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
+			'order_id', 'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'freight', 'discount_reprice', 'repricer_id', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
 		);
 
 		/**
@@ -40,7 +37,7 @@
 		 */
 		protected $names_edit_required = array(
 			'user_id', 'id',
-			'order_id', 'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_payed', 'freight', 'discount_reprice', 'repricer_id', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
+			'order_id', 'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'freight', 'discount_reprice', 'repricer_id', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
 		);
 
 		/**
@@ -90,7 +87,8 @@
 		 */
 		public function __destruct()
 		{
-			$this->output->enable_profiler(TRUE);
+			parent::__destruct();
+			//$this->output->enable_profiler(TRUE);
 		}
 
 		/**
@@ -100,7 +98,6 @@
 		{
 			// 筛选条件
 			$condition = NULL;
-			//$condition['name'] = 'value';
 
 			// （可选）遍历筛选条件
 			foreach ($this->names_to_sort as $sorter):
@@ -135,7 +132,7 @@
 		 * 1 列表/基本搜索
 		 */
 		public function index()
-		{	
+		{
 			// 检查必要参数是否已传入
 			$required_params = array();
 			foreach ($required_params as $param):
@@ -191,7 +188,7 @@
 
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );
-			
+
 			// 获取特定项；默认可获取已删除项
 			$item = $this->basic_model->select_by_id($id);
 			if ( !empty($item) ):
@@ -413,18 +410,17 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('subtotal', '小计（元）', 'trim|required');
-			$this->form_validation->set_rules('promotion_id', '营销活动ID', 'trim|');
-			$this->form_validation->set_rules('discount_promotion', '营销活动折抵金额（元）', 'trim|');
-			$this->form_validation->set_rules('coupon_id', '优惠券ID', 'trim|');
-			$this->form_validation->set_rules('discount_coupon', '优惠券折抵金额（元）', 'trim|');
-			$this->form_validation->set_rules('credit_id', '积分流水ID', 'trim|');
-			$this->form_validation->set_rules('discount_payed', '积分折抵金额（元）', 'trim|');
-			$this->form_validation->set_rules('freight', '运费（元）', 'trim|');
-			$this->form_validation->set_rules('discount_reprice', '改价折抵金额（元）', 'trim|');
+			$this->form_validation->set_rules('promotion_id', '营销活动ID', 'trim');
+			$this->form_validation->set_rules('discount_promotion', '营销活动折抵金额（元）', 'trim');
+			$this->form_validation->set_rules('coupon_id', '优惠券ID', 'trim');
+			$this->form_validation->set_rules('discount_coupon', '优惠券折抵金额（元）', 'trim');
+			$this->form_validation->set_rules('credit_id', '积分流水ID', 'trim');
+			$this->form_validation->set_rules('freight', '运费（元）', 'trim');
+			$this->form_validation->set_rules('discount_reprice', '改价折抵金额（元）', 'trim');
 			$this->form_validation->set_rules('total', '应支付金额（元）', 'trim|required');
-			$this->form_validation->set_rules('total_payed', '实际支付金额（元）', 'trim|');
-			$this->form_validation->set_rules('total_refund', '实际退款金额（元）', 'trim|');
-			$this->form_validation->set_rules('note_stuff', '员工留言', 'trim|');
+			$this->form_validation->set_rules('total_payed', '实际支付金额（元）', 'trim');
+			$this->form_validation->set_rules('total_refund', '实际退款金额（元）', 'trim');
+			$this->form_validation->set_rules('note_stuff', '员工留言', 'trim');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
 				// ...
@@ -443,7 +439,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'discount_payed', 'freight', 'discount_reprice', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'note_stuff',
+					'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'freight', 'discount_reprice', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'note_stuff',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -523,26 +519,25 @@
 			$data_to_validate["{$name}"] = $value;
 			$this->form_validation->set_data($data_to_validate);
 			$this->form_validation->set_rules('subtotal', '小计（元）', 'trim|required');
-			$this->form_validation->set_rules('promotion_id', '营销活动ID', 'trim|');
-			$this->form_validation->set_rules('discount_promotion', '营销活动折抵金额（元）', 'trim|');
-			$this->form_validation->set_rules('coupon_id', '优惠券ID', 'trim|');
-			$this->form_validation->set_rules('discount_coupon', '优惠券折抵金额（元）', 'trim|');
-			$this->form_validation->set_rules('credit_id', '积分流水ID', 'trim|');
-			$this->form_validation->set_rules('discount_payed', '积分折抵金额（元）', 'trim|');
-			$this->form_validation->set_rules('freight', '运费（元）', 'trim|');
-			$this->form_validation->set_rules('discount_reprice', '改价折抵金额（元）', 'trim|');
+			$this->form_validation->set_rules('promotion_id', '营销活动ID', 'trim');
+			$this->form_validation->set_rules('discount_promotion', '营销活动折抵金额（元）', 'trim');
+			$this->form_validation->set_rules('coupon_id', '优惠券ID', 'trim');
+			$this->form_validation->set_rules('discount_coupon', '优惠券折抵金额（元）', 'trim');
+			$this->form_validation->set_rules('credit_id', '积分流水ID', 'trim');
+			$this->form_validation->set_rules('freight', '运费（元）', 'trim');
+			$this->form_validation->set_rules('discount_reprice', '改价折抵金额（元）', 'trim');
 			$this->form_validation->set_rules('total', '应支付金额（元）', 'trim|required');
-			$this->form_validation->set_rules('total_payed', '实际支付金额（元）', 'trim|');
-			$this->form_validation->set_rules('total_refund', '实际退款金额（元）', 'trim|');
+			$this->form_validation->set_rules('total_payed', '实际支付金额（元）', 'trim');
+			$this->form_validation->set_rules('total_refund', '实际退款金额（元）', 'trim');
 			$this->form_validation->set_rules('fullname', '姓名', 'trim|required');
 			$this->form_validation->set_rules('mobile', '手机号', 'trim|required');
 			$this->form_validation->set_rules('province', '省份', 'trim|required');
 			$this->form_validation->set_rules('city', '城市', 'trim|required');
 			$this->form_validation->set_rules('county', '区/县', 'trim|required');
 			$this->form_validation->set_rules('street', '具体地址', 'trim|required');
-			$this->form_validation->set_rules('longitude', '经度', 'trim|');
-			$this->form_validation->set_rules('latitude', '纬度', 'trim|');
-			$this->form_validation->set_rules('note_stuff', '员工留言', 'trim|');
+			$this->form_validation->set_rules('longitude', '经度', 'trim');
+			$this->form_validation->set_rules('latitude', '纬度', 'trim');
+			$this->form_validation->set_rules('note_stuff', '员工留言', 'trim');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):

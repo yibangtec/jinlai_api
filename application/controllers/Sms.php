@@ -41,7 +41,6 @@
 		 */
 		protected $names_to_sort = array(
 			'mobile', 'mobile_list', 'type', 'captcha', 'time', 'time_expire',
-
 			'time_create', 'time_delete',
 		);
 
@@ -198,7 +197,7 @@
 		 * @param string $content 短信内容；验证码短信可不传
 		 * @param string $type 短信类型；验证码1，非验证码2，默认1
 		 */
-		public function send()
+		private function send()
 		{
 			// 为短信内容添加后缀签名
 			$this->content .= $this->suffix;
@@ -295,7 +294,7 @@
 		 * 发送批量短信并储存内容
 		 * https://luosimao.com/docs/api/20#send_batch
 		 */
-		public function send_bulk()
+		private function send_bulk()
 		{
 			// 为短信内容添加后缀签名
 			$this->content .= $this->suffix;
@@ -323,7 +322,7 @@
 		} // send_bulk
 
 		// 保存已批量发送成功的短信
-		public function save_bulk()
+		private function save_bulk()
 		{
 			$data_to_create = array(
 				'type' => $this->type,
@@ -398,7 +397,8 @@
 			
 			endif;
 		} // end verify
-	}
+
+	} // end class Sms
 
 /* End of file Sms.php */
 /* Location: ./application/controllers/Sms.php */

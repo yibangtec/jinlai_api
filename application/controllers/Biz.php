@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * BIZ 商家类
+	 * Biz/BIZ 商家类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
@@ -59,20 +59,6 @@
 		protected $names_edit_required = array(
 			'user_id', 'id',
 			'tel_public', 'fullname_owner', 'code_license', 'code_ssn_owner',
-		);
-
-		/**
-		 * 编辑单行特定字段时必要的字段名
-		 */
-		protected $names_edit_certain_required = array(
-			'user_id', 'id', 'name', 'value',
-		);
-
-		/**
-		 * 编辑多行特定字段时必要的字段名
-		 */
-		protected $names_edit_bulk_required = array(
-			'user_id', 'ids', 'operation', 'password',
 		);
 
 		public function __construct()
@@ -181,13 +167,12 @@
 				$this->result['content']['error']['message'] = '必要的请求参数未传入';
 				exit();
 			endif;
-			
+
 			$this->db->select( implode(',', $this->names_to_return) );
 
 			// 客户端仅获取状态为‘正常’的商家
-			if ($this->app_type === 'client'):
-				//$this->db->where('status', '正常');
-			endif;
+			//if ($this->app_type === 'client')
+			//	$this->db->where('status', '正常');
 
 			// 获取特定项；默认可获取已删除项
 			if ( !empty($url_name) ):
@@ -195,6 +180,7 @@
 			else:
 				$item = $this->basic_model->select_by_id($id);
 			endif;
+
 			if ( !empty($item) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
@@ -214,11 +200,6 @@
 			// 操作可能需要检查客户端及设备信息
 			$type_allowed = array('admin', 'biz'); // 客户端类型
 			$this->client_check($type_allowed);
-
-			// 操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
 
 			// 检查必要参数是否已传入
 			$required_params = $this->names_create_required;
@@ -288,7 +269,7 @@
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
-				// 去除biz表中没有的user_id值，该值用于稍后创建员工关系
+				// 从待创建数据中去除biz表中没有的user_id值，该值用于稍后创建员工关系
 				unset($data_to_create['user_id']);
 
 				// 创建商家
@@ -307,7 +288,7 @@
 					endif;
 
 					// 发送商家通知短信
-					$content = '恭喜您成功创建商家，我们已自动为您生成入驻申请并安排事务最少的同事进行受理，敬请稍候。';
+					$content = '恭喜您成功创建商家，我们已为您生成入驻申请并安排事务最少的同事为您受理，敬请稍候。';
 					@$this->sms_send($mobile, $content); // 容忍发送失败
 
 					// 发送招商经理通知短信

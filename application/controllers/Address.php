@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Address ADR 地址类
+	 * Address/ADR 地址类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'address_id', 'user_id', 'brief', 'fullname', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'zipcode', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'user_id', 'brief', 'fullname', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'zipcode', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -47,22 +47,6 @@
 			'fullname', 'mobile', 'province', 'city', 'street',
 		);
 
-		/**
-		 * 编辑单行特定字段时必要的字段名
-		 */
-		protected $names_edit_certain_required = array(
-			'user_id', 'id',
-			'name', 'value',
-		);
-
-		/**
-		 * 编辑多行特定字段时必要的字段名
-		 */
-		protected $names_edit_bulk_required = array(
-			'user_id', 'ids',
-			'operation', 'password',
-		);
-
 		public function __construct()
 		{
 			parent::__construct();
@@ -85,7 +69,6 @@
 			// 筛选条件
 			if ( empty($condition) ):
 				$condition = NULL;
-				//$condition['name'] = 'value';
 			endif;
 
 			// （可选）遍历筛选条件
@@ -330,10 +313,6 @@
 			$this->form_validation->set_rules('longitude', '经度', 'trim|min_length[7]|max_length[10]|decimal');
 			$this->form_validation->set_rules('latitude', '纬度', 'trim|min_length[7]|max_length[10]|decimal');
 			$this->form_validation->set_rules('zipcode', '邮政编码', 'trim|integer|max_length[6]');
-			// 针对特定条件的验证规则
-			if ($this->app_type === '管理员'):
-				// ...
-			endif;
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -369,11 +348,6 @@
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
-
-				// 根据客户端类型等条件筛选可操作的字段名
-				if ($this->app_type !== 'admin'):
-					//unset($data_to_edit['name']);
-				endif;
 
 				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);

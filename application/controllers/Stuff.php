@@ -2,10 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Stuff 员工类
-	 *
-	 * 以API服务形式返回数据列表、详情、创建、单行编辑、单/多行编辑（删除、恢复）等功能提供了常见功能的示例代码
-	 * CodeIgniter官方网站 https://www.codeigniter.com/user_guide/
+	 * Stuff/STF 员工类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
@@ -17,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'stuff_id', 'user_id', 'biz_id', 'fullname', 'mobile', 'password', 'role', 'level', 'status',
+			'user_id', 'biz_id', 'fullname', 'mobile', 'password', 'role', 'level', 'status',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 

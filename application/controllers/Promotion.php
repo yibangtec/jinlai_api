@@ -2,10 +2,9 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Promotion 平台营销类
+	 * Promotion/PRM 平台营销类
 	 *
-	 * 以API服务形式返回数据列表、详情、创建、单行编辑、单/多行编辑（删除、恢复）等功能提供了常见功能的示例代码
-	 * CodeIgniter官方网站 https://www.codeigniter.com/user_guide/
+	 * 平台级营销活动
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
@@ -17,7 +16,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'promotion_id', 'name', 'description', 'url_images', 'url_web', 'brand_ids', 'biz_ids', 'item_ids', 'time_start', 'time_end', 'note_stuff',
+			'name', 'description', 'url_images', 'url_web', 'brand_ids', 'biz_ids', 'item_ids', 'time_start', 'time_end', 'note_stuff',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -224,15 +223,15 @@
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
 			$this->form_validation->set_rules('name', '名称', 'trim|required');
-			$this->form_validation->set_rules('description', '说明', 'trim|');
-			$this->form_validation->set_rules('url_images', '形象图URL们', 'trim|');
-			$this->form_validation->set_rules('url_web', '活动页面URL', 'trim|');
-			$this->form_validation->set_rules('brand_ids', '参与活动的品牌ID们', 'trim|');
-			$this->form_validation->set_rules('biz_ids', '参与活动的商家ID们', 'trim|');
-			$this->form_validation->set_rules('item_ids', '参与活动的商品ID们', 'trim|');
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim|');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim|');
-			$this->form_validation->set_rules('note_stuff', '员工备注', 'trim|');
+			$this->form_validation->set_rules('description', '说明', 'trim');
+			$this->form_validation->set_rules('url_images', '形象图URL们', 'trim');
+			$this->form_validation->set_rules('url_web', '活动页面URL', 'trim');
+			$this->form_validation->set_rules('brand_ids', '参与活动的品牌ID们', 'trim');
+			$this->form_validation->set_rules('biz_ids', '参与活动的商家ID们', 'trim');
+			$this->form_validation->set_rules('item_ids', '参与活动的商品ID们', 'trim');
+			$this->form_validation->set_rules('time_start', '开始时间', 'trim');
+			$this->form_validation->set_rules('time_end', '结束时间', 'trim');
+			$this->form_validation->set_rules('note_stuff', '员工备注', 'trim');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -295,15 +294,15 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('name', '名称', 'trim|required');
-			$this->form_validation->set_rules('description', '说明', 'trim|');
-			$this->form_validation->set_rules('url_images', '形象图URL们', 'trim|');
-			$this->form_validation->set_rules('url_web', '活动页面URL', 'trim|');
-			$this->form_validation->set_rules('brand_ids', '参与活动的品牌ID们', 'trim|');
-			$this->form_validation->set_rules('biz_ids', '参与活动的商家ID们', 'trim|');
-			$this->form_validation->set_rules('item_ids', '参与活动的商品ID们', 'trim|');
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim|');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim|');
-			$this->form_validation->set_rules('note_stuff', '员工备注', 'trim|');
+			$this->form_validation->set_rules('description', '说明', 'trim');
+			$this->form_validation->set_rules('url_images', '形象图URL们', 'trim');
+			$this->form_validation->set_rules('url_web', '活动页面URL', 'trim');
+			$this->form_validation->set_rules('brand_ids', '参与活动的品牌ID们', 'trim');
+			$this->form_validation->set_rules('biz_ids', '参与活动的商家ID们', 'trim');
+			$this->form_validation->set_rules('item_ids', '参与活动的商品ID们', 'trim');
+			$this->form_validation->set_rules('time_start', '开始时间', 'trim');
+			$this->form_validation->set_rules('time_end', '结束时间', 'trim');
+			$this->form_validation->set_rules('note_stuff', '员工备注', 'trim');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
 				// ...
@@ -400,15 +399,15 @@
 			$data_to_validate["{$name}"] = $value;
 			$this->form_validation->set_data($data_to_validate);
 			$this->form_validation->set_rules('name', '名称', 'trim|required');
-			$this->form_validation->set_rules('description', '说明', 'trim|');
-			$this->form_validation->set_rules('url_images', '形象图URL们', 'trim|');
-			$this->form_validation->set_rules('url_web', '活动页面URL', 'trim|');
-			$this->form_validation->set_rules('brand_ids', '参与活动的品牌ID们', 'trim|');
-			$this->form_validation->set_rules('biz_ids', '参与活动的商家ID们', 'trim|');
-			$this->form_validation->set_rules('item_ids', '参与活动的商品ID们', 'trim|');
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim|');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim|');
-			$this->form_validation->set_rules('note_stuff', '员工备注', 'trim|');
+			$this->form_validation->set_rules('description', '说明', 'trim');
+			$this->form_validation->set_rules('url_images', '形象图URL们', 'trim');
+			$this->form_validation->set_rules('url_web', '活动页面URL', 'trim');
+			$this->form_validation->set_rules('brand_ids', '参与活动的品牌ID们', 'trim');
+			$this->form_validation->set_rules('biz_ids', '参与活动的商家ID们', 'trim');
+			$this->form_validation->set_rules('item_ids', '参与活动的商品ID们', 'trim');
+			$this->form_validation->set_rules('time_start', '开始时间', 'trim');
+			$this->form_validation->set_rules('time_end', '结束时间', 'trim');
+			$this->form_validation->set_rules('note_stuff', '员工备注', 'trim');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -517,9 +516,8 @@
 
 			endif;
 		} // end edit_bulk
-		
 
-	}
+	} // end class Promotion
 
 /* End of file Promotion.php */
 /* Location: ./application/controllers/Promotion.php */

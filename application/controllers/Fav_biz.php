@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Fav_biz FVB 商家收藏类
+	 * Fav_biz/FVB 商家关注类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'record_id', 'user_id', 'biz_id', 'time_create', 'time_edit',
+			'user_id', 'biz_id', 'time_create', 'time_edit',
 		);
 
 		/**

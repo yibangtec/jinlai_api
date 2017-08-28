@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Material 类
+	 * TODO Material 类
 	 *
 	 * 处理AJAX文件上传
 	 *

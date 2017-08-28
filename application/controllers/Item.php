@@ -52,22 +52,6 @@
 			'url_image_main', 'name', 'price', 'stocks',
 		);
 
-		/**
-		 * 编辑单行特定字段时必要的字段名
-		 */
-		protected $names_edit_certain_required = array(
-			'user_id', 'id',
-			'name', 'value',
-		);
-
-		/**
-		 * 编辑多行特定字段时必要的字段名
-		 */
-		protected $names_edit_bulk_required = array(
-			'user_id', 'ids',
-			'operation', 'password',
-		);
-
 		public function __construct()
 		{
 			parent::__construct();
@@ -89,7 +73,6 @@
 		{
 			// 筛选条件
 			$condition = NULL;
-			//$condition['name'] = 'value';
 
 			// （可选）遍历筛选条件
 			foreach ($this->names_to_sort as $sorter):
@@ -138,7 +121,6 @@
 
 			// 筛选条件
 			$condition = NULL;
-			//$condition['name'] = 'value';
 			// （可选）遍历筛选条件
 			foreach ($this->names_to_sort as $sorter):
 				if ( !empty($this->input->post_get($sorter)) ):

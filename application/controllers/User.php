@@ -2,10 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * User 用户类
-	 *
-	 * 以API服务形式返回数据列表、详情、创建、单行编辑、单/多行编辑（删除、恢复）等功能提供了常见功能的示例代码
-	 * CodeIgniter官方网站 https://www.codeigniter.com/user_guide/
+	 * User/USR 用户类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
@@ -17,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'user_id', 'password', 'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob', 'avatar', 'mobile', 'email', 'wechat_union_id', 'address_id', 'bank_name', 'bank_account', 'last_login_timestamp', 'last_login_ip',
+			'password', 'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob', 'avatar', 'mobile', 'email', 'wechat_union_id', 'address_id', 'bank_name', 'bank_account', 'last_login_timestamp', 'last_login_ip',
 			'time_create', 'time_delete', 'time_edit', 'operator_id',
 		);
 
@@ -25,7 +22,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'user_id', 'password', 'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob', 'avatar', 'mobile', 'email', 'wechat_union_id', 'address_id', 'bank_name', 'bank_account', 'last_login_timestamp', 'last_login_ip',
+			'user_id', 'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob', 'avatar', 'mobile', 'email', 'wechat_union_id', 'address_id', 'bank_name', 'bank_account', 'last_login_timestamp', 'last_login_ip',
 			'time_create', 'time_delete', 'time_edit', 'operator_id',
 		);
 
@@ -33,8 +30,7 @@
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id',
-			'mobile',
+			'user_id', 'mobile',
 		);
 
 		/**
@@ -49,22 +45,6 @@
 		 */
 		protected $names_edit_required = array(
 			'user_id', 'id',
-		);
-
-		/**
-		 * 编辑单行特定字段时必要的字段名
-		 */
-		protected $names_edit_certain_required = array(
-			'user_id', 'id',
-			'name', 'value',
-		);
-
-		/**
-		 * 编辑多行特定字段时必要的字段名
-		 */
-		protected $names_edit_bulk_required = array(
-			'user_id', 'ids',
-			'operation', 'password',
 		);
 
 		public function __construct()
@@ -88,8 +68,6 @@
 		{
 			// 筛选条件
 			$condition = NULL;
-			//$condition['name'] = 'value';
-
 			// （可选）遍历筛选条件
 			foreach ($this->names_to_sort as $sorter):
 				if ( !empty($this->input->post_get($sorter)) ):
@@ -137,7 +115,6 @@
 
 			// 筛选条件
 			$condition = NULL;
-			//$condition['name'] = 'value';
 			// （可选）遍历筛选条件
 			foreach ($this->names_to_sort as $sorter):
 				if ( !empty($this->input->post($sorter)) )
@@ -146,18 +123,12 @@
 			
 			// 排序条件
 			$order_by = NULL;
-			//$order_by['name'] = 'value';
 
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );
 
 			// 获取列表；默认可获取已删除项
 			$items = $this->basic_model->select($condition, $order_by);
-			
-			// 不返回真实密码信息
-			foreach ($items as $item):
-				if ( !empty($item['password']) ) $item['password'] = 'set';
-			endforeach;
 
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
@@ -184,7 +155,7 @@
 			endif;
 
 			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
+			$this->db->select( implode(',', $this->names_to_return). ',password' );
 			
 			// 获取特定项；默认可获取已删除项
 			$item = $this->basic_model->select_by_id($id);
@@ -211,11 +182,6 @@
 			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
 			$this->client_check($type_allowed);
 
-			// 管理类客户端操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
-
 			// 检查必要参数是否已传入
 			$required_params = $this->names_edit_required;
 			foreach ($required_params as $param):
@@ -233,15 +199,10 @@
 			$this->form_validation->set_rules('nickname', '昵称', 'trim|max_length[12]');
 			$this->form_validation->set_rules('lastname', '姓氏', 'trim|max_length[9]');
 			$this->form_validation->set_rules('firstname', '名', 'trim|max_length[6]');
-			$this->form_validation->set_rules('gender', '性别', 'trim');
+			$this->form_validation->set_rules('gender', '性别', 'trim|in_list[男,女]');
 			$this->form_validation->set_rules('dob', '出生日期', 'trim');
 			$this->form_validation->set_rules('avatar', '头像', 'trim');
-			$this->form_validation->set_rules('email', '电子邮件地址', 'trim');
-
-			// 针对特定条件的验证规则
-			if ($this->app_type === '管理员'):
-				// ...
-			endif;
+			$this->form_validation->set_rules('email', '电子邮件地址', 'trim|valid_email');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -256,15 +217,10 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'avatar', 'email', 'address_id', 'bank_name', 'bank_account',
+					'nickname', 'lastname', 'firstname', 'gender', 'avatar', 'email',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
-
-				// 根据客户端类型等条件筛选可操作的字段名
-				if ($this->app_type !== 'admin'):
-					//unset($data_to_edit['name']);
-				endif;
 
 				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);
@@ -291,11 +247,6 @@
 			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
 			$this->client_check($type_allowed);
 
-			// 管理类客户端操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
-
 			// 检查必要参数是否已传入
 			$required_params = $this->names_edit_certain_required;
 			foreach ($required_params as $param):
@@ -314,19 +265,6 @@
 				exit();
 			endif;
 
-			// 根据客户端类型检查是否可编辑
-			/*
-			$names_limited = array(
-				'biz' => array('name1', 'name2', 'name3', 'name4'),
-				'admin' => array('name1', 'name2', 'name3', 'name4'),
-			);
-			if ( in_array($name, $names_limited[$this->app_type]) ):
-				$this->result['status'] = 432;
-				$this->result['content']['error']['message'] = '该字段不可被当前类型的客户端修改';
-				exit();
-			endif;
-			*/
-
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
@@ -336,10 +274,11 @@
 			$this->form_validation->set_rules('nickname', '昵称', 'trim|max_length[12]');
 			$this->form_validation->set_rules('lastname', '姓氏', 'trim|max_length[9]');
 			$this->form_validation->set_rules('firstname', '名', 'trim|max_length[6]');
-			$this->form_validation->set_rules('gender', '性别', 'trim');
+			$this->form_validation->set_rules('gender', '性别', 'trim|in_list[男,女]');
 			$this->form_validation->set_rules('dob', '出生日期', 'trim');
 			$this->form_validation->set_rules('avatar', '头像', 'trim');
-			$this->form_validation->set_rules('email', '电子邮件地址', 'trim');
+
+			$this->form_validation->set_rules('email', '电子邮件地址', 'trim|valid_email');
 			$this->form_validation->set_rules('wechat_union_id', '微信UnionID', 'trim');
 			$this->form_validation->set_rules('address_id', '默认地址', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|min_length[3]');
@@ -381,7 +320,7 @@
 		public function edit_bulk()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
+			$type_allowed = array('admin', 'biz',); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
