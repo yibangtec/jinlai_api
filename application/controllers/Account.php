@@ -249,7 +249,7 @@
 
 			endif;
 		} // end password_change
-		
+
 		/**
 		 * ACT4 密码登录
 		 *
@@ -300,6 +300,8 @@
 				// 若用户存在，检查密码正确性。
 				if ( !empty($user_info) ):
 					if ($user_info['password'] === sha1($password)):
+						// 检查是否传入了微信UnionID
+						$login_info['wechat_union_id'] = $this->input->post('wechat_union_id'); // 微信UnionID
 						// 更新最后登录信息
 						$login_info['last_login_ip'] = empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'); // 优先检查请求是否来自APP
 						$login_info['last_login_timestamp'] = time();
@@ -507,7 +509,11 @@
 				endif;
 
 				// 若用户存在，返回用户信息
-				if ( !empty($user_info) ):
+				if ( empty($user_info) ):
+					$this->result['status'] = 414;
+					$this->result['content']['error']['message'] = '用户未注册';
+
+				else:
 					// 更新最后登录信息
 					$login_info['last_login_ip'] = empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'); // 优先检查请求是否来自APP
 					$login_info['last_login_timestamp'] = time();
@@ -544,10 +550,6 @@
 
 					$this->result['status'] = 200;
 					$this->result['content'] = array_merge($user_info, $login_info);
-
-				else:
-					$this->result['status'] = 414;
-					$this->result['content']['error']['message'] = '用户未注册';
 
 				endif;
 

@@ -24,22 +24,6 @@
 			'coupon_id', 'user_id', 'template_id', 'category_id', 'biz_id', 'category_biz_id', 'item_id', 'name', 'description', 'amount', 'min_subtotal', 'time_start', 'time_end', 'time_expire', 'order_id', 'time_used', 'time_create', 'time_delete', 'status',
 		);
 
-		/**
-		 * 创建时必要的字段名
-		 */
-		protected $names_create_required = array(
-			'user_id',
-			'template_id',
-		);
-		
-		/**
-		 * 编辑多行特定字段时必要的字段名
-		 */
-		protected $names_edit_bulk_required = array(
-			'user_id', 'ids',
-			'operation', 'password',
-		);
-
 		public function __construct()
 		{
 			parent::__construct();
@@ -167,37 +151,33 @@
 		} // end detail
 
 		/**
-		 * 3 创建
+		 * TODO 3 创建（领取优惠券）
 		 */
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
+			$type_allowed = array('admin', 'biz', 'client',); // 客户端类型；平台及商家可手动向指定用户发放优惠券
 			$this->client_check($type_allowed);
 
-			// 管理类客户端操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
-
 			// 检查必要参数是否已传入
-			$required_params = $this->names_create_required;
-			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
-				if ( !isset( ${$param} ) ):
-					$this->result['status'] = 400;
-					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-					exit();
-				endif;
-			endforeach;
+			// 必须传入combo_id，或template_id
+			$combo_id = $this->input->post('combo_id');
+			$template_id = $this->input->post('template_id');
+			if ( !empty($template_id) ):
+				$count = $this->input->post('count');
+			elseif ( empty($combo_id) ):
+				$this->result['status'] = 400;
+				$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+				exit();
+			endif;
 
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('coupon_id', '优惠券ID', 'trim|required');
 			$this->form_validation->set_rules('user_id', '所属用户ID', 'trim|required');
-			$this->form_validation->set_rules('template_id', '所属优惠券模板ID', 'trim|required');
+			$this->form_validation->set_rules('combo_id', '所属优惠券包ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('template_id', '所属优惠券模板ID', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('count', '数量', 'trim|is_natural_no_zero');
 
 			// 若表单提交不成功
@@ -207,7 +187,7 @@
 
 			else:
 				// 获取优惠券模板
-				
+
 				// 检查有无限制条件
 				
 				// 根据优惠券模板信息及传入的张数生成优惠券
@@ -320,7 +300,6 @@
 
 			endif;
 		} // end edit_bulk
-		
 
 	} // end class Coupon
 

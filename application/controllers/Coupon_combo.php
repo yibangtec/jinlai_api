@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'combo_id', 'biz_id', 'name', 'description', 'template_ids', 'max_amount', 'time_start', 'time_end',
+			'biz_id', 'name', 'description', 'template_ids', 'max_amount', 'time_start', 'time_end',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -47,14 +47,6 @@
 		protected $names_edit_required = array(
 			'user_id', 'id',
 			'name', 'template_ids',
-		);
-
-		/**
-		 * 编辑多行特定字段时必要的字段名
-		 */
-		protected $names_edit_bulk_required = array(
-			'user_id', 'ids',
-			'operation', 'password',
 		);
 
 		public function __construct()

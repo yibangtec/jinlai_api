@@ -47,6 +47,13 @@
 			'fullname', 'mobile', 'province', 'city', 'street',
 		);
 
+		/**
+		 * 编辑多行特定字段时必要的字段名
+		 */
+		protected $names_edit_bulk_required = array(
+			'user_id', 'ids', 'operation',
+		);
+
 		public function __construct()
 		{
 			parent::__construct();
@@ -141,7 +148,7 @@
 			else:
 				$this->result['status'] = 414;
 				$this->result['content']['error']['message'] = '没有符合条件的数据';
-			
+
 			endif;
 		} // end index
 
@@ -160,7 +167,7 @@
 
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );
-			
+
 			// 获取特定项；默认可获取已删除项
 			$item = $this->basic_model->select_by_id($id);
 			if ( !empty($item) ):
@@ -409,17 +416,11 @@
 			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
 			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore]');
 			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
-			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):
 				$this->result['status'] = 401;
 				$this->result['content']['error']['message'] = validation_errors();
-				exit();
-
-			elseif ($this->operator_check() !== TRUE):
-				$this->result['status'] = 453;
-				$this->result['content']['error']['message'] = '与该ID及类型对应的操作者不存在，或操作密码错误';
 				exit();
 
 			else:

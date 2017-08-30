@@ -130,7 +130,7 @@
 					'form_data' => '', // 用于接口测试的key-value值，可用于Postman等工具
 					'rules' => '', // 验证规则
 					'params_request' => '', // 请求参数（生成文档用）
-					'params_respond' => '<tr><td>'.$id_name.'</td><td>string</td><td>详见“返回示例”，下同</td><td>'.$class_name_cn.'ID</td></tr>'. "\n", // 响应参数（生成文档用）
+					'params_respond' => '', // 响应参数（生成文档用）
 					'elements' => '', // 主要视图元素（生成文档用）
 
 					'create' => '', // 创建页字段
@@ -146,7 +146,7 @@
 
 					$this->result['content']['names_list'] .= "'$name', ";
 					$this->result['content']['form_data'] .= $name. ':'. "\n";
-					$this->result['content']['params_request'] .= '<tr><td>'. $name. '</td><td>'.$type.'</td><td>'.($allow_null === 'YES'? '是': '否').'</td><td>示例</td><td>'.$comment.'</td></tr>'. "\n";
+					$this->result['content']['params_request'] .= '<tr><td>'. $name. '</td><td>'.$type.'</td><td>'.($allow_null === 'YES'? '否': '是').'</td><td>示例</td><td>'.$comment.'</td></tr>'. "\n"; // 根据相应字段在数据库中是否允许为空标识请求参数的必要性
 
 					// 对于其它信息，去除字段备注中全角分号之后的部分
 					$length_to_end = strpos($comment, '；');

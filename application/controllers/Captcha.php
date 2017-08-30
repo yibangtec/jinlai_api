@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Captcha/CPT 验证码类
+	 * Captcha/CAP 验证码类
 	 *
 	 * 验证码相关功能
 	 *
@@ -34,7 +34,7 @@
 		}
 
 		/**
-		 * 1 验证码创建
+		 * 3 验证码创建
 		 */
 		public function create()
 		{
