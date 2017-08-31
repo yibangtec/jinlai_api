@@ -323,7 +323,7 @@
 									$this->result['status'] = 415;
 									$this->result['content']['error']['message'] = '该用户并非商户端员工';
 									exit();
-								
+
 								else:
 									$user_info['biz_id'] = $stuff['biz_id'];
 									$user_info['role'] = $stuff['role'];

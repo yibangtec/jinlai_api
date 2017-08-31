@@ -202,7 +202,6 @@
 			$this->form_validation->set_rules('gender', '性别', 'trim|in_list[男,女]');
 			$this->form_validation->set_rules('dob', '出生日期', 'trim');
 			$this->form_validation->set_rules('avatar', '头像', 'trim');
-			$this->form_validation->set_rules('email', '电子邮件地址', 'trim|valid_email');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -217,7 +216,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'nickname', 'lastname', 'firstname', 'gender', 'avatar', 'email',
+					'nickname', 'lastname', 'firstname', 'gender', 'avatar',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);

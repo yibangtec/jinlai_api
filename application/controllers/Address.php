@@ -266,7 +266,9 @@
 						'user_id' => $user_id,
 						'time_delete' => 'NULL',
 					);
-					if ( $this->basic_model->count($condition) === 1):
+					$address_count = $this->basic_model->count($condition);
+					$this->result['content']['count'] = $address_count; // 当前用户未删除地址数
+					if ( $address_count === 1):
 						$this->basic_model->table_name = 'user';
 						$this->basic_model->id_name = 'user_id';
 
@@ -330,7 +332,6 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
-					'user_id' => $user_id,
 					//'nation' => empty($this->input->post('nation'))? '中国': $this->input->post('nation'),
 					'nation' => '中国', // 暂时只支持中国
 				);
@@ -367,8 +368,9 @@
 						'user_id' => $user_id,
 						'time_delete' => 'NULL',
 					);
-					$this->count($condition);
-					if ( $this->result['content']['count'] === 1):
+					$address_count = $this->basic_model->count($condition);
+					$this->result['content']['count'] = $address_count; // 当前用户未删除地址数
+					if ( $address_count === 1):
 						$this->basic_model->table_name = 'user';
 						$this->basic_model->id_name = 'user_id';
 

@@ -16,7 +16,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'parent_id',
+			'parent_id', 'nature', 'level', 'name', 'description', 'url_name', 'url_image',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -24,7 +24,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'parent_id', 'name', 'url_name', 'url_image', 'description',
+			'category_id', 'parent_id', 'nature', 'level', 'name', 'description', 'url_name', 'url_image',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -39,7 +39,7 @@
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'parent_id', 'name', 'url_name', 'url_image', 'description',
+			'parent_id', 'name', 'description', 'url_name', 'url_image',
 		);
 
 		/**
@@ -48,20 +48,6 @@
 		protected $names_edit_required = array(
 			'user_id', 'id',
 			'name',
-		);
-
-		/**
-		 * 编辑单行特定字段时必要的字段名
-		 */
-		protected $names_edit_certain_required = array(
-			'user_id', 'id', 'name', 'value',
-		);
-
-		/**
-		 * 编辑多行特定字段时必要的字段名
-		 */
-		protected $names_edit_bulk_required = array(
-			'user_id', 'ids', 'operation', 'password',
 		);
 
 		public function __construct()
@@ -485,7 +471,7 @@
 			endif;
 		} // end edit_bulk
 
-	}
+	} // end class Item_category
 
 /* End of file Item_category.php */
 /* Location: ./application/controllers/Item_category.php */
