@@ -37,6 +37,13 @@
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
 		}
+		
+		public function __destruct()
+		{
+			parent::__destruct();
+
+			//$this->output->enable_profiler(TRUE);
+		}
 
 		/**
 		 * 0 计数
@@ -150,6 +157,77 @@
 			endif;
 		} // end detail
 
+		// 检查优惠券模板是否可被特定用户领取
+		protected function get_template($template_id, $user_id, $in_combo = FALSE)
+		{
+			// 获取优惠券模板
+			$this->basic_model->table_name = 'coupon_template';
+			$this->basic_model->id_name = 'template_id';
+			
+			// 有效期结束时间不早于当前时间
+			$this->db->where('time_delete', NULL)
+			        ->group_start()
+			                ->where('time_end', NULL)
+	                        ->or_where('time_end >', time())
+			        ->group_end();
+			$template = $this->basic_model->select_by_id($template_id);
+			//var_dump($template);
+
+			// 还原数据库参数
+			$this->basic_model->table_name = $this->table_name;
+			$this->basic_model->id_name = $this->id_name;
+
+			// 若无复合条件的优惠券，返回false
+			if ( empty($template) ):
+				return FALSE;
+
+			// 若单独被领取，检查总限量及单个用户限量
+			elseif ($in_combo === FALSE):
+				// 重置数据库查询构造器
+				$this->db->reset_query();
+				
+				// 初始化有效性
+				$is_valid = TRUE;
+
+				// 若当前模板有总限量，进行检查
+				if ($template['max_amount'] != 0):
+					// 获取当前模板已生成的模板优惠券数量
+					$condition = array(
+						'template_id' => $template_id,
+						'time_delete' => 'NULL',
+					);
+					$count = $this->basic_model->count($condition);
+					if ($count >= $template['max_amount'])
+						$is_valid = FALSE;
+				endif;
+
+				// 若当前模板有单个用户限量，进行检查
+				if ($template['max_amount_user'] != 0):
+					// 获取当前模板已生成的模板优惠券数量
+					$condition = array(
+						'user_id' => $user_id,
+						'template_id' => $template_id,
+						'time_delete' => 'NULL',
+					);
+					$count = $this->basic_model->count($condition);
+					if ($count >= $template['max_amount_user'])
+						$is_valid = FALSE;
+				endif;
+
+				// 若无异常，返回优惠券模板信息
+				if ($is_valid === TRUE):
+					return $template;
+				else:
+					return FALSE;
+				endif;
+
+			// 若作为礼包项被领取，忽视限量
+			else:
+				return $template;
+
+			endif;
+		}
+
 		/**
 		 * TODO 3 创建（领取优惠券）
 		 */
@@ -160,12 +238,13 @@
 			$this->client_check($type_allowed);
 
 			// 检查必要参数是否已传入
+			$user_id = $this->input->post('user_id');
 			// 必须传入combo_id，或template_id
 			$combo_id = $this->input->post('combo_id');
 			$template_id = $this->input->post('template_id');
-			if ( !empty($template_id) ):
+			if ( !empty($user_id) && !empty($template_id) ):
 				$count = $this->input->post('count');
-			elseif ( empty($combo_id) ):
+			elseif ( empty($user_id) || empty($combo_id) ):
 				$this->result['status'] = 400;
 				$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 				exit();
@@ -186,34 +265,50 @@
 				$this->result['content']['error']['message'] = validation_errors();
 
 			else:
-				// 获取优惠券模板
+				// TODO 获取优惠券包
 
-				// 检查有无限制条件
-				
-				// 根据优惠券模板信息及传入的张数生成优惠券
-				
+				// 获取优惠券模板
+				$template = $this->get_template($template_id, $user_id);
+				//var_dump($template);
+				if ($template === FALSE):
+					$this->result['status'] = 414;
+					$this->result['content']['error']['message'] = '该优惠券不可领取';
+					exit();
+				endif;
+
+				// 计算失效时间
+				if ( !empty($template['time_end']) ):
+					$time_to_end = $template['time_end']; // 若指定了有效期结束日期，直接赋值
+				else:
+					$time_to_end = empty($template['period'])? NULL: time() + $template['period']; // 若未指定有效期，则长期有效
+				endif;
+
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
-					//'creator_id' => $user_id,
-					//'name' => $this->input->post('name'),
 					'user_id' => $user_id,
+					'template_id' => $template_id,
+					'biz_id' => $template['biz_id'],
+					'category_id' => $template['category_id'],
+					'category_biz_id' => $template['category_biz_id'],
+					'name' => $template['name'],
+					'description' => $template['description'],
+					'item_id' => $template['item_id'],
+					'amount' => $template['amount'],
+					'min_subtotal' => $template['min_subtotal'],
+					'time_start' => $template['time_start'],
+					'time_end' => $time_to_end,
 				);
-				// 自动生成无需特别处理的数据
-				$data_need_no_prepare = array(
-					'user_id', 'template_id', 'category_id', 'count',
-				);
-				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+				//var_dump( array_filter($data_to_create) );
 
-				$result = $this->basic_model->create($data_to_create, TRUE);
+				$result = $this->basic_model->create(array_filter($data_to_create), TRUE);
 				if ($result !== FALSE):
 					$this->result['status'] = 200;
 					$this->result['content']['id'] = $result;
-					$this->result['content']['message'] = '创建成功';
+					$this->result['content']['message'] = '领取成功';
 
 				else:
 					$this->result['status'] = 424;
-					$this->result['content']['error']['message'] = '创建失败';
+					$this->result['content']['error']['message'] = '领取失败';
 
 				endif;
 			endif;

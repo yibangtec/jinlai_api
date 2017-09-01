@@ -210,14 +210,17 @@
 			$this->form_validation->set_rules('min_subtotal', '起用金额（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
 			$this->form_validation->set_rules('max_amount', '总限量', 'trim|greater_than_equal_to[0]|less_than_equal_to[999999]');
 			$this->form_validation->set_rules('max_amount_user', '单个用户限量', 'trim|greater_than_equal_to[0]|less_than_equal_to[99]');
-			$this->form_validation->set_rules('category_id', '限用系统商品分类', 'trim');
 			$this->form_validation->set_rules('category_biz_id', '限用商家商品分类', 'trim');
 			$this->form_validation->set_rules('item_id', '限用商品', 'trim');
-			$this->form_validation->set_rules('period', '有效期', 'trim');
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]|callback_time_start');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]|callback_time_end');
+			$this->form_validation->set_rules('period', '领取后有效期', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('time_start', '有效期开始时间', 'trim|exact_length[10]|integer|callback_time_start');
+			$this->form_validation->set_rules('time_end', '有效期结束时间', 'trim|exact_length[10]|integer|callback_time_end');
 			$this->form_validation->set_message('time_start', '开始时间需详细到分，且晚于当前时间1分钟后');
 			$this->form_validation->set_message('time_end', '结束时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
+			// 针对特定条件的验证规则
+			if ($this->app_type === 'admin'):
+				$this->form_validation->set_rules('category_id', '限用系统商品分类', 'trim');
+			endif;
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -228,14 +231,20 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
-					'period' => empty($this->input->post('period'))? '2592000': $this->input->post('period'), // 有效期默认为30个自然日
+					'period' => (empty($this->input->post('period')) && empty($this->input->post('time_end')) )? '2592000': $this->input->post('period'), // 有效期默认为30个自然日；但若指定了有效期结束时间，则忽略领取后有效期
+					'time_start' => empty($this->input->post('time_start'))? 0: $this->input->post('time_start'),
+					'time_end' => empty($this->input->post('time_end'))? NULL: $this->input->post('time_end'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'description', 'max_amount', 'max_amount_user', 'min_subtotal', 'amount', 'time_start', 'time_end',
+					'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'description', 'max_amount', 'max_amount_user', 'min_subtotal', 'amount',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
+				// 根据客户端类型等条件筛选可操作的字段名
+				if ($this->app_type !== 'admin'):
+					unset($data_to_edit['category_id']);
+				endif;
 
 				$result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):
@@ -285,17 +294,16 @@
 			$this->form_validation->set_rules('min_subtotal', '起用金额（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
 			$this->form_validation->set_rules('max_amount', '总限量', 'trim|greater_than_equal_to[0]|less_than_equal_to[999999]');
 			$this->form_validation->set_rules('max_amount_user', '单个用户限量', 'trim|greater_than_equal_to[0]|less_than_equal_to[99]');
-			$this->form_validation->set_rules('category_id', '限用系统商品分类', 'trim');
-			$this->form_validation->set_rules('category_biz_id', '限用商家商品分类', 'trim');
+			$this->form_validation->set_rules('category_biz_id', '限用店内商品分类', 'trim');
 			$this->form_validation->set_rules('item_id', '限用商品', 'trim');
-			$this->form_validation->set_rules('period', '有效期', 'trim');
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]|callback_time_start');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]|callback_time_end');
+			$this->form_validation->set_rules('period', '领取后有效期', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('time_start', '有效期开始时间', 'trim|exact_length[10]|integer|callback_time_start');
+			$this->form_validation->set_rules('time_end', '有效期结束时间', 'trim|exact_length[10]|integer|callback_time_end');
 			$this->form_validation->set_message('time_start', '开始时间需详细到分，且晚于当前时间1分钟后');
 			$this->form_validation->set_message('time_end', '结束时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 			// 针对特定条件的验证规则
-			if ($this->app_type === '管理员'):
-				// ...
+			if ($this->app_type === 'admin'):
+				$this->form_validation->set_rules('category_id', '限用系统商品分类', 'trim');
 			endif;
 
 			// 若表单提交不成功
@@ -307,18 +315,20 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
-					'period' => empty($this->input->post('period'))? '2592000': $this->input->post('period'), // 有效期默认为30个自然日
+					'period' => (empty($this->input->post('period')) && empty($this->input->post('time_end')) )? '2592000': $this->input->post('period'), // 有效期默认为30个自然日；但若指定了有效期结束时间，则忽略领取后有效期
+					'time_start' => empty($this->input->post('time_start'))? 0: $this->input->post('time_start'),
+					'time_end' => empty($this->input->post('time_end'))? NULL: $this->input->post('time_end'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_id', 'category_biz_id', 'item_id', 'name', 'description', 'max_amount', 'max_amount_user', 'min_subtotal', 'amount', 'time_start', 'time_end',
+					'category_id', 'category_biz_id', 'item_id', 'name', 'description', 'max_amount', 'max_amount_user', 'min_subtotal', 'amount',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
 
 				// 根据客户端类型等条件筛选可操作的字段名
 				if ($this->app_type !== 'admin'):
-					//unset($data_to_edit['name']);
+					unset($data_to_edit['category_id']);
 				endif;
 
 				// 进行修改
