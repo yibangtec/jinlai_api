@@ -11,16 +11,19 @@
 	class Cart extends MY_Controller
 	{
 		/**
-		 * 编辑单行特定字段时必要的字段名
+		 * 同步上传时必需的请求参数
 		 */
-		protected $names_edit_certain_required = array(
-			'user_id', 'id',
-			'name', 'value',
+		protected $names_sync_required = array(
+			'id', 'name', 'value',
 		);
 
 		public function __construct()
 		{
 			parent::__construct();
+			
+			// 操作可能需要检查客户端及设备信息
+			$type_allowed = array('client'); // 客户端类型
+			$this->client_check($type_allowed);
 
 			// 设置主要数据库信息
 			$this->table_name = 'user'; // 这里……
@@ -33,9 +36,9 @@
 		}
 
 		/**
-		 * 2 详情
+		 * 2 详情/下载
 		 */
-		public function detail()
+		public function sync_down()
 		{
 			// 检查必要参数是否已传入
 			$id = $this->input->post('id');
@@ -62,16 +65,12 @@
 		} // end detail
 
 		/**
-		 * 5 编辑单行数据特定字段
+		 * 5 单项修改/上传
 		 */
-		public function edit_certain()
+		public function sync_up()
 		{
-			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('client'); // 客户端类型
-			$this->client_check($type_allowed);
-
 			// 检查必要参数是否已传入
-			$required_params = $this->names_edit_certain_required;
+			$required_params = $this->names_sync_required;
 			foreach ($required_params as $param):
 				${$param} = $this->input->post($param);
 				if ( $param !== 'value' && empty( ${$param} ) ): // value 可以为空；必要字段会在字段验证中另行检查
@@ -100,7 +99,6 @@
 				$data_to_edit[$name] = $value;
 
 				// 获取ID
-				$id = $this->input->post('id');
 				$result = $this->basic_model->edit($id, $data_to_edit);
 
 				if ($result !== FALSE):

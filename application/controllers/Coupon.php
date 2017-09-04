@@ -14,19 +14,22 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'user_id', 'template_id', 'category_id', 'biz_id', 'category_biz_id', 'item_id', 'name', 'description', 'amount', 'min_subtotal', 'time_start', 'time_end', 'time_expire', 'order_id', 'time_used', 'time_create', 'time_delete', 'status',
+			'user_id', 'combo_id', 'template_id', 'category_id', 'biz_id', 'category_biz_id', 'item_id', 'name', 'description', 'amount', 'min_subtotal', 'time_start', 'time_end', 'time_expire', 'order_id', 'time_used', 'time_create', 'time_delete', 'status',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'coupon_id', 'user_id', 'template_id', 'category_id', 'biz_id', 'category_biz_id', 'item_id', 'name', 'description', 'amount', 'min_subtotal', 'time_start', 'time_end', 'time_expire', 'order_id', 'time_used', 'time_create', 'time_delete', 'status',
+			'coupon_id', 'user_id', 'combo_id', 'template_id', 'category_id', 'biz_id', 'category_biz_id', 'item_id', 'name', 'description', 'amount', 'min_subtotal', 'time_start', 'time_end', 'time_expire', 'order_id', 'time_used', 'time_create', 'time_delete', 'status',
 		);
 
 		public function __construct()
 		{
 			parent::__construct();
+
+			// 初始化待用类属性
+			$this->result['content']['ids'] = $this->result['content']['message'] = '';
 
 			// 设置主要数据库信息
 			$this->table_name = 'coupon'; // 这里……
@@ -36,13 +39,6 @@
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
-		}
-		
-		public function __destruct()
-		{
-			parent::__destruct();
-
-			//$this->output->enable_profiler(TRUE);
 		}
 
 		/**
@@ -157,13 +153,20 @@
 			endif;
 		} // end detail
 
-		// 检查优惠券模板是否可被特定用户领取
-		protected function get_template($template_id, $user_id, $in_combo = FALSE)
+		/**
+		 * 检查优惠券模板有效性
+		 *
+		 * @params int/string $template_id 优惠券模板ID
+		 * @params int/string $user_id 用户ID
+		 * @params boolean $in_combo 是否在优惠券包中
+		 * @return array/boolean 可用的优惠券模板信息或FALSE
+		 */
+		protected function get_template($template_id, $user_id, $combo_id = NULL)
 		{
 			// 获取优惠券模板
 			$this->basic_model->table_name = 'coupon_template';
 			$this->basic_model->id_name = 'template_id';
-			
+
 			// 有效期结束时间不早于当前时间
 			$this->db->where('time_delete', NULL)
 			        ->group_start()
@@ -177,29 +180,17 @@
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
 
-			// 若无复合条件的优惠券，返回false
+			// 若无符合条件的优惠券，返回false
 			if ( empty($template) ):
 				return FALSE;
 
 			// 若单独被领取，检查总限量及单个用户限量
-			elseif ($in_combo === FALSE):
+			elseif ($combo_id === NULL):
 				// 重置数据库查询构造器
 				$this->db->reset_query();
 				
 				// 初始化有效性
 				$is_valid = TRUE;
-
-				// 若当前模板有总限量，进行检查
-				if ($template['max_amount'] != 0):
-					// 获取当前模板已生成的模板优惠券数量
-					$condition = array(
-						'template_id' => $template_id,
-						'time_delete' => 'NULL',
-					);
-					$count = $this->basic_model->count($condition);
-					if ($count >= $template['max_amount'])
-						$is_valid = FALSE;
-				endif;
 
 				// 若当前模板有单个用户限量，进行检查
 				if ($template['max_amount_user'] != 0):
@@ -211,6 +202,18 @@
 					);
 					$count = $this->basic_model->count($condition);
 					if ($count >= $template['max_amount_user'])
+						$is_valid = FALSE;
+				endif;
+
+				// 若当前模板有总限量，进行检查
+				if ($template['max_amount'] != 0):
+					// 获取当前模板已生成的模板优惠券数量
+					$condition = array(
+						'template_id' => $template_id,
+						'time_delete' => 'NULL',
+					);
+					$count = $this->basic_model->count($condition);
+					if ($count >= $template['max_amount'])
 						$is_valid = FALSE;
 				endif;
 
@@ -226,10 +229,163 @@
 				return $template;
 
 			endif;
-		}
+		} // get_template
 
 		/**
-		 * TODO 3 创建（领取优惠券）
+		 * 检查优惠券包有效性
+		 *
+		 * @params int/string $combo_id 优惠券包ID
+		 * @params int/string $user_id 用户ID
+		 * @return array/boolean 可用的优惠券包信息或FALSE
+		 */
+		protected function get_combo($combo_id, $user_id)
+		{
+			// 获取优惠券模板
+			$this->basic_model->table_name = 'coupon_combo';
+			$this->basic_model->id_name = 'combo_id';
+			
+			// 有效期结束时间不早于当前时间
+			$this->db->where('time_delete', NULL)
+			        ->group_start()
+			                ->where('time_end', NULL)
+	                        ->or_where('time_end >', time())
+			        ->group_end();
+			$combo = $this->basic_model->select_by_id($combo_id);
+			//var_dump($combo);
+
+			// 还原数据库参数
+			$this->basic_model->table_name = $this->table_name;
+			$this->basic_model->id_name = $this->id_name;
+
+			// 若无符合条件的优惠券包，返回false
+			if ( empty($combo) ):
+				return FALSE;
+
+			// 若单独被领取，检查总限量及单个用户限量
+			else:
+				// 重置数据库查询构造器
+				$this->db->reset_query();
+				
+				// 初始化有效性
+				$is_valid = TRUE;
+
+				// 每个优惠券包对单一用户限领一次
+				$condition = array(
+					'user_id' => $user_id,
+					'combo_id' => $combo_id,
+					'time_delete' => 'NULL',
+				);
+				$count = $this->basic_model->count($condition);
+				//var_dump($count);
+				if ($count > 0)
+					$is_valid = FALSE;
+
+				// 若当前模板有总限量，进行检查
+				if ($combo['max_amount'] != 0):
+					// 获取当前模板已生成的模板优惠券数量
+					$condition = array(
+						'combo_id' => $combo_id,
+						'time_delete' => 'NULL',
+					);
+					$count = $this->basic_model->count($condition);
+					if ($count >= $combo['max_amount'])
+						$is_valid = FALSE;
+				endif;
+
+				// 若无异常，返回优惠券模板信息
+				if ($is_valid === TRUE):
+					return $combo;
+				else:
+					return FALSE;
+				endif;
+
+			endif;
+		} // get_combo
+		
+		/**
+		 * 生成优惠券
+		 *
+		 * @params int/string $user_id 用户ID
+		 * @params array $template 优惠券模板信息
+		 * @params int/string $combo_id 所属优惠券包ID
+		 */
+		protected function generate_coupon($user_id, $template_id, $combo_id = NULL)
+		{
+			// 获取优惠券模板
+			$template = $this->get_template($template_id, $user_id, $combo_id);
+			if ($template === FALSE):
+				if ($this->result['status'] === 200):
+					$this->result['content']['message'] = '部分优惠券不可领取';
+
+				else:
+					$this->result['status'] = 414;
+					if ($combo_id === NULL):
+						$this->result['content']['error']['message'] = '领取失败';
+					else:
+						$this->result['content']['error']['message'] .= '<li>部分优惠券领取失败</li>';
+					endif;
+					
+				endif;
+
+			else:
+				// 计算失效时间
+				if ( !empty($template['time_end']) ):
+					$time_to_end = $template['time_end']; // 若指定了有效期结束日期，直接赋值
+				else:
+					$time_to_end = empty($template['period'])? NULL: time() + $template['period']; // 若未指定有效期，则长期有效
+				endif;
+
+				// 需要创建的数据；逐一赋值需特别处理的字段
+				$data_to_create = array(
+					'user_id' => $user_id,
+					'combo_id' => $combo_id,
+					'template_id' => $template_id,
+					'biz_id' => $template['biz_id'],
+					'category_id' => $template['category_id'],
+					'category_biz_id' => $template['category_biz_id'],
+					'name' => $template['name'],
+					'description' => $template['description'],
+					'item_id' => $template['item_id'],
+					'amount' => $template['amount'],
+					'min_subtotal' => $template['min_subtotal'],
+					'time_start' => $template['time_start'],
+					'time_end' => $time_to_end,
+				);
+
+				// 创建优惠券
+				$result = $this->basic_model->create(array_filter($data_to_create), TRUE);
+				if ($result !== FALSE):
+					$this->result['status'] = 200;
+
+					if ($combo_id === NULL):
+						$this->result['content']['id'] = $result;
+						$this->result['content']['message'] = '领取成功';
+					else:
+						$this->result['content']['ids'] .= ','.$result;
+						$this->result['content']['message'] .= '<li>“'.$template['name'].'”领取成功</li>';
+					endif;
+
+				else:
+					if ($this->result['status'] === 200):
+						$this->result['content']['message'] = '部分优惠券领取失败';
+
+					else:
+						$this->result['status'] = 424;
+						if ($combo_id === NULL):
+							$this->result['content']['error']['message'] = '领取失败';
+						else:
+							$this->result['content']['error']['message'] .= '<li>“'.$template['name'].'”领取失败</li>';
+						endif;
+					
+					endif;
+
+				endif;
+
+			endif;
+		} // generate_coupon
+
+		/**
+		 * 3 创建（领取优惠券）
 		 */
 		public function create()
 		{
@@ -243,6 +399,7 @@
 			$combo_id = $this->input->post('combo_id');
 			$template_id = $this->input->post('template_id');
 			if ( !empty($user_id) && !empty($template_id) ):
+				// 若传入了$template_id，尝试获取$count
 				$count = $this->input->post('count');
 			elseif ( empty($user_id) || empty($combo_id) ):
 				$this->result['status'] = 400;
@@ -254,9 +411,9 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('user_id', '所属用户ID', 'trim|required');
-			$this->form_validation->set_rules('combo_id', '所属优惠券包ID', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('template_id', '所属优惠券模板ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('user_id', '用户ID', 'trim|required');
+			$this->form_validation->set_rules('combo_id', '优惠券包ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('template_id', '优惠券模板ID', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('count', '数量', 'trim|is_natural_no_zero');
 
 			// 若表单提交不成功
@@ -264,53 +421,43 @@
 				$this->result['status'] = 401;
 				$this->result['content']['error']['message'] = validation_errors();
 
-			else:
-				// TODO 获取优惠券包
-
-				// 获取优惠券模板
-				$template = $this->get_template($template_id, $user_id);
-				//var_dump($template);
-				if ($template === FALSE):
+			// 领取优惠券包
+			elseif ( !empty($combo_id) ):
+				// 获取优惠券包
+				$combo = $this->get_combo($combo_id, $user_id);
+				//var_dump($combo);
+				if ($combo === FALSE):
 					$this->result['status'] = 414;
-					$this->result['content']['error']['message'] = '该优惠券不可领取';
-					exit();
-				endif;
-
-				// 计算失效时间
-				if ( !empty($template['time_end']) ):
-					$time_to_end = $template['time_end']; // 若指定了有效期结束日期，直接赋值
-				else:
-					$time_to_end = empty($template['period'])? NULL: time() + $template['period']; // 若未指定有效期，则长期有效
-				endif;
-
-				// 需要创建的数据；逐一赋值需特别处理的字段
-				$data_to_create = array(
-					'user_id' => $user_id,
-					'template_id' => $template_id,
-					'biz_id' => $template['biz_id'],
-					'category_id' => $template['category_id'],
-					'category_biz_id' => $template['category_biz_id'],
-					'name' => $template['name'],
-					'description' => $template['description'],
-					'item_id' => $template['item_id'],
-					'amount' => $template['amount'],
-					'min_subtotal' => $template['min_subtotal'],
-					'time_start' => $template['time_start'],
-					'time_end' => $time_to_end,
-				);
-				//var_dump( array_filter($data_to_create) );
-
-				$result = $this->basic_model->create(array_filter($data_to_create), TRUE);
-				if ($result !== FALSE):
-					$this->result['status'] = 200;
-					$this->result['content']['id'] = $result;
-					$this->result['content']['message'] = '领取成功';
+					$this->result['content']['error']['message'] = '该优惠券包不可领取';
 
 				else:
-					$this->result['status'] = 424;
-					$this->result['content']['error']['message'] = '领取失败';
+					$template_ids = $combo['template_ids'];
+
+					// 拆分字符串为数组
+					$template_ids = explode(',', trim($template_ids, ',')); // 清除多余的前后半角逗号
+					foreach ($template_ids as $template_id):
+						$this->generate_coupon($user_id, $template_id, $combo_id);
+					endforeach;
 
 				endif;
+				
+				// 清楚冗余的分隔符
+				$this->result['content']['ids'] = trim($this->result['content']['ids'], ',');
+
+			// 领取单种优惠券（优惠券模板）
+			else:
+				// 若未传入张数，直接生成
+				if ( empty($count) ):
+					$this->generate_coupon($user_id, $template_id);
+
+				// 若传入了张数，则尝试生成多张；最大可领取张数将在相关类方法中进行检查
+				else:
+					for ($i=0; $i<$count; $i++):
+						$this->generate_coupon($user_id, $template_id);
+					endfor;
+
+				endif;
+
 			endif;
 		} // end create
 

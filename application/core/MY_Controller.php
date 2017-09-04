@@ -29,7 +29,7 @@
 		// 初始化返回结果
 		public $result = array(
 			'status' => null, // 请求响应状态
-			'content' => null, // 返回内容
+			'content' => array(), // 返回内容
 			'param' => array(
 				'get' => array(), // GET请求参数
 				'post' => array(), // POST请求参数
@@ -93,6 +93,9 @@
 
 		public function __destruct()
 		{
+			// 清理待返回内容中的空元素
+			$this->result['content'] = array_filter($this->result['content']);
+
 			// 将请求参数一并返回以便调试
 			$this->result['param']['get'] = $this->input->get();
 			$this->result['param']['post'] = $this->input->post();

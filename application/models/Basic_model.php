@@ -96,7 +96,7 @@
 		}
 
 		/**
-		 * 根据条件获取列表，默认不返回已删除项
+		 * 根据条件获取列表，默认可返回已删除项
 		 *
 		 * @param int $limit 需获取的行数，通过get或post方式传入
 		 * @param int $offset 需跳过的行数，与$limit参数配合做分页功能，通过get或post方式传入
@@ -136,9 +136,10 @@
 				$this->db->order_by($this->id_name, 'DESC');
 			endif;
 			
-			// 默认不返回已删除项
+			// 默认可返回已删除项
 			if ($allow_deleted === FALSE) $this->db->where('time_delete', NULL);
 
+			// 可选择仅返回符合条件项的ID列表
 			if ($return_ids === TRUE) $this->db->select($this->id_name);
 
 			$this->db->limit($limit, $offset);
@@ -162,7 +163,7 @@
 		}
 
 		/**
-		 * 根据ID获取特定项，默认不返回已删除项
+		 * 根据ID获取特定项，默认可返回已删除项
 		 *
 		 * @param int $id 需获取的行的ID
 		 * @param bool $allow_deleted 是否可返回被标注为删除状态的行；默认为TRUE
@@ -170,13 +171,31 @@
 		 */
 		public function select_by_id($id, $allow_deleted = TRUE)
 		{
-			// 默认不返回已删除项
+			// 默认可返回已删除项
 			if ($allow_deleted === FALSE) $this->db->where('time_delete', NULL);
 
 			$this->db->where($this->id_name, $id);
 
 			$query = $this->db->get($this->table_name);
 			return $query->row_array();
+		}
+
+		/**
+		 * 根据CSV格式的ID们字符串获取列表，默认可返回已删除项
+		 */
+		public function select_by_ids($ids, $allow_deleted = TRUE)
+		{
+			// 默认可返回已删除项
+			if ($allow_deleted === FALSE) $this->db->where('time_delete', NULL);
+
+			// 拆分字符串为数组
+			$ids = explode(',', trim($ids, ',')); // 清除多余的前后半角逗号
+			foreach ($ids as $id):
+				$this->db->or_where($this->id_name, $id);
+			endforeach;
+
+			$query = $this->db->get($this->table_name);
+			return $query->result_array();
 		}
 
 		/**
