@@ -146,7 +146,13 @@
 			$this->db->select( implode(',', $this->names_to_return) );
 
 			// 获取列表；默认可获取已删除项
-			$items = $this->basic_model->select($condition, $order_by);
+			$ids = $this->input->post('ids');
+			if ( empty($ids) ):
+				$items = $this->basic_model->select($condition, $order_by);
+			else:
+				$items = $this->basic_model->select_by_ids($ids);
+			endif;
+			
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
@@ -569,9 +575,17 @@
 
 			endif;
 		} // end edit_bulk
-		
+
+		/**
+		 * TODO 批量获取多个商品
+		 */
+		protected function get_bulk($ids)
+		{
+			$this->basic_model->select_by_ids();
+		} // get_bulk
+
 		// 检查起始时间
-		public function time_start($value)
+		protected function time_start($value)
 		{
 			if ( empty($value) ):
 				return true;
@@ -591,7 +605,7 @@
 		} // end time_start
 
 		// 检查结束时间
-		public function time_end($value)
+		protected function time_end($value)
 		{
 			if ( empty($value) ):
 				return true;

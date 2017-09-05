@@ -14,14 +14,14 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'freight', 'discount_reprice', 'repricer_id', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
+			'biz_id', 'biz_name', 'biz_url_logo', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'freight', 'discount_reprice', 'repricer_id', 'total', 'credit_id', 'credit_payed', 'total_payed', 'total_refund', 'fullname', 'code_ssn', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_refund_auto', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'order_id', 'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'freight', 'discount_reprice', 'repricer_id', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
+			'biz_id', 'biz_name', 'biz_url_logo', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'freight', 'discount_reprice', 'repricer_id', 'total', 'credit_id', 'credit_payed', 'total_payed', 'total_refund', 'fullname', 'code_ssn', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_refund_auto', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status'
 		);
 
 		/**
@@ -61,6 +61,9 @@
 
 		// 订单相关商品信息（订单创建）
 		private $order_items = array();
+		
+		// 订单收货地址信息（订单创建）
+		private $order_address = array();
 
 		public function __construct()
 		{
@@ -80,15 +83,6 @@
 			{
 				//...
 		    }
-		}
-		
-		/**
-		 * 截止3.1.3为止，CI_Controller类无析构函数，所以无需继承相应方法
-		 */
-		public function __destruct()
-		{
-			parent::__destruct();
-			//$this->output->enable_profiler(TRUE);
 		}
 
 		/**
@@ -222,6 +216,21 @@
 				endif;
 			endforeach;
 
+			/*
+			// 检查是否单品及购物车信息均未传入
+			$item_id = $this->input->post('item_id');
+			$cart_string = $this->input->post('cart_string');
+			if ( isset($item_id) ):
+				$sku_id = $this->input->post('sku_id');
+				$count = $this->input->post('count')? $this->input->post('count'): 1;
+
+			elseif ( !isset($cart_string) ):
+				$this->result['status'] = 400;
+				$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+				exit();
+			endif;
+			*/
+
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
@@ -244,41 +253,89 @@
 
 			// 若订单数据生成失败
 			elseif ($this->generate_order_data() === FALSE):
-				var_dump($this->result);
-				$this->result['status'] = 401;
+				$this->result['status'] = 411;
 				$this->result['content']['error']['message'] = $this->order_data['content']['error']['message'];
 
+			// 获取地址信息
+			elseif ($this->get_address($address_id, $user_id) === FALSE):
+				$this->result['status'] = 411;
+				$this->result['content']['error']['message'] = '收货地址不可用';
+
 			else:
-				var_dump($this->order_items);
-				var_dump($this->order_data);
-				// 通用订单数据
-				$data_to_create = array(
-					'time_create' => time(),
+				//var_dump($this->order_items);
+				//var_dump($this->order_data);
+				//var_dump($this->order_address);
+
+				// 生成通用订单数据
+				$common_meta = array(
 					'user_id' => $user_id,
 					'user_ip' => empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'), // 优先检查请求是否来自APP
-					'user_note' => $this->input->post('user_note'),
+					'note_user' => $this->input->post('note_user'),
+					'time_create' => time(),
 				);
+				// 合并通用订单数据及地址数据
+				$common_meta = array_merge($common_meta, $this->order_address);
+				unset($this->order_address);
 
-				//TODO 以商家为单位生成订单
-				// 合并通用订单及每笔订单数据
-				$data_to_create = array_merge($data_to_create, $this->order_data);
-				var_dump($data_to_create);
-				exit();
+				// 计算待生成订单总数，即商家数
+				$bizs_count = count($this->order_data);
 
-				$result = $this->basic_model->create($data_to_create, TRUE);
-				if ($result !== FALSE):
-					$this->result['status'] = 200;
-					$this->result['content']['id'] = $result;
-					$this->result['content']['message'] = '创建成功';
+				// 以商家为单位生成订单
+				for ($i=0; $i<$bizs_count; $i++):
+					// 合并通用订单及每笔订单数据
+					$data_to_create = array_merge($common_meta, $this->order_data[$i]);
 
-				else:
-					$this->result['status'] = 424;
-					$this->result['content']['error']['message'] = '创建失败';
+					$result = $this->basic_model->create($data_to_create, TRUE);
+					if ($result !== FALSE):
+						$this->result['status'] = 200;
+						$this->result['content']['id'] = $result;
+						$this->result['content']['message'] = '创建成功';
 
-				endif;
+					else:
+						$this->result['status'] = 424;
+						$this->result['content']['error']['message'] = '创建失败';
+
+					endif;
+				endfor;
 			endif;
 		} // end create
 		
+		// 获取特定地址信息
+		private function get_address($id, $user_id)
+		{
+			// 从API服务器获取相应列表信息
+			$conditions = array(
+				'address_id' => $id,
+				'user_id' => $user_id,
+				'time_delete' => NULL,
+			);
+
+			$this->basic_model->table_name = 'address';
+			$this->basic_model->id_name = 'address_id';
+
+			$result = $this->basic_model->match($conditions);
+
+			$this->basic_model->table_name = $this->table_name;
+			$this->basic_model->id_name = $this->id_name;
+
+			if ( !empty($result) ):
+				$this->order_address = array(
+					'fullname' => $result['fullname'],
+					'mobile' => $result['mobile'],
+					'province' => $result['province'],
+					'city' => $result['city'],
+					'county' => $result['county'],
+					'street' => $result['street'],
+					'longitude' => $result['longitude'],
+					'latitude' => $result['latitude'],
+				);
+
+			else:
+
+				return FALSE;
+			endif;
+		} // end get_address
+
 		// TODO 生成订单数据
 		private function generate_order_data()
 		{
@@ -319,6 +376,11 @@
 			$this->basic_model->table_name = 'item';
 			$this->basic_model->id_name = 'item_id';
 			$item = $this->basic_model->select_by_id($item_id);
+			
+			// 获取需要写入订单信息的商家信息
+			$this->basic_model->table_name = 'biz';
+			$this->basic_model->id_name = 'biz_id';
+			$biz = $this->basic_model->select_by_id($item['biz_id']);
 
 			// 获取规格信息
 			if ( !empty($sku_id) ):
@@ -351,6 +413,8 @@
 			// 生成订单信息
 			$this->order_data[] = array(
 				'biz_id' => $item['biz_id'],
+				'biz_name' => $biz['brief_name'],
+				'biz_url_logo' => $biz['url_logo'],
 				'subtotal' => $item['price'],
 
 				//'promotion_id' => $item['promotion_id'], // 营销活动ID

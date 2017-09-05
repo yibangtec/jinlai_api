@@ -440,7 +440,7 @@
 					endforeach;
 
 				endif;
-				
+
 				// 清楚冗余的分隔符
 				$this->result['content']['ids'] = trim($this->result['content']['ids'], ',');
 
@@ -459,6 +459,9 @@
 				endif;
 
 			endif;
+			
+			// 清理待返回内容中的空元素
+			$this->result['content'] = array_filter($this->result['content']);
 		} // end create
 
 		/**

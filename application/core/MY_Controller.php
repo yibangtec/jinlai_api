@@ -93,9 +93,6 @@
 
 		public function __destruct()
 		{
-			// 清理待返回内容中的空元素
-			$this->result['content'] = array_filter($this->result['content']);
-
 			// 将请求参数一并返回以便调试
 			$this->result['param']['get'] = $this->input->get();
 			$this->result['param']['post'] = $this->input->post();
@@ -317,6 +314,19 @@
 			endif;
 		}
 
+		// 拆分CSV为数组
+		protected function explode_csv($text, $seperator = ',')
+		{
+			// 清理可能存在的冗余分隔符及空字符
+			$text = trim($text);
+			$text = trim($text, $seperator);
+
+			// 拆分文本为数组并清理可被转换为布尔型FALSE的数组元素（空数组、空字符、NULL、0、’0‘等）
+			$array = array_filter( explode(',', $text) );
+
+			return $array;
+		} // end explode_csv
+
 		/**
 		 * 高德地图 将地址文字转换为经纬度
 		 *
@@ -344,5 +354,40 @@
 				return FALSE;
 
 			endif;
-		}
+		} // amap_geocode
+		
+		// TODO 解析购物车
+		protected function cart_decode()
+		{
+			// 初始化商家及购物车项数组
+			$data['bizs'] = $data['items'] = array();
+
+			// 检查购物车是否为空，若空则直接返回相应提示，否则显示购物车详情
+			if ( !empty($this->session->cart) ):
+				// 拆分现购物车数组中各项，并获取商品信息
+				$current_cart = $this->explode_csv($this->session->cart);
+
+				// 获取各商品信息
+				foreach ($current_cart as $cart_item):
+					// 分解出item_id、sku_id、count等
+					list($biz_id, $item_id, $sku_id, $count) = explode('|', $cart_item);
+
+					// 获取商家信息
+					$data['bizs']['biz_'.$biz_id] = $this->get_biz($biz_id);
+
+					// 获取商品信息
+					$item = $this->get_item($item_id);
+
+					// 获取SKU信息（若有）
+					if ($sku_id != 0) $item['sku'] = $this->get_sku($sku_id);
+
+					$item['count'] = $count; // 数量保持原状
+					$data['items'][] = $item; // 推入商品信息数组
+				endforeach;
+
+			endif;
+
+			return $data;
+		} // end cart_decode
+
 	}
