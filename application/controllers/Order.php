@@ -149,7 +149,6 @@
 			
 			// 排序条件
 			$order_by = NULL;
-			//$order_by['name'] = 'value';
 
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );
@@ -188,6 +187,15 @@
 			if ( !empty($item) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
+				
+				// 获取订单商品信息
+				$this->basic_model->table_name = 'order_items';
+				$this->basic_model->id_name = 'record_id';
+				// 筛选条件
+				$condition = array(
+					'order_id' => $item['order_id'],
+				);
+				$this->result['content']['order_items'] = $this->basic_model->select($condition, NULL);
 
 			else:
 				$this->result['status'] = 414;
@@ -284,12 +292,30 @@
 				for ($i=0; $i<$bizs_count; $i++):
 					// 合并通用订单及每笔订单数据
 					$data_to_create = array_merge($common_meta, $this->order_data[$i]);
+					//var_dump($data_to_create);
 
+					// 取出订单商品数据
+					$order_items = $data_to_create['order_items'];
+					unset($data_to_create['order_items']);
+					//var_dump($order_items);
+
+					// 创建订单
 					$result = $this->basic_model->create($data_to_create, TRUE);
 					if ($result !== FALSE):
+						$order_id = $result; // 获取被创建的订单号
 						$this->result['status'] = 200;
-						$this->result['content']['id'] = $result;
+						$this->result['content']['id'] = $order_id;
 						$this->result['content']['message'] = '创建成功';
+
+						// 创建订单商品
+						$this->basic_model->table_name = 'order_items';
+						$this->basic_model->id_name = 'record_id';
+						foreach ($order_items as $order_item):
+							$order_item['order_id'] = $order_id;
+							$order_item['user_id'] = $user_id;
+							$order_item['time_create'] = time();
+							$result = $this->basic_model->create($order_item, TRUE);
+						endforeach;
 
 					else:
 						$this->result['status'] = 424;
@@ -299,7 +325,7 @@
 				endfor;
 			endif;
 		} // end create
-		
+
 		// 获取特定地址信息
 		private function get_address($id, $user_id)
 		{
@@ -393,10 +419,12 @@
 			//TODO 计算单品优惠券折抵
 			//TODO 计算单品运费
 			// 生成订单商品信息
-			$this->order_items[] = array(
+			$order_item = array(
 				'biz_id' => $item['biz_id'],
 				'item_id' => $item_id,
-				'sku_id' => $sku_id,
+				'name' => $item['name'],
+				'item_image' => $item['url_image_main'],
+				'slogan' => $item['slogan'],
 				'price' => $item['price'],
 				'count' => $count,
 
@@ -406,6 +434,18 @@
 				//'coupon_id' => $item['coupon_id'], // 优惠券ID
 				//'discount_coupon' => $discount_coupon, // 优惠券折抵金额
 			);
+			if ( !empty($sku) ):
+				$order_sku = array(
+					'sku_id' => $sku_id,
+					'sku_name' => $sku['name_first']. $sku['name_second']. $sku['name_third'],
+					'sku_image' => $sku['url_image'],
+				);
+				$order_item = array_merge($order_item, $order_sku);
+			endif;
+			// 生成订单商品信息
+			//$this->order_items[] = $order_item;
+			$order_items[] = array_filter($order_item);
+
 
 			//TODO 计算商家优惠活动折抵
 			//TODO 计算商家优惠券折抵
@@ -425,6 +465,7 @@
 
 				//'freight' => $freight,
 				'total' => $item['price'],
+				'order_items' => $order_items,
 			);
 		}
 
