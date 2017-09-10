@@ -93,7 +93,8 @@
 				// 返回数组
 				return $ids;
 			endif;
-		}
+		} // end select
+
 	} // end class Fav_biz_model
 
 /* End of file Fav_biz_model.php */

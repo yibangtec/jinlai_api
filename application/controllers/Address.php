@@ -261,23 +261,30 @@
 					// 获取已创建的地址ID
 					$id = $result;
 
-					// 获取当前用户的地址数量，若仅有1个未删除地址，则更新当前地址为该用户的默认地址
-					$condition = array(
-						'user_id' => $user_id,
-						'time_delete' => 'NULL',
-					);
-					$address_count = $this->basic_model->count($condition);
-					$this->result['content']['count'] = $address_count; // 当前用户未删除地址数
-					if ( $address_count === 1):
-						$this->basic_model->table_name = 'user';
-						$this->basic_model->id_name = 'user_id';
-
-						$data_to_edit = array('address_id' => $id);
-						$update_result = $this->basic_model->edit($user_id, $data_to_edit);
+					// 若当前地址需要设为默认地址
+					if ( $this->input->post('default_this') == 1 ):
+						$update_result = $this->default_this($id, $user_id);
 						if ( $update_result !== FALSE ):
 							$this->result['content']['address_id'] = $id; // 通知前端更新本地默认地址
 							$this->result['content']['message'] .= '，已设置为默认地址';
 						endif;
+						
+					else:
+						// 获取当前用户的地址数量，若仅有1个未删除地址，则更新当前地址为该用户的默认地址
+						$condition = array(
+							'user_id' => $user_id,
+							'time_delete' => 'NULL',
+						);
+						$address_count = $this->basic_model->count($condition);
+						$this->result['content']['count'] = $address_count; // 当前用户未删除地址数
+						if ( $address_count === 1):
+							$update_result = $this->default_this($id, $user_id);
+							if ( $update_result !== FALSE ):
+								$this->result['content']['address_id'] = $id; // 通知前端更新本地默认地址
+								$this->result['content']['message'] .= '，已设置为默认地址';
+							endif;
+						endif;
+					
 					endif;
 
 				else:
@@ -363,23 +370,14 @@
 					$this->result['status'] = 200;
 					$this->result['content']['message'] = '编辑成功';
 
-					// 获取当前用户的地址数量，若仅有1个未删除地址，则更新当前地址为该用户的默认地址
-					$condition = array(
-						'user_id' => $user_id,
-						'time_delete' => 'NULL',
-					);
-					$address_count = $this->basic_model->count($condition);
-					$this->result['content']['count'] = $address_count; // 当前用户未删除地址数
-					if ( $address_count === 1):
-						$this->basic_model->table_name = 'user';
-						$this->basic_model->id_name = 'user_id';
-
-						$data_to_edit = array('address_id' => $id);
-						$update_result = $this->basic_model->edit($user_id, $data_to_edit);
+					// 若当前地址需要设为默认地址
+					if ( $this->input->post('default_this') == 1 ):
+						$update_result = $this->default_this($id, $user_id);
 						if ( $update_result !== FALSE ):
 							$this->result['content']['address_id'] = $id; // 通知前端更新本地默认地址
 							$this->result['content']['message'] .= '，已设置为默认地址';
 						endif;
+					
 					endif;
 
 				else:
@@ -460,6 +458,20 @@
 
 			endif;
 		} // end edit_bulk
+		
+		// 设置当前地址为默认地址
+		protected function default_this($address_id, $user_id)
+		{
+			$this->basic_model->table_name = 'user';
+			$this->basic_model->id_name = 'user_id';
+
+			$data_to_edit = array(
+				'address_id' => $address_id,
+				'operator_id' => $user_id,
+			);
+			$result = $this->basic_model->edit($user_id, $data_to_edit);
+			return $result;
+		} // end default_this
 
 	} // end class Address
 

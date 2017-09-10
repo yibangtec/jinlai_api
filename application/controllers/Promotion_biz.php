@@ -232,8 +232,10 @@
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
 			$this->form_validation->set_rules('type', '活动类型', 'trim|required');
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim|required');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim|required');
+			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]|integer|callback_time_start');
+			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]|integer|callback_time_end');
+			$this->form_validation->set_message('time_start', '开始时间需详细到分，且晚于当前时间1分钟后');
+			$this->form_validation->set_message('time_end', '结束时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 			$this->form_validation->set_rules('description', '说明', 'trim');
 			$this->form_validation->set_rules('url_image', '形象图', 'trim');
 			$this->form_validation->set_rules('url_image_wide', '宽屏形象图', 'trim');
@@ -267,10 +269,12 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
+					'time_start' => empty($this->input->post('time_start'))? 0: $this->input->post('time_start'),
+					'time_end' => empty($this->input->post('time_end'))? NULL: $this->input->post('time_end'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'biz_id', 'type', 'name', 'time_start', 'time_end', 'description', 'url_image', 'url_image_wide', 'fold_allowed', 'discount', 'present_trigger_amount', 'present_trigger_count', 'present', 'reduction_trigger_amount', 'reduction_trigger_count', 'reduction_amount', 'reduction_amount_time', 'reduction_discount', 'coupon_id', 'coupon_combo_id', 'deposit', 'balance', 'time_book_start', 'time_book_end', 'time_complete_start', 'time_complete_end', 'groupbuy_order_amount', 'groupbuy_quantity_max',
+					'biz_id', 'type', 'name', 'description', 'url_image', 'url_image_wide', 'fold_allowed', 'discount', 'present_trigger_amount', 'present_trigger_count', 'present', 'reduction_trigger_amount', 'reduction_trigger_count', 'reduction_amount', 'reduction_amount_time', 'reduction_discount', 'coupon_id', 'coupon_combo_id', 'deposit', 'balance', 'time_book_start', 'time_book_end', 'time_complete_start', 'time_complete_end', 'groupbuy_order_amount', 'groupbuy_quantity_max',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -318,8 +322,10 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim|required');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim|required');
+			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]|integer|callback_time_start');
+			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]|integer|callback_time_end');
+			$this->form_validation->set_message('time_start', '开始时间需详细到分，且晚于当前时间1分钟后');
+			$this->form_validation->set_message('time_end', '结束时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 			$this->form_validation->set_rules('description', '说明', 'trim');
 			$this->form_validation->set_rules('url_image', '形象图', 'trim');
 			$this->form_validation->set_rules('url_image_wide', '宽屏形象图', 'trim');
@@ -357,11 +363,12 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
-					//'name' => $this->input->post('name')),
+					'time_start' => empty($this->input->post('time_start'))? 0: $this->input->post('time_start'),
+					'time_end' => empty($this->input->post('time_end'))? NULL: $this->input->post('time_end'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'time_start', 'time_end', 'description', 'url_image', 'url_image_wide', 'fold_allowed', 'discount', 'present_trigger_amount', 'present_trigger_count', 'present', 'reduction_trigger_amount', 'reduction_trigger_count', 'reduction_amount', 'reduction_amount_time', 'reduction_discount', 'coupon_id', 'coupon_combo_id', 'deposit', 'balance', 'time_book_start', 'time_book_end', 'time_complete_start', 'time_complete_end', 'groupbuy_order_amount', 'groupbuy_quantity_max',
+					'name', 'description', 'url_image', 'url_image_wide', 'fold_allowed', 'discount', 'present_trigger_amount', 'present_trigger_count', 'present', 'reduction_trigger_amount', 'reduction_trigger_count', 'reduction_amount', 'reduction_amount_time', 'reduction_discount', 'coupon_id', 'coupon_combo_id', 'deposit', 'balance', 'time_book_start', 'time_book_end', 'time_complete_start', 'time_complete_end', 'groupbuy_order_amount', 'groupbuy_quantity_max',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -466,6 +473,52 @@
 
 			endif;
 		} // end edit_bulk
+		
+		// 检查起始时间
+		public function time_start($value)
+		{
+			if ( empty($value) ):
+				return true;
+
+			elseif (strlen($value) !== 10):
+				return false;
+
+			else:
+				// 该时间不可早于当前时间一分钟以内
+				if ($value <= time() + 60):
+					return false;
+				else:
+					return true;
+				endif;
+
+			endif;
+		} // end time_start
+
+		// 检查结束时间
+		public function time_end($value)
+		{
+			if ( empty($value) ):
+				return true;
+
+			elseif (strlen($value) !== 10):
+				return false;
+
+			else:
+				// 该时间不可早于当前时间一分钟以内
+				if ($value <= time() + 60):
+					return false;
+
+				// 若已设置开始时间，不可早于开始时间一分钟以内
+				elseif ( !empty($this->input->post('time_start')) && $value <= $this->input->post('time_start') + 60):
+					return false;
+
+				else:
+					return true;
+
+				endif;
+
+			endif;
+		} // end time_end
 
 	} // end class Promotion_biz
 
