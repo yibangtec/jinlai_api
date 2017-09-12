@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'user_id', 'biz_id', 'time_create', 'time_delete', 'time_edit',
+			'user_id', 'biz_id', 'time_create', 'time_create_end', 'time_delete', 'time_edit',
 		);
 
 		/**
@@ -53,20 +53,17 @@
 		{
 			// 筛选条件
 			$condition = NULL;
-			//$condition['name'] = 'value';
-
-			// （可选）遍历筛选条件
+			// 遍历筛选条件
 			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post_get($sorter)) ):
+				if ( !empty($this->input->post($sorter)) ):
 					// 对时间范围做限制
-					if ($sorter === 'start_time'):
-						$condition['time_create >='] = $this->input->post_get($sorter);
-					elseif ($sorter === 'end_time'):
-						$condition['time_create <='] = $this->input->post_get($sorter);
+					if ($sorter === 'time_create'):
+						$condition['time_create >'] = $this->input->post($sorter);
+					elseif ($sorter === 'time_create_end'):
+						$condition['time_create <'] = $this->input->post($sorter);
 					else:
-						$condition[$sorter] = $this->input->post_get($sorter);
+						$condition[$sorter] = $this->input->post($sorter);
 					endif;
-
 				endif;
 			endforeach;
 
@@ -102,10 +99,18 @@
 
 			// 筛选条件
 			$condition = NULL;
-			// （可选）遍历筛选条件
+			// 遍历筛选条件
 			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post($sorter)) )
-					$condition[$sorter] = $this->input->post($sorter);
+				if ( !empty($this->input->post($sorter)) ):
+					// 对时间范围做限制
+					if ($sorter === 'time_create'):
+						$condition['time_create >'] = $this->input->post($sorter);
+					elseif ($sorter === 'time_create_end'):
+						$condition['time_create <'] = $this->input->post($sorter);
+					else:
+						$condition[$sorter] = $this->input->post($sorter);
+					endif;
+				endif;
 			endforeach;
 
 			// 排序条件
@@ -162,6 +167,7 @@
 				$data_to_create = array(
 					'user_id' => $this->input->post('user_id'),
 					'biz_id' => $this->input->post('biz_id'),
+					'time_create' => time(),
 				);
 
 				// 检查是否有重复项

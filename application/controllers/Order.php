@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'biz_id', 'biz_name', 'biz_url_logo', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'freight', 'discount_reprice', 'repricer_id', 'total', 'credit_id', 'credit_payed', 'total_payed', 'total_refund', 'fullname', 'code_ssn', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_refund_auto', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
+			'biz_id', 'biz_name', 'biz_url_logo', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'freight', 'discount_reprice', 'repricer_id', 'total', 'credit_id', 'credit_payed', 'total_payed', 'total_refund', 'fullname', 'code_ssn', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_create_start', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_refund_auto', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
 		);
 
 		/**
@@ -92,19 +92,17 @@
 		{
 			// 筛选条件
 			$condition = NULL;
-
-			// （可选）遍历筛选条件
+			// 遍历筛选条件
 			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post_get($sorter)) ):
+				if ( !empty($this->input->post($sorter)) ):
 					// 对时间范围做限制
-					if ($sorter === 'start_time'):
-						$condition['time_create >='] = $this->input->post_get($sorter);
-					elseif ($sorter === 'end_time'):
-						$condition['time_create <='] = $this->input->post_get($sorter);
+					if ($sorter === 'time_create'):
+						$condition['time_create >'] = $this->input->post($sorter);
+					elseif ($sorter === 'time_create_end'):
+						$condition['time_create <'] = $this->input->post($sorter);
 					else:
-						$condition[$sorter] = $this->input->post_get($sorter);
+						$condition[$sorter] = $this->input->post($sorter);
 					endif;
-
 				endif;
 			endforeach;
 
@@ -140,11 +138,18 @@
 
 			// 筛选条件
 			$condition = NULL;
-			//$condition['name'] = 'value';
-			// （可选）遍历筛选条件
+			// 遍历筛选条件
 			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post($sorter)) )
-					$condition[$sorter] = $this->input->post($sorter);
+				if ( !empty($this->input->post($sorter)) ):
+					// 对时间范围做限制
+					if ($sorter === 'time_create'):
+						$condition['time_create >'] = $this->input->post($sorter);
+					elseif ($sorter === 'time_create_end'):
+						$condition['time_create <'] = $this->input->post($sorter);
+					else:
+						$condition[$sorter] = $this->input->post($sorter);
+					endif;
+				endif;
 			endforeach;
 			
 			// 排序条件
@@ -309,6 +314,9 @@
 					//var_dump($order_items);
 
 					// 创建订单
+					// 重置数据库参数
+					$this->basic_model->table_name = $this->table_name;
+					$this->basic_model->id_name = $this->id_name;
 					$result = $this->basic_model->create($data_to_create, TRUE);
 					if ($result !== FALSE):
 						$order_id = $result; // 获取被创建的订单号
@@ -332,6 +340,7 @@
 
 					endif;
 				endfor;
+
 			endif;
 		} // end create
 
@@ -346,9 +355,6 @@
 				$count = empty($this->input->post('count'))? 1: $this->input->post('count'); // 获取数量
 
 				$this->generate_single_item($item_id, $sku_id, $count);
-				// 重置数据库参数
-				$this->basic_model->table_name = $this->table_name;
-				$this->basic_model->id_name = $this->id_name;
 
 			// TODO 生成多品订单
 			elseif ( !empty($this->input->post('cart_string')) ):
@@ -361,15 +367,29 @@
 						'sku_id' => NULL,
 						'count' => 3,
 					),
+					array(
+						'biz_id' => 2,
+						'item_id' => 3,
+						'sku_id' => NULL,
+						'count' => 1,
+					),
+					array(
+						'biz_id' => 2,
+						'item_id' => 4,
+						'sku_id' => NULL,
+						'count' => 1,
+					),
+					array(
+						'biz_id' => 2,
+						'item_id' => 8,
+						'sku_id' => NULL,
+						'count' => 2,
+					),
 				);
 				
 				for ($i=0;$i<count($items_to_create);$i++):
 					$this->generate_single_item($items_to_create[$i]['item_id'], $items_to_create[$i]['sku_id'], $items_to_create[$i]['count']);
 				endfor;
-
-				// 重置数据库参数
-				$this->basic_model->table_name = $this->table_name;
-				$this->basic_model->id_name = $this->id_name;
 
 			else:
 				return FALSE;
@@ -390,11 +410,6 @@
 			$this->basic_model->table_name = 'item';
 			$this->basic_model->id_name = 'item_id';
 			$item = $this->basic_model->select_by_id($item_id);
-
-			// 获取需要写入订单信息的商家信息
-			$this->basic_model->table_name = 'biz';
-			$this->basic_model->id_name = 'biz_id';
-			$biz = $this->basic_model->select_by_id($item['biz_id']);
 
 			// 获取规格信息
 			if ( !empty($sku_id) ):
@@ -442,24 +457,52 @@
 			//TODO 计算商家优惠活动折抵
 			//TODO 计算商家优惠券折抵
 			//TODO 计算商家运费
-			// 生成订单信息
-			$this->order_data[] = array(
-				'biz_id' => $order_item['biz_id'],
-				'biz_name' => $biz['brief_name'],
-				'biz_url_logo' => $biz['url_logo'],
-				'subtotal' => $order_item['single_total'],
 
-				//'promotion_id' => $item['promotion_id'], // 营销活动ID
-				//'discount_promotion' => $discount_promotion, // 营销活动折抵金额
+			//$bizs_exist = array_column($this->order_data, 'biz_id');
+			//var_dump($bizs_exist);
 
-				//'coupon_id' => $item['coupon_id'], // 优惠券ID
-				//'discount_coupon' => $discount_coupon, // 优惠券折抵金额
+			// 若当前商家已有待创建订单，更新部分订单信息及订单商品信息
+			$need_to_create = TRUE;
+			if ( ! empty($this->order_data) ):
+				for ($i=0;$i<count($this->order_data);$i++):
+					if ( !empty($this->order_data[$i]) ):
 
-				//'freight' => $freight,
-				'total' => $order_item['single_total'],
-				'order_items' => $order_items,
-			);
-		}
+						if ($this->order_data[$i]['biz_id'] === $order_item['biz_id']):
+							$this->order_data[$i]['subtotal'] += $order_item['single_total'];
+							$this->order_data[$i]['total'] += $order_item['single_total'];
+							$this->order_data[$i]['order_items'] = array_merge($this->order_data[$i]['order_items'], $order_items);
+							$need_to_create = FALSE; // 无需新建待创建订单
+						endif;
+
+					endif;
+				endfor;
+			endif;
+
+			// 若当前商家没有待创建订单，新建待创建订单
+			if ($need_to_create === TRUE):
+				// 获取需要写入订单信息的商家信息
+				$this->basic_model->table_name = 'biz';
+				$this->basic_model->id_name = 'biz_id';
+				$biz = $this->basic_model->select_by_id($item['biz_id']);
+
+				$this->order_data[] = array(
+					'biz_id' => $order_item['biz_id'],
+					'biz_name' => $biz['brief_name'],
+					'biz_url_logo' => $biz['url_logo'],
+					'subtotal' => $order_item['single_total'],
+
+					//'promotion_id' => $item['promotion_id'], // 营销活动ID
+					//'discount_promotion' => $discount_promotion, // 营销活动折抵金额
+
+					//'coupon_id' => $item['coupon_id'], // 优惠券ID
+					//'discount_coupon' => $discount_coupon, // 优惠券折抵金额
+
+					//'freight' => $freight,
+					'total' => $order_item['single_total'],
+					'order_items' => $order_items,
+				);
+			endif;
+		} // end generate_single_item
 
 		/**
 		 * TODO 生成多品订单
