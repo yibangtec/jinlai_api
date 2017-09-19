@@ -57,13 +57,13 @@
 		);
 
 		// 订单信息（订单创建）
-		private $order_data = array();
+		protected $order_data = array();
 
 		// 订单相关商品信息（订单创建）
-		private $order_items = array();
+		protected $order_items = array();
 		
 		// 订单收货地址信息（订单创建）
-		private $order_address = array();
+		protected $order_address = array();
 
 		public function __construct()
 		{
@@ -358,7 +358,6 @@
 
 			// TODO 生成多品订单
 			elseif ( !empty($this->input->post('cart_string')) ):
-				//$this->generate_multiple_items();
 				//$items_to_create = $this->parse_cart( $this->input->post('cart_string') );
 				$items_to_create = array(
 					array(
@@ -386,16 +385,16 @@
 						'count' => 2,
 					),
 				);
-				
-				for ($i=0;$i<count($items_to_create);$i++):
-					$this->generate_single_item($items_to_create[$i]['item_id'], $items_to_create[$i]['sku_id'], $items_to_create[$i]['count']);
-				endfor;
+
+				foreach ($items_to_create as $item_to_create):
+					$this->generate_single_item($item_to_create['item_id'], $item_to_create['sku_id'], $item_to_create['count']);
+				endforeach;
 
 			else:
 				return FALSE;
 
 			endif;
-		}
+		} // generate_order_data
 
 		/**
 		 * TODO 生成单品订单
@@ -504,21 +503,6 @@
 			endif;
 		} // end generate_single_item
 
-		/**
-		 * TODO 生成多品订单
-		 */
-		private function generate_multiple_items()
-		{
-			$cart_string = $this->input->post('cart_string');
-
-			//TODO 检查是否有相同商家的商品
-			if ( !array_key_exists($item['biz_id'], $this->order_data) ):
-				NULL;
-			else:
-				NULL;
-			endif;
-		}
-		
 		// 获取特定地址信息
 		private function get_address($id, $user_id)
 		{
@@ -550,195 +534,10 @@
 				);
 
 			else:
-
 				return FALSE;
+
 			endif;
 		} // end get_address
-
-		/**
-		 * 4 编辑单行数据
-		 */
-		public function edit()
-		{
-			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
-			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
-			$min_version = '0.0.1'; // 最低版本要求
-			$this->client_check($type_allowed, $platform_allowed, $min_version);
-
-			// 管理类客户端操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
-
-			// 检查必要参数是否已传入
-			$required_params = $this->names_edit_required;
-			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
-				if ( !isset( ${$param} ) ):
-					$this->result['status'] = 400;
-					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-					exit();
-				endif;
-			endforeach;
-
-			// 初始化并配置表单验证库
-			$this->load->library('form_validation');
-			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('subtotal', '小计（元）', 'trim|required');
-			$this->form_validation->set_rules('promotion_id', '营销活动ID', 'trim');
-			$this->form_validation->set_rules('discount_promotion', '营销活动折抵金额（元）', 'trim');
-			$this->form_validation->set_rules('coupon_id', '优惠券ID', 'trim');
-			$this->form_validation->set_rules('discount_coupon', '优惠券折抵金额（元）', 'trim');
-			$this->form_validation->set_rules('credit_id', '积分流水ID', 'trim');
-			$this->form_validation->set_rules('freight', '运费（元）', 'trim');
-			$this->form_validation->set_rules('discount_reprice', '改价折抵金额（元）', 'trim');
-			$this->form_validation->set_rules('total', '应支付金额（元）', 'trim|required');
-			$this->form_validation->set_rules('total_payed', '实际支付金额（元）', 'trim');
-			$this->form_validation->set_rules('total_refund', '实际退款金额（元）', 'trim');
-			$this->form_validation->set_rules('note_stuff', '员工留言', 'trim');
-			// 针对特定条件的验证规则
-			if ($this->app_type === '管理员'):
-				// ...
-			endif;
-
-			// 若表单提交不成功
-			if ($this->form_validation->run() === FALSE):
-				$this->result['status'] = 401;
-				$this->result['content']['error']['message'] = validation_errors();
-
-			else:
-				// 需要编辑的数据；逐一赋值需特别处理的字段
-				$data_to_edit = array(
-					'operator_id' => $user_id,
-					//'name' => $this->input->post('name'),
-				);
-				// 自动生成无需特别处理的数据
-				$data_need_no_prepare = array(
-					'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'freight', 'discount_reprice', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'note_stuff',
-				);
-				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = $this->input->post($name);
-
-				// 根据客户端类型等条件筛选可操作的字段名
-				if ($this->app_type !== 'admin'):
-					//unset($data_to_edit['name']);
-				endif;
-
-				// 进行修改
-				$result = $this->basic_model->edit($id, $data_to_edit);
-				if ($result !== FALSE):
-					$this->result['status'] = 200;
-					$this->result['content']['message'] = '编辑成功';
-
-				else:
-					$this->result['status'] = 434;
-					$this->result['content']['error']['message'] = '编辑失败';
-
-				endif;
-			endif;
-		} // end edit
-		
-		/**
-		 * 5 编辑单行数据特定字段
-		 *
-		 * 修改单行数据的单一字段值
-		 */
-		public function edit_certain()
-		{
-			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
-			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
-			$min_version = '0.0.1'; // 最低版本要求
-			$this->client_check($type_allowed, $platform_allowed, $min_version);
-
-			// 管理类客户端操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
-
-			// 检查必要参数是否已传入
-			$required_params = $this->names_edit_certain_required;
-			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
-				if ( $param !== 'value' && !isset( ${$param} ) ): // value 可以为空；必要字段会在字段验证中另行检查
-					$this->result['status'] = 400;
-					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-					exit();
-				endif;
-			endforeach;
-
-			// 检查目标字段是否可编辑
-			if ( ! in_array($name, $this->names_edit_allowed) ):
-				$this->result['status'] = 431;
-				$this->result['content']['error']['message'] = '该字段不可被修改';
-				exit();
-			endif;
-
-			// 根据客户端类型检查是否可编辑
-			/*
-			$names_limited = array(
-				'biz' => array('name1', 'name2', 'name3', 'name4'),
-				'admin' => array('name1', 'name2', 'name3', 'name4'),
-			);
-			if ( in_array($name, $names_limited[$this->app_type]) ):
-				$this->result['status'] = 432;
-				$this->result['content']['error']['message'] = '该字段不可被当前类型的客户端修改';
-				exit();
-			endif;
-			*/
-
-			// 初始化并配置表单验证库
-			$this->load->library('form_validation');
-			$this->form_validation->set_error_delimiters('', '');
-			// 动态设置待验证字段名及字段值
-			$data_to_validate["{$name}"] = $value;
-			$this->form_validation->set_data($data_to_validate);
-			$this->form_validation->set_rules('subtotal', '小计（元）', 'trim|required');
-			$this->form_validation->set_rules('promotion_id', '营销活动ID', 'trim');
-			$this->form_validation->set_rules('discount_promotion', '营销活动折抵金额（元）', 'trim');
-			$this->form_validation->set_rules('coupon_id', '优惠券ID', 'trim');
-			$this->form_validation->set_rules('discount_coupon', '优惠券折抵金额（元）', 'trim');
-			$this->form_validation->set_rules('credit_id', '积分流水ID', 'trim');
-			$this->form_validation->set_rules('freight', '运费（元）', 'trim');
-			$this->form_validation->set_rules('discount_reprice', '改价折抵金额（元）', 'trim');
-			$this->form_validation->set_rules('total', '应支付金额（元）', 'trim|required');
-			$this->form_validation->set_rules('total_payed', '实际支付金额（元）', 'trim');
-			$this->form_validation->set_rules('total_refund', '实际退款金额（元）', 'trim');
-			$this->form_validation->set_rules('fullname', '姓名', 'trim|required');
-			$this->form_validation->set_rules('mobile', '手机号', 'trim|required');
-			$this->form_validation->set_rules('province', '省份', 'trim|required');
-			$this->form_validation->set_rules('city', '城市', 'trim|required');
-			$this->form_validation->set_rules('county', '区/县', 'trim|required');
-			$this->form_validation->set_rules('street', '具体地址', 'trim|required');
-			$this->form_validation->set_rules('longitude', '经度', 'trim');
-			$this->form_validation->set_rules('latitude', '纬度', 'trim');
-			$this->form_validation->set_rules('note_stuff', '员工留言', 'trim');
-
-			// 若表单提交不成功
-			if ($this->form_validation->run() === FALSE):
-				$this->result['status'] = 401;
-				$this->result['content']['error']['message'] = validation_errors();
-
-			else:
-				// 需要编辑的数据
-				$data_to_edit['operator_id'] = $user_id;
-				$data_to_edit[$name] = $value;
-
-				// 获取ID
-				$result = $this->basic_model->edit($id, $data_to_edit);
-
-				if ($result !== FALSE):
-					$this->result['status'] = 200;
-					$this->result['content']['message'] = '编辑成功';
-
-				else:
-					$this->result['status'] = 434;
-					$this->result['content']['error']['message'] = '编辑失败';
-
-				endif;
-			endif;
-		} // end edit_certain
 
 		/**
 		 * 6 编辑多行数据特定字段
@@ -794,10 +593,31 @@
 
 				// 根据待执行的操作赋值待编辑数据
 				switch ( $operation ):
-					case 'delete':
+					case 'note': // 员工备注
+						$data_to_edit['note_stuff'] = $this->input->post('note_stuff');
+						break;
+					case 'reprice': // 改价
+						$data_to_edit['discount_reprice'] = $this->input->post('discount_reprice');
+						$data_to_edit['repricer_id'] = $user_id;
+						break;
+					case 'refuse': // 拒单
+						$data_to_edit['time_refuse'] = time();
+						break;
+					case 'accept': // 接单
+						$data_to_edit['time_accept'] = time();
+						break;
+					case 'deliver': // 发货
+						$data_to_edit['time_deliver'] = time();
+						$data_to_edit['deliver_method'] = $this->input->post('deliver_method');
+						$data_to_edit['deliver_biz'] = $this->input->post('deliver_biz');
+						$data_to_edit['waybill_id'] = $this->input->post('waybill_id');
+						break;
+					
+					
+					case 'delete': // 仅限用户
 						$data_to_edit['time_delete'] = date('Y-m-d H:i:s');
 						break;
-					case 'restore':
+					case 'restore': // 仅限用户
 						$data_to_edit['time_delete'] = NULL;
 						break;
 				endswitch;
@@ -829,7 +649,7 @@
 		 *
 		 * time_cancel、status
 		 */
-		public function cancel()
+		private function cancel()
 		{
 			$data_to_edit = array(
 				'time_cancel' => time(),
@@ -842,7 +662,7 @@
 		 *
 		 * time_refuse、status
 		 */
-		public function refuse()
+		private function refuse()
 		{
 			$data_to_edit = array(
 				'time_refuse' => time(),
@@ -855,7 +675,7 @@
 		 *
 		 * time_accept、status
 		 */
-		public function accept()
+		private function accept()
 		{
 			$data_to_edit = array(
 				'time_accept' => time(),
@@ -868,7 +688,7 @@
 		 *
 		 * time_deliver、status
 		 */
-		public function deliver()
+		private function deliver()
 		{
 			$data_to_edit = array(
 				'time_deliver' => time(),
@@ -881,7 +701,7 @@
 		 *
 		 * time_confirm、status
 		 */
-		public function confirm()
+		private function confirm()
 		{
 			$data_to_edit = array(
 				'time_confirm' => time(),

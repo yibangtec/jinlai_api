@@ -355,39 +355,142 @@
 
 			endif;
 		} // amap_geocode
-		
-		// TODO 解析购物车
-		protected function cart_decode()
-		{
-			// 初始化商家及购物车项数组
-			$data['bizs'] = $data['items'] = array();
 
+		// TODO 解析购物车
+		protected function cart_decode($current_cart)
+		{
 			// 检查购物车是否为空，若空则直接返回相应提示，否则显示购物车详情
-			if ( !empty($this->session->cart) ):
-				// 拆分现购物车数组中各项，并获取商品信息
-				$current_cart = $this->explode_csv($this->session->cart);
+			if ( !empty($current_cart) ):
+
+				//
+				$items_to_create = array();
 
 				// 获取各商品信息
-				foreach ($current_cart as $cart_item):
+				$cart_items = $this->explode_csv($current_cart);
+				foreach ($cart_items as $cart_item):
 					// 分解出item_id、sku_id、count等
 					list($biz_id, $item_id, $sku_id, $count) = explode('|', $cart_item);
+					$items_to_create[] = array(
+						'biz_id' => $biz_id,
+						'item_id' => $item_id,
+						'sku_id' => $sku_id,
+						'count' => $count,
+					);
+				endforeach;
 
-					// 获取商家信息
-					$data['bizs']['biz_'.$biz_id] = $this->get_biz($biz_id);
-
-					// 获取商品信息
-					$item = $this->get_item($item_id);
-
-					// 获取SKU信息（若有）
-					if ($sku_id != 0) $item['sku'] = $this->get_sku($sku_id);
-
-					$item['count'] = $count; // 数量保持原状
-					$data['items'][] = $item; // 推入商品信息数组
+				// 生成单品信息
+				foreach ($items_to_create as $item_to_create):
+					$this->generate_single_item($item_to_create['item_id'], $item_to_create['sku_id'], $item_to_create['count']);
 				endforeach;
 
 			endif;
-
-			return $data;
 		} // end cart_decode
 
-	}
+		/**
+		 * TODO 生成单品订单信息
+		 *
+		 * @params varchar/int $item_id 商品ID；商家ID需要从商品资料中获取
+		 * @params varchar/int $sku_id 规格ID
+		 * @params int $count 份数；默认为1，但有每单最低限量的情况下允许传入count
+		 */
+		private function generate_single_item($item_id, $sku_id = NULL, $count = 1)
+		{
+			// 获取商品信息
+			$this->basic_model->table_name = 'item';
+			$this->basic_model->id_name = 'item_id';
+			$item = $this->basic_model->select_by_id($item_id);
+
+			// 获取规格信息
+			if ( !empty($sku_id) ):
+				$this->basic_model->table_name = 'sku';
+				$this->basic_model->id_name = 'sku_id';
+				$sku = $this->basic_model->select_by_id($sku_id);
+			endif;
+
+			//TODO 计算单品优惠活动折抵
+			//TODO 计算单品优惠券折抵
+			//TODO 计算单品运费
+			// 生成订单商品信息
+			$order_item = array(
+				'biz_id' => $item['biz_id'],
+				'item_id' => $item_id,
+				'name' => $item['name'],
+				'item_image' => $item['url_image_main'],
+				'slogan' => $item['slogan'],
+				'tag_price' => $item['tag_price'],
+				'price' => $item['price'],
+				'count' => $count,
+
+				//'promotion_id' => $item['promotion_id'], // 营销活动ID
+				//'discount_promotion' => $discount_promotion, // 营销活动折抵金额
+
+				//'coupon_id' => $item['coupon_id'], // 优惠券ID
+				//'discount_coupon' => $discount_coupon, // 优惠券折抵金额
+			);
+			if ( !empty($sku) ):
+				$order_sku = array(
+					'sku_id' => $sku_id,
+					'sku_name' => $sku['name_first']. $sku['name_second']. $sku['name_third'],
+					'sku_image' => $sku['url_image'],
+					'tag_price' => $sku['tag_price'],
+					'price' => $sku['price'],
+				);
+				$order_item = array_merge($order_item, $order_sku);
+			endif;
+			// 生成订单商品信息
+			//$this->order_items[] = $order_item;
+			$order_item['single_total'] = $order_item['price'] * $order_item['count']; // 计算当前商品应付金额
+			$order_items[] = array_filter($order_item);
+
+
+			//TODO 计算商家优惠活动折抵
+			//TODO 计算商家优惠券折抵
+			//TODO 计算商家运费
+
+			//$bizs_exist = array_column($this->order_data, 'biz_id');
+			//var_dump($bizs_exist);
+
+			// 若当前商家已有待创建订单，更新部分订单信息及订单商品信息
+			$need_to_create = TRUE;
+			if ( ! empty($this->order_data) ):
+				for ($i=0;$i<count($this->order_data);$i++):
+					if ( !empty($this->order_data[$i]) ):
+
+						if ($this->order_data[$i]['biz_id'] === $order_item['biz_id']):
+							$this->order_data[$i]['subtotal'] += $order_item['single_total'];
+							$this->order_data[$i]['total'] += $order_item['single_total'];
+							$this->order_data[$i]['order_items'] = array_merge($this->order_data[$i]['order_items'], $order_items);
+							$need_to_create = FALSE; // 无需新建待创建订单
+						endif;
+
+					endif;
+				endfor;
+			endif;
+
+			// 若当前商家没有待创建订单，新建待创建订单
+			if ($need_to_create === TRUE):
+				// 获取需要写入订单信息的商家信息
+				$this->basic_model->table_name = 'biz';
+				$this->basic_model->id_name = 'biz_id';
+				$biz = $this->basic_model->select_by_id($item['biz_id']);
+
+				$this->order_data[] = array(
+					'biz_id' => $order_item['biz_id'],
+					'biz_name' => $biz['brief_name'],
+					'biz_url_logo' => $biz['url_logo'],
+					'subtotal' => $order_item['single_total'],
+
+					//'promotion_id' => $item['promotion_id'], // 营销活动ID
+					//'discount_promotion' => $discount_promotion, // 营销活动折抵金额
+
+					//'coupon_id' => $item['coupon_id'], // 优惠券ID
+					//'discount_coupon' => $discount_coupon, // 优惠券折抵金额
+
+					//'freight' => $freight,
+					'total' => $order_item['single_total'],
+					'order_items' => $order_items,
+				);
+			endif;
+		} // end generate_single_item
+
+	} // end class MY_Controller

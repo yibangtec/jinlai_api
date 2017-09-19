@@ -120,8 +120,12 @@
 					elseif ($value === 'IS NOT NULL'):
 						$this->db->where("$name IS NOT NULL");
 					
+					elseif ($name === 'name'):
+						$this->db->like($name, $value);
+					
 					else:
 						$this->db->where($name, $value);
+
 					endif;
 				endforeach;
 			endif;

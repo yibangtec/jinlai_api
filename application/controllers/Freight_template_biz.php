@@ -14,14 +14,14 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'template_id', 'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'type_actual', 'time_latest_deliver', 'exempt_amount', 'max_amount', 'start_amount', 'fee_start', 'fee_unit', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'type_actual', 'time_latest_deliver', 'exempt_amount', 'exempt_subtotal', 'max_amount', 'start_amount', 'fee_start', 'fee_unit', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'template_id', 'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'type_actual', 'time_latest_deliver', 'exempt_amount', 'max_amount', 'start_amount', 'fee_start', 'fee_unit', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'template_id', 'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'type_actual', 'time_latest_deliver', 'exempt_amount', 'exempt_subtotal',  'max_amount', 'start_amount', 'fee_start', 'fee_unit', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -36,7 +36,7 @@
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'name', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'type_actual', 'time_latest_deliver', 'exempt_amount', 'max_amount', 'start_amount', 'fee_start', 'fee_unit',
+			'name', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'type_actual', 'time_latest_deliver', 'exempt_amount', 'exempt_subtotal', 'max_amount', 'start_amount', 'fee_start', 'fee_unit',
 		);
 
 		/**
@@ -45,14 +45,6 @@
 		protected $names_edit_required = array(
 			'user_id', 'id',
 			'name',
-		);
-
-		/**
-		 * 编辑单行特定字段时必要的字段名
-		 */
-		protected $names_edit_certain_required = array(
-			'user_id', 'id',
-			'name', 'value',
 		);
 
 		/**
@@ -133,7 +125,6 @@
 
 			// 筛选条件
 			$condition = NULL;
-			//$condition['name'] = 'value';
 			// （可选）遍历筛选条件
 			foreach ($this->names_to_sort as $sorter):
 				if ( !empty($this->input->post($sorter)) )
@@ -142,7 +133,6 @@
 			
 			// 排序条件
 			$order_by = NULL;
-			//$order_by['name'] = 'value';
 
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );
@@ -226,11 +216,12 @@
 			$this->form_validation->set_rules('expire_refund_rate', '过期退款比例', 'trim');
 			$this->form_validation->set_rules('type_actual', '运费计算方式', 'trim');
 			$this->form_validation->set_rules('time_latest_deliver', '最晚发货时间', 'trim');
-			$this->form_validation->set_rules('exempt_amount', '包邮量', 'trim|less_than_equal_to[9999]');
 			$this->form_validation->set_rules('max_amount', '每单最高配送量', 'trim|less_than_equal_to[9999]');
 			$this->form_validation->set_rules('start_amount', '起始量', 'trim|less_than_equal_to[9999]');
 			$this->form_validation->set_rules('fee_start', '起始量运费', 'trim|less_than_equal_to[9999]');
 			$this->form_validation->set_rules('fee_unit', '超出后运费', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('exempt_amount', '包邮量', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('exempt_subtotal', '包邮小计', 'trim|less_than_equal_to[99999.99]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -247,7 +238,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'type_actual', 'exempt_amount', 'max_amount', 'start_amount', 'fee_start', 'fee_unit',
+					'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'type_actual', 'exempt_amount', 'exempt_subtotal', 'max_amount', 'start_amount', 'fee_start', 'fee_unit',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -301,11 +292,12 @@
 			$this->form_validation->set_rules('expire_refund_rate', '过期退款比例', 'trim');
 			$this->form_validation->set_rules('type_actual', '运费计算方式', 'trim');
 			$this->form_validation->set_rules('time_latest_deliver', '最晚发货时间', 'trim');
-			$this->form_validation->set_rules('exempt_amount', '包邮量', 'trim|less_than_equal_to[9999]');
 			$this->form_validation->set_rules('max_amount', '每单最高配送量', 'trim|less_than_equal_to[9999]');
 			$this->form_validation->set_rules('start_amount', '起始量', 'trim|less_than_equal_to[9999]');
 			$this->form_validation->set_rules('fee_start', '起始量运费', 'trim|less_than_equal_to[9999]');
 			$this->form_validation->set_rules('fee_unit', '超出后运费', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('exempt_amount', '包邮量', 'trim|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('exempt_subtotal', '包邮小计', 'trim|less_than_equal_to[99999.99]');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
 				// ...
@@ -326,7 +318,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'time_valid_from', 'time_valid_end', 'type_actual', 'exempt_amount', 'max_amount', 'start_amount', 'fee_start', 'fee_unit',
+					'name', 'time_valid_from', 'time_valid_end', 'type_actual', 'exempt_amount', 'exempt_subtotal', 'max_amount', 'start_amount', 'fee_start', 'fee_unit',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -349,97 +341,6 @@
 				endif;
 			endif;
 		} // end edit
-		
-		/**
-		 * 5 编辑单行数据特定字段
-		 *
-		 * 修改单行数据的单一字段值
-		 */
-		public function edit_certain()
-		{
-			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('biz'); // 客户端类型
-			$this->client_check($type_allowed);
-
-			// 管理类客户端操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
-
-			// 检查必要参数是否已传入
-			$required_params = $this->names_edit_certain_required;
-			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
-				if ( $param !== 'value' && empty( ${$param} ) ): // value 可以为空；必要字段会在字段验证中另行检查
-					$this->result['status'] = 400;
-					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-					exit();
-				endif;
-			endforeach;
-
-			// 检查目标字段是否可编辑
-			if ( ! in_array($name, $this->names_edit_allowed) ):
-				$this->result['status'] = 431;
-				$this->result['content']['error']['message'] = '该字段不可被修改';
-				exit();
-			endif;
-
-			// 根据客户端类型检查是否可编辑
-			/*
-			$names_limited = array(
-				'biz' => array('name1', 'name2', 'name3', 'name4'),
-				'admin' => array('name1', 'name2', 'name3', 'name4'),
-			);
-			if ( in_array($name, $names_limited[$this->app_type]) ):
-				$this->result['status'] = 432;
-				$this->result['content']['error']['message'] = '该字段不可被当前类型的客户端修改';
-				exit();
-			endif;
-			*/
-
-			// 初始化并配置表单验证库
-			$this->load->library('form_validation');
-			$this->form_validation->set_error_delimiters('', '');
-			// 动态设置待验证字段名及字段值
-			$data_to_validate["{$name}"] = $value;
-			$this->form_validation->set_data($data_to_validate);
-			$this->form_validation->set_rules('name', '名称', 'trim');
-			$this->form_validation->set_rules('time_valid_from', '有效期起始时间', 'trim');
-			$this->form_validation->set_rules('time_valid_end', '有效期结束时间', 'trim');
-			$this->form_validation->set_rules('period_valid', '有效期（天）', 'trim');
-			$this->form_validation->set_rules('expire_refund_rate', '过期退款比例', 'trim');
-			$this->form_validation->set_rules('type_actual', '运费计算方式', 'trim');
-			$this->form_validation->set_rules('time_latest_deliver', '最晚发货时间', 'trim');
-			$this->form_validation->set_rules('max_amount', '每单最高配送量', 'trim|less_than_equal_to[9999]');
-			$this->form_validation->set_rules('start_amount', '起始量', 'trim|less_than_equal_to[9999]');
-			$this->form_validation->set_rules('fee_start', '起始量运费', 'trim|less_than_equal_to[9999]');
-			$this->form_validation->set_rules('fee_unit', '超出后运费', 'trim|less_than_equal_to[9999]');
-
-			// 若表单提交不成功
-			if ($this->form_validation->run() === FALSE):
-				$this->result['status'] = 401;
-				$this->result['content']['error']['message'] = validation_errors();
-
-			else:
-				// 需要编辑的数据
-				$data_to_edit['operator_id'] = $user_id;
-				$data_to_edit[$name] = $value;
-
-				// 获取ID
-				$id = $this->input->post('id');
-				$result = $this->basic_model->edit($id, $data_to_edit);
-
-				if ($result !== FALSE):
-					$this->result['status'] = 200;
-					$this->result['content']['message'] = '编辑成功';
-
-				else:
-					$this->result['status'] = 434;
-					$this->result['content']['error']['message'] = '编辑失败';
-
-				endif;
-			endif;
-		} // end edit_certain
 
 		/**
 		 * 6 编辑多行数据特定字段

@@ -10,17 +10,19 @@
 	 */
 	class Cart extends MY_Controller
 	{
-		/**
-		 * 同步上传时必需的请求参数
-		 */
-		protected $names_sync_required = array(
-			'id', 'name', 'value',
-		);
+		// 订单信息（订单创建）
+		protected $order_data = array();
+
+		// 订单相关商品信息（订单创建）
+		protected $order_items = array();
+
+		// 订单收货地址信息（订单创建）
+		protected $order_address = array();
 
 		public function __construct()
 		{
 			parent::__construct();
-			
+
 			// 操作可能需要检查客户端及设备信息
 			$type_allowed = array('client'); // 客户端类型
 			$this->client_check($type_allowed);
@@ -34,6 +36,42 @@
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
 		}
+		
+		/**
+		 * 1 列表
+		 *
+		 * 特定用户的购物车内容列表
+		 *
+		 * @param int/string $user_id 用户ID
+		 */
+		public function index()
+		{
+			// 检查必要参数是否已传入
+			$id = $this->input->post('user_id');
+			if ( empty($id) ):
+				$this->result['status'] = 400;
+				$this->result['content']['error']['message'] = '必要的请求参数未传入';
+				exit();
+			endif;
+
+			// 限制可返回的字段
+			$this->db->select('cart_string');
+
+			// 获取用户购物车内容
+			$item = $this->basic_model->select_by_id($id);
+			if ( empty($item) ):
+				$this->result['status'] = 414;
+				$this->result['content']['error']['message'] = '没有符合条件的数据';
+
+			else:
+				// 解码为数组
+				$this->cart_decode($item['cart_string']);
+
+				$this->result['status'] = 200;
+				$this->result['content'] = $this->order_data;
+
+			endif;
+		} // end index
 
 		/**
 		 * 2 详情/下载
@@ -62,7 +100,7 @@
 				$this->result['content']['error']['message'] = '没有符合条件的数据';
 
 			endif;
-		} // end detail
+		} // end sync_down
 
 		/**
 		 * 5 单项修改/上传
@@ -70,7 +108,7 @@
 		public function sync_up()
 		{
 			// 检查必要参数是否已传入
-			$required_params = $this->names_sync_required;
+			$required_params = array('id', 'name', 'value',);
 			foreach ($required_params as $param):
 				${$param} = $this->input->post($param);
 				if ( $param !== 'value' && empty( ${$param} ) ): // value 可以为空；必要字段会在字段验证中另行检查
@@ -111,7 +149,7 @@
 
 				endif;
 			endif;
-		} // end edit_certain
+		} // end sync_up
 
 	} // end class Cart
 

@@ -31,7 +31,7 @@
 		 */
 		protected $names_create_required = array(
 			'user_id',
-			'biz_id', 'name', 'amount',
+			'name', 'amount',
 		);
 
 		/**
