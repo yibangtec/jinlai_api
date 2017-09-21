@@ -89,7 +89,7 @@
 					$condition[$sorter] = $this->input->post($sorter);
 				endif;
 			endforeach;
-			
+
 			// 排序条件
 			$order_by = NULL;
 			

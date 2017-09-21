@@ -4,9 +4,6 @@
 	/**
 	 * Tool 类
 	 *
-	 * 以API服务形式返回数据列表、详情、创建、单行编辑、单/多行编辑（删除、恢复）等功能提供了常见功能的示例代码
-	 * CodeIgniter官方网站 https://www.codeigniter.com/user_guide/
-	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
 	 * @copyright ICBG <www.bingshankeji.com>
@@ -183,7 +180,7 @@
 			endif;
 		} // end table_columns
 
-	} // end Tool
+	} // end class Tool
 
 /* End of file Tool.php */
 /* Location: ./application/controllers/Tool.php */
