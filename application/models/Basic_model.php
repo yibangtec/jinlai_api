@@ -119,10 +119,7 @@
 
 					elseif ($value === 'IS NOT NULL'):
 						$this->db->where("$name IS NOT NULL");
-					
-					elseif ($name === 'name'):
-						$this->db->like($name, $value);
-					
+
 					else:
 						$this->db->where($name, $value);
 
@@ -139,7 +136,7 @@
 			else:
 				$this->db->order_by($this->id_name, 'DESC');
 			endif;
-			
+
 			// 默认可返回已删除项
 			if ($allow_deleted === FALSE) $this->db->where('time_delete', NULL);
 

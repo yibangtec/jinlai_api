@@ -205,8 +205,8 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			
-			$this->form_validation->set_rules('parent_id', '商品分类', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('biz_id', '所属商家ID', 'trim|required|is_natural_no_zero');
+			$this->form_validation->set_rules('parent_id', '所属店内分类', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
 			$this->form_validation->set_rules('url_image', '图片URL', 'trim');
 
@@ -269,7 +269,7 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('parent_id', '商品分类', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('parent_id', '所属店内分类', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
 			$this->form_validation->set_rules('url_image', '分类图片', 'trim');
 			// 针对特定条件的验证规则

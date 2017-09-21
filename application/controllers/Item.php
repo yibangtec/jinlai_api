@@ -2,10 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Item 商品类
-	 *
-	 * 以API服务形式返回数据列表、详情、创建、单行编辑、单/多行编辑（删除、恢复）等功能提供了常见功能的示例代码
-	 * CodeIgniter官方网站 https://www.codeigniter.com/user_guide/
+	 * Item/ITM 商品类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
@@ -17,8 +14,15 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'name', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id', 'status',
+			'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id', 'status',
 			'time_create', 'time_delete', 'time_publish', 'time_suspend', 'time_edit', 'creator_id', 'operator_id',
+		);
+
+		/**
+		 * 可作为排序条件的字段名
+		 */
+		protected $names_to_order = array(
+			'price', 'time_publish', 'time_to_suspend',
 		);
 
 		/**
@@ -66,6 +70,24 @@
 			$this->basic_model->id_name = $this->id_name;
 		}
 
+		/*
+		 * 类特有筛选器
+		 */
+		protected function advanced_sorter()
+		{
+			if ( !empty($this->input->post('name')) ):
+				$this->db->like('name', $this->input->post('name'));
+			endif;
+
+			if ( !empty($this->input->post('price_min')) ):
+				$this->db->where('price >=', $this->input->post('price_min'));
+			endif;
+
+			if ( !empty($this->input->post('price_max')) ):
+				$this->db->where('price <=', $this->input->post('price_max'));
+			endif;
+		} // end advanced_sorter
+
 		/**
 		 * 0 计数
 		 */
@@ -73,21 +95,21 @@
 		{
 			// 筛选条件
 			$condition = NULL;
-
 			// （可选）遍历筛选条件
 			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post_get($sorter)) ):
+				if ( !empty($this->input->post($sorter)) ):
 					// 对时间范围做限制
 					if ($sorter === 'start_time'):
-						$condition['time_create >='] = $this->input->post_get($sorter);
+						$condition['time_create >='] = $this->input->post($sorter);
 					elseif ($sorter === 'end_time'):
-						$condition['time_create <='] = $this->input->post_get($sorter);
+						$condition['time_create <='] = $this->input->post($sorter);
 					else:
-						$condition[$sorter] = $this->input->post_get($sorter);
+						$condition[$sorter] = $this->input->post($sorter);
 					endif;
-
 				endif;
 			endforeach;
+			// 类特有筛选项
+			$this->advanced_sorter();
 
 			// 获取列表；默认可获取已删除项
 			$count = $this->basic_model->count($condition);
@@ -123,24 +145,27 @@
 			$condition = NULL;
 			// （可选）遍历筛选条件
 			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post_get($sorter)) ):
+				if ( !empty($this->input->post($sorter)) ):
 					// 对时间范围做限制
 					if ($sorter === 'start_time'):
-						$condition['time_create >='] = $this->input->post_get($sorter);
+						$condition['time_create >='] = $this->input->post($sorter);
 					elseif ($sorter === 'end_time'):
-						$condition['time_create <='] = $this->input->post_get($sorter);
+						$condition['time_create <='] = $this->input->post($sorter);
 					else:
-						$condition[$sorter] = $this->input->post_get($sorter);
+						$condition[$sorter] = $this->input->post($sorter);
 					endif;
-
 				endif;
 			endforeach;
+			// 类特有筛选项
+			$this->advanced_sorter();
 
 			// 排序条件
-			$order_by['biz_id'] = 'ASC'; // 按商家ID升序
-			$order_by['category_id'] = 'ASC'; // 按系统分类升序
-			$order_by['category_biz_id'] = 'ASC'; // 按商家分类升序
-			$order_by['time_create'] = 'DESC'; // 按创建时间倒序
+			$order_by = NULL;
+			// （可选）遍历筛选条件
+			foreach ($this->names_to_order as $sorter):
+				if ( !empty($this->input->post('orderby_'.$sorter)) )
+					$order_by[$sorter] = $this->input->post('orderby_'.$sorter);
+			endforeach;
 
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );

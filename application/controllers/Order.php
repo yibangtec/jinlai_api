@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Order/ODR 订单类
+	 * Order/ODR 商品订单类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
