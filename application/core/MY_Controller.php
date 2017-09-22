@@ -407,9 +407,6 @@
 				$sku = $this->basic_model->select_by_id($sku_id);
 			endif;
 
-			//TODO 计算单品优惠活动折抵
-			//TODO 计算单品优惠券折抵
-			//TODO 计算单品运费
 			// 生成订单商品信息
 			$order_item = array(
 				'biz_id' => $item['biz_id'],
@@ -417,15 +414,10 @@
 				'name' => $item['name'],
 				'item_image' => $item['url_image_main'],
 				'slogan' => $item['slogan'],
+				'unit_name' => $item['unit_name'],
 				'tag_price' => $item['tag_price'],
 				'price' => $item['price'],
 				'count' => $count,
-
-				//'promotion_id' => $item['promotion_id'], // 营销活动ID
-				//'discount_promotion' => $discount_promotion, // 营销活动折抵金额
-
-				//'coupon_id' => $item['coupon_id'], // 优惠券ID
-				//'discount_coupon' => $discount_coupon, // 优惠券折抵金额
 			);
 			if ( !empty($sku) ):
 				$order_sku = array(
@@ -438,17 +430,8 @@
 				$order_item = array_merge($order_item, $order_sku);
 			endif;
 			// 生成订单商品信息
-			//$this->order_items[] = $order_item;
 			$order_item['single_total'] = $order_item['price'] * $order_item['count']; // 计算当前商品应付金额
 			$order_items[] = array_filter($order_item);
-
-
-			//TODO 计算商家优惠活动折抵
-			//TODO 计算商家优惠券折抵
-			//TODO 计算商家运费
-
-			//$bizs_exist = array_column($this->order_data, 'biz_id');
-			//var_dump($bizs_exist);
 
 			// 若当前商家已有待创建订单，更新部分订单信息及订单商品信息
 			$need_to_create = TRUE;
@@ -479,14 +462,6 @@
 					'biz_name' => $biz['brief_name'],
 					'biz_url_logo' => $biz['url_logo'],
 					'subtotal' => $order_item['single_total'],
-
-					//'promotion_id' => $item['promotion_id'], // 营销活动ID
-					//'discount_promotion' => $discount_promotion, // 营销活动折抵金额
-
-					//'coupon_id' => $item['coupon_id'], // 优惠券ID
-					//'discount_coupon' => $discount_coupon, // 优惠券折抵金额
-
-					//'freight' => $freight,
 					'total' => $order_item['single_total'],
 					'order_items' => $order_items,
 				);

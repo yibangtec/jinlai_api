@@ -177,15 +177,22 @@
 			else:
 				$items = $this->basic_model->select_by_ids($ids);
 			endif;
-			
+
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
 
+				/*
+				$this->db->select('ROUND( AVG(price), 2 ) as avg_price, MAX(price) as max_price, MIN(price) as min_price');
+				$query = $this->db->get($this->table_name);
+				$table_meta = $query->result_array();
+				$this->result['table_meta'] = $table_meta;
+				*/
+
 			else:
 				$this->result['status'] = 414;
 				$this->result['content']['error']['message'] = '没有符合条件的数据';
-			
+
 			endif;
 		} // end index
 
@@ -202,9 +209,13 @@
 				exit();
 			endif;
 
+			// 若传入了商家ID，则进行限制
+			if ( !empty($this->input->post('biz_id') ) )
+				$this->db->where('biz_id', $biz_id);
+
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );
-			
+
 			// 获取特定项；默认可获取已删除项
 			$item = $this->basic_model->select_by_id($id);
 			if ( !empty($item) ):
@@ -405,6 +416,9 @@
 
 				// 获取ID
 				$id = $this->input->post('id');
+				// 若传入了商家ID，则进行限制
+				if ( !empty($this->input->post('biz_id') ) )
+					$this->db->where('biz_id', $biz_id);
 				$result = $this->basic_model->edit($id, $data_to_edit);
 
 				if ($result !== FALSE):

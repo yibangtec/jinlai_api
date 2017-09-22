@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'category_id', 'parent_id', 'name', 'url_name', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'parent_id', 'name', 'url_name', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -325,89 +325,6 @@
 				endif;
 			endif;
 		} // end edit
-		
-		/**
-		 * 5 编辑单行数据特定字段
-		 *
-		 * 修改单行数据的单一字段值
-		 */
-		public function edit_certain()
-		{
-			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz'); // 客户端类型
-			$this->client_check($type_allowed);
-
-			// 管理类客户端操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
-
-			// 检查必要参数是否已传入
-			$required_params = $this->names_edit_certain_required;
-			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
-				if ( $param !== 'value' && empty( ${$param} ) ): // value 可以为空；必要字段会在字段验证中另行检查
-					$this->result['status'] = 400;
-					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-					exit();
-				endif;
-			endforeach;
-
-			// 检查目标字段是否可编辑
-			if ( ! in_array($name, $this->names_edit_allowed) ):
-				$this->result['status'] = 431;
-				$this->result['content']['error']['message'] = '该字段不可被修改';
-				exit();
-			endif;
-
-			// 根据客户端类型检查是否可编辑
-			/*
-			$names_limited = array(
-				'biz' => array('name1', 'name2', 'name3', 'name4'),
-				'admin' => array('name1', 'name2', 'name3', 'name4'),
-			);
-			if ( in_array($name, $names_limited[$this->app_type]) ):
-				$this->result['status'] = 432;
-				$this->result['content']['error']['message'] = '该字段不可被当前类型的客户端修改';
-				exit();
-			endif;
-			*/
-
-			// 初始化并配置表单验证库
-			$this->load->library('form_validation');
-			$this->form_validation->set_error_delimiters('', '');
-			// 动态设置待验证字段名及字段值
-			$data_to_validate["{$name}"] = $value;
-			$this->form_validation->set_data($data_to_validate);
-			$this->form_validation->set_rules('parent_id', '所属分类ID', 'trim');
-			$this->form_validation->set_rules('name', '名称', 'trim|required');
-			$this->form_validation->set_rules('url_name', '自定义域名', 'trim');
-
-			// 若表单提交不成功
-			if ($this->form_validation->run() === FALSE):
-				$this->result['status'] = 401;
-				$this->result['content']['error']['message'] = validation_errors();
-
-			else:
-				// 需要编辑的数据
-				$data_to_edit['operator_id'] = $user_id;
-				$data_to_edit[$name] = $value;
-
-				// 获取ID
-				$id = $this->input->post('id');
-				$result = $this->basic_model->edit($id, $data_to_edit);
-
-				if ($result !== FALSE):
-					$this->result['status'] = 200;
-					$this->result['content']['message'] = '编辑成功';
-
-				else:
-					$this->result['status'] = 434;
-					$this->result['content']['error']['message'] = '编辑失败';
-
-				endif;
-			endif;
-		} // end edit_certain
 
 		/**
 		 * 6 编辑多行数据特定字段
