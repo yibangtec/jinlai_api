@@ -68,6 +68,9 @@
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
+			
+			// 商家仅可操作自己的数据
+			if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
 		}
 
 		/*
@@ -209,9 +212,8 @@
 				exit();
 			endif;
 
-			// 若传入了商家ID，则进行限制
-			if ( !empty($this->input->post('biz_id') ) )
-				$this->db->where('biz_id', $biz_id);
+			// 商家仅可操作自己的数据
+			if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
 
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );
@@ -394,7 +396,7 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
-					
+
 					'figure_image_urls' => trim($this->input->post('figure_image_urls'), ','),
 					'figure_video_urls' => trim($this->input->post('figure_video_urls'), ','),
 					'tag_price' => empty($this->input->post('tag_price'))? '0.00': $this->input->post('tag_price'),
@@ -414,11 +416,6 @@
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
 
-				// 获取ID
-				$id = $this->input->post('id');
-				// 若传入了商家ID，则进行限制
-				if ( !empty($this->input->post('biz_id') ) )
-					$this->db->where('biz_id', $biz_id);
 				$result = $this->basic_model->edit($id, $data_to_edit);
 
 				if ($result !== FALSE):

@@ -356,16 +356,15 @@
 			endif;
 		} // amap_geocode
 
-		// TODO 解析购物车
+		// 解析购物车
 		protected function cart_decode($current_cart)
 		{
 			// 检查购物车是否为空，若空则直接返回相应提示，否则显示购物车详情
 			if ( !empty($current_cart) ):
-
-				//
+				// 初始化商品信息数组
 				$items_to_create = array();
 
-				// 获取各商品信息
+				// 拆分各商品信息
 				$cart_items = $this->explode_csv($current_cart);
 				foreach ($cart_items as $cart_item):
 					// 分解出item_id、sku_id、count等

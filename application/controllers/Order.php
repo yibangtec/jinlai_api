@@ -207,7 +207,7 @@
 					'order_id' => $item['order_id'],
 				);
 				$item['order_items'] = $this->basic_model->select($condition, NULL);
-				
+
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
 
@@ -219,7 +219,7 @@
 		} // end detail
 
 		/**
-		 * 3 TODO 创建
+		 * 3 创建
 		 */
 		public function create()
 		{
@@ -260,28 +260,27 @@
 			$this->form_validation->set_rules('user_id', '用户ID', 'trim|required');
 			$this->form_validation->set_rules('user_ip', '用户下单IP地址', 'trim');
 			$this->form_validation->set_rules('address_id', '收件地址', 'trim|required|is_natural_no_zero');
-			$this->form_validation->set_rules('note_user', '用户留言', 'trim|max_length[255]');
+			// 仅购物车订单涉及以下字段
+			$this->form_validation->set_rules('cart_string', '订单商品信息', 'trim|max_length[255]');
 			// 仅单品订单涉及以下字段
 			$this->form_validation->set_rules('item_id', '商品ID', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('sku_id', '规格ID', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('count', '份数', 'trim|is_natural_no_zero|less_than_equal_to[99]');
-			// 仅购物车订单涉及以下字段
-			$this->form_validation->set_rules('cart_string', '购物车内容', 'trim|max_length[255]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
 				$this->result['status'] = 401;
 				$this->result['content']['error']['message'] = validation_errors();
 
-			// 若订单数据生成失败
-			elseif ($this->generate_order_data() === FALSE):
-				$this->result['status'] = 411;
-				$this->result['content']['error']['message'] = $this->order_data['content']['error']['message'];
-
 			// 获取地址信息
 			elseif ($this->get_address($address_id, $user_id) === FALSE):
 				$this->result['status'] = 411;
 				$this->result['content']['error']['message'] = '收货地址不可用';
+
+			// 若订单数据生成失败
+			elseif ($this->generate_order_data() === FALSE):
+				$this->result['status'] = 411;
+				$this->result['content']['error']['message'] = $this->order_data['content']['error']['message'];
 
 			else:
 				//var_dump($this->order_items);
@@ -290,16 +289,16 @@
 
 				// 生成通用订单数据
 				$common_meta = array(
+					'time_create' => time(),
+
 					'user_id' => $user_id,
 					'user_ip' => empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'), // 优先检查请求是否来自APP
-					'note_user' => $this->input->post('note_user'),
-					'time_create' => time(),
 				);
 				// 合并通用订单数据及地址数据
 				$common_meta = array_merge($common_meta, $this->order_address);
 				unset($this->order_address);
 
-				// 计算待生成订单总数，即商家数
+				// 计算待生成子订单总数，即订单相关商家数
 				$bizs_count = count($this->order_data);
 
 				// 以商家为单位生成订单
@@ -321,7 +320,7 @@
 					if ($result !== FALSE):
 						$order_id = $result; // 获取被创建的订单号
 						$this->result['status'] = 200;
-						$this->result['content']['id'] = $order_id;
+						$this->result['content']['ids'][] = $order_id;
 						$this->result['content']['message'] = '创建成功';
 
 						// 创建订单商品
@@ -333,18 +332,21 @@
 							$order_item['time_create'] = time();
 							$result = $this->basic_model->create($order_item, TRUE);
 						endforeach;
-  
+
 					else:
 						$this->result['status'] = 424;
 						$this->result['content']['error']['message'] = '创建失败';
 
 					endif;
 				endfor;
+				
+				// 转换已创建订单ID数组为CSV字符串
+				$this->result['content']['ids'] = implode($this->result['content']['ids'], ',');
 
 			endif;
 		} // end create
 
-		// TODO 生成订单数据
+		// 生成订单数据
 		private function generate_order_data()
 		{
 			// 只要传入了商品ID，即视为单品订单
@@ -356,36 +358,25 @@
 
 				$this->generate_single_item($item_id, $sku_id, $count);
 
-			// TODO 生成多品订单
+			// 生成多品订单
 			elseif ( !empty($this->input->post('cart_string')) ):
-				//$items_to_create = $this->parse_cart( $this->input->post('cart_string') );
-				$items_to_create = array(
-					array(
-						'biz_id' => 2,
-						'item_id' => 6,
-						'sku_id' => NULL,
-						'count' => 3,
-					),
-					array(
-						'biz_id' => 2,
-						'item_id' => 3,
-						'sku_id' => NULL,
-						'count' => 1,
-					),
-					array(
-						'biz_id' => 2,
-						'item_id' => 4,
-						'sku_id' => NULL,
-						'count' => 1,
-					),
-					array(
-						'biz_id' => 2,
-						'item_id' => 8,
-						'sku_id' => NULL,
-						'count' => 2,
-					),
-				);
+				// 初始化商品信息数组
+				$items_to_create = array();
 
+				// 拆分各商品信息
+				$cart_items = $this->explode_csv( $this->input->post('cart_string') );
+				foreach ($cart_items as $cart_item):
+					// 分解出item_id、sku_id、count等
+					list($biz_id, $item_id, $sku_id, $count) = explode('|', $cart_item);
+					$items_to_create[] = array(
+						'biz_id' => $biz_id,
+						'item_id' => $item_id,
+						'sku_id' => $sku_id,
+						'count' => $count,
+					);
+				endforeach;
+
+				// 生成订单单品信息
 				foreach ($items_to_create as $item_to_create):
 					$this->generate_single_item($item_to_create['item_id'], $item_to_create['sku_id'], $item_to_create['count']);
 				endforeach;
@@ -397,7 +388,7 @@
 		} // generate_order_data
 
 		/**
-		 * TODO 生成单品订单
+		 * 生成订单单品信息
 		 *
 		 * @params varchar/int $item_id 商品ID；商家ID需要从商品资料中获取
 		 * @params varchar/int $sku_id 规格ID
@@ -452,13 +443,9 @@
 			$order_item['single_total'] = $order_item['price'] * $order_item['count']; // 计算当前商品应付金额
 			$order_items[] = array_filter($order_item);
 
-
 			//TODO 计算商家优惠活动折抵
 			//TODO 计算商家优惠券折抵
 			//TODO 计算商家运费
-
-			//$bizs_exist = array_column($this->order_data, 'biz_id');
-			//var_dump($bizs_exist);
 
 			// 若当前商家已有待创建订单，更新部分订单信息及订单商品信息
 			$need_to_create = TRUE;
@@ -499,6 +486,7 @@
 					//'freight' => $freight,
 					'total' => $order_item['single_total'],
 					'order_items' => $order_items,
+					'note_user' => $this->input->post('note_user')[$order_item['biz_id']],
 				);
 			endif;
 		} // end generate_single_item
