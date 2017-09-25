@@ -24,7 +24,7 @@
 			'user_id',
 			'biz_id',
 		);
-		
+
 		/**
 		 * 编辑多行特定字段时必要的字段名
 		 */
@@ -122,6 +122,20 @@
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
+
+				// TODO 待迭代优化
+				// 为收藏商家获取最新上架产品
+				$this->basic_model->table_name = 'item';
+				$this->basic_model->id_name = 'item_id';
+				$this->db->order_by('time_publish', 'DESC');
+
+				for ($i=0; $i<count($this->result['content']); $i++):
+					$condition = array(
+						'biz_id' => $this->result['content'][$i]['biz_id'],
+						'time_delete' => 'NULL',
+					);
+					$this->result['content'][$i]['recent_items'] = $this->basic_model->select($condition);
+				endfor;
 
 			else:
 				$this->result['status'] = 414;
