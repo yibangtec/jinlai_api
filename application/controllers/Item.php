@@ -22,7 +22,7 @@
 		 * 可作为排序条件的字段名
 		 */
 		protected $names_to_order = array(
-			'price', 'time_publish', 'time_to_suspend',
+			'price', 'time_publish', 'time_to_suspend', 'unit_sold',
 		);
 
 		/**
@@ -143,6 +143,10 @@
 					exit();
 				endif;
 			endforeach;
+			
+			if ($this->input->post('test_mode') === 'on'):
+				$this->output->enable_profiler(TRUE);
+			endif;
 
 			// 筛选条件
 			$condition = NULL;
@@ -170,14 +174,18 @@
 					$order_by[$sorter] = $this->input->post('orderby_'.$sorter);
 			endforeach;
 
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
-
 			// 获取列表；默认可获取已删除项
-			$ids = $this->input->post('ids');
+			$ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID
 			if ( empty($ids) ):
+				// 限制可返回的字段，获取销量
+				$this->db->select(
+					implode(',', $this->names_to_return).
+					',(SELECT SUM(`count`) FROM `order_items` WHERE `time_accepted` IS NOT NULL AND `item_id`= `item`.`item_id`) as unit_sold'
+				);
 				$items = $this->basic_model->select($condition, $order_by);
 			else:
+				// 限制可返回的字段
+   				$this->db->select( implode(',', $this->names_to_return) );
 				$items = $this->basic_model->select_by_ids($ids);
 			endif;
 
@@ -216,7 +224,11 @@
 			if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
 
 			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
+			//$this->db->select( implode(',', $this->names_to_return) );
+			$this->db->select(
+				implode(',', $this->names_to_return).
+				',(SELECT SUM(`count`) FROM `order_items` WHERE `time_accepted` IS NOT NULL AND `item_id`= `item`.`item_id`) as unit_sold'
+			);
 
 			// 获取特定项；默认可获取已删除项
 			$item = $this->basic_model->select_by_id($id);

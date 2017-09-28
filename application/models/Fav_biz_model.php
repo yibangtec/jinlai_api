@@ -5,7 +5,6 @@
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
 	 * @copyright ICBG <www.bingshankeji.com>
-	 * @copyright BasicCodeIgniter <https://github.com/kamaslau/BasicCodeIgniter>
 	 */
 	class Fav_biz_model extends CI_Model
 	{

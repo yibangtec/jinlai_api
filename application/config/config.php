@@ -37,18 +37,19 @@ define('WECHAT_TOKEN', '');
 define('AES_KEY', '');
 
 // 微信支付
-// 平台版公众号
-/*
-define('WEPAY_MCH_ID', '1488874732'); // APP的商户号
-define('WEPAY_APP_ID', 'wxba173a67df14c087'); // APP的AppId
-define('WEPAY_APP_SECRET', '1b1bf0c279a0d9eb0ec7288787ccb20a'); // APP的AppSecret
+// 平台版APP
+define('WEPAY_MCH_ID', '1489776982'); // APP的商户号
+define('WEPAY_APP_ID', 'wx9b19c66cc2b8bfb1'); // APP的AppId
+define('WEPAY_APP_SECRET', ''); // APP的AppSecret，不适用于APP支付
 define('WEPAY_KEY', 'OHLAt2qyVdNVHqWWoWoc5Q4UbpFycpH6');
-*/
-// 单商户版
+
+// 单商户版APP
+/*
 define('WEPAY_MCH_ID', '1301515501'); // APP的商户号
 define('WEPAY_APP_ID', 'wx6f4a0a1910270a5c'); // APP的AppId
-define('WEPAY_APP_SECRET', ''); // APP的AppSecret
+define('WEPAY_APP_SECRET', ''); // APP的AppSecret，不适用于APP支付
 define('WEPAY_KEY', 'qingdaoyibangjituan587812wechatp');
+*/
 
 define('WEPAY_NOTIFY_URL', BASE_URL.'/wepay/notify'); // 异步回调URL
 define('WEPAY_SSLCERT_PATH', BASE_URL.'/payment/wepay/cert/apiclient_cert.pem');

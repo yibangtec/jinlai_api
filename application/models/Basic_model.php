@@ -132,9 +132,6 @@
 				foreach ($order_by as $column_name => $value):
 					$this->db->order_by($column_name, $value);
 				endforeach;
-			// 若未指定排序条件，则默认按照ID倒序排列
-			else:
-				$this->db->order_by($this->id_name, 'DESC');
 			endif;
 
 			// 默认可返回已删除项

@@ -395,7 +395,7 @@
 		 * @params int $count 份数；默认为1，但有每单最低限量的情况下允许传入count
 		 */
 		private function generate_single_item($item_id, $sku_id = NULL, $count = 1)
-		{	
+		{
 			// 获取商品信息
 			$this->basic_model->table_name = 'item';
 			$this->basic_model->id_name = 'item_id';
@@ -632,6 +632,47 @@
 			endif;
 		} // end edit_bulk
 		
+		/**
+		 * 7 预下单
+		 *
+		 * 获取订单格式的商品信息，为下单页准备
+		 */
+		public function prepare()
+		{
+			// 操作可能需要检查客户端及设备信息
+			$type_allowed = array('client'); // 客户端类型
+			$this->client_check($type_allowed);
+
+			// 检查必要参数是否已传入
+			$required_params = array('user_id', 'cart_string');
+			foreach ($required_params as $param):
+				${$param} = $this->input->post($param);
+				if ( !isset( ${$param} ) ):
+					$this->result['status'] = 400;
+					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+					exit();
+				endif;
+			endforeach;
+
+			// 获取可用地址信息
+			$conditions = array(
+				'user_id' => $user_id,
+				'time_delete' => 'NULL',
+			);
+			$this->switch_model('address', 'address_id');
+			$this->db->select('fullname, mobile, nation, province, city, county, longitude, latitude, zipcode');
+			$addresses = $this->basic_model->select($conditions, NULL);
+			$this->reset_model();
+
+			// 获取商品信息
+			$this->cart_decode($cart_string);
+			$order_data = $this->order_data;
+
+			$this->result['status'] = 200;
+			$this->result['content']['addresses'] = $addresses;
+			$this->result['content']['order_data'] = $this->order_data;
+		} // prepare
+
 		/**
 		 * 用户取消
 		 *

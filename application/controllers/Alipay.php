@@ -74,7 +74,7 @@
 				$this->result['content']['error']['message'] = '必要的请求参数未传入';
 				exit();
 			endif;
-			
+
 			// 获取订单类型，默认为商品订单
 			$type = $this->input->post('type')? $this->input->post('type'): 'order';
 
@@ -94,7 +94,7 @@
 				'body' => SITE_NAME. ($type === 'recharge')? '充值订单': '商品订单',
 				'total_fee' => '0.01',
 			);
-			
+
 			//'rsaPrivateKey' => ALIPAY_KEY_PRIVATE, // 私钥
 			//'alipayrsaPublicKey' => ALIPAY_KEY_PUBLIC, // 公钥
 
@@ -115,15 +115,19 @@
 
 			// 参与签名的参数
 			$out_trade_no = date('YmdHis').'_'. $type.'_'. $order_id; // 拼装订单号，64个字符以内
+			$subject = $order_data['body']. $out_trade_no;
 			$request_params = array(
 				'out_trade_no' => $out_trade_no,
 				'total_amount' => $order_data['total_fee'],
-				'subject' => $order_data['body']. $out_trade_no,
+				'subject' => $subject,
 			);
 			$params['biz_content'] = (String) json_encode($request_params);
 
-			// 生成并拼合签名到请求参数
-			$params['sign'] = $this->sign_generate($params);
+			// 生成签名并拼合不参与签名的参数到请求参数
+			$sign = $this->sign_generate($params);
+			$params['subject'] = $subject;
+			$params['sign'] = $sign;
+			$params['payment_string'] = $this->sign_string_generate($params).'&sign='. $sign; // 含签名的所有参数字符串
 
 			if ( !empty($params)):
 				$this->result['status'] = 200;
@@ -157,16 +161,16 @@
 			ksort($params); // 按数组键名升序排序
 
 			foreach ($params as $key => $value):
-				$sign_string .= '&'. $key. '='. $value;
+				$sign_string .= '&'. $key. '='. urlencode($value);
 			endforeach;
 
 			// 去掉多余的“&”
 			$sign_string = trim($sign_string, '&');
 
 			// 取消字符转义
-			if (get_magic_quotes_gpc()):
-				$sign_string = stripcslashes($sign_string);
-			endif;
+			//if (get_magic_quotes_gpc()):
+			//	$sign_string = stripcslashes($sign_string);
+			//endif;
 			
 			return $sign_string;
 		} // end sign_string_generate
