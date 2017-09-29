@@ -29,8 +29,16 @@
 		// 响应型接口属性
 		public $data; // 接收到的数据，类型为关联数组
 		public $returnParameters;// 返回给微信服务器的参数，类型为关联数组
+		
+		/**
+		 * 接收订单通知时必要的字段名
+		 */
+		protected $names_edit_required = array(
+			'out_trade_no', 'openid', 'transaction_id',
+		);
 
-		public function __construct()
+		// 仅部分方法适用构造函数
+		protected function manual_construct()
 		{
 	        parent::__construct();
 
@@ -57,10 +65,8 @@
 				$this->sign_check();
 		} // end __construct
 
-		/**
-		 * 仅部分API需要返回JSON格式数据
-		 */
-		public function manual_destruct()
+		// 仅部分方法适用解构函数
+		protected function manual_destruct()
 		{
 			// 将请求参数一并返回以便调试
 			$this->result['param']['get'] = $this->input->get();
@@ -81,11 +87,21 @@
 			echo $output_json;
 		} // end manual_destruct
 		
+		// 更换所用数据库
+		protected function switch_model($table_name, $id_name)
+		{
+			$this->basic_model->table_name = $table_name;
+			$this->basic_model->id_name = $id_name;
+		}
+		
 		/**
-		 * WPY3 创建微信支付订单
+		 * 3 创建微信支付订单
 		 */
 		public function create()
 		{
+			// 手动构造函数
+			$this->manual_construct();
+
 			// 检查必要参数是否已传入
 			$order_id = $this->input->post('order_id');
 			if ( empty($order_id) ):
@@ -94,13 +110,13 @@
 				$this->manual_destruct();
 				exit();
 			endif;
-			
+
 			// 获取订单类型，默认为商品订单
 			$type = $this->input->post('type')? $this->input->post('type'): 'order';
-			
+
 			// 获取订单信息备用
 			$order_data = array(
-				'body' => '进来商城平台版测试订单',
+				'body' => '进来商城平台版测试订单'.$order_id,
 				'total_fee' => '0.01',
 			);
 
@@ -142,16 +158,21 @@
 			$this->result['status'] = 200;
 			$this->result['content'] = $return_parameters;
 
-			// 手动输出JSON
+			// 手动析构函数
 			$this->manual_destruct();
 		} // end unified_order
 
-		/* 接收并回复微信发来的支付结果回调，并根据回调结果处理相应订单 */
+		/**
+		 * 4 接收并回复微信发来的支付结果回调，并根据回调结果处理相应订单
+		 */
 		public function notify()
 		{
-			// 存储微信的回调
+			// 存储微信通知的请求参数
 			$xml = file_get_contents('php://input');
 			$this->saveData($xml);
+
+			if ($this->data['test_mode'] == 'on')
+				var_dump($this->data);
 
 			if ($this->data['return_code'] == FALSE):
 				echo '此接口仅用于接收微信推送的付款状态通知';
@@ -172,49 +193,32 @@
 			echo $returnXml;
 
 			// 根据通知参数进行相应处理
-			if($this->checkSign() === TRUE):
+			if ($this->checkSign() === TRUE):
 				if ($this->data['return_code'] === 'FAIL'):
-					//此处应该更新一下订单状态，商户自行增删操作
+					// 更新订单状态
 					//$log_->log_result($log_name, "【通信出错】:\n". $xml. "\n");
 
 				elseif ($this->data['result_code'] === 'FAIL'):
-					//此处应该更新一下订单状态，商户自行增删操作
+					// 更新订单状态
 					//$log_->log_result($log_name, "【业务出错】:\n". $xml. "\n");
 
 				else:
-					//此处应该更新一下订单状态，商户自行增删操作
+					// 更新订单状态
 					//$log_->log_result($log_name, "【支付成功】:\n". $xml. "\n");
 
-					// RESTful API更新订单状态
-					@list($order_prefix, $type, $order_id) = split('_', $this->data['out_trade_no']); // 分解出订单前缀、订单类型（consume或recharge）、哎油订单号等
-					$params['type'] = $type; // 从XML中获取type
-					$params['order_id'] = $order_id; // 从XML中获取order_id
-					$params['status'] = '3';
-					$params['payment_type'] = '1'; // 支付方式，全额使用微信支付即为1
-					$params['payment_id'] = $this->data['transaction_id']; // 支付流水号，即微信支付订单号
-					// 通过RESTful API更新订单状态
-					$params['token'] = '7C4l7JLaM3Fq5biQurtmk6nFS';
-					$url = 'http://api.irefuel.cn/order/update_status';
-				    $curl = curl_init();
-				    curl_setopt($curl, CURLOPT_URL, $url);
+					// 更新订单状态
+					@list($order_prefix, $type, $order_id) = split('_', $this->data['out_trade_no']); // 分解出订单前缀、订单类型（consume或recharge）、订单号等
+					$data_to_edit['payment_type'] = '微信支付'; // 支付方式
+					$data_to_edit['payment_account'] = $this->data['openid']; // 付款账号；微信OpenID
+					$data_to_edit['payment_id'] = $this->data['transaction_id']; // 支付流水号；微信支付订单号
+					$data_to_edit['time_pay'] = time(); // 服务器接收到付款通知的时间
+					$data_to_edit['total_payed'] = $this->data['total_fee'] / 100; // 将货币单位由“分”换算为“元”
+					$data_to_edit['status'] = '已支付';
 
-				    // 设置cURL参数，要求结果保存到字符串中还是输出到屏幕上。
-				    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-				    curl_setopt($curl, CURLOPT_ENCODING, 'UTF-8');
-					curl_setopt($curl, CURLOPT_POST, count($params));
-					curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
-	
-				    // 运行cURL，请求API
-					$result = curl_exec($curl);
-
-					// 关闭URL请求
-				    curl_close($curl);
+					// 更新订单状态
+					$this->switch_model($type, 'order_id');
+					$this->basic_model->edit($order_id, $data_to_edit);
 				endif;
-
-				// 商户自行增加处理流程
-				//例如：更新订单状态
-				//例如：数据库操作
-				//例如：推送支付完成信息
 			endif;
 		} // end notify
 

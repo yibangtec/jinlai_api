@@ -153,7 +153,7 @@
 			endforeach;
 			
 			// 排序条件
-			$order_by = NULL;
+			$order_by['time_create'] = 'DESC';
 
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );
@@ -631,7 +631,7 @@
 
 			endif;
 		} // end edit_bulk
-		
+
 		/**
 		 * 7 预下单
 		 *
@@ -660,7 +660,7 @@
 				'time_delete' => 'NULL',
 			);
 			$this->switch_model('address', 'address_id');
-			$this->db->select('fullname, mobile, nation, province, city, county, longitude, latitude, zipcode');
+			$this->db->select('fullname, mobile, nation, province, city, county, street, longitude, latitude, zipcode');
 			$addresses = $this->basic_model->select($conditions, NULL);
 			$this->reset_model();
 
