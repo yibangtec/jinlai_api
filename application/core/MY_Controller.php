@@ -89,7 +89,11 @@
 			// 测试环境可跳过签名检查
 			if ( ENVIRONMENT !== 'development' && $this->input->post('skip_sign') !== 'please' )
 				$this->sign_check();
-	    }
+
+			// 如果已经打开测试模式，则输出调试信息
+			if ($this->input->post('test_mode') === 'on')
+				$this->output->enable_profiler(TRUE);
+	    } // end __construct
 
 		public function __destruct()
 		{
@@ -110,7 +114,7 @@
 			header("Content-type:application/json;charset=utf-8");
 			$output_json = json_encode($this->result);
 			echo $output_json;
-		}
+		} // end __destruct
 
 		/**
 		 * 签名有效性检查
@@ -123,7 +127,7 @@
 			$this->sign_check_time();
 			$this->sign_check_params();
 			$this->sign_check_string();
-		}
+		} // end sign_check
 
 		// 检查签名是否传入
 		public function sign_check_exits()
@@ -135,7 +139,7 @@
 				$this->result['content']['error']['message'] = '未传入签名';
 				exit();
 			endif;
-		}
+		} // end sign_check_exits
 
 		// 签名时间检查
 		public function sign_check_time()
@@ -162,7 +166,7 @@
 				endif;
 
 			endif;
-		}
+		} // end sign_check_time
 
 		// 签名参数检查
 		public function sign_check_params()
@@ -187,7 +191,7 @@
 			else:
 				return TRUE;
 			endif;
-		}
+		} // end sign_check_params
 
 		// 签名正确性检查
 		public function sign_check_string()
@@ -211,7 +215,7 @@
 				return TRUE;
 
 			endif;
-		}
+		} // end sign_check_string
 
 		/**
 		 * 生成签名
@@ -236,14 +240,14 @@
 			$sign = strtoupper( SHA1($param_string) );
 
 			return $sign;
-		}
+		} // end sign_generate
 		
 		// 更换所用数据库
 		protected function switch_model($table_name, $id_name)
 		{
 			$this->basic_model->table_name = $table_name;
 			$this->basic_model->id_name = $id_name;
-		}
+		} // end switch_model
 		
 		// 还原所用数据库
 		protected function reset_model()
@@ -251,7 +255,7 @@
 			$this->db->reset_query();
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
-		}
+		} // end reset_model
 
 		/**
 		 * 客户端检查
@@ -290,7 +294,7 @@
 				return TRUE;
 
 			endif;
-		}
+		} // end client_check
 
 		/**
 		 * TODO 权限检查
@@ -300,7 +304,7 @@
 		public function permission_check($role_allowed, $min_level)
 		{
 			return TRUE;
-		}
+		} // end permission_check
 
 		/**
 		 * 操作者有效性检查；通过操作者类型、ID、密码进行验证
@@ -327,7 +331,7 @@
 			else:
 				return FALSE;
 			endif;
-		}
+		} // end operator_check
 
 		// 拆分CSV为数组
 		protected function explode_csv($text, $seperator = ',')

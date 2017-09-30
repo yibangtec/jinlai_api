@@ -68,9 +68,6 @@
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
-			
-			// 商家仅可操作自己的数据
-			if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
 		}
 
 		/*
@@ -113,6 +110,9 @@
 			endforeach;
 			// 类特有筛选项
 			$this->advanced_sorter();
+			
+			// 商家仅可操作自己的数据
+			if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
 
 			// 获取列表；默认可获取已删除项
 			$count = $this->basic_model->count($condition);
@@ -165,6 +165,9 @@
 			endforeach;
 			// 类特有筛选项
 			$this->advanced_sorter();
+			
+			// 商家仅可操作自己的数据
+			if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
 
 			// 排序条件
 			$order_by = NULL;
@@ -427,6 +430,10 @@
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
+				
+				
+				// 商家仅可操作自己的数据
+				if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
 
 				$result = $this->basic_model->edit($id, $data_to_edit);
 
@@ -516,6 +523,9 @@
 				// 需要编辑的数据
 				$data_to_edit['operator_id'] = $user_id;
 				$data_to_edit[$name] = $value;
+				
+				// 商家仅可操作自己的数据
+				if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
 
 				// 获取ID
 				$result = $this->basic_model->edit($id, $data_to_edit);
@@ -605,6 +615,9 @@
 				// 依次操作数据并输出操作结果
 				// 将待操作行ID们的CSV格式字符串，转换为待操作行的ID数组
 				$ids = explode(',', $ids);
+				
+				// 商家仅可操作自己的数据
+				if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
 
 				// 默认批量处理全部成功，若有任一处理失败则将处理失败行进行记录
 				$this->result['status'] = 200;
