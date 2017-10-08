@@ -238,6 +238,14 @@
 			if ( !empty($item) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
+				
+				// 获取该商品SKU列表
+				$this->switch_model('sku', 'sku_id');
+				$condition = array(
+					'item_id' => $item['item_id'],
+				);
+				if ($this->app_type === 'client') $condition['time_delete'] = 'NULL';
+				$this->result['content']['skus'] = $this->basic_model->select($condition, NULL);
 
 			else:
 				$this->result['status'] = 414;

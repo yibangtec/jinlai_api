@@ -257,7 +257,6 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('user_id', '用户ID', 'trim|required');
 			$this->form_validation->set_rules('user_ip', '用户下单IP地址', 'trim');
 			$this->form_validation->set_rules('address_id', '收件地址', 'trim|required|is_natural_no_zero');
 			// 仅购物车订单涉及以下字段

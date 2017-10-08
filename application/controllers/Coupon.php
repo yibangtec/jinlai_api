@@ -411,7 +411,7 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('user_id', '用户ID', 'trim|required');
+			$this->form_validation->set_rules('user_id', '用户ID', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('combo_id', '优惠券包ID', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('template_id', '优惠券模板ID', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('count', '数量', 'trim|is_natural_no_zero');
