@@ -74,7 +74,6 @@
 			// 设置主要数据库信息
 			$this->table_name = 'promotion'; // 这里……
 			$this->id_name = 'promotion_id'; // 这里……
-			$this->names_to_return[] = 'promotion_id'; // 还有这里，OK，这就可以了
 
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;

@@ -206,21 +206,46 @@
 					// 更新订单状态
 					//$log_->log_result($log_name, "【支付成功】:\n". $xml. "\n");
 
-					// 更新订单状态
-					@list($order_prefix, $type, $order_id) = split('_', $this->data['out_trade_no']); // 分解出订单前缀、订单类型（consume或recharge）、订单号等
+					// 获取基本订单信息及支付信息
+					@list($order_prefix, $type, $order_id) = split('_', $this->data['out_trade_no']); // 分解出防冗余下单订单前缀、订单类型（商品、券码、服务等）、订单号等
 					$data_to_edit['payment_type'] = '微信支付'; // 支付方式
 					$data_to_edit['payment_account'] = $this->data['openid']; // 付款账号；微信OpenID
 					$data_to_edit['payment_id'] = $this->data['transaction_id']; // 支付流水号；微信支付订单号
-					$data_to_edit['time_pay'] = time(); // 服务器接收到付款通知的时间
 					$data_to_edit['total_payed'] = $this->data['total_fee'] / 100; // 将货币单位由“分”换算为“元”
-					$data_to_edit['status'] = '已支付';
 
-					// 更新订单状态
-					$this->switch_model($type, 'order_id');
-					$this->basic_model->edit($order_id, $data_to_edit);
+					// 更新订单信息
+					$this->order_update($data_to_edit, $type, $order_id);
 				endif;
 			endif;
 		} // end notify
+
+		/**
+		 * 更新订单信息
+		 */
+		private function order_update($data_to_edit, $type, $order_id)
+		{
+			$current_time = time(); // 服务器接收到付款通知的时间
+			$data_to_edit['time_pay'] = $current_time;
+
+			// 根据订单类型更新相应字段值
+			switch ($type):
+				case 'coupon': // 券码类订单
+					$data_to_edit['time_accept'] = $current_time; // 收款即接单（等待发货）
+					$data_to_edit['time_deliver'] = $current_time; // 收款即发货（生成券码）
+					$data_to_edit['status'] = '待使用';
+					break;
+				case 'cater': // 服务类订单
+					$data_to_edit['status'] = '待接单';
+					break;
+				default: // 实物类订单
+					$data_to_edit['time_accept'] = $current_time; // 收款即接单（等待发货）
+					$data_to_edit['status'] = '待发货';
+			endswitch;
+
+			// 更新订单信息
+			$this->switch_model($type, 'order_id');
+			$this->basic_model->edit($order_id, $data_to_edit);
+		} // end order_update
 
 		/**
 		 * 基础通用方法

@@ -39,7 +39,6 @@
 			// 设置主要数据库信息
 			$this->table_name = 'fav_item'; // 这里……
 			$this->id_name = 'record_id'; // 这里……
-			$this->names_to_return[] = 'record_id'; // 还有这里，OK，这就可以了
 
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
@@ -167,7 +166,6 @@
 				$data_to_create = array(
 					'user_id' => $this->input->post('user_id'),
 					'item_id' => $this->input->post('item_id'),
-					'time_create' => time(),
 				);
 
 				// 检查是否有重复项
@@ -187,6 +185,7 @@
 					endif;
 					
 				else:
+					$data_to_create['time_create'] = time();
 					$result = $this->basic_model->create($data_to_create, TRUE);
 					if ($result !== FALSE):
 						$this->result['status'] = 200;

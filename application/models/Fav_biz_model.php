@@ -70,7 +70,7 @@
 				$this->db->select($this->id_name);
 			else:
 				// 获取必要信息
-				$this->db->select($this->table_name.'.*, biz.name as name, biz.url_logo as url_logo, biz.status as status');
+				$this->db->select($this->table_name.'.*, biz.name as name, biz.brief_name as brief_name, biz.url_logo as url_logo, biz.status as status');
 				$this->db->join('biz', $this->table_name.'.biz_id = biz.biz_id', 'left outer');
 			endif;
 

@@ -28,7 +28,6 @@
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id',
 			'order_id', 'user_id', 'biz_id', 'item_id',
 		);
 
@@ -47,7 +46,6 @@
 			// 设置主要数据库信息
 			$this->table_name = 'comment_item'; // 这里……
 			$this->id_name = 'comment_id'; // 这里……
-			$this->names_to_return[] = 'comment_id'; // 还有这里，OK，这就可以了
 
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
@@ -239,6 +237,52 @@
 				endif;
 			endif;
 		} // end create
+		
+		/**
+		 * 7 批量创建
+		 *
+		 * 为单一订单的商家及全部相关商品
+		 */
+		public function create_bulk()
+		{
+			// 操作可能需要检查客户端及设备信息
+			$type_allowed = array('client'); // 客户端类型
+			$this->client_check($type_allowed);
+
+			// 管理类客户端操作可能需要检查操作权限
+			//$role_allowed = array('管理员', '经理'); // 角色要求
+			//$min_level = 10; // 级别要求
+			//$this->permission_check($role_allowed, $min_level);
+
+			// 检查必要参数是否已传入
+			$required_params = array('order_id', 'user_id',);
+			foreach ($required_params as $param):
+				${$param} = $this->input->post($param);
+				if ( !isset( ${$param} ) ):
+					$this->result['status'] = 400;
+					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+					exit();
+				endif;
+			endforeach;
+
+			// 获取订单信息，必须是已付款已成交且未评价，所属用户为当前用户的订单
+			$data_to_search = array(
+				'order_id' => $order_id,
+				'user_id' => $user_id,
+				//'time_pay' => 'IS NOT NULL',
+				//'time_comment' => 'NULL', // 未评价
+				//'status' => '待评价',
+			);
+			$this->switch_model('order', 'order_id');
+			$order_data = $this->basic_model->match($data_to_search);
+			var_dump($order_data);
+			
+			// 为相关商家创建商家评论
+			
+			// 为相关商品创建商品评论
+			
+			
+		} // end create_bulk
 
 		/**
 		 * 6 编辑多行数据特定字段

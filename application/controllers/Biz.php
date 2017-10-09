@@ -22,7 +22,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'name', 'brief_name', 'url_name', 'url_logo', 'slogan', 'description', 'notification',
+			'biz_id', 'name', 'brief_name', 'url_name', 'url_logo', 'slogan', 'description', 'notification',
 			'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
 			'fullname_owner', 'fullname_auth',
 			'code_license', 'code_ssn_owner',  'code_ssn_auth',
@@ -68,7 +68,6 @@
 			// 设置主要数据库信息
 			$this->table_name = 'biz'; // 这里……
 			$this->id_name = 'biz_id';  // 还有这里，OK，这就可以了
-			$this->names_to_return[] = 'biz_id';
 
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;

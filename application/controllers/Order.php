@@ -14,14 +14,14 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'biz_id', 'biz_name', 'biz_url_logo', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'freight', 'discount_reprice', 'repricer_id', 'total', 'credit_id', 'credit_payed', 'total_payed', 'total_refund', 'fullname', 'code_ssn', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_create_start', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_refund_auto', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
+			'biz_id', 'biz_name', 'biz_url_logo', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'freight', 'discount_reprice', 'repricer_id', 'total', 'credit_id', 'credit_payed', 'total_payed', 'total_refund', 'fullname', 'code_ssn', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'deliver_method', 'deliver_biz', 'waybill_id', 'refund_status', 'refund_id', 'invoice_status', 'invoice_id', 'time_create', 'time_create_start', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'biz_id', 'biz_name', 'biz_url_logo', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'freight', 'discount_reprice', 'repricer_id', 'total', 'credit_id', 'credit_payed', 'total_payed', 'total_refund', 'fullname', 'code_ssn', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_refund_auto', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status'
+			'order_id', 'biz_id', 'biz_name', 'biz_url_logo', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'freight', 'discount_reprice', 'repricer_id', 'total', 'credit_id', 'credit_payed', 'total_payed', 'total_refund', 'fullname', 'code_ssn', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'deliver_method', 'deliver_biz', 'waybill_id', 'refund_status', 'refund_id', 'invoice_status', 'invoice_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status',
 		);
 
 		/**
@@ -30,22 +30,6 @@
 		protected $names_create_required = array(
 			'user_id',
 			'address_id',
-		);
-
-		/**
-		 * 完整编辑单行时必要的字段名
-		 */
-		protected $names_edit_required = array(
-			'user_id', 'id',
-			'order_id', 'biz_id', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'credit_id', 'freight', 'discount_reprice', 'repricer_id', 'total', 'total_payed', 'total_refund', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'invoice_status',
-		);
-
-		/**
-		 * 编辑单行特定字段时必要的字段名
-		 */
-		protected $names_edit_certain_required = array(
-			'user_id', 'id',
-			'name', 'value',
 		);
 
 		/**
@@ -72,7 +56,6 @@
 			// 设置主要数据库信息
 			$this->table_name = 'order'; // 这里……
 			$this->id_name = 'order_id'; // 这里……
-			$this->names_to_return[] = 'order_id'; // 还有这里，OK，这就可以了
 
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
@@ -659,7 +642,7 @@
 				'time_delete' => 'NULL',
 			);
 			$this->switch_model('address', 'address_id');
-			$this->db->select('fullname, mobile, nation, province, city, county, street, longitude, latitude, zipcode');
+			$this->db->select('brief, fullname, mobile, nation, province, city, county, street, longitude, latitude, zipcode');
 			$addresses = $this->basic_model->select($conditions, NULL);
 			$this->reset_model();
 

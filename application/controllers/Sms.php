@@ -48,7 +48,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'mobile', 'mobile_list', 'type', 'captcha', 'content', 'time', 'user_ip', 'time_expire',
+			'sms_id', 'mobile', 'mobile_list', 'type', 'captcha', 'content', 'time', 'user_ip', 'time_expire',
 		);
 
 		public function __construct()
@@ -58,7 +58,6 @@
 			// 设置主要数据库信息
 			$this->table_name = 'sms'; // 这里……
 			$this->id_name = 'sms_id';  // 还有这里，OK，这就可以了
-			$this->names_to_return[] = 'sms_id';
 
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;

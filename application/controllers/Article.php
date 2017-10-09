@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'article_id', 'category_id', 'biz_id', 'title', 'excerpt', 'content', 'url_name', 'url_images', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'category_id', 'biz_id', 'title', 'excerpt', 'content', 'url_name', 'url_images', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -70,7 +70,6 @@
 			// 设置主要数据库信息
 			$this->table_name = 'article'; // 这里……
 			$this->id_name = 'article_id'; // 这里……
-			$this->names_to_return[] = 'article_id'; // 还有这里，OK，这就可以了
 
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
