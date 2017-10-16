@@ -10,6 +10,12 @@
 	 */
 	class Alipay extends CI_Controller
 	{
+		// 待签名字符串
+		private $sign_string = '';
+		
+		// 支付参数字符串
+		private $payment_string = '';
+		
 		public function __construct()
 		{
 	        parent::__construct();
@@ -91,12 +97,9 @@
 
 			// 获取订单信息备用
 			$order_data = array(
-				'body' => SITE_NAME. ($type === 'recharge')? '充值订单': '商品订单',
+				'body' => SITE_NAME. ($type === 'order'? '商品订单': '充值订单'),
 				'total_fee' => '0.01',
 			);
-
-			//'rsaPrivateKey' => ALIPAY_KEY_PRIVATE, // 私钥
-			//'alipayrsaPublicKey' => ALIPAY_KEY_PUBLIC, // 公钥
 
 			// 请求地址
 			$gateway_url = 'https://openapi.alipay.com/gateway.do';
@@ -104,30 +107,37 @@
 			// 公共参数
 			$params = array(
 				'app_id' => ALIPAY_APP_ID,
-				'method' => 'alipay.trade.create', // 接口名称在具体请求中赋值，此处仅为示例
+				'method' => 'alipay.trade.app.pay', // 接口名称在具体请求中赋值，此处仅为示例
 				'charset' => 'utf-8',
+				//'format' => 'JSON',
 				'sign_type' => 'RSA2',
 				//'sign' => '', // 签名
 				'timestamp' => date('Y-m-d H:i:s'),
 				'version' => '1.0',
+				'notify_url' => base_url('alipay/notify'),
 				'biz_content' => '', // 请求参数的集合字符串，除公共参数外所有请求参数都通过该参数传递
 			);
 
 			// 参与签名的参数
 			$out_trade_no = date('YmdHis').'_'. $type.'_'. $order_id; // 拼装订单号，64个字符以内
-			$subject = $order_data['body']. $out_trade_no;
+			$subject = $order_data['body']. ' 编号'. $order_id;
+			$body = $order_data['body']. $out_trade_no;
 			$request_params = array(
 				'out_trade_no' => $out_trade_no,
 				'total_amount' => $order_data['total_fee'],
 				'subject' => $subject,
+				'body' => $body,
+				'product_code' => 'QUICK_MSECURITY_PAY', // 固定值
 			);
-			$params['biz_content'] = (String) json_encode($request_params);
+			$params['biz_content'] = json_encode($request_params, JSON_UNESCAPED_UNICODE);
 
 			// 生成签名并拼合不参与签名的参数到请求参数
-			$sign = $this->sign_generate($params);
-			$params['subject'] = $subject;
+			$this->sign_string_generate($params); // 生成待签名及支付参数字符串
+			$sign = $this->sign_generate($params); // 生成签名
+			$params['subject'] = $subject; // 订单名称
+			$params['string_to_sign'] = $this->sign_string; // 待签名字符串
 			$params['sign'] = $sign;
-			$params['payment_string'] = $this->sign_string_generate($params).'&sign='. $sign; // 含签名的所有参数字符串
+			$params['payment_string'] = $this->payment_string.'&sign='. urlencode($sign); // 含签名的所有参数字符串
 
 			if ( !empty($params)):
 				$this->result['status'] = 200;
@@ -144,35 +154,32 @@
 		public function notify()
 		{
 			echo '订单通知';
-			
+
 			$sign = $params['sign'];
 			unset($params['sign']);
 
 			$this->sign_verify($params, $sign);
 		} // end notify
-		
-		// 生成待签名字符串
+
+		// 生成待签名及支付字符串
 		private function sign_string_generate($params)
 		{
-			// 根据已有参数生成签名
-			$sign_string = '';
-
 			$params = array_filter($params); // 清理空元素
 			ksort($params); // 按数组键名升序排序
 
 			foreach ($params as $key => $value):
-				$sign_string .= '&'. $key. '='. urlencode($value);
+				$this->sign_string .= '&'. $key. '='. $value;
+				$this->payment_string .= '&'. $key. '='. urlencode($value);
 			endforeach;
 
 			// 去掉多余的“&”
-			$sign_string = trim($sign_string, '&');
+			$this->sign_string = trim($this->sign_string, '&');
+			$this->payment_string = trim($this->payment_string, '&');
 
 			// 取消字符转义
-			//if (get_magic_quotes_gpc()):
-			//	$sign_string = stripcslashes($sign_string);
-			//endif;
-			
-			return $sign_string;
+			if (get_magic_quotes_gpc()):
+				$this->sign_string = stripcslashes($this->sign_string);
+			endif;
 		} // end sign_string_generate
 
 		/**
@@ -180,7 +187,7 @@
 		 */
 		private function sign_generate($params)
 		{
-			$sign_string = $this->sign_string_generate($params);
+			$sign_string = $this->sign_string;
 
 			$priKey = ALIPAY_KEY_PRIVATE;
 			$res = "-----BEGIN RSA PRIVATE KEY-----\n".
@@ -193,11 +200,9 @@
 
 			// base64编码
 		    $sign = base64_encode($sign);
-			// 对签名值进行URL编码处理
-		    $sign = urlencode($sign);
 		    return $sign;
 		} // end sign_generate
-		
+
 		/**
 		 * 验证RSA2签名
 		 */
@@ -213,7 +218,7 @@
 			($res) or die('支付宝RSA公钥错误。请检查公钥文件格式是否正确');
 
 			$result = (bool)openssl_verify($sign_string, base64_decode($sign), $res, OPENSSL_ALGO_SHA256);
-			
+
 			return $result;
 		} // end sign_verify
 

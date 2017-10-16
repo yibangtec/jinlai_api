@@ -245,6 +245,7 @@
 		// 更换所用数据库
 		protected function switch_model($table_name, $id_name)
 		{
+			$this->db->reset_query(); // 重置查询
 			$this->basic_model->table_name = $table_name;
 			$this->basic_model->id_name = $id_name;
 		} // end switch_model
@@ -252,7 +253,7 @@
 		// 还原所用数据库
 		protected function reset_model()
 		{
-			$this->db->reset_query();
+			$this->db->reset_query(); // 重置查询
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
 		} // end reset_model

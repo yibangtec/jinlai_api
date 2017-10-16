@@ -36,7 +36,7 @@
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
 		}
-		
+
 		/**
 		 * 1 列表
 		 *

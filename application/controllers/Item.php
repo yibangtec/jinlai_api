@@ -164,7 +164,7 @@
 			endforeach;
 			// 类特有筛选项
 			$this->advanced_sorter();
-			
+
 			// 商家仅可操作自己的数据
 			if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
 
@@ -222,7 +222,7 @@
 				exit();
 			endif;
 
-			// 商家仅可操作自己的数据
+			// 商家仅可查看或操作自己的数据
 			if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
 
 			// 限制可返回的字段
@@ -231,20 +231,49 @@
 				implode(',', $this->names_to_return).
 				',(SELECT SUM(`count`) FROM `order_items` WHERE `time_accepted` IS NOT NULL AND `item_id`= `item`.`item_id`) as unit_sold'
 			);
+			if ($this->app_type === 'client') $this->db->where('time_delete IS NULL');
 
 			// 获取特定项；默认可获取已删除项
 			$item = $this->basic_model->select_by_id($id);
 			if ( !empty($item) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
-				
-				// 获取该商品SKU列表
+
+				// 获取该商品所属商家信息
+				$this->switch_model('biz', 'biz_id');
+				$this->db->select('name, brief_name, url_logo, slogan, tel_public');
+				$this->result['content']['biz'] = $this->basic_model->select_by_id($item['biz_id']);
+
+				// 获取该商品相关SKU列表
 				$this->switch_model('sku', 'sku_id');
+				if ($this->app_type === 'client') $this->db->where('time_delete IS NULL'); // 若为客户端发起的请求，则仅获取可用数据，下同
 				$condition = array(
 					'item_id' => $item['item_id'],
 				);
-				if ($this->app_type === 'client') $condition['time_delete'] = 'NULL';
+				$this->db->select('sku_id, biz_id, item_id, url_image, name_first, name_second, name_third, tag_price, price, stocks, weight_net, weight_gross, weight_volume');
 				$this->result['content']['skus'] = $this->basic_model->select($condition, NULL);
+
+				// 获取当前商家营销活动
+				$this->switch_model('promotion_biz', 'promotion_id');
+				if ($this->app_type === 'client') $this->db->where('time_delete IS NULL');
+				$condition = array(
+					'biz_id' => $item['biz_id'],
+				);
+				$this->result['content']['biz_promotions'] = $this->basic_model->select($condition, NULL);
+				
+				// 获取平台营销活动
+				$this->switch_model('promotion', 'promotion_id');
+				if ($this->app_type === 'client') $this->db->where('time_delete IS NULL');
+				$this->result['content']['promotions'] = $this->basic_model->select(NULL, NULL);
+
+				// 获取商家及平台优惠券模板信息
+				$this->switch_model('coupon_template', 'template_id');
+				if ($this->app_type === 'client') $this->db->where('time_delete IS NULL');
+				$this->db->group_start()
+					->where('biz_id IS NULL') // 平台优惠券
+					->or_where('biz_id', $item['biz_id']) // 商家优惠券
+					->group_end();
+				$this->result['content']['coupon_templates'] = $this->basic_model->select(NULL, NULL);
 
 			else:
 				$this->result['status'] = 414;
@@ -259,7 +288,7 @@
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('biz'); // 客户端类型
+			$type_allowed = array('biz',); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -362,7 +391,7 @@
 		public function edit()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('biz'); // 客户端类型
+			$type_allowed = array('biz',); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限

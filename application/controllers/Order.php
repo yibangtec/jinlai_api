@@ -28,16 +28,14 @@
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id',
-			'address_id',
+			'user_id', 'address_id',
 		);
 
 		/**
 		 * 编辑多行特定字段时必要的字段名
 		 */
 		protected $names_edit_bulk_required = array(
-			'user_id', 'ids',
-			'operation', 'password',
+			'user_id', 'ids', 'operation',
 		);
 
 		// 订单信息（订单创建）
@@ -221,20 +219,19 @@
 				endif;
 			endforeach;
 
-			/*
 			// 检查是否单品及购物车信息均未传入
 			$item_id = $this->input->post('item_id');
 			$cart_string = $this->input->post('cart_string');
-			if ( isset($item_id) ):
+			if ( !empty($item_id) ):
+				// 若为单品订单，尝试获取待下单SKU及数量
 				$sku_id = $this->input->post('sku_id');
 				$count = $this->input->post('count')? $this->input->post('count'): 1;
 
-			elseif ( !isset($cart_string) ):
+			elseif ( empty($cart_string) ):
 				$this->result['status'] = 400;
 				$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 				exit();
 			endif;
-			*/
 
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
@@ -254,31 +251,27 @@
 				$this->result['status'] = 401;
 				$this->result['content']['error']['message'] = validation_errors();
 
-			// 获取地址信息
+			// 获取收货地址信息
 			elseif ($this->get_address($address_id, $user_id) === FALSE):
 				$this->result['status'] = 411;
 				$this->result['content']['error']['message'] = '收货地址不可用';
 
-			// 若订单数据生成失败
+			// 尝试生成订单数据
 			elseif ($this->generate_order_data() === FALSE):
 				$this->result['status'] = 411;
 				$this->result['content']['error']['message'] = $this->order_data['content']['error']['message'];
 
 			else:
-				//var_dump($this->order_items);
-				//var_dump($this->order_data);
-				//var_dump($this->order_address);
-
-				// 生成通用订单数据
+				// 生成全局订单数据
 				$common_meta = array(
 					'time_create' => time(),
 
 					'user_id' => $user_id,
 					'user_ip' => empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'), // 优先检查请求是否来自APP
 				);
-				// 合并通用订单数据及地址数据
+				// 合并通用订单数据及收货地址数据
 				$common_meta = array_merge($common_meta, $this->order_address);
-				unset($this->order_address);
+				unset($this->order_address); // 释放内存资源，下同
 
 				// 计算待生成子订单总数，即订单相关商家数
 				$bizs_count = count($this->order_data);
@@ -295,9 +288,8 @@
 					//var_dump($order_items);
 
 					// 创建订单
-					// 重置数据库参数
-					$this->basic_model->table_name = $this->table_name;
-					$this->basic_model->id_name = $this->id_name;
+					$this->reset_model();// 重置数据库参数
+
 					$result = $this->basic_model->create($data_to_create, TRUE);
 					if ($result !== FALSE):
 						$order_id = $result; // 获取被创建的订单号
@@ -306,8 +298,7 @@
 						$this->result['content']['message'] = '创建成功';
 
 						// 创建订单商品
-						$this->basic_model->table_name = 'order_items';
-						$this->basic_model->id_name = 'record_id';
+						$this->switch_model('order_items', 'record_id');
 						foreach ($order_items as $order_item):
 							$order_item['order_id'] = $order_id;
 							$order_item['user_id'] = $user_id;
@@ -374,19 +365,17 @@
 		 *
 		 * @params varchar/int $item_id 商品ID；商家ID需要从商品资料中获取
 		 * @params varchar/int $sku_id 规格ID
-		 * @params int $count 份数；默认为1，但有每单最低限量的情况下允许传入count
+		 * @params int $count 份数；默认为1，后续需核对每单最低限量
 		 */
 		private function generate_single_item($item_id, $sku_id = NULL, $count = 1)
 		{
 			// 获取商品信息
-			$this->basic_model->table_name = 'item';
-			$this->basic_model->id_name = 'item_id';
+			$this->switch_model('item', 'item_id');
 			$item = $this->basic_model->select_by_id($item_id);
 
 			// 获取规格信息
 			if ( !empty($sku_id) ):
-				$this->basic_model->table_name = 'sku';
-				$this->basic_model->id_name = 'sku_id';
+				$this->switch_model('sku', 'sku_id');
 				$sku = $this->basic_model->select_by_id($sku_id);
 			endif;
 
@@ -421,13 +410,8 @@
 				$order_item = array_merge($order_item, $order_sku);
 			endif;
 			// 生成订单商品信息
-			//$this->order_items[] = $order_item;
 			$order_item['single_total'] = $order_item['price'] * $order_item['count']; // 计算当前商品应付金额
-			$order_items[] = array_filter($order_item);
-
-			//TODO 计算商家优惠活动折抵
-			//TODO 计算商家优惠券折抵
-			//TODO 计算商家运费
+			$order_items[] = array_filter($order_item); // 去掉空数组元素
 
 			// 若当前商家已有待创建订单，更新部分订单信息及订单商品信息
 			$need_to_create = TRUE;
@@ -445,12 +429,15 @@
 					endif;
 				endfor;
 			endif;
+			
+			//TODO 计算商家优惠活动折抵
+			//TODO 计算商家优惠券折抵
+			//TODO 计算商家运费
 
 			// 若当前商家没有待创建订单，新建待创建订单
 			if ($need_to_create === TRUE):
 				// 获取需要写入订单信息的商家信息
-				$this->basic_model->table_name = 'biz';
-				$this->basic_model->id_name = 'biz_id';
+				$this->switch_model('biz', 'biz_id');
 				$biz = $this->basic_model->select_by_id($item['biz_id']);
 
 				$this->order_data[] = array(
@@ -465,49 +452,13 @@
 					//'coupon_id' => $item['coupon_id'], // 优惠券ID
 					//'discount_coupon' => $discount_coupon, // 优惠券折抵金额
 
-					//'freight' => $freight,
+					//'freight' => $freight, // 运费
 					'total' => $order_item['single_total'],
 					'order_items' => $order_items,
-					'note_user' => $this->input->post('note_user')[$order_item['biz_id']],
+					'note_user' => $this->input->post('note_user')[$order_item['biz_id']], // 用户留言
 				);
 			endif;
 		} // end generate_single_item
-
-		// 获取特定地址信息
-		private function get_address($id, $user_id)
-		{
-			// 从API服务器获取相应列表信息
-			$conditions = array(
-				'address_id' => $id,
-				'user_id' => $user_id,
-				'time_delete' => NULL,
-			);
-
-			$this->basic_model->table_name = 'address';
-			$this->basic_model->id_name = 'address_id';
-
-			$result = $this->basic_model->match($conditions);
-
-			$this->basic_model->table_name = $this->table_name;
-			$this->basic_model->id_name = $this->id_name;
-
-			if ( !empty($result) ):
-				$this->order_address = array(
-					'fullname' => $result['fullname'],
-					'mobile' => $result['mobile'],
-					'province' => $result['province'],
-					'city' => $result['city'],
-					'county' => $result['county'],
-					'street' => $result['street'],
-					'longitude' => $result['longitude'],
-					'latitude' => $result['latitude'],
-				);
-
-			else:
-				return FALSE;
-
-			endif;
-		} // end get_address
 
 		/**
 		 * 6 编辑多行数据特定字段
@@ -518,9 +469,7 @@
 		{
 			// 操作可能需要检查客户端及设备信息
 			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
-			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
-			$min_version = '0.0.1'; // 最低版本要求
-			$this->client_check($type_allowed, $platform_allowed, $min_version);
+			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -563,28 +512,32 @@
 
 				// 根据待执行的操作赋值待编辑数据
 				switch ( $operation ):
-					case 'note': // 员工备注
+					case 'note': // 商家备注
 						$data_to_edit['note_stuff'] = $this->input->post('note_stuff');
 						break;
-					case 'reprice': // 改价
+					case 'reprice': // 商家改价
 						$data_to_edit['discount_reprice'] = $this->input->post('discount_reprice');
 						$data_to_edit['repricer_id'] = $user_id;
 						break;
-					case 'refuse': // 拒单
+
+					case 'refuse': // 商家拒单
 						$data_to_edit['time_refuse'] = time();
+						$data_to_edit['status'] = '已拒绝';
 						break;
-					case 'accept': // 接单
+					case 'accept': // 商家接单
 						$data_to_edit['time_accept'] = time();
+						$data_to_edit['status'] = '待发货';
 						break;
-					case 'deliver': // 发货
+
+					case 'deliver': // 商家发货
 						$data_to_edit['time_deliver'] = time();
 						$data_to_edit['deliver_method'] = $this->input->post('deliver_method');
 						$data_to_edit['deliver_biz'] = $this->input->post('deliver_biz');
 						$data_to_edit['waybill_id'] = $this->input->post('waybill_id');
+						$data_to_edit['status'] = '待收货';
 						break;
-					
-					
-					case 'delete': // 仅限用户
+
+					case 'delete': // 用户删除待支付、已取消、已拒绝、待评价、已完成订单
 						$data_to_edit['time_delete'] = date('Y-m-d H:i:s');
 						break;
 					case 'restore': // 仅限用户
@@ -604,7 +557,6 @@
 						$this->result['status'] = 434;
 						$this->result['content']['row_failed'][] = $id;
 					endif;
-
 				endforeach;
 
 				// 添加全部操作成功后的提示
@@ -654,6 +606,38 @@
 			$this->result['content']['addresses'] = $addresses;
 			$this->result['content']['order_data'] = $this->order_data;
 		} // prepare
+		
+		// 获取特定地址信息
+		private function get_address($id, $user_id)
+		{
+			// 从API服务器获取相应列表信息
+			$conditions = array(
+				'address_id' => $id,
+				'user_id' => $user_id,
+				'time_delete' => NULL,
+			);
+
+			$this->switch_model('address', 'address_id');
+			$result = $this->basic_model->match($conditions);
+			$this->reset_model();
+
+			if ( !empty($result) ):
+				$this->order_address = array(
+					'fullname' => $result['fullname'],
+					'mobile' => $result['mobile'],
+					'province' => $result['province'],
+					'city' => $result['city'],
+					'county' => $result['county'],
+					'street' => $result['street'],
+					'longitude' => $result['longitude'],
+					'latitude' => $result['latitude'],
+				);
+
+			else:
+				return FALSE;
+
+			endif;
+		} // end get_address
 
 		/**
 		 * 用户取消
