@@ -269,7 +269,7 @@
 			// 手机号、Email须至少传入一项
 			$mobile = $this->input->post('mobile');
 			$email = $this->input->post('email');
-			if ( empty($mobile) && empty($email) ):
+			if ( empty($mobile.$email) ):
 				$this->result['status'] = 400;
 				$this->result['content']['error']['message'] = '手机号、Email须至少传入一项';
 				exit();
@@ -425,11 +425,11 @@
 		 */
 		public function user_exist()
 		{
-			// 手机号及Email须至少传入一项
+			// 手机号、Email及微信UnionID须至少传入一项
 			$mobile = $this->input->post('mobile');
 			$email = $this->input->post('email');
 			$wechat_union_id = $this->input->post('wechat_union_id');
-			if ( empty($mobile) && empty($email) && empty($wechat_union_id) ):
+			if ( empty($mobile.$email.$wechat_union_id) ):
 				$this->result['status'] = 400;
 				$this->result['content']['error']['message'] = '手机号、Email及微信UnionID须至少传入一项';
 				exit();
@@ -454,7 +454,7 @@
 				if ( !empty($mobile) ):
 					$user_info = $this->check_mobile($mobile);
 				elseif ( !empty($wechat_union_id) ):
-				$user_info = $this->check_wechat($wechat_union_id);
+					$user_info = $this->check_wechat($wechat_union_id);
 				else:
 					$user_info = $this->check_email($email);
 				endif;
@@ -597,11 +597,9 @@
 				);
 
 				// 获取列表；默认不获取已删除项
-				$this->basic_model->table_name = 'sms'; // 更改当前表名
-				$this->basic_model->id_name = 'sms_id'; // 更改当前表主键名
+				$this->switch_model('sms', 'sms_id');
 				$items = $this->basic_model->select($condition, NULL, FALSE, FALSE);
-				$this->basic_model->table_name = $this->table_name; // 还原当前表名
-				$this->basic_model->id_name = $this->id_name; // 还原当前表主键名
+				$this->reset_model();
 
 				if ( empty($items) ):
 					$this->result['status'] = 400;
@@ -700,15 +698,12 @@
 		// 检查是否已经有与相应user_id相关的员工记录
 		private function check_stuff($user_id, $return_boolean = FALSE)
 		{
-			$this->basic_model->table_name = 'stuff';
-			$this->basic_model->id_name = 'stuff_id';
-
 			$data_to_search['user_id'] = $user_id;
 			$data_to_search['time_delete'] = NULL; // 仅获取有效的员工关系
+			
+			$this->switch_model('stuff', 'stuff_id');
 			$result = $this->basic_model->match($data_to_search);
-
-			$this->basic_model->table_name = $this->table_name;
-			$this->basic_model->id_name = $this->id_name;
+			$this->reset_model();
 
 			if ($return_boolean === FALSE):
 				return $result;

@@ -344,16 +344,6 @@
 			return $result;
 		} // end stuff_create
 
-		// 发送短信
-		private function sms_send($mobile, $content)
-		{
-			// 为短信内容添加后缀签名
-			$content .= '【进来商城】';
-
-			$this->load->library('luosimao');
-			$result = $this->luosimao->send($mobile, $content);
-		} // end test_sms
-
 		/**
 		 * 4 编辑单行数据
 		 */

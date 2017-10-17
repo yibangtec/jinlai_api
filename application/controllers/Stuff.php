@@ -140,7 +140,7 @@
 				if ( !empty($this->input->post($sorter)) )
 					$condition[$sorter] = $this->input->post($sorter);
 			endforeach;
-			
+
 			// 排序条件
 			$order_by = NULL;
 			//$order_by['name'] = 'value';
@@ -434,16 +434,6 @@
 
 			endif;
 		} // end edit_bulk
-		
-		// 发送短信
-		private function sms_send($mobile, $content)
-		{
-			// 为短信内容添加后缀签名
-			$content .= '【进来商城】';
-
-			$this->load->library('luosimao');
-			$result = $this->luosimao->send($mobile, $content);
-		} // end test_sms
 
 	} // end class Stuff
 

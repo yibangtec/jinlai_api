@@ -242,6 +242,19 @@
 			return $sign;
 		} // end sign_generate
 		
+		// 拆分CSV为数组
+		protected function explode_csv($text, $seperator = ',')
+		{
+			// 清理可能存在的空字符、冗余分隔符
+			$text = trim($text);
+			$text = trim($text, $seperator);
+
+			// 拆分文本为数组并清理可被转换为布尔型FALSE的数组元素（空数组、空字符、NULL、0、’0‘等）
+			$array = array_filter( explode(',', $text) );
+
+			return $array;
+		} // end explode_csv
+		
 		// 更换所用数据库
 		protected function switch_model($table_name, $id_name)
 		{
@@ -302,7 +315,7 @@
 		 *
 		 * 对已登录用户，根据所需角色、所需等级等进行权限检查
 		 */
-		public function permission_check($role_allowed, $min_level)
+		protected function permission_check($role_allowed, $min_level)
 		{
 			return TRUE;
 		} // end permission_check
@@ -310,11 +323,10 @@
 		/**
 		 * 操作者有效性检查；通过操作者类型、ID、密码进行验证
 		 */
-		public function operator_check()
+		protected function operator_check()
 		{
-			// 设置数据库参数
-			$this->basic_model->table_name = 'user';
-			$this->basic_model->id_name = 'user_id';
+			// 切换数据库
+			$this->switch_model('user', 'user_id');
 
 			// 尝试获取复合条件的数据
 			$data_to_search = array(
@@ -323,9 +335,8 @@
 			);
 			$result = $this->basic_model->match($data_to_search);
 
-			// 还原原有数据库参数
-			$this->basic_model->table_name = $this->table_name;
-			$this->basic_model->id_name = $this->id_name;
+			// 切换数据库
+			$this->reset_model();
 
 			if ( !empty($result) ):
 				return TRUE;
@@ -333,19 +344,16 @@
 				return FALSE;
 			endif;
 		} // end operator_check
-
-		// 拆分CSV为数组
-		protected function explode_csv($text, $seperator = ',')
+		
+		// 发送短信
+		protected function sms_send($mobile, $content)
 		{
-			// 清理可能存在的冗余分隔符及空字符
-			$text = trim($text);
-			$text = trim($text, $seperator);
+			// 为短信内容添加后缀签名
+			$content .= '【'. SITE_NAME. '】';
 
-			// 拆分文本为数组并清理可被转换为布尔型FALSE的数组元素（空数组、空字符、NULL、0、’0‘等）
-			$array = array_filter( explode(',', $text) );
-
-			return $array;
-		} // end explode_csv
+			$this->load->library('luosimao');
+			$result = $this->luosimao->send($mobile, $content);
+		} // end sms_send
 
 		/**
 		 * 高德地图 将地址文字转换为经纬度

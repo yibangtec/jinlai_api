@@ -21,7 +21,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'order_id', 'biz_id', 'biz_name', 'biz_url_logo', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'freight', 'discount_reprice', 'repricer_id', 'total', 'credit_id', 'credit_payed', 'total_payed', 'total_refund', 'fullname', 'code_ssn', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'deliver_method', 'deliver_biz', 'waybill_id', 'refund_status', 'refund_id', 'invoice_status', 'invoice_id', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status',
+			'order_id', 'biz_id', 'biz_name', 'biz_url_logo', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'freight', 'discount_reprice', 'repricer_id', 'total', 'credit_id', 'credit_payed', 'total_payed', 'total_refund', 'fullname', 'code_ssn', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'deliver_method', 'deliver_biz', 'waybill_id', 'code_string', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'refund_id', 'invoice_status', 'invoice_id',
 		);
 
 		/**
@@ -58,12 +58,6 @@
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
-
-			// （可选）某些用于此类的自定义函数
-		    function function_name($parameter)
-			{
-				//...
-		    }
 		}
 
 		/**
@@ -191,6 +185,12 @@
 
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
+
+				if ($this->app_type === 'client'):
+					$this->result['content']['operations'] = $this->operations_for_client($item['status']);
+				elseif ($this->app_type === 'biz'):
+					$this->result['content']['operations'] = $this->operations_for_biz($item['status']);
+				endif;
 
 			else:
 				$this->result['status'] = 414;
@@ -476,7 +476,6 @@
 			//$min_level = 10; // 级别要求
 			//$this->permission_check($role_allowed, $min_level);
 
-			// 检查必要参数是否已传入
 			$required_params = $this->names_edit_bulk_required;
 			foreach ($required_params as $param):
 				${$param} = $this->input->post($param);
@@ -491,9 +490,26 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
-			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore]');
+			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[cancel,note,reprice,refuse,accept,deliver,confirm,delete,restore]');
 			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
-			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
+			// 用户确认订单、商家改价时需要输入密码
+			if ($operation === 'confirm' || $operation === 'reprice')
+				$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
+
+			// 商家备注时需验证字段
+			if ($operation === 'note')
+				$this->form_validation->set_rules('note_stuff', '员工备注', 'trim|required|max_length[255]');
+
+			// 商家改价时需验证字段
+			if ($operation === 'reprice')
+				$this->form_validation->set_rules('discount_reprice', '改价折扣金额（元）', 'trim|required|greater_than[0.01]|less_than_equal_to[99999.99]');
+
+			// 商家发货时需验证字段
+			if ($operation === 'deliver'):
+				$this->form_validation->set_rules('deliver_method', '发货方式', 'trim|required|max_length[30]');
+				$this->form_validation->set_rules('deliver_biz', '物流服务商', 'trim|max_length[30]');
+				$this->form_validation->set_rules('waybill_id', '物流运单号', 'trim|max_length[30]alpha_numeric');
+			endif;
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):
@@ -501,40 +517,37 @@
 				$this->result['content']['error']['message'] = validation_errors();
 				exit();
 
-			elseif ($this->operator_check() !== TRUE):
-				$this->result['status'] = 453;
-				$this->result['content']['error']['message'] = '与该ID及类型对应的操作者不存在，或操作密码错误';
-				exit();
-
 			else:
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit['operator_id'] = $user_id;
 
 				// 根据待执行的操作赋值待编辑数据
-				switch ( $operation ):
+				switch ($operation):
+					case 'cancel': // 用户取消
+						$data_to_edit = array_merge($data_to_edit, $this->operation_cancel());
+						break;
+
 					case 'note': // 商家备注
-						$data_to_edit['note_stuff'] = $this->input->post('note_stuff');
+						$data_to_edit = array_merge($data_to_edit, $this->operation_note());
 						break;
 					case 'reprice': // 商家改价
-						$data_to_edit['discount_reprice'] = $this->input->post('discount_reprice');
+						$data_to_edit = array_merge($data_to_edit, $this->operation_reprice());
 						$data_to_edit['repricer_id'] = $user_id;
 						break;
 
 					case 'refuse': // 商家拒单
-						$data_to_edit['time_refuse'] = time();
-						$data_to_edit['status'] = '已拒绝';
+						$data_to_edit = array_merge($data_to_edit, $this->operation_refuse());
 						break;
 					case 'accept': // 商家接单
-						$data_to_edit['time_accept'] = time();
-						$data_to_edit['status'] = '待发货';
+						$data_to_edit = array_merge($data_to_edit, $this->operation_accept());
 						break;
 
 					case 'deliver': // 商家发货
-						$data_to_edit['time_deliver'] = time();
-						$data_to_edit['deliver_method'] = $this->input->post('deliver_method');
-						$data_to_edit['deliver_biz'] = $this->input->post('deliver_biz');
-						$data_to_edit['waybill_id'] = $this->input->post('waybill_id');
-						$data_to_edit['status'] = '待收货';
+						$data_to_edit = array_merge($data_to_edit, $this->operation_deliver());
+						break;
+
+					case 'confirm': // 用户收货
+						$data_to_edit = array_merge($data_to_edit, $this->operation_confirm());
 						break;
 
 					case 'delete': // 用户删除待支付、已取消、已拒绝、待评价、已完成订单
@@ -605,8 +618,83 @@
 			$this->result['status'] = 200;
 			$this->result['content']['addresses'] = $addresses;
 			$this->result['content']['order_data'] = $this->order_data;
-		} // prepare
-		
+		} // end prepare
+
+		/**
+		 * 8 商家验证
+		 *
+		 * 根据验证码对卡券类订单进行核销
+		 */
+		public function valid()
+		{
+			// 操作可能需要检查客户端及设备信息
+			$type_allowed = array('biz'); // 客户端类型
+			$this->client_check($type_allowed);
+
+			// 检查必要参数是否已传入
+			$required_params = array('biz_id', 'user_id', 'code_string');
+			foreach ($required_params as $param):
+				${$param} = $this->input->post($param);
+				if ( !isset( ${$param} ) ):
+					$this->result['status'] = 400;
+					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+					exit();
+				endif;
+			endforeach;
+
+			// 初始化并配置表单验证库
+			$this->load->library('form_validation');
+			$this->form_validation->set_error_delimiters('', '');
+			$this->form_validation->set_rules('biz_id', '所属商家ID', 'trim|required|is_natural_no_zero');
+			$this->form_validation->set_rules('code_string', '卡券验证码', 'trim|required|integer|exact_length[12]');
+
+			// 验证表单值格式
+			if ($this->form_validation->run() === FALSE):
+				$this->result['status'] = 401;
+				$this->result['content']['error']['message'] = validation_errors();
+				exit();
+
+			else:
+				// 获取订单信息
+				$data_to_search = array(
+					'biz_id' => $biz_id,
+					'code_string' => $code_string,
+					'status' => '待使用',
+					'time_pay' => 'IS NOT NULL',
+					'payment_type' => 'IS NOT NULL',
+					'payment_account' => 'IS NOT NULL',
+					'payment_id' => 'IS NOT NULL',
+				);
+				$order = $this->basic_model->match($data_to_search);
+
+				if ( empty($order) ):
+					$this->result['status'] = 414;
+					$this->result['content']['error']['message'] = '验证码无效';
+					exit();
+
+				else:
+					$data_to_edit = array(
+						'operator_id' => $user_id,
+
+						'time_confirm' => time(),
+						'status' => '待评价',
+					);
+
+					$result = $this->basic_model->edit($order['order_id'], $data_to_edit);
+					if ($result !== FALSE):
+						$this->result['status'] = 200;
+						$this->result['content']['message'] = '验证成功';
+
+					else:
+						$this->result['status'] = 434;
+						$this->result['content']['error']['message'] = '验证失败';
+
+					endif;
+				endif;
+
+			endif;
+		} // end valid
+
 		// 获取特定地址信息
 		private function get_address($id, $user_id)
 		{
@@ -644,66 +732,155 @@
 		 *
 		 * time_cancel、status
 		 */
-		private function cancel()
+		private function operation_cancel()
 		{
-			$data_to_edit = array(
-				'time_cancel' => time(),
-				'status' => '已取消',
-			);
-		} // end cancel
-		
+			$data_to_edit['time_cancel'] = time();
+			$data_to_edit['status'] = '已取消';
+			return $data_to_edit;
+		} // end operation_cancel
+
 		/**
-		 * 商家拒绝
+		 * 商家备注
+		 *
+		 * note_stuff
+		 */
+		private function operation_note()
+		{
+			$data_to_edit['note_stuff'] = $this->input->post('note_stuff');
+			return $data_to_edit;
+		} // end operation_note
+
+		/**
+		 * 商家改价
+		 *
+		 * 需要验证密码
+		 * discount_reprice、repricer_id
+		 */
+		private function operation_reprice()
+		{
+			if ($this->operator_check() !== TRUE):
+				$this->result['status'] = 453;
+				$this->result['content']['error']['message'] = '与该ID及类型对应的操作者不存在，或操作密码错误/未传入密码';
+				exit();
+			else:
+				$data_to_edit['discount_reprice'] = $this->input->post('discount_reprice');
+				return $data_to_edit;
+			endif;
+		} // end operation_reprice
+
+		/**
+		 * 商家拒单
 		 *
 		 * time_refuse、status
 		 */
-		private function refuse()
+		private function operation_refuse()
 		{
-			$data_to_edit = array(
-				'time_refuse' => time(),
-				'status' => '已拒绝',
-			);
-		} // end refuse
-		
+			$data_to_edit['time_refuse'] = time();
+			$data_to_edit['status'] = '已拒绝';
+			return $data_to_edit;
+		} // end operation_refuse
+
 		/**
 		 * 商家接单
 		 *
 		 * time_accept、status
 		 */
-		private function accept()
+		private function operation_accept()
 		{
-			$data_to_edit = array(
-				'time_accept' => time(),
-				'status' => '待发货',
-			);
-		} // end accept
+			$data_to_edit['time_accept'] = time();
+			$data_to_edit['status'] = '待发货';
+			return $data_to_edit;
+		} // end operation_accept
 		
 		/**
 		 * 商家发货
 		 *
-		 * time_deliver、status
+		 * time_deliver、deliver_method、deliver_biz、waybill_id、status
 		 */
-		private function deliver()
+		private function operation_deliver()
 		{
-			$data_to_edit = array(
-				'time_deliver' => time(),
-				'status' => '待收货',
-			);
-		} // end deliver
-		
+			$data_to_edit['time_deliver'] = time();
+			$data_to_edit['deliver_method'] = $this->input->post('deliver_method'); // 发货方式
+			$data_to_edit['deliver_biz'] = $this->input->post('deliver_biz'); // 物流服务商
+			$data_to_edit['waybill_id'] = $this->input->post('waybill_id'); // 物流运单号；deliver_method为自行配送或用户自提时可留空
+			$data_to_edit['status'] = '待收货';
+			return $data_to_edit;
+		} // end operation_deliver
+
 		/**
-		 * 用户确认
+		 * 用户收货
 		 *
+		 * 需要验证密码
 		 * time_confirm、status
 		 */
-		private function confirm()
+		private function operation_confirm()
 		{
-			$data_to_edit = array(
-				'time_confirm' => time(),
-				'status' => '待评价',
-			);
+			if ($this->operator_check() !== TRUE):
+				$this->result['status'] = 453;
+				$this->result['content']['error']['message'] = '与该ID及类型对应的操作者不存在，或操作密码错误/未传入密码';
+				exit();
+			else:
+				$data_to_edit['time_confirm'] = time();
+				$data_to_edit['status'] = '待评价';
+				return $data_to_edit;
+			endif;
+		} // end operation_confirm
+		
+		// 根据订单状态，获取客户端可用操作
+	    private function operations_for_client($status)
+		{
+			switch ($status):
+				case '待付款':
+					$operations = array('cancel', 'pay',);
+					break;
+				case '待接单':
+				case '待发货':
+					$operations = array('refund',);
+					break;
+				case '待收货':
+					$operations = array('refund', 'confirm',);
+					break;
+				case '待使用':
+					$operations = array('refund',);
+					break;
+				case '待评价':
+					$operations = array('refund', 'comment',);
+					break;
+				case '已完成':
+					$operations = array('refund', 'delete',);
+					break;
+				case '已取消':
+				case '已关闭':
+				case '已拒绝':
+				case '已退款':
+					$operations = array('delete',);
+					break;
+			endswitch;
 			
-		} // end confirm
+			return $operations;
+	    } // end operations_for_client
+
+		// 根据订单状态，获取商家端可用操作
+	    private function operations_for_biz($status)
+		{
+			switch ($status):
+				case '待付款':
+					$operations = array('reprice',);
+					break;
+				case '待接单':
+					$operations = array('refuse', 'accept',);
+					break;
+				case '待发货':
+					$operations = array('deliver',);
+					break;
+				case '待使用':
+					$operations = array('refund',);
+					break;
+			endswitch;
+			
+			$operations[] = 'note'; // 商家可以对任何状态的订单添加备注
+			return $operations;
+	    } // end operations_for_biz
 
 	} // end class Order
 
