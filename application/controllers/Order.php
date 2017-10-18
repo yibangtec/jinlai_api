@@ -136,12 +136,10 @@
 			// 获取列表；默认可获取已删除项
 			$items = $this->basic_model->select($condition, $order_by);
 			if ( !empty($items) ):
-				$this->basic_model->table_name = 'order_items';
-				$this->basic_model->id_name = 'record_id';
+				$this->switch_model('order_items', 'record_id');
 				for ($i=0;$i<count($items);$i++):
 					// 获取订单商品
 					$condition = array('order_id' => $items[$i]['order_id']);
-					//var_dump($condition);
 					$items[$i]['order_items'] = $this->basic_model->select($condition, NULL);
 				endfor;
 
@@ -265,6 +263,7 @@
 				// 生成全局订单数据
 				$common_meta = array(
 					'time_create' => time(),
+					'time_expire' => time() + 60*60*24*3, // 3天内不支付则过期
 
 					'user_id' => $user_id,
 					'user_ip' => empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'), // 优先检查请求是否来自APP
@@ -429,7 +428,7 @@
 					endif;
 				endfor;
 			endif;
-			
+
 			//TODO 计算商家优惠活动折抵
 			//TODO 计算商家优惠券折抵
 			//TODO 计算商家运费
@@ -607,7 +606,7 @@
 				'time_delete' => 'NULL',
 			);
 			$this->switch_model('address', 'address_id');
-			$this->db->select('brief, fullname, mobile, nation, province, city, county, street, longitude, latitude, zipcode');
+			$this->db->select('address_id, brief, fullname, mobile, nation, province, city, county, street, longitude, latitude, zipcode');
 			$addresses = $this->basic_model->select($conditions, NULL);
 			$this->reset_model();
 
@@ -856,7 +855,7 @@
 					$operations = array('delete',);
 					break;
 			endswitch;
-			
+
 			return $operations;
 	    } // end operations_for_client
 

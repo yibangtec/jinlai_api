@@ -92,7 +92,7 @@
 		 * 1 列表/基本搜索
 		 */
 		public function index()
-		{	
+		{
 			// 检查必要参数是否已传入
 			$required_params = array();
 			foreach ($required_params as $param):
@@ -125,18 +125,28 @@
 			//$order_by['name'] = 'value';
 
 			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
+			//$this->db->select( implode(',', $this->names_to_return) );
+			// 获取退款信息及相关商家信息
+			$this->db->select($this->table_name.'.*, biz.brief_name as brief_name');
+			$this->db->join('biz', $this->table_name.'.biz_id = biz.biz_id', 'left outer');
 
 			// 获取列表；默认可获取已删除项
 			$items = $this->basic_model->select($condition, $order_by);
 			if ( !empty($items) ):
+				// 获取涉及退款的订单商品
+				$this->switch_model('order_items', 'record_id');
+				for ($i=0;$i<count($items);$i++):
+					// 获取订单商品
+					$items[$i]['order_items'] = $this->basic_model->select_by_ids( $items[$i]['item_ids'] );
+				endfor;
+
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
 
 			else:
 				$this->result['status'] = 414;
 				$this->result['content']['error']['message'] = '没有符合条件的数据';
-			
+
 			endif;
 		} // end index
 
@@ -154,11 +164,25 @@
 			endif;
 
 			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
-			
+			//$this->db->select( implode(',', $this->names_to_return) );
+			// 获取退款信息及相关商家信息
+			$this->db->select($this->table_name.'.*, biz.brief_name as brief_name');
+			$this->db->join('biz', $this->table_name.'.biz_id = biz.biz_id', 'left outer');
+
 			// 获取特定项；默认可获取已删除项
 			$item = $this->basic_model->select_by_id($id);
 			if ( !empty($item) ):
+				// 获取涉及退款的订单商品
+				$this->switch_model('order_items', 'record_id');
+				$item['order_items'] = $this->basic_model->select_by_ids($item['item_ids']);
+
+				// 获取用户信息
+				if ($this->app_type !== 'client'):
+					$this->switch_model('user', 'user_id');
+					$this->db->select('user_id, nickname, avatar');
+					$item['user'] = $this->basic_model->select_by_id($item['user_id']);
+				endif;
+
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
 
@@ -229,6 +253,10 @@
 
 				$result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):
+					//TODO 更新订单状态
+					$this->switch_model('order', 'order_id');
+					
+					
 					$this->result['status'] = 200;
 					$this->result['content']['id'] = $result;
 					$this->result['content']['message'] = '创建成功';
