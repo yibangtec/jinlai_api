@@ -834,13 +834,11 @@
 					break;
 				case '待接单':
 				case '待发货':
+				case '待使用':
 					$operations = array('refund',);
 					break;
 				case '待收货':
 					$operations = array('refund', 'confirm',);
-					break;
-				case '待使用':
-					$operations = array('refund',);
 					break;
 				case '待评价':
 					$operations = array('refund', 'comment',);
@@ -848,12 +846,8 @@
 				case '已完成':
 					$operations = array('refund', 'delete',);
 					break;
-				case '已取消':
-				case '已关闭':
-				case '已拒绝':
-				case '已退款':
+				default:
 					$operations = array('delete',);
-					break;
 			endswitch;
 
 			return $operations;
@@ -873,7 +867,7 @@
 					$operations = array('deliver',);
 					break;
 				case '待使用':
-					$operations = array('refund',);
+					$operations = array('valid',);
 					break;
 			endswitch;
 			

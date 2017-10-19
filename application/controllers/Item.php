@@ -192,15 +192,25 @@
 			endif;
 
 			if ( !empty($items) ):
+				// 获取各项相应规格
+				$this->switch_model('sku', 'sku_id');
+				$this->db->select('sku_id, biz_id, item_id, url_image, name_first, name_second, name_third, tag_price, price, stocks, weight_net, weight_gross, weight_volume');
+				for ($i=0;$i<count($items);$i++):
+					// 获取订单商品
+					$condition = array('item_id' => $items[$i]['item_id']);
+					$items[$i]['skus'] = $this->basic_model->select($condition, NULL);
+				endfor;
+
+				// 若非客户端调用，则输出相应统计信息
+				if ($this->app_type === 'client'):
+					$this->reset_model(); // 重置数据库查询语句
+					$this->db->select('ROUND( AVG(price), 2 ) as avg_price, MAX(price) as max_price, MIN(price) as min_price');
+					$query = $this->db->get($this->table_name);
+					$this->result['table_meta'] = $query->result_array();
+				endif;
+
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
-
-				/*
-				$this->db->select('ROUND( AVG(price), 2 ) as avg_price, MAX(price) as max_price, MIN(price) as min_price');
-				$query = $this->db->get($this->table_name);
-				$table_meta = $query->result_array();
-				$this->result['table_meta'] = $table_meta;
-				*/
 
 			else:
 				$this->result['status'] = 414;
@@ -259,8 +269,9 @@
 				$condition = array(
 					'biz_id' => $item['biz_id'],
 				);
+				$this->db->select('promotion_id, type, name, time_start, time_end');
 				$this->result['content']['biz_promotions'] = $this->basic_model->select($condition, NULL);
-				
+
 				// 获取平台营销活动
 				$this->switch_model('promotion', 'promotion_id');
 				if ($this->app_type === 'client') $this->db->where('time_delete IS NULL');
