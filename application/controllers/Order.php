@@ -27,16 +27,12 @@
 		/**
 		 * 创建时必要的字段名
 		 */
-		protected $names_create_required = array(
-			'user_id', 'address_id',
-		);
+		protected $names_create_required = array('user_id', 'address_id',);
 
 		/**
 		 * 编辑多行特定字段时必要的字段名
 		 */
-		protected $names_edit_bulk_required = array(
-			'user_id', 'ids', 'operation',
-		);
+		protected $names_edit_bulk_required = array('user_id', 'ids', 'operation',);
 
 		// 订单信息（订单创建）
 		protected $order_data = array();
