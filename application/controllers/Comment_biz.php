@@ -27,31 +27,22 @@
 		/**
 		 * 创建时必要的字段名
 		 */
-		protected $names_create_required = array(
-			'biz_id', 'user_id',
-		);
+		protected $names_create_required = array('biz_id', 'user_id',);
 
 		/**
 		 * 可被编辑的字段名
 		 */
-		protected $names_edit_allowed = array(
-			'score_service', 'score_deliver', 'score_environment', 'content', 'image_urls',
-		);
+		protected $names_edit_allowed = array('score_service', 'score_deliver', 'score_environment', 'content', 'image_urls',);
 
 		/**
 		 * 完整编辑单行时必要的字段名
 		 */
-		protected $names_edit_required = array(
-			'user_id', 'id',
-		);
+		protected $names_edit_required = array('user_id', 'id',);
 
 		/**
 		 * 编辑多行特定字段时必要的字段名
 		 */
-		protected $names_edit_bulk_required = array(
-			'user_id', 'ids',
-			'operation', 'password',
-		);
+		protected $names_edit_bulk_required = array('user_id', 'ids', 'operation', 'password',);
 
 		public function __construct()
 		{
@@ -190,11 +181,6 @@
 			$type_allowed = array('client'); // 客户端类型
 			$this->client_check($type_allowed);
 
-			// 管理类客户端操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
-
 			// 检查必要参数是否已传入
 			$required_params = $this->names_create_required;
 			foreach ($required_params as $param):
@@ -211,7 +197,6 @@
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
 			$this->form_validation->set_rules('biz_id', '相关商家ID', 'trim|required|is_natural_no_zero');
-			$this->form_validation->set_rules('user_id', '所属用户ID', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('order_id', '所属订单ID', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('score_service', '服务态度', 'trim|is_natural_no_zero|greater_than[0]|less_than[6]');
 			$this->form_validation->set_rules('score_deliver', '物流服务', 'trim|is_natural_no_zero|greater_than[0]|less_than[6]');

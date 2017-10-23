@@ -284,7 +284,6 @@
 
 					// 创建订单
 					$this->reset_model();// 重置数据库参数
-
 					$result = $this->basic_model->create($data_to_create, TRUE);
 					if ($result !== FALSE):
 						$order_id = $result; // 获取被创建的订单号
