@@ -29,10 +29,7 @@
 		/**
 		 * 创建时必要的字段名
 		 */
-		protected $names_create_required = array(
-			'user_id',
-			'name', 'amount',
-		);
+		protected $names_create_required = array('user_id', 'name', 'amount',);
 
 		/**
 		 * 可被编辑的字段名
@@ -44,10 +41,7 @@
 		/**
 		 * 完整编辑单行时必要的字段名
 		 */
-		protected $names_edit_required = array(
-			'user_id', 'id',
-			'name', 'amount',
-		);
+		protected $names_edit_required = array('user_id', 'id', 'name', 'amount',);
 
 		public function __construct()
 		{

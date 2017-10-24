@@ -43,6 +43,9 @@
 		// 订单收货地址信息（订单创建）
 		protected $order_address = array();
 
+		// 用户留言信息（订单创建）
+		protected $note_user = array();
+
 		public function __construct()
 		{
 			parent::__construct();
@@ -55,6 +58,33 @@
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
 		}
+
+		public function stock_update()
+        {$this->output->enable_profiler(TRUE);
+            $order_id = $this->input->post('order_id');
+
+            // 获取订单相关商品数据
+            $query = $this->db->query("CALL get_order_items( $order_id )");
+            $order_items = $query->result_array();
+            $this->db->reconnect(); // 调用存储过程后必须重新连接数据库
+
+            foreach ($order_items as $item):
+                if ( empty($item['sku_id']) ):
+                    $result = $this->db->query("CALL stocks_update('item', ".$item['item_id'].','. $item['count'].')');
+                else:
+                    $result = $this->db->query("CALL stocks_update('sku', ".$item['sku_id'].','. $item['count'].')');
+                endif;
+                /*if ($result !== FALSE):
+                    $this->result['status'] = 200;
+                    $this->result['content']['message'] = '验证成功';
+
+                else:
+                    $this->result['status'] = 434;
+                    $this->result['content']['error']['message'] = '验证失败';
+
+                endif;*/
+            endforeach;
+        }
 
 		/**
 		 * 0 计数
@@ -227,6 +257,9 @@
 				exit();
 			endif;
 
+			// 获取用户留言信息
+            $this->note_user = json_decode($this->input->post('note_user'), TRUE);
+
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
@@ -357,9 +390,9 @@
 		/**
 		 * 生成订单单品信息
 		 *
-		 * @params varchar/int $item_id 商品ID；商家ID需要从商品资料中获取
-		 * @params varchar/int $sku_id 规格ID
-		 * @params int $count 份数；默认为1，后续需核对每单最低限量
+		 * @param varchar/int $item_id 商品ID；商家ID需要从商品资料中获取
+		 * @param varchar/int $sku_id 规格ID
+		 * @param int $count 份数；默认为1，后续需核对每单最低限量
 		 */
 		private function generate_single_item($item_id, $sku_id = NULL, $count = 1)
 		{
@@ -370,7 +403,11 @@
 			// 获取规格信息
 			if ( !empty($sku_id) ):
 				$this->switch_model('sku', 'sku_id');
-				$sku = $this->basic_model->select_by_id($sku_id);
+			    $data_to_search = array(
+			        'sku_id' => $sku_id,
+                    'item_id' => $item_id,
+                );
+				$sku = $this->basic_model->match($data_to_search);
 			endif;
 
 			//TODO 计算单品优惠活动折抵
@@ -449,7 +486,7 @@
 					//'freight' => $freight, // 运费
 					'total' => $order_item['single_total'],
 					'order_items' => $order_items,
-					'note_user' => $this->input->post('note_user')[$order_item['biz_id']], // 用户留言
+					'note_user' => $this->note_user[$order_item['biz_id']], // 用户留言
 				);
 			endif;
 		} // end generate_single_item

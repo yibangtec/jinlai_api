@@ -51,10 +51,7 @@
 		/**
 		 * 完整编辑单行时必要的字段名
 		 */
-		protected $names_edit_required = array(
-			'user_id', 'id',
-			'url_image_main', 'name', 'price', 'stocks',
-		);
+		protected $names_edit_required = array('user_id', 'id', 'url_image_main', 'name', 'price', 'stocks',);
 
 		public function __construct()
 		{

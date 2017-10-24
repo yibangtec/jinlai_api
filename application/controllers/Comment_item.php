@@ -34,6 +34,9 @@ class Comment_item extends MY_Controller
      */
     protected $names_edit_bulk_required = array('user_id', 'ids', 'operation', 'password',);
 
+    // 商品评价信息（批量创建评价）
+    protected $comment_item = array();
+
     public function __construct()
     {
         parent::__construct();
@@ -249,6 +252,9 @@ class Comment_item extends MY_Controller
             endif;
         endforeach;
 
+        // 获取商品评价信息
+        $this->comment_item = json_decode($this->input->post('comment_item'), TRUE);
+
         // 初始化并配置表单验证库
         $this->load->library('form_validation');
         $this->form_validation->set_error_delimiters('', '');
@@ -268,7 +274,7 @@ class Comment_item extends MY_Controller
             $data_to_search = array(
                 'order_id' => $order_id,
                 'user_id' => $user_id,
-                //'status' => '待评价',
+                'status' => '待评价',
             );
             $order = $this->basic_model->match($data_to_search);
 
@@ -297,7 +303,7 @@ class Comment_item extends MY_Controller
                 'order_id' => $order['order_id'],
             );
             $order_items = $this->basic_model->select($conditions);
-            //var_dump($order_items);
+
             // 为每个商品创建评价
             // 各商品评价通用值
             $this->switch_model('comment_item', 'comment_id');
@@ -309,13 +315,16 @@ class Comment_item extends MY_Controller
                 'order_id' => $order_id,
             );
             foreach ($order_items as $item):
+                $item_score = $this->comment_item[$item['item_id']]['score'];
+                $item_content = $this->comment_item[$item['item_id']]['content'];
+                $item_image_urls = $this->comment_item[$item['item_id']]['image_urls'];
+
                 $comment_item = array(
                     'item_id' => $item['item_id'],
-                    'score' => !empty($this->input->post('comment_item_' . $item['item_id'])['score']) ? $this->input->post('comment_item_' . $item['item_id'])['score'] : 4,
-                    'content' => !empty($this->input->post('comment_item_' . $item['item_id'])['content']) ? $this->input->post('comment_item_' . $item['item_id'])['content'] : '默认好评',
-                    'image_urls' => !empty($this->input->post('comment_item_' . $item['item_id'])['image_urls']) ? $this->input->post('comment_item_' . $item['item_id'])['image_urls'] : NULL,
+                    'score' => !empty($item_score) ? $item_score : 4,
+                    'content' => !empty($item_content) ? $item_content : '默认好评',
+                    'image_urls' => !empty($item_image_urls) ? $item_image_urls : NULL,
                 );
-                //var_dump($comment_item);
                 $this->create_comment_item( array_merge($data_to_create, $comment_item) );
             endforeach;
         endif;

@@ -90,7 +90,8 @@
 		// 更换所用数据库
 		protected function switch_model($table_name, $id_name)
 		{
-			$this->basic_model->table_name = $table_name;
+            $this->db->reset_query(); // 重置查询
+		    $this->basic_model->table_name = $table_name;
 			$this->basic_model->id_name = $id_name;
 		}
 		
@@ -146,7 +147,7 @@
 			endif;
 			$prepay_id = $this->result['prepay_id'];
 			$return_parameters['prepayid'] = $prepay_id;
-			$return_parameters['appid'] = $this->app_id; //公众账号ID
+			$return_parameters['appid'] = $this->app_id; // 公众账号或微信开放平台的应用ID
 			$return_parameters['partnerid'] = $this->mch_id;
 			$return_parameters['noncestr'] = $this->createNoncestr();
 			$return_parameters['package'] = 'Sign=WXPay';
@@ -207,7 +208,7 @@
 					//$log_->log_result($log_name, "【支付成功】:\n". $xml. "\n");
 
 					// 获取基本订单信息及支付信息
-					@list($order_prefix, $type, $order_id) = split('_', $this->data['out_trade_no']); // 分解出防冗余下单订单前缀、订单类型（商品、券码、服务等）、订单号等
+					@list($order_prefix, $type, $order_id) = preg_split('_', $this->data['out_trade_no']); // 分解出防冗余下单订单前缀、订单类型（商品、券码、服务等）、订单号等
 					$data_to_edit['payment_type'] = '微信支付'; // 支付方式
 					$data_to_edit['payment_account'] = $this->data['openid']; // 付款账号；微信OpenID
 					$data_to_edit['payment_id'] = $this->data['transaction_id']; // 支付流水号；微信支付订单号
@@ -240,12 +241,38 @@
 				default: // 实物类订单
 					$data_to_edit['time_accept'] = $current_time; // 收款即接单（等待发货）
 					$data_to_edit['status'] = '待发货';
+					$this->stocks_update($order_id);
 			endswitch;
 
 			// 更新订单信息
 			$this->switch_model($type, 'order_id');
 			$this->basic_model->edit($order_id, $data_to_edit);
 		} // end order_update
+
+        /**
+         * 更新实物订单相关商品/规格的库存值
+         */
+        private function stocks_update($order_id)
+        {
+            // 获取订单相关商品信息
+            $this->switch_model('order_items', 'record_id');
+            $conditions = array(
+                'order_id' => $order_id,
+            );
+            $order_items = $this->basic_model->select($conditions, NULL);
+
+            foreach ($order_items as $item):
+                if (empty($item['sku_id'])):
+                    // 修改相关商品库存数
+                    // 调用存储过程实现
+                    $this->switch_model('item', 'item_id');
+                else:
+                    // 修改相关规格库存数
+                    // 调用存储过程实现
+                    $this->switch_model('sku', 'sku_id');
+                endif;
+            endforeach;
+        } // end stocks_update
 
 		/**
 		 * 基础通用方法

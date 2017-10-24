@@ -121,7 +121,7 @@
 		 *
 		 * 依次检查签名的时间是否过期、参数是否完整、签名是否正确
 		 */
-		public function sign_check()
+        protected function sign_check()
 		{
 			$this->sign_check_exits();
 			$this->sign_check_time();
@@ -130,7 +130,7 @@
 		} // end sign_check
 
 		// 检查签名是否传入
-		public function sign_check_exits()
+        protected function sign_check_exits()
 		{
 			$this->sign = $this->input->post('sign');
 
@@ -142,7 +142,7 @@
 		} // end sign_check_exits
 
 		// 签名时间检查
-		public function sign_check_time()
+        protected function sign_check_time()
 		{
 			$timestamp_sign = $this->input->post('timestamp');
 
@@ -169,7 +169,7 @@
 		} // end sign_check_time
 
 		// 签名参数检查
-		public function sign_check_params()
+        protected function sign_check_params()
 		{
 			// 检查需要参与签名的必要参数；
 			$params_required = array(
@@ -194,7 +194,7 @@
 		} // end sign_check_params
 
 		// 签名正确性检查
-		public function sign_check_string()
+        protected function sign_check_string()
 		{
 			// 获取传入的参数们
 			$params = $_POST;
@@ -220,7 +220,7 @@
 		/**
 		 * 生成签名
 		 */
-		public function sign_generate($params)
+        protected function sign_generate($params)
 		{
 			// 对参与签名的参数进行排序
 			ksort($params);
@@ -276,7 +276,7 @@
 		 *
 		 * 根据客户端类型、版本号、平台等进行权限检查
 		 */
-		public function client_check($type_allowed, $platform_allowed = NULL, $min_version = NULL)
+        protected function client_check($type_allowed, $platform_allowed = NULL, $min_version = NULL)
 		{
 			if ( !in_array($this->app_type, $type_allowed) ):
 				$this->result['status'] = 450;
@@ -360,7 +360,7 @@
 		 *
 		 * http://lbs.amap.com/api/webservice/guide/api/georegeo
 		 */
-		public function amap_geocode($address, $city = '青岛')
+		protected function amap_geocode($address, $city = '青岛')
 		{
 			$api_key = AMAP_KEY_SERVER; // 高德key
 			$api_url = 'http://restapi.amap.com/v3/geocode/geo?key='. $api_key. '&address='.urlencode($address). '&city='.urlencode($city);
