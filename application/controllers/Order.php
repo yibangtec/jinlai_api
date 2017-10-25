@@ -59,33 +59,6 @@
 			$this->basic_model->id_name = $this->id_name;
 		}
 
-		public function stock_update()
-        {$this->output->enable_profiler(TRUE);
-            $order_id = $this->input->post('order_id');
-
-            // 获取订单相关商品数据
-            $query = $this->db->query("CALL get_order_items( $order_id )");
-            $order_items = $query->result_array();
-            $this->db->reconnect(); // 调用存储过程后必须重新连接数据库
-
-            foreach ($order_items as $item):
-                if ( empty($item['sku_id']) ):
-                    $result = $this->db->query("CALL stocks_update('item', ".$item['item_id'].','. $item['count'].')');
-                else:
-                    $result = $this->db->query("CALL stocks_update('sku', ".$item['sku_id'].','. $item['count'].')');
-                endif;
-                /*if ($result !== FALSE):
-                    $this->result['status'] = 200;
-                    $this->result['content']['message'] = '验证成功';
-
-                else:
-                    $this->result['status'] = 434;
-                    $this->result['content']['error']['message'] = '验证失败';
-
-                endif;*/
-            endforeach;
-        }
-
 		/**
 		 * 0 计数
 		 */

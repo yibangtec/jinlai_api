@@ -29,13 +29,6 @@
 		// 响应型接口属性
 		public $data; // 接收到的数据，类型为关联数组
 		public $returnParameters;// 返回给微信服务器的参数，类型为关联数组
-		
-		/**
-		 * 接收订单通知时必要的字段名
-		 */
-		protected $names_edit_required = array(
-			'out_trade_no', 'openid', 'transaction_id',
-		);
 
 		// 仅部分方法适用构造函数
 		protected function manual_construct()
@@ -63,7 +56,7 @@
 			// 测试环境可跳过签名检查
 			if ( ENVIRONMENT !== 'development' && $this->input->post('skip_sign') !== 'please' )
 				$this->sign_check();
-		} // end __construct
+		} // end manual_construct
 
 		// 仅部分方法适用解构函数
 		protected function manual_destruct()
@@ -86,14 +79,14 @@
 			$output_json = json_encode($this->result);
 			echo $output_json;
 		} // end manual_destruct
-		
+
 		// 更换所用数据库
 		protected function switch_model($table_name, $id_name)
 		{
             $this->db->reset_query(); // 重置查询
 		    $this->basic_model->table_name = $table_name;
 			$this->basic_model->id_name = $id_name;
-		}
+		} // switch_model
 		
 		/**
 		 * 3 创建微信支付订单
@@ -112,14 +105,27 @@
 				exit();
 			endif;
 
-			// 获取订单类型，默认为商品订单
-			$type = $this->input->post('type')? $this->input->post('type'): 'order';
+            // 获取订单类型，默认为商品订单
+            $type = $this->input->post('type')? $this->input->post('type'): 'order';
 
-			// 获取订单信息备用
-			$order_data = array(
-				'body' => '进来商城平台版测试订单'.$order_id,
-				'total_fee' => '0.01',
-			);
+            /*
+            // 根据订单类型和订单编号获取订单信息
+            if ($type == 'daigou'):
+                $this->load->model('daigou_model');
+                $order = $this->daigou_model->select_by_id($order_id);
+            else:
+                $this->load->model('order_model');
+                $order = $this->order_model->select_by_id($order_id);
+            endif;
+            */
+
+            // 获取订单信息备用
+            $order = $this->get_order_detail($order_id);
+            $order_data = array(
+                'body' => SITE_NAME. ($type === 'order'? '商品订单': '充值订单'),
+                'total_fee' => '0.01',
+                //'total_fee' => $order['total'],
+            );
 
 			// 重组请求参数
 			$this->parameters['out_trade_no'] = date('YmdHis').'_order_'.$order_id;
@@ -163,27 +169,24 @@
 			$this->manual_destruct();
 		} // end unified_order
 
-		/**
-		 * 4 接收并回复微信发来的支付结果回调，并根据回调结果处理相应订单
-		 */
+        /**
+         * 4 接收订单通知并更新相关信息
+         */
 		public function notify()
 		{
 			// 存储微信通知的请求参数
 			$xml = file_get_contents('php://input');
 			$this->saveData($xml);
 
-			if ($this->data['test_mode'] == 'on')
-				var_dump($this->data);
-
 			if ($this->data['return_code'] == FALSE):
 				echo '此接口仅用于接收微信推送的付款状态通知';
 				exit;
 			endif;
 
-			// 验证签名，并回应微信。
-			//对后台通知交互时，如果微信收到商户的应答不是成功或超时，微信认为通知失败，
-			//微信会通过一定的策略（如30分钟共8次）定期重新发起通知，
-			//尽可能提高通知的成功率，但微信不保证通知最终能成功。
+			// 验证签名，并回应微信
+			// 对后台通知交互时，如果微信收到商户的应答不是成功或超时，微信认为通知失败，
+			// 微信会通过一定的策略（如30分钟共8次）定期重新发起通知，
+			// 尽可能提高通知的成功率，但微信不保证通知最终能成功。
 			if ($this->checkSign() === FALSE):
 				$this->setReturnParameter('return_code', 'FAIL'); //返回状态码
 				$this->setReturnParameter('return_msg', '签名失败'); //返回信息
@@ -208,7 +211,7 @@
 					//$log_->log_result($log_name, "【支付成功】:\n". $xml. "\n");
 
 					// 获取基本订单信息及支付信息
-					@list($order_prefix, $type, $order_id) = preg_split('_', $this->data['out_trade_no']); // 分解出防冗余下单订单前缀、订单类型（商品、券码、服务等）、订单号等
+					list($order_prefix, $type, $order_id) = preg_split('/_/', $this->data['out_trade_no']); // 分解出防冗余下单订单前缀、订单类型（商品、券码、服务等）、订单号等
 					$data_to_edit['payment_type'] = '微信支付'; // 支付方式
 					$data_to_edit['payment_account'] = $this->data['openid']; // 付款账号；微信OpenID
 					$data_to_edit['payment_id'] = $this->data['transaction_id']; // 支付流水号；微信支付订单号
@@ -220,9 +223,28 @@
 			endif;
 		} // end notify
 
-		/**
-		 * 更新订单信息
-		 */
+        /**
+         * 获取订单信息
+         *
+         * @param int/varchar $order_id 订单ID
+         * @return array $result 订单信息
+         */
+        private function get_order_detail($order_id)
+        {
+            $this->switch_model('order', 'order_id');
+            $this->db->select('total');
+            $result = $this->basic_model->find('order_id', $order_id);
+
+            return $result;
+        } // end get_order_detail
+
+        /**
+         * 更新订单信息
+         *
+         * @param $data_to_edit 待更新的订单信息
+         * @param $type 订单类型
+         * @param $order_id 订单号
+         */
 		private function order_update($data_to_edit, $type, $order_id)
 		{
 			$current_time = time(); // 服务器接收到付款通知的时间
@@ -251,32 +273,29 @@
 
         /**
          * 更新实物订单相关商品/规格的库存值
+         * TODO 执行结果验证
+         * @param $order_id 相关订单ID
          */
-        private function stocks_update($order_id)
+        protected function stocks_update($order_id)
         {
-            // 获取订单相关商品信息
-            $this->switch_model('order_items', 'record_id');
-            $conditions = array(
-                'order_id' => $order_id,
-            );
-            $order_items = $this->basic_model->select($conditions, NULL);
+            // 获取订单相关商品数据
+            $query = $this->db->query("CALL get_order_items( $order_id )");
+            $order_items = $query->result_array();
+            $this->db->reconnect(); // 调用存储过程后必须重新连接数据库，下同
 
             foreach ($order_items as $item):
-                if (empty($item['sku_id'])):
-                    // 修改相关商品库存数
-                    // 调用存储过程实现
-                    $this->switch_model('item', 'item_id');
+                if ( empty($item['sku_id']) ):
+                    $result = $this->db->query("CALL stocks_update('item', ".$item['item_id'].','. $item['count'].')');
                 else:
-                    // 修改相关规格库存数
-                    // 调用存储过程实现
-                    $this->switch_model('sku', 'sku_id');
+                    $result = $this->db->query("CALL stocks_update('sku', ".$item['sku_id'].','. $item['count'].')');
                 endif;
+                $this->db->reconnect();
             endforeach;
         } // end stocks_update
 
 		/**
 		 * 基础通用方法
-		**/
+         */
 		public function trimString($value)
 		{
 			$ret = NULL;
@@ -360,7 +379,7 @@
 			endforeach;
 	        $xml .= '</xml>';
 	        return $xml;
-	    }
+	    } // end arrayToXml
 
 		/**
 		 * 	作用：将xml转为array
@@ -370,7 +389,7 @@
 	        //将XML转为array        
 	        $array_data = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), TRUE);		
 			return $array_data;
-		}
+		} // end xmlToArray
 
 		/**
 		 * 	作用：以post方式提交xml到对应的接口url
@@ -405,7 +424,7 @@
 				curl_close($ch);
 				return FALSE;
 			endif;
-		}
+		} // end postXmlCurl
 
 		/**
 		 * 	作用：使用证书，以post方式提交xml到对应的接口url
@@ -446,7 +465,7 @@
 				curl_close($ch);
 				return FALSE;
 			endif;
-		}
+		} // end postXmlSSLCurl
 
 		/**
 		 * 	作用：打印数组
@@ -457,11 +476,12 @@
 			echo $wording.'<br>';
 			var_dump($err);
 			print_r('</pre>');
-		}
+		} // end printErr
 
-/**
- * 请求型接口的方法
-**/
+        /**
+         * 请求型接口的方法
+        */
+
 		/**
 		 * 	作用：设置请求参数
 		 */
@@ -498,9 +518,9 @@
 			return $this->result;
 		}
 
-/**
- * 响应型接口方法
-**/
+        /**
+         * 响应型接口方法
+         */
 	 	function saveData($xml)
 	 	{
 	 		$this->data = $this->xmlToArray($xml);
@@ -552,7 +572,7 @@
 		
 		/**
 		 * 具体业务方法
-		**/
+		 */
 		public function index()
 		{
 			echo $this->createNoncestr();

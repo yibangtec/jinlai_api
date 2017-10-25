@@ -10,13 +10,14 @@
 	 */
 	class Alipay extends CI_Controller
 	{
-		// 待签名字符串
+		// 待签名/待验签字符串
 		private $sign_string = '';
 		
 		// 支付参数字符串
 		private $payment_string = '';
-		
-		public function __construct()
+
+        // 仅部分方法适用构造函数
+		public function manual_construct()
 		{
 	        parent::__construct();
 
@@ -41,10 +42,10 @@
 			// 测试环境可跳过签名检查
 			if ( ENVIRONMENT !== 'development' && $this->input->post('skip_sign') !== 'please' )
 				$this->sign_check();
-		} // end __construct
+		} // end manual_construct
 
-		// 析构时将待输出的内容作为json格式返回
-		public function __destruct()
+        // 仅部分方法适用解构函数
+		public function manual_destruct()
 		{
 			// 将请求参数一并返回以便调试
 			$this->result['param']['get'] = $this->input->get();
@@ -63,16 +64,24 @@
 			header("Content-type:application/json;charset=utf-8");
 			$output_json = json_encode($this->result);
 			echo $output_json;
-		} // end __destruct
+		} // end manual_destruct
 
-		// 待输出的内容
-		public $result;
+        // 更换所用数据库
+        protected function switch_model($table_name, $id_name)
+        {
+            $this->db->reset_query(); // 重置查询
+            $this->basic_model->table_name = $table_name;
+            $this->basic_model->id_name = $id_name;
+        }
 
 		/**
 		 * APY3 获取支付宝支付所需参数
 		 */
 		public function create()
 		{
+            // 手动构造函数
+            $this->manual_construct();
+
 			// 检查必要参数是否已传入
 			$order_id = $this->input->post('order_id');
 			if ( empty($order_id) ):
@@ -96,9 +105,11 @@
 			*/
 
 			// 获取订单信息备用
-			$order_data = array(
+            $order = $this->get_order_detail($order_id);
+            $order_data = array(
 				'body' => SITE_NAME. ($type === 'order'? '商品订单': '充值订单'),
 				'total_fee' => '0.01',
+                //'total_fee' => $order['total'],
 			);
 
 			// 请求地址
@@ -111,7 +122,6 @@
 				'charset' => 'utf-8',
 				//'format' => 'JSON',
 				'sign_type' => 'RSA2',
-				//'sign' => '', // 签名
 				'timestamp' => date('Y-m-d H:i:s'),
 				'version' => '1.0',
 				'notify_url' => base_url('alipay/notify'),
@@ -129,14 +139,15 @@
 				'body' => $body,
 				'product_code' => 'QUICK_MSECURITY_PAY', // 固定值
 			);
-			$params['biz_content'] = json_encode($request_params, JSON_UNESCAPED_UNICODE);
+			$params['biz_content'] = json_encode($request_params, JSON_UNESCAPED_UNICODE); // 订单信息
 
-			// 生成签名并拼合不参与签名的参数到请求参数
+			// 生成签名，并拼合不参与签名的参数到请求参数
 			$this->sign_string_generate($params); // 生成待签名及支付参数字符串
-			$sign = $this->sign_generate($params); // 生成签名
-			$params['subject'] = $subject; // 订单名称
+			$sign = $this->sign_generate(); // 生成签名
+
+            $params['sign'] = $sign; // 已生成的签名
 			$params['string_to_sign'] = $this->sign_string; // 待签名字符串
-			$params['sign'] = $sign;
+            $params['subject'] = $subject; // 订单名称
 			$params['payment_string'] = $this->payment_string.'&sign='. urlencode($sign); // 含签名的所有参数字符串
 
 			if ( !empty($params)):
@@ -146,22 +157,73 @@
 				$this->result['status'] = 400;
 				$this->result['content'] = '支付宝支付参数获取失败';
 			endif;
+
+            // 手动析构函数
+            $this->manual_destruct();
 		} // end create
 		
 		/**
-		 * TODO APY5 订单通知
+		 * 4 接收订单通知并更新相关信息
 		 */
 		public function notify()
 		{
-			echo '订单通知';
+            // 计算得出通知验证结果
+            $result = $this->sign_verify($_POST);
 
-			$sign = $params['sign'];
-			unset($params['sign']);
+            // 验证成功
+            if ($result):
+                // 交易状态
+                $trade_status = $_POST['trade_status'];
 
-			$this->sign_verify($params, $sign);
-		} // end notify
+                if ($_POST['trade_status'] == 'TRADE_FINISHED'): // 即时到帐交易确认支付后返回这个状态
+                    //判断该笔订单是否在商户网站中已经做过处理
+                    //如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统中查到该笔订单的详细，并执行商户的业务程序
+                    //如果有做过处理，不执行商户的业务程序
 
-		// 生成待签名及支付字符串
+                    //注意：
+                    //退款日期超过可退款期限后（如三个月可退款），支付宝系统发送该交易状态通知
+
+                elseif ($_POST['trade_status'] == 'TRADE_SUCCESS'): // 付款完成后，支付宝系统发送该交易状态通知
+                    // 获取基本订单信息及支付信息
+                    list($order_prefix, $type, $order_id) = preg_split('/_/', $_POST['out_trade_no']); // 分解出防冗余下单订单前缀、订单类型（商品、券码、服务等）、订单号等
+                    $data_to_edit['payment_type'] = '支付宝'; // 支付方式
+                    $data_to_edit['payment_account'] = $_POST['buyer_logon_id']; // 付款账号；支付宝账号
+                    $data_to_edit['payment_id'] = $_POST['trade_no']; // 支付流水号；支付宝订单号
+                    $data_to_edit['total_payed'] = $_POST['receipt_amount']; // 已支付金额
+
+                    // 更新订单信息
+                    $this->order_update($data_to_edit, $type, $order_id);
+                endif;
+
+                echo 'success'; // 请不要修改或删除
+
+            // 验证失败
+            else:
+                echo 'fail';
+
+            endif;
+        } // end notify
+
+        /**
+         * 获取订单信息
+         *
+         * @param int/varchar $order_id 订单ID
+         * @return array $result 订单信息
+         */
+        private function get_order_detail($order_id)
+        {
+            $this->switch_model('order', 'order_id');
+            $this->db->select('total');
+            $result = $this->basic_model->find('order_id', $order_id);
+
+            return $result;
+        } // end get_order_detail
+
+        /**
+         * 生成待签名及支付字符串
+         *
+         * @param $params
+         */
 		private function sign_string_generate($params)
 		{
 			$params = array_filter($params); // 清理空元素
@@ -172,7 +234,7 @@
 				$this->payment_string .= '&'. $key. '='. urlencode($value);
 			endforeach;
 
-			// 去掉多余的“&”
+			// 清理冗余“&”
 			$this->sign_string = trim($this->sign_string, '&');
 			$this->payment_string = trim($this->payment_string, '&');
 
@@ -182,21 +244,47 @@
 			endif;
 		} // end sign_string_generate
 
-		/**
-		 * 生成RSA2签名
-		 */
-		private function sign_generate($params)
-		{
-			$sign_string = $this->sign_string;
+        /**
+         * 生成待验证签名字符串
+         *
+         * @param $params
+         */
+        private function design_string_generate($params)
+        {
+            // 部分参数不参与签名
+            unset($params['sign']);
+            unset($params['sign_type']);
 
+            $params = array_filter($params); // 清理空元素
+            ksort($params); // 按数组键名升序排序
+
+            foreach ($params as $key => $value):
+                $this->sign_string .= '&'. $key. '='. $value;
+            endforeach;
+
+            // 清理冗余“&”
+            $this->sign_string = trim($this->sign_string, '&');
+
+            // 取消字符转义
+            if (get_magic_quotes_gpc()):
+                $this->sign_string = stripcslashes($this->sign_string);
+            endif;
+        } // end design_string_generate
+
+        /**
+         * 生成RSA2签名
+         *
+         * @return string 签名字符串
+         */
+		private function sign_generate()
+		{
 			$priKey = ALIPAY_KEY_PRIVATE;
 			$res = "-----BEGIN RSA PRIVATE KEY-----\n".
 				wordwrap($priKey, 64, "\n", true).
 				"\n-----END RSA PRIVATE KEY-----";
-
 			($res) or die('您使用的私钥格式错误，请检查RSA私钥配置');
 
-		    openssl_sign($sign_string, $sign, $res, OPENSSL_ALGO_SHA256);
+		    openssl_sign($this->sign_string, $sign, $res, OPENSSL_ALGO_SHA256);
 
 			// base64编码
 		    $sign = base64_encode($sign);
@@ -205,22 +293,110 @@
 
 		/**
 		 * 验证RSA2签名
+         *
+         * @param array $params 接收到的异步回调内容
+         * @return boolean $result 签名是否正确
 		 */
-		private function sign_verify($params, $sign)
+		private function sign_verify($params)
 		{
-			$sign_string = $this->sign_string_generate($params);
+            // 获取签名
+		    $sign = $params['sign'];
+
+            // 生成待签名字符串
+            $this->design_string_generate($params);
+
+		    // 生成测试日志
+            //$this->log_this($params);
 
 			$priKey = ALIPAY_KEY_PUBLIC;
 			$res = "-----BEGIN PUBLIC KEY-----\n".
 				wordwrap($priKey, 64, "\n", true).
 				"\n-----END PUBLIC KEY-----";
-
 			($res) or die('支付宝RSA公钥错误。请检查公钥文件格式是否正确');
 
-			$result = (bool)openssl_verify($sign_string, base64_decode($sign), $res, OPENSSL_ALGO_SHA256);
+			$result = (bool)openssl_verify($this->sign_string, base64_decode($sign), $res, OPENSSL_ALGO_SHA256);
 
 			return $result;
 		} // end sign_verify
+
+        /**
+         * 异步通知接收日志
+         *
+         * @param $params
+         */
+        private function log_this($params)
+        {
+            // 输出原始报文
+            $origin_params = $params;
+            $origin_data = '';
+            foreach ($origin_params as $name => $value):
+                $origin_data .= '&'.$name.'='.$value;
+            endforeach;
+
+            $data = $this->sign_string; // 待签名字符串
+            $data .= "\n\n". $params['sign']; // 签名值
+            $data .= "\n\n". trim($origin_data, '&'); // 原始报文
+
+            // 写入日志
+            $this->load->helper('file');
+            $url = 'alipay.txt'; // 位于项目根目录下
+            write_file($url, $data, 'w+');
+        } // end log_this
+
+        /**
+         * 更新订单信息
+         *
+         * @param $data_to_edit 待更新的订单信息
+         * @param $type 订单类型
+         * @param $order_id 订单号
+         */
+        private function order_update($data_to_edit, $type, $order_id)
+        {
+            $current_time = time(); // 服务器接收到付款通知的时间
+            $data_to_edit['time_pay'] = $current_time;
+
+            // 根据订单类型更新相应字段值
+            switch ($type):
+                case 'coupon': // 券码类订单
+                    $data_to_edit['time_accept'] = $current_time; // 收款即接单（等待发货）
+                    $data_to_edit['time_deliver'] = $current_time; // 收款即发货（生成券码）
+                    $data_to_edit['status'] = '待使用';
+                    break;
+                case 'cater': // 服务类订单
+                    $data_to_edit['status'] = '待接单';
+                    break;
+                default: // 实物类订单
+                    $data_to_edit['time_accept'] = $current_time; // 收款即接单（等待发货）
+                    $data_to_edit['status'] = '待发货';
+                    $this->stocks_update($order_id);
+            endswitch;
+
+            // 更新订单信息
+            $this->switch_model($type, 'order_id');
+            $this->basic_model->edit($order_id, $data_to_edit);
+        } // end order_update
+
+        /**
+         * 更新实物订单相关商品/规格的库存值
+         * TODO 执行结果验证
+         * @param int/string $order_id 相关订单ID
+         */
+        protected function stocks_update($order_id)
+        {
+            // 获取订单相关商品数据
+            $query = $this->db->query("CALL get_order_items( $order_id )");
+            $order_items = $query->result_array();
+            $this->db->reconnect(); // 调用存储过程后必须重新连接数据库，下同
+
+            foreach ($order_items as $item):
+                if ( empty($item['sku_id']) ):
+                    $result = $this->db->query("CALL stocks_update('item', ".$item['item_id'].','. $item['count'].')');
+                else:
+                    $result = $this->db->query("CALL stocks_update('sku', ".$item['sku_id'].','. $item['count'].')');
+                endif;
+                $this->db->reconnect();
+            endforeach;
+        } // end stocks_update
 
 	} // end class Alipay
 

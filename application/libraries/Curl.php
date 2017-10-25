@@ -53,7 +53,7 @@
 
 			return $result;
 		}
-	}
+	} // end Class Curl
 	
 /* End of file Curl.php */
 /* Location: ./application/libraries/Curl.php */

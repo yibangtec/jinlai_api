@@ -133,7 +133,7 @@
 
 			return $text_to_return;
 		}
-	}
+	} // end Class Luosimao
 
 /* End of file Luosimao.php */
 /* Location: ./application/libraries/Luosimao.php */
