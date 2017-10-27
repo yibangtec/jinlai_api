@@ -305,7 +305,7 @@
 				$result = $this->basic_model->edit($id, $data_to_edit);
 				if ($result !== FALSE):
                     $this->result['status'] = 200;
-                    $this->result['content']['id'] = $result;
+                    $this->result['content']['id'] = $id;
                     $this->result['content']['message'] = '编辑成功';
 
 				else:
