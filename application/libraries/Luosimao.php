@@ -42,7 +42,7 @@
 			curl_close($ch);
 
 			return $res;
-		}
+		} // end send
 		
 		/**
 		 * 发送批量短信
@@ -77,7 +77,7 @@
 			curl_close($ch);
 
 			return $res;
-		}
+		} // end send_bulk
 		
 		/**
 		 * 查询余额
@@ -101,7 +101,7 @@
 			$res =  curl_exec($ch);
 			curl_close($ch); 
 			return $res;
-		}
+		} // end balance
 
 		/**
 		 * 错误码可读化
@@ -132,7 +132,8 @@
 			if ($error->error === '-31') $text_to_return .= $error->hit;
 
 			return $text_to_return;
-		}
+		} // end error_text
+
 	} // end Class Luosimao
 
 /* End of file Luosimao.php */

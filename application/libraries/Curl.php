@@ -11,14 +11,14 @@
 	class Curl
 	{
 		/**
-		* 执行CURL
-		*
-		* @param string $url 待请求的URL
-		* @param string $method 待发送的CURL请求类型；默认为get，可设为'post'
-		* @param array $params 待发送的CURL请求参数数组，当且以POST方式发送的时候需传入此数组
-		* @param string $return 需返回的数据格式；默认为数组格式，可传入'object'以设置为以对象格式返回
-		* @return object|array 返回的CURL请求结果
-		*/
+		 * 执行CURL
+		 *
+		 * @param string $url 待请求的URL
+		 * @param string $method 待发送的CURL请求类型；默认为get，可设为'post'
+		 * @param array $params 待发送的CURL请求参数数组，当且以POST方式发送的时候需传入此数组
+		 * @param string $return 需返回的数据格式；默认为数组格式，可传入'object'以设置为以对象格式返回
+		 * @return object/array 返回的CURL请求结果
+		 */
 		public function go($url, $params = NULL, $return = 'array', $method = 'post')
 		{
 		    $curl = curl_init();
@@ -52,7 +52,8 @@
 			endif;
 
 			return $result;
-		}
+		} // end go
+
 	} // end Class Curl
 	
 /* End of file Curl.php */

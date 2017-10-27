@@ -134,31 +134,33 @@
 				endforeach;
 			endif;
 
+            $this->db->limit($limit, $offset);
+
 			// 默认可返回已删除项
 			if ($allow_deleted === FALSE) $this->db->where('time_delete', NULL);
 
-			// 可选择仅返回符合条件项的ID列表
-			if ($return_ids === TRUE) $this->db->select($this->id_name);
+            $query = $this->db->get($this->table_name);
 
-			$this->db->limit($limit, $offset);
+            // 可选择仅返回符合条件项的ID列表
+            if ($return_ids === FALSE):
+                return $query->result_array();
 
-			$query = $this->db->get($this->table_name);
-			return $query->result_array();
+            else:
+                // 多维数组转换为一维数组
+                $ids = array();
+                $result = $query->result_array();
 
-			if ($return_ids === TRUE):
-				// 多维数组转换为一维数组
-				$ids = array();
-				foreach ($results as $item):
-					$ids[] = $item[$this->id_name]; // 返回当前行的主键
-				endforeach;
+                foreach ($result as $item):
+                    $ids[] = $item[$this->id_name]; // 返回当前行的主键
+                endforeach;
 
-				// 释放原结果数组以节省内存
-				unset($results);
+                unset($result); // 释放原结果数组以节省内存
 
-				// 返回数组
-				return $ids;
-			endif;
-		}
+                // 返回数组
+                return $ids;
+
+            endif;
+		} // end select
 
 		/**
 		 * 根据ID获取特定项，默认可返回已删除项

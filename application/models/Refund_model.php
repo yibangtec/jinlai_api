@@ -1,26 +1,26 @@
 <?php
 	/**
-	 * 商家关注模型类
+	 * 退款/售后模型类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
 	 * @copyright ICBG <www.bingshankeji.com>
 	 */
-	class Fav_biz_model extends CI_Model
+	class Refund_model extends CI_Model
 	{
 		/**
 		 * 数据库表名
 		 *
 		 * @var string $table_name 表名
 		 */
-		public $table_name = 'fav_biz';
+		public $table_name = 'refund';
 
 		/**
 		 * 数据库主键名
 		 *
 		 * @var string $id_name 数据库主键名
 		 */
-		public $id_name = 'record_id';
+		public $id_name = 'refund_id';
 
 		/**
 		 * 初始化类
@@ -33,7 +33,7 @@
 		}
 
 		// 获取列表
-		public function select($condition = NULL, $order_by = NULL, $return_ids = FALSE, $allow_deleted = FALSE)
+		public function select($condition = NULL, $order_by = NULL, $return_ids = FALSE)
 		{
 			$limit = $this->input->get_post('limit')? $this->input->get_post('limit'): NULL; // 需要从数据库获取的数据行数
 			$offset = $this->input->get_post('offset')? $this->input->get_post('offset'): NULL; // 需要从数据库获取的数据起始行数（与$limit配合可用于分页等功能）
@@ -65,20 +65,11 @@
 
             $this->db->limit($limit, $offset);
 
-			// 默认不返回已删除项
-			if ($allow_deleted === FALSE) $this->db->where($this->table_name.'.time_delete', NULL);
+            // 获取必要信息
+            $this->db->select($this->table_name.'.*, biz.brief_name as brief_name, biz.url_logo as url_logo');
+            $this->db->join('biz', $this->table_name.'.biz_id = biz.biz_id', 'left outer');
 
-			if ($return_ids === TRUE):
-				$this->db->select($this->id_name);
-			else:
-				// 获取必要信息
-				$this->db->select($this->table_name.'.*, biz.name as name, biz.brief_name as brief_name, biz.url_logo as url_logo, biz.status as status');
-				$this->db->join('biz', $this->table_name.'.biz_id = biz.biz_id', 'left outer');
-			endif;
-
-
-
-            $query = $this->db->get($this->table_name);
+			$query = $this->db->get($this->table_name);
 
             // 可选择仅返回符合条件项的ID列表
             if ($return_ids === FALSE):
@@ -101,7 +92,7 @@
             endif;
 		} // end select
 
-	} // end class Fav_biz_model
+	} // end class Refund_model
 
-/* End of file Fav_biz_model.php */
-/* Location: ./application/models/Fav_biz_model.php */
+/* End of file Refund_model.php */
+/* Location: ./application/models/Refund_model.php */

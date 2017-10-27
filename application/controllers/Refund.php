@@ -18,27 +18,14 @@
 		);
 
 		/**
-		 * 可作为查询结果返回的字段名
-		 */
-		protected $names_to_return = array(
-			'refund_id', 'user_id', 'biz_id', 'order_id', 'item_ids', 'type', 'cargo_status', 'reason', 'max_total_refund', 'total_refund', 'description', 'url_images', 'status', 'time_create', 'time_cancel', 'time_close', 'time_refuse', 'time_accept', 'time_refund', 'time_edit', 'operator_id',
-		);
-
-		/**
 		 * 创建时必要的字段名
 		 */
-		protected $names_create_required = array(
-			'user_id',
-			'biz_id', 'order_id', 'item_ids', 'type', 'cargo_status', 'reason',
-		);
+		protected $names_create_required = array('user_id', 'biz_id', 'order_id', 'item_ids', 'type', 'cargo_status', 'reason',);
 
 		/**
 		 * 编辑多行特定字段时必要的字段名
 		 */
-		protected $names_edit_bulk_required = array(
-			'user_id', 'ids',
-			'operation', 'password',
-		);
+		protected $names_edit_bulk_required = array('user_id', 'ids', 'operation', 'password',);
 
 		public function __construct()
 		{
@@ -122,21 +109,16 @@
 
 			// 排序条件
 			$order_by = NULL;
-			//$order_by['name'] = 'value';
-
-			// 限制可返回的字段
-			//$this->db->select( implode(',', $this->names_to_return) );
-			// 获取退款信息及相关商家信息
-			$this->db->select($this->table_name.'.*, biz.brief_name as brief_name');
-			$this->db->join('biz', $this->table_name.'.biz_id = biz.biz_id', 'left outer');
 
 			// 获取列表；默认可获取已删除项
-			$items = $this->basic_model->select($condition, $order_by);
+            $this->load->model('refund_model');
+			$items = $this->refund_model->select($condition, $order_by);
 			if ( !empty($items) ):
 				// 获取涉及退款的订单商品
 				$this->switch_model('order_items', 'record_id');
 				for ($i=0;$i<count($items);$i++):
 					// 获取订单商品
+                    $this->db->select('item_id, name, item_image, slogan, sku_id, sku_name, sku_image, price, count, single_total');
 					$items[$i]['order_items'] = $this->basic_model->select_by_ids( $items[$i]['item_ids'] );
 				endfor;
 
@@ -163,17 +145,16 @@
 				exit();
 			endif;
 
-			// 限制可返回的字段
-			//$this->db->select( implode(',', $this->names_to_return) );
 			// 获取退款信息及相关商家信息
-			$this->db->select($this->table_name.'.*, biz.brief_name as brief_name');
-			$this->db->join('biz', $this->table_name.'.biz_id = biz.biz_id', 'left outer');
+            $this->db->select($this->table_name.'.*, biz.brief_name as brief_name, biz.url_logo as url_logo');
+            $this->db->join('biz', $this->table_name.'.biz_id = biz.biz_id', 'left outer');
 
 			// 获取特定项；默认可获取已删除项
 			$item = $this->basic_model->select_by_id($id);
 			if ( !empty($item) ):
 				// 获取涉及退款的订单商品
 				$this->switch_model('order_items', 'record_id');
+                $this->db->select('item_id, name, item_image, slogan, sku_id, sku_name, sku_image, price, count');
 				$item['order_items'] = $this->basic_model->select_by_ids($item['item_ids']);
 
 				// 获取用户信息

@@ -1,6 +1,6 @@
 <?php
 	/**
-	 * 商品收藏类
+	 * 商品收藏模型类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
@@ -63,35 +63,36 @@
 				$this->db->order_by($this->id_name, 'DESC');
 			endif;
 
+            $this->db->limit($limit, $offset);
+
 			// 默认不返回已删除项
 			if ($allow_deleted === FALSE) $this->db->where($this->table_name.'.time_delete', NULL);
 
-			if ($return_ids === TRUE):
-				$this->db->select($this->id_name);
-			else:
-				// 获取必要信息
-				$this->db->select($this->table_name.'.*, item.name as name, item.tag_price as tag_price, item.price as price, item.url_image_main as url_image_main, item.stocks as stocks, item.time_publish as time_publish, item.time_to_publish as time_to_publish, item.status as status');
-				$this->db->join('item', $this->table_name.'.item_id = item.item_id', 'left outer');
-			endif;
+            // 获取必要信息
+            $this->db->select($this->table_name.'.*, item.name as name, item.tag_price as tag_price, item.price as price, item.url_image_main as url_image_main, item.stocks as stocks, item.time_publish as time_publish, item.time_to_publish as time_to_publish, item.status as status');
+            $this->db->join('item', $this->table_name.'.item_id = item.item_id', 'left outer');
 
-			$this->db->limit($limit, $offset);
+            $query = $this->db->get($this->table_name);
 
-			$query = $this->db->get($this->table_name);
-			return $query->result_array();
+            // 可选择仅返回符合条件项的ID列表
+            if ($return_ids === FALSE):
+                return $query->result_array();
 
-			if ($return_ids === TRUE):
-				// 多维数组转换为一维数组
-				$ids = array();
-				foreach ($results as $item):
-					$ids[] = $item[$this->id_name]; // 返回当前行的主键
-				endforeach;
+            else:
+                // 多维数组转换为一维数组
+                $ids = array();
+                $result = $query->result_array();
 
-				// 释放原结果数组以节省内存
-				unset($results);
+                foreach ($result as $item):
+                    $ids[] = $item[$this->id_name]; // 返回当前行的主键
+                endforeach;
 
-				// 返回数组
-				return $ids;
-			endif;
+                unset($result); // 释放原结果数组以节省内存
+
+                // 返回数组
+                return $ids;
+
+            endif;
 		}
 	} // end class Fav_item_model
 

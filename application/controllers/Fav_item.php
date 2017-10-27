@@ -21,8 +21,7 @@
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id',
-			'item_id',
+			'user_id', 'item_id',
 		);
 
 		/**

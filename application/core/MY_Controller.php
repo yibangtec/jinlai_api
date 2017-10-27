@@ -12,6 +12,13 @@
 	 */
 	class MY_Controller extends CI_Controller
 	{
+        /**
+         * @var array 仅在管理类客户端返回的字段
+         */
+	    protected $names_return_for_admin = array(
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+        );
+
 		/**
 		 * 编辑单行特定字段时必要的字段名
 		 */

@@ -30,8 +30,7 @@
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id',
-			'biz_id', 'name', 'template_ids',
+			'user_id', 'biz_id', 'name', 'template_ids',
 		);
 
 		/**
@@ -45,8 +44,7 @@
 		 * 完整编辑单行时必要的字段名
 		 */
 		protected $names_edit_required = array(
-			'user_id', 'id',
-			'name', 'template_ids',
+			'user_id', 'id', 'name', 'template_ids',
 		);
 
 		public function __construct()
@@ -313,8 +311,9 @@
 				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);
 				if ($result !== FALSE):
-					$this->result['status'] = 200;
-					$this->result['content']['message'] = '编辑成功';
+                    $this->result['status'] = 200;
+                    $this->result['content']['id'] = $result;
+                    $this->result['content']['message'] = '编辑成功';
 
 				else:
 					$this->result['status'] = 434;

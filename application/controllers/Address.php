@@ -28,8 +28,7 @@
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id',
-			'fullname', 'mobile', 'province', 'city', 'street',
+			'user_id', 'fullname', 'mobile', 'province', 'city', 'street',
 		);
 
 		/**
@@ -43,8 +42,7 @@
 		 * 完整编辑单行时必要的字段名
 		 */
 		protected $names_edit_required = array(
-			'user_id', 'id',
-			'fullname', 'mobile', 'province', 'city', 'street',
+			'user_id', 'id', 'fullname', 'mobile', 'province', 'city', 'street',
 		);
 
 		/**
@@ -366,8 +364,9 @@
 				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);
 				if ($result !== FALSE):
-					$this->result['status'] = 200;
-					$this->result['content']['message'] = '编辑成功';
+                    $this->result['status'] = 200;
+                    $this->result['content']['id'] = $result;
+                    $this->result['content']['message'] = '编辑成功';
 
 					// 若当前地址需要设为默认地址
 					if ( $this->input->post('default_this') == 1 ):
@@ -448,7 +447,6 @@
 						$this->result['status'] = 434;
 						$this->result['content']['row_failed'][] = $id;
 					endif;
-
 				endforeach;
 
 				// 添加全部操作成功后的提示
@@ -461,8 +459,7 @@
 		// 设置当前地址为默认地址
 		protected function default_this($address_id, $user_id)
 		{
-			$this->basic_model->table_name = 'user';
-			$this->basic_model->id_name = 'user_id';
+			$this->switch_model('user', 'user_id');
 
 			$data_to_edit = array(
 				'address_id' => $address_id,

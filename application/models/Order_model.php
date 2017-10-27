@@ -1,6 +1,6 @@
 <?php
 	/**
-	 * 商品订单类
+	 * 商品订单模型类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
@@ -63,6 +63,8 @@
 				$this->db->order_by($this->id_name, 'DESC');
 			endif;
 
+            $this->db->limit($limit, $offset);
+
 			// 默认不返回已删除项
 			if ($allow_deleted === FALSE) $this->db->where($this->table_name.'.time_delete', NULL);
 
@@ -74,24 +76,27 @@
 				$this->db->join('biz', $this->table_name.'.biz_id = biz.biz_id', 'left outer');
 			endif;
 
-			$this->db->limit($limit, $offset);
+            $query = $this->db->get($this->table_name);
 
-			$query = $this->db->get($this->table_name);
-			return $query->result_array();
+            // 可选择仅返回符合条件项的ID列表
+            if ($return_ids === FALSE):
+                return $query->result_array();
 
-			if ($return_ids === TRUE):
-				// 多维数组转换为一维数组
-				$ids = array();
-				foreach ($results as $item):
-					$ids[] = $item[$this->id_name]; // 返回当前行的主键
-				endforeach;
+            else:
+                // 多维数组转换为一维数组
+                $ids = array();
+                $result = $query->result_array();
 
-				// 释放原结果数组以节省内存
-				unset($results);
+                foreach ($result as $item):
+                    $ids[] = $item[$this->id_name]; // 返回当前行的主键
+                endforeach;
 
-				// 返回数组
-				return $ids;
-			endif;
+                unset($result); // 释放原结果数组以节省内存
+
+                // 返回数组
+                return $ids;
+
+            endif;
 		} // end select
 
 	} // end class Order_model

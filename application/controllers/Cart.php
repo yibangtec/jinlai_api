@@ -30,7 +30,6 @@
 			// 设置主要数据库信息
 			$this->table_name = 'user'; // 这里……
 			$this->id_name = 'user_id'; // 这里……
-			$this->names_to_return[] = 'user_id'; // 还有这里，OK，这就可以了
 
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
@@ -133,7 +132,7 @@
 
 			else:
 				// 需要编辑的数据
-				$data_to_edit['operator_id'] = $user_id;
+				$data_to_edit['operator_id'] = $id;
 				$data_to_edit[$name] = trim($value, ',');
 
 				// 获取ID

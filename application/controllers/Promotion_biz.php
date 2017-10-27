@@ -32,8 +32,7 @@
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id',
-			'biz_id', 'name', 'type', 'time_start', 'time_end',
+			'user_id', 'biz_id', 'name', 'type', 'time_start', 'time_end',
 		);
 
 		/*
@@ -63,16 +62,7 @@
 		 * 完整编辑单行时必要的字段名
 		 */
 		protected $names_edit_required = array(
-			'user_id', 'id',
-			'name', 'time_start', 'time_end', 'fold_allowed',
-		);
-
-		/**
-		 * 编辑多行特定字段时必要的字段名
-		 */
-		protected $names_edit_bulk_required = array(
-			'user_id', 'ids',
-			'operation', 'password',
+			'user_id', 'id', 'name', 'time_start', 'time_end', 'fold_allowed',
 		);
 
 		public function __construct()

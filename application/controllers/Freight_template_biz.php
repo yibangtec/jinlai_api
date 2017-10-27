@@ -47,14 +47,6 @@
 			'name',
 		);
 
-		/**
-		 * 编辑多行特定字段时必要的字段名
-		 */
-		protected $names_edit_bulk_required = array(
-			'user_id', 'ids',
-			'operation', 'password',
-		);
-
 		public function __construct()
 		{
 			parent::__construct();
@@ -330,8 +322,9 @@
 				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);
 				if ($result !== FALSE):
-					$this->result['status'] = 200;
-					$this->result['content']['message'] = '编辑成功';
+                    $this->result['status'] = 200;
+                    $this->result['content']['id'] = $result;
+                    $this->result['content']['message'] = '编辑成功';
 
 				else:
 					$this->result['status'] = 434;
