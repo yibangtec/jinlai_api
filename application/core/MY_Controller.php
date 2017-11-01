@@ -136,7 +136,9 @@
 			$this->sign_check_string();
 		} // end sign_check
 
-		// 检查签名是否传入
+		/**
+         * 检查签名是否传入
+         */
         protected function sign_check_exits()
 		{
 			$this->sign = $this->input->post('sign');
@@ -148,7 +150,9 @@
 			endif;
 		} // end sign_check_exits
 
-		// 签名时间检查
+		/**
+         * 签名时间检查
+         */
         protected function sign_check_time()
 		{
 			$timestamp_sign = $this->input->post('timestamp');
@@ -175,7 +179,9 @@
 			endif;
 		} // end sign_check_time
 
-		// 签名参数检查
+		/**
+         * 签名参数检查
+         */
         protected function sign_check_params()
 		{
 			// 检查需要参与签名的必要参数；
@@ -200,7 +206,9 @@
 			endif;
 		} // end sign_check_params
 
-		// 签名正确性检查
+		/**
+         * 签名正确性检查
+         */
         protected function sign_check_string()
 		{
 			// 获取传入的参数们
@@ -249,7 +257,9 @@
 			return $sign;
 		} // end sign_generate
 		
-		// 拆分CSV为数组
+		/**
+         * 拆分CSV为数组
+         */
 		protected function explode_csv($text, $seperator = ',')
 		{
 			// 清理可能存在的空字符、冗余分隔符
@@ -262,7 +272,9 @@
 			return $array;
 		} // end explode_csv
 		
-		// 更换所用数据库
+		/**
+         * 更换所用数据库
+         */
 		protected function switch_model($table_name, $id_name)
 		{
 			$this->db->reset_query(); // 重置查询
@@ -270,7 +282,9 @@
 			$this->basic_model->id_name = $id_name;
 		} // end switch_model
 		
-		// 还原所用数据库
+		/**
+         * 还原所用数据库
+         */
 		protected function reset_model()
 		{
 			$this->db->reset_query(); // 重置查询
@@ -352,7 +366,9 @@
 			endif;
 		} // end operator_check
 		
-		// 发送短信
+		/**
+         * 发送短信
+         */
 		protected function sms_send($mobile, $content)
 		{
 			// 为短信内容添加后缀签名
@@ -391,7 +407,11 @@
 			endif;
 		} // amap_geocode
 
-		// 解析购物车
+		/**
+         * 解析购物车
+         *
+         * @param string $current_cart 购物车内容
+         */
 		protected function cart_decode($current_cart)
 		{
 			// 检查购物车是否为空，若空则直接返回相应提示，否则显示购物车详情
@@ -424,9 +444,9 @@
 		 * 生成单品订单信息
          * TODO 移除已失效项
 		 *
-		 * @params varchar/int $item_id 商品ID；商家ID需要从商品资料中获取
-		 * @params varchar/int $sku_id 规格ID
-		 * @params int $count 份数；默认为1，但有每单最低限量的情况下允许传入count
+		 * @param varchar/int $item_id 商品ID；商家ID需要从商品资料中获取
+		 * @param varchar/int $sku_id 规格ID
+		 * @param int $count 份数；默认为1，但有每单最低限量的情况下允许传入count
 		 */
 		private function generate_single_item($item_id, $sku_id = NULL, $count = 1)
 		{
@@ -450,9 +470,16 @@
 				'unit_name' => $item['unit_name'],
 				'tag_price' => $item['tag_price'],
 				'price' => $item['price'],
+				'stocks' => $item['stocks'],
 				'count' => $count,
+                'quantity_max' => $item['quantity_max'],
+                'quantity_min' => $item['quantity_min'],
+                'valid' => TRUE, // 默认该商品有效（可下单）
 			);
+
+			// 生成规格信息，并判断当前商品/规格是否有效
 			if ( !empty($sku) ):
+                if ( empty($sku['time_publish']) || $count > $sku['stocks']) $order_item['valid'] = FALSE;
 				$order_sku = array(
 					'sku_id' => $sku_id,
 					'sku_name' => $sku['name_first']. $sku['name_second']. $sku['name_third'],
@@ -461,7 +488,10 @@
 					'price' => $sku['price'],
 				);
 				$order_item = array_merge($order_item, $order_sku);
+            else:
+                if ( empty($item['time_publish']) || $count > $item['stocks']) $order_item['valid'] = FALSE;
 			endif;
+
 			// 生成订单商品信息
 			$order_item['single_total'] = $order_item['price'] * $order_item['count']; // 计算当前商品应付金额
 			//$order_items[] = array_filter($order_item);

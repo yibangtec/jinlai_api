@@ -207,6 +207,8 @@
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
+            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
+            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -217,6 +219,9 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
+                    'time_to_publish' => empty($this->input->post('time_to_publish'))? NULL: $this->input->post('time_to_publish'),
+                    'time_to_suspend' => empty($this->input->post('time_to_suspend'))? NULL: $this->input->post('time_to_suspend'),
+                    'time_publish' => empty($this->input->post('time_to_publish'))? time(): NULL, // 若未预订上架时间，则直接上架
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
@@ -276,6 +281,8 @@
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
+            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
+            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
 				// ...
@@ -290,7 +297,9 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
-					//'name' => $this->input->post('name')),
+                    'time_to_publish' => empty($this->input->post('time_to_publish'))? NULL: $this->input->post('time_to_publish'),
+                    'time_to_suspend' => empty($this->input->post('time_to_suspend'))? NULL: $this->input->post('time_to_suspend'),
+                    'time_publish' => empty($this->input->post('time_to_publish'))? time(): NULL, // 若未预订上架时间，则直接上架
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
@@ -381,6 +390,8 @@
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
+            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
+            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
