@@ -1,4 +1,4 @@
-
+# IDE配置文件
 .idea/workspace.xml
 
 .idea/vcs.xml
@@ -6,3 +6,6 @@
 .idea/modules.xml
 
 .idea/jinlai_api.iml
+
+# 调试日志文件
+alipay.txt

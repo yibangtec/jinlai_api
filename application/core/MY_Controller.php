@@ -421,7 +421,8 @@
 		} // end cart_decode
 
 		/**
-		 * TODO 生成单品订单信息
+		 * 生成单品订单信息
+         * TODO 移除已失效项
 		 *
 		 * @params varchar/int $item_id 商品ID；商家ID需要从商品资料中获取
 		 * @params varchar/int $sku_id 规格ID
@@ -430,14 +431,12 @@
 		private function generate_single_item($item_id, $sku_id = NULL, $count = 1)
 		{
 			// 获取商品信息
-			$this->basic_model->table_name = 'item';
-			$this->basic_model->id_name = 'item_id';
-			$item = $this->basic_model->select_by_id($item_id);
+            $this->switch_model('item', 'item_id');
+            $item = $this->basic_model->select_by_id($item_id);
 
 			// 获取规格信息
 			if ( !empty($sku_id) ):
-				$this->basic_model->table_name = 'sku';
-				$this->basic_model->id_name = 'sku_id';
+                $this->switch_model('sku', 'sku_id');
 				$sku = $this->basic_model->select_by_id($sku_id);
 			endif;
 
@@ -465,7 +464,8 @@
 			endif;
 			// 生成订单商品信息
 			$order_item['single_total'] = $order_item['price'] * $order_item['count']; // 计算当前商品应付金额
-			$order_items[] = array_filter($order_item);
+			//$order_items[] = array_filter($order_item);
+            $order_items[] = $order_item;
 
 			// 若当前商家已有待创建订单，更新部分订单信息及订单商品信息
 			$need_to_create = TRUE;
@@ -503,3 +503,6 @@
 		} // end generate_single_item
 
 	} // end class MY_Controller
+
+/* End of file MY_Controller.php */
+/* Location: ./application/core/MY_Controller.php */

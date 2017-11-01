@@ -150,7 +150,8 @@
             $this->db->join('biz', $this->table_name.'.biz_id = biz.biz_id', 'left outer');
 
 			// 获取特定项；默认可获取已删除项
-			$item = $this->basic_model->select_by_id($id);
+            $this->load->model('refund_model');
+			$item = $this->refund_model->select_by_id($id);
 			if ( !empty($item) ):
 				// 获取涉及退款的订单商品
 				$this->switch_model('order_items', 'record_id');
@@ -180,13 +181,8 @@
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('biz', 'client'); // 客户端类型
+			$type_allowed = array('client',); // 客户端类型
 			$this->client_check($type_allowed);
-
-			// 管理类客户端操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
 
 			// 检查必要参数是否已传入
 			$required_params = $this->names_create_required;
@@ -234,10 +230,6 @@
 
 				$result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):
-					//TODO 更新订单状态
-					$this->switch_model('order', 'order_id');
-					
-					
 					$this->result['status'] = 200;
 					$this->result['content']['id'] = $result;
 					$this->result['content']['message'] = '创建成功';

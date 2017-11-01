@@ -37,8 +37,7 @@
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id',
-			'category_id', 'biz_id', 'url_image_main', 'name', 'price', 'stocks',
+			'user_id', 'category_id', 'biz_id', 'url_image_main', 'name', 'price', 'stocks',
 		);
 
 		/**
@@ -236,9 +235,8 @@
 			//$this->db->select( implode(',', $this->names_to_return) );
 			$this->db->select(
 				implode(',', $this->names_to_return).
-				',(SELECT SUM(`count`) FROM `order_items` WHERE `time_accepted` IS NOT NULL AND `item_id`= `item`.`item_id`) as unit_sold'
+				',(SELECT SUM(`count`) FROM `order_items` WHERE `item_id`= `item`.`item_id`) as unit_sold, (SELECT SUM(`count`) FROM `order_items` WHERE `time_create` > (unix_timestamp() - 60*60*24*31) AND `item_id`= `item`.`item_id`) as unit_sold_monthly,'
 			);
-			if ($this->app_type === 'client') $this->db->where('time_delete IS NULL');
 
 			// 获取特定项；默认可获取已删除项
 			$item = $this->basic_model->select_by_id($id);
@@ -248,26 +246,51 @@
 
 				// 获取该商品所属商家信息
 				$this->switch_model('biz', 'biz_id');
-				$this->db->select('name, brief_name, url_logo, slogan, tel_public');
+				$this->db->select('brief_name, url_logo, slogan, tel_public');
 				$this->result['content']['biz'] = $this->basic_model->select_by_id($item['biz_id']);
+                    // 该商家商品总数
+                    $this->reset_model();
+                    $conditions = array(
+                        'biz_id' => $item['biz_id'],
+                        'time_publish' => 'IS NOT NULL',
+                    );
+                    $this->result['content']['biz']['item_count'] = $this->basic_model->count($conditions, FALSE);
+                    // 该商家被关注总数
+                    $this->switch_model('fav_biz', 'record_id');
+                    $conditions = array(
+                        'biz_id' => $item['biz_id'],
+                    );
+                    $this->result['content']['biz']['fav_biz_count'] = $this->basic_model->count($conditions, FALSE);
+                    // 获取该商家商品描述评价分数
+                    $this->switch_model('comment_item', 'comment_id');
+                    $this->db->select('AVG(`score`) AS score_description');
+                    $conditions = array(
+                        'biz_id' => $item['biz_id'],
+                        'time_delete' => 'IS NULL',
+                    );
+                    $result = $this->basic_model->select($conditions);
+                    $this->result['content']['biz']['score_description'] = !empty($result['score_description'])? $result['score_description']: 4.5;
+                    // 获取该商家服务态度、物流配送、环境分数（客户端按需取用）
+                    $this->switch_model('comment_biz', 'comment_id');
+                    $this->db->select('AVG(`score_service`) AS score_service, AVG(`score_deliver`) AS score_deliver, AVG(`score_environment`) AS score_environment');
+                    $result = $this->basic_model->select($conditions);
+                    $this->result['content']['biz']['score_service'] = !empty($result['score_service'])? $result['score_service']: 4.5;
+                    $this->result['content']['biz']['score_deliver'] = !empty($result['score_deliver'])? $result['score_deliver']: 4.5;
+                    $this->result['content']['biz']['score_environment'] = !empty($result['score_environment'])? $result['score_environment']: 4.5;
 
-				// 获取该商品相关SKU列表
+                // 获取该商品相关SKU列表
 				$this->switch_model('sku', 'sku_id');
 				if ($this->app_type === 'client') $this->db->where('time_delete IS NULL'); // 若为客户端发起的请求，则仅获取可用数据，下同
-				$condition = array(
-					'item_id' => $item['item_id'],
-				);
+				$conditions = array('item_id' => $item['item_id'],);
 				$this->db->select('sku_id, biz_id, item_id, url_image, name_first, name_second, name_third, tag_price, price, stocks, weight_net, weight_gross, weight_volume');
-				$this->result['content']['skus'] = $this->basic_model->select($condition, NULL);
+				$this->result['content']['skus'] = $this->basic_model->select($conditions, NULL);
 
 				// 获取当前商家营销活动
 				$this->switch_model('promotion_biz', 'promotion_id');
 				if ($this->app_type === 'client') $this->db->where('time_delete IS NULL');
-				$condition = array(
-					'biz_id' => $item['biz_id'],
-				);
+				$conditions = array('biz_id' => $item['biz_id'],);
 				$this->db->select('promotion_id, type, name, time_start, time_end');
-				$this->result['content']['biz_promotions'] = $this->basic_model->select($condition, NULL);
+				$this->result['content']['biz_promotions'] = $this->basic_model->select($conditions, NULL);
 
 				// 获取平台营销活动
 				$this->switch_model('promotion', 'promotion_id');
@@ -282,6 +305,11 @@
 					->or_where('biz_id', $item['biz_id']) // 商家优惠券
 					->group_end();
 				$this->result['content']['coupon_templates'] = $this->basic_model->select(NULL, NULL);
+
+				// 获取商品评价
+                $this->switch_model('comment_item', 'comment_id');
+                $conditions = array('item_id' => $id);
+                $this->result['content']['comments'] = $this->basic_model->select($conditions, NULL);
 
 			else:
 				$this->result['status'] = 414;

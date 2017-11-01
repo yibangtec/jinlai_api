@@ -65,8 +65,9 @@
 
             $this->db->limit($limit, $offset);
 
-			// 默认不返回已删除项
-			if ($allow_deleted === FALSE) $this->db->where($this->table_name.'.time_delete', NULL);
+            // 默认可返回已删除项
+            if ($allow_deleted === FALSE)
+                $this->db->where("`time_delete` IS NULL");
 
 			if ($return_ids === TRUE):
 				$this->db->select($this->id_name);

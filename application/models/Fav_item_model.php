@@ -65,8 +65,9 @@
 
             $this->db->limit($limit, $offset);
 
-			// 默认不返回已删除项
-			if ($allow_deleted === FALSE) $this->db->where($this->table_name.'.time_delete', NULL);
+            // 默认可返回已删除项
+            if ($allow_deleted === FALSE)
+                $this->db->where("`time_delete` IS NULL");
 
             // 获取必要信息
             $this->db->select($this->table_name.'.*, item.name as name, item.tag_price as tag_price, item.price as price, item.url_image_main as url_image_main, item.stocks as stocks, item.time_publish as time_publish, item.time_to_publish as time_to_publish, item.status as status');

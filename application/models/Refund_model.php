@@ -92,6 +92,24 @@
             endif;
 		} // end select
 
+        /**
+         * 根据ID获取特定项，默认可返回已删除项
+         *
+         * @param int $id 需获取的行的ID
+         * @param bool $allow_deleted 是否可返回被标注为删除状态的行；默认为TRUE
+         * @return array 结果行
+         */
+        public function select_by_id($id, $allow_deleted = TRUE)
+        {
+            // 默认可返回已删除项
+            if ($allow_deleted === FALSE) $this->db->where('time_delete', NULL);
+
+            $this->db->where($this->table_name.'.order_id', $id);
+
+            $query = $this->db->get($this->table_name);
+            return $query->row_array();
+        } // end select_by_id
+
 	} // end class Refund_model
 
 /* End of file Refund_model.php */

@@ -32,7 +32,7 @@
 			parent::__construct();
 		}
 		
-		// TODO 获取列表
+		// 获取列表
 		public function select($condition = NULL, $order_by = NULL, $return_ids = FALSE, $allow_deleted = FALSE)
 		{
 			$limit = $this->input->get_post('limit')? $this->input->get_post('limit'): NULL; // 需要从数据库获取的数据行数
@@ -65,15 +65,16 @@
 
             $this->db->limit($limit, $offset);
 
-			// 默认不返回已删除项
-			if ($allow_deleted === FALSE) $this->db->where($this->table_name.'.time_delete', NULL);
+            // 默认可返回已删除项
+            if ($allow_deleted === FALSE)
+                $this->db->where("`time_delete` IS NULL");
 
 			if ($return_ids === TRUE):
 				$this->db->select($this->id_name);
 			else:
 				// 获取必要信息
-				$this->db->select($this->table_name.'.*, biz.name as name, biz.url_logo as url_logo, biz.status as status');
-				$this->db->join('biz', $this->table_name.'.biz_id = biz.biz_id', 'left outer');
+				$this->db->select($this->table_name.'.*, refund.status as refund_status');
+                $this->db->join('refund', $this->table_name.'.order_id = refund.order_id', 'left outer');
 			endif;
 
             $query = $this->db->get($this->table_name);
@@ -98,6 +99,28 @@
 
             endif;
 		} // end select
+
+        /**
+         * 根据ID获取特定项，默认可返回已删除项
+         *
+         * @param int $id 需获取的行的ID
+         * @param bool $allow_deleted 是否可返回被标注为删除状态的行；默认为TRUE
+         * @return array 结果行（一维数组）
+         */
+        public function select_by_id($id, $allow_deleted = TRUE)
+        {
+            // 获取必要信息
+            $this->db->select($this->table_name.'.*, refund.status as refund_status');
+            $this->db->join('refund', $this->table_name.'.order_id = refund.order_id', 'left outer');
+
+            // 默认可返回已删除项
+            if ($allow_deleted === FALSE) $this->db->where('time_delete', NULL);
+
+            $this->db->where($this->table_name.'.'.$this->id_name, $id);
+
+            $query = $this->db->get($this->table_name);
+            return $query->row_array();
+        } // end select_by_id
 
 	} // end class Order_model
 

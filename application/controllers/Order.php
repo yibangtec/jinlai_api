@@ -14,14 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'biz_id', 'biz_name', 'biz_url_logo', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'freight', 'discount_reprice', 'repricer_id', 'total', 'credit_id', 'credit_payed', 'total_payed', 'total_refund', 'fullname', 'code_ssn', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'deliver_method', 'deliver_biz', 'waybill_id', 'refund_status', 'refund_id', 'invoice_status', 'invoice_id', 'time_create', 'time_create_start', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status',
-		);
-
-		/**
-		 * 可作为查询结果返回的字段名
-		 */
-		protected $names_to_return = array(
-			'order_id', 'biz_id', 'biz_name', 'biz_url_logo', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'freight', 'discount_reprice', 'repricer_id', 'total', 'credit_id', 'credit_payed', 'total_payed', 'total_refund', 'fullname', 'code_ssn', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'deliver_method', 'deliver_biz', 'waybill_id', 'code_string', 'time_create', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status', 'refund_status', 'refund_id', 'invoice_status', 'invoice_id',
+			'biz_id', 'biz_name', 'biz_url_logo', 'user_id', 'user_ip', 'subtotal', 'promotion_id', 'discount_promotion', 'coupon_id', 'discount_coupon', 'freight', 'discount_reprice', 'repricer_id', 'total', 'credit_id', 'credit_payed', 'total_payed', 'total_refund', 'fullname', 'code_ssn', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'payment_type', 'payment_account', 'payment_id', 'note_user', 'note_stuff', 'commission', 'promoter_id', 'deliver_method', 'deliver_biz', 'waybill_id', 'invoice_status', 'invoice_id', 'time_create', 'time_create_start', 'time_cancel', 'time_expire', 'time_pay', 'time_refuse', 'time_accept', 'time_deliver', 'time_confirm', 'time_confirm_auto', 'time_comment', 'time_refund', 'time_delete', 'time_edit', 'operator_id', 'status',
 		);
 
 		/**
@@ -129,11 +122,9 @@
 			// 排序条件
 			$order_by['time_create'] = 'DESC';
 
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
-
 			// 获取列表；默认可获取已删除项
-			$items = $this->basic_model->select($condition, $order_by);
+            $this->load->model('order_model');
+			$items = $this->order_model->select($condition, $order_by);
 			if ( !empty($items) ):
 				$this->switch_model('order_items', 'record_id');
 				for ($i=0;$i<count($items);$i++):
@@ -165,15 +156,12 @@
 				exit();
 			endif;
 
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
-
 			// 获取特定项；默认可获取已删除项
-			$item = $this->basic_model->select_by_id($id);
+            $this->load->model('order_model');
+			$item = $this->order_model->select_by_id($id);
 			if ( !empty($item) ):
 				// 获取订单商品信息
-				$this->basic_model->table_name = 'order_items';
-				$this->basic_model->id_name = 'record_id';
+                $this->switch_model('order_items', 'record_id');
 				// 筛选条件
 				$condition = array(
 					'order_id' => $item['order_id'],
@@ -617,7 +605,6 @@
 
 			// 获取商品信息
 			$this->cart_decode($cart_string);
-			$order_data = $this->order_data;
 
 			$this->result['status'] = 200;
 			$this->result['content']['addresses'] = $addresses;

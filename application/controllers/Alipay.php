@@ -306,7 +306,7 @@
             $this->design_string_generate($params);
 
 		    // 生成测试日志
-            //$this->log_this($params);
+            $this->log_this($params);
 
 			$priKey = ALIPAY_KEY_PUBLIC;
 			$res = "-----BEGIN PUBLIC KEY-----\n".

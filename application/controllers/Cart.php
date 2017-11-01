@@ -60,7 +60,7 @@
 			$item = $this->basic_model->select_by_id($id);
 			if ( empty($item) ):
 				$this->result['status'] = 414;
-				$this->result['content']['error']['message'] = '没有符合条件的数据';
+				$this->result['content']['error']['message'] = '购物车是空的';
 
 			else:
 				// 解码为数组
@@ -96,7 +96,7 @@
 
 			else:
 				$this->result['status'] = 414;
-				$this->result['content']['error']['message'] = '没有符合条件的数据';
+				$this->result['content']['error']['message'] = '购物车是空的';
 
 			endif;
 		} // end sync_down
@@ -123,7 +123,7 @@
 			// 动态设置待验证字段名及字段值
 			$data_to_validate["{$name}"] = $value;
 			$this->form_validation->set_data($data_to_validate);
-			$this->form_validation->set_rules('cart_string', '购物车内容', 'trim|required');
+			$this->form_validation->set_rules('cart_string', '购物车内容', 'trim');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):

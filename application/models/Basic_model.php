@@ -11,7 +11,7 @@
 	{
 		/**
 		 * 数据库表名
-		 *
+         *
 		 * @var string $table_name 表名
 		 */
 		public $table_name;
@@ -24,9 +24,9 @@
 		public $id_name;
 
 		/**
-		 * 初始化类
-		 * @param void
-		 * @return void
+		 * 构造函数
+         *
+         * @param void
 		 */
 		public function __construct()
 		{
@@ -48,7 +48,7 @@
 
 			$query = $this->db->get($this->table_name);
 			return $query->row_array();
-		}
+		} // end find
 
 		/**
 		 * 返回符合多个条件的数据（单行）
@@ -62,7 +62,7 @@
 		{
 			$query = $this->db->get_where($this->table_name, $data_to_search);
 			return $query->row_array();
-		}
+		} // end match
 
 		/**
 		 * 统计数量
@@ -90,10 +90,10 @@
 
 			// 默认不计算被标记为已删除状态的行
 			if ($include_deleted === FALSE)
-				$this->db->where("`time_delete` IS NOT NULL");
+				$this->db->where("`time_delete` IS NULL");
 
 			return $this->db->count_all_results($this->table_name);
-		}
+		} // end count
 
 		/**
 		 * 根据条件获取列表，默认可返回已删除项
@@ -137,7 +137,8 @@
             $this->db->limit($limit, $offset);
 
 			// 默认可返回已删除项
-			if ($allow_deleted === FALSE) $this->db->where('time_delete', NULL);
+            if ($allow_deleted === FALSE)
+                $this->db->where("`time_delete` IS NULL");
 
             $query = $this->db->get($this->table_name);
 
@@ -178,15 +179,16 @@
 
 			$query = $this->db->get($this->table_name);
 			return $query->row_array();
-		}
+		} // end select_by_id
 
 		/**
 		 * 根据CSV格式的ID们字符串获取列表，默认可返回已删除项
 		 */
 		public function select_by_ids($ids, $allow_deleted = TRUE)
 		{
-			// 默认可返回已删除项
-			if ($allow_deleted === FALSE) $this->db->where('time_delete', NULL);
+            // 默认可返回已删除项
+            if ($allow_deleted === FALSE)
+                $this->db->where("`time_delete` IS NULL");
 
 			// 拆分字符串为数组
 			$ids = explode(',', trim($ids, ',')); // 清除多余的前后半角逗号
@@ -196,7 +198,7 @@
 
 			$query = $this->db->get($this->table_name);
 			return $query->result_array();
-		}
+		} // end select_by_ids
 
 		/**
 		 * 获取已删除项列表
@@ -235,23 +237,28 @@
 			$this->db->where('time_delete !=', NULL)
 					->limit($limit, $offset);
 
-			$query = $this->db->get($this->table_name);
-			return $query->result_array();
-			
-			if ($return_ids === TRUE):
-				// 多维数组转换为一维数组
-				$ids = array();
-				foreach ($results as $item):
-					$ids[] = $item[$this->id_name]; // 返回当前行的主键
-				endforeach;
+            $query = $this->db->get($this->table_name);
 
-				// 释放原结果数组以节省内存
-				unset($results);
+            // 可选择仅返回符合条件项的ID列表
+            if ($return_ids === FALSE):
+                return $query->result_array();
 
-				// 返回数组
-				return $ids;
-			endif;
-		}
+            else:
+                // 多维数组转换为一维数组
+                $ids = array();
+                $result = $query->result_array();
+
+                foreach ($result as $item):
+                    $ids[] = $item[$this->id_name]; // 返回当前行的主键
+                endforeach;
+
+                unset($result); // 释放原结果数组以节省内存
+
+                // 返回数组
+                return $ids;
+
+            endif;
+		} // end select_trash
 
 		/**
 		 * 创建
@@ -276,7 +283,7 @@
 			else:
 				return $insert_result;
 			endif;
-		}
+		} // end create
 
 		/**
 		 * 修改
@@ -298,8 +305,8 @@
 			else:
 				return $update_result;
 			endif;
-		}
-	}
+		} // end edit;
+	} // end Class Basic_model
 
 /* End of file Basic_model.php */
 /* Location: ./application/models/Basic_model.php */
