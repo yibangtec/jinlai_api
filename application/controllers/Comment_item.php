@@ -18,21 +18,18 @@ class Comment_item extends MY_Controller
     );
 
     /**
-     * 可作为查询结果返回的字段名
-     */
-    protected $names_to_return = array(
-        'comment_id', 'order_id', 'user_id', 'biz_id', 'item_id', 'score', 'content', 'image_urls', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
-    );
-
-    /**
      * 创建时必要的字段名
      */
-    protected $names_create_required = array('order_id', 'user_id', 'biz_id', 'item_id',);
+    protected $names_create_required = array(
+        'order_id', 'user_id', 'biz_id', 'item_id',
+    );
 
     /**
      * 编辑多行特定字段时必要的字段名
      */
-    protected $names_edit_bulk_required = array('user_id', 'ids', 'operation', 'password',);
+    protected $names_edit_bulk_required = array(
+        'user_id', 'ids', 'operation', 'password',
+    );
 
     // 商品评价信息（批量创建评价）
     protected $comment_item = array();
@@ -121,11 +118,9 @@ class Comment_item extends MY_Controller
         $order_by = NULL;
         //$order_by['name'] = 'value';
 
-        // 限制可返回的字段
-        $this->db->select(implode(',', $this->names_to_return));
-
         // 获取列表；默认可获取已删除项
-        $items = $this->basic_model->select($condition, $order_by);
+        $this->load->model('comment_item_model');
+        $items = $this->comment_item_model->select($condition, $order_by);
         if (!empty($items)):
             $this->result['status'] = 200;
             $this->result['content'] = $items;
@@ -150,11 +145,9 @@ class Comment_item extends MY_Controller
             exit();
         endif;
 
-        // 限制可返回的字段
-        $this->db->select(implode(',', $this->names_to_return));
-
         // 获取特定项；默认可获取已删除项
-        $item = $this->basic_model->select_by_id($id);
+        $this->load->model('comment_item_model');
+        $item = $this->comment_item_model->select_by_id($id);
         if (!empty($item)):
             $this->result['status'] = 200;
             $this->result['content'] = $item;
@@ -254,6 +247,7 @@ class Comment_item extends MY_Controller
 
         // 获取商品评价信息
         $this->comment_item = json_decode($this->input->post('comment_item'), TRUE);
+        if ($this->input->post('test_mode') === 'on') var_dump($this->comment_item);
 
         // 初始化并配置表单验证库
         $this->load->library('form_validation');
@@ -261,7 +255,7 @@ class Comment_item extends MY_Controller
         $this->form_validation->set_rules('order_id', '所属订单ID', 'trim|required|is_natural_no_zero');
         // 商家相关评论内容
         $this->form_validation->set_rules('score_service', '服务态度', 'trim|is_natural_no_zero|greater_than[0]|less_than[6]');
-        $this->form_validation->set_rules('score_deliver', '物流服务', 'trim|is_natural_no_zero|greater_than[0]|less_than[6]');
+        $this->form_validation->set_rules('score_deliver', '物流配送', 'trim|is_natural_no_zero|greater_than[0]|less_than[6]');
 
         // 若表单提交不成功
         if ($this->form_validation->run() === FALSE):
@@ -362,7 +356,7 @@ class Comment_item extends MY_Controller
         $result = $this->basic_model->create($data_to_create, TRUE);
         if ($result !== FALSE):
             $this->result['status'] = 200;
-            $this->result['content']['comment_item_id'][] = $result;
+            $this->result['content']['comment_item_ids'][] = $result;
             $this->result['content']['message'] .= '商品ID['.$data_to_create['item_id'].']评论创建成功、';
 
         else:

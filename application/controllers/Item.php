@@ -232,7 +232,6 @@
 			if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
 
 			// 限制可返回的字段
-			//$this->db->select( implode(',', $this->names_to_return) );
 			$this->db->select(
 				implode(',', $this->names_to_return).
 				',(SELECT SUM(`count`) FROM `order_items` WHERE `item_id`= `item`.`item_id`) as unit_sold, (SELECT SUM(`count`) FROM `order_items` WHERE `time_create` > (unix_timestamp() - 60*60*24*31) AND `item_id`= `item`.`item_id`) as unit_sold_monthly,'
@@ -309,7 +308,8 @@
 				// 获取商品评价
                 $this->switch_model('comment_item', 'comment_id');
                 $conditions = array('item_id' => $id);
-                $this->result['content']['comments'] = $this->basic_model->select($conditions, NULL);
+                $this->load->model('comment_item_model');
+                $this->result['content']['comments'] = $this->comment_item_model->select($conditions, NULL);
 
 			else:
 				$this->result['status'] = 414;

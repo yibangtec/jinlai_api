@@ -18,31 +18,25 @@
 		);
 
 		/**
-		 * 可作为查询结果返回的字段名
-		 */
-		protected $names_to_return = array(
-			'comment_id', 'biz_id', 'user_id', 'order_id', 'score_service', 'score_deliver', 'score_environment', 'content', 'image_urls', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
-		);
-
-		/**
 		 * 创建时必要的字段名
 		 */
-		protected $names_create_required = array('biz_id', 'user_id',);
+		protected $names_create_required = array(
+		    'biz_id', 'user_id',
+        );
 
 		/**
 		 * 可被编辑的字段名
 		 */
-		protected $names_edit_allowed = array('score_service', 'score_deliver', 'score_environment', 'content', 'image_urls',);
+		protected $names_edit_allowed = array(
+		    'score_service', 'score_deliver', 'score_environment', 'content', 'image_urls',
+        );
 
 		/**
 		 * 完整编辑单行时必要的字段名
 		 */
-		protected $names_edit_required = array('user_id', 'id',);
-
-		/**
-		 * 编辑多行特定字段时必要的字段名
-		 */
-		protected $names_edit_bulk_required = array('user_id', 'ids', 'operation', 'password',);
+		protected $names_edit_required = array(
+		    'user_id', 'id',
+        );
 
 		public function __construct()
 		{
@@ -127,11 +121,9 @@
 			// 排序条件
 			$order_by = NULL;
 
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
-
 			// 获取列表；默认可获取已删除项
-			$items = $this->basic_model->select($condition, $order_by);
+            $this->load->model('comment_biz_model');
+            $items = $this->comment_biz_model->select($condition, $order_by);
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
@@ -155,12 +147,10 @@
 				$this->result['content']['error']['message'] = '必要的请求参数未传入';
 				exit();
 			endif;
-
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
 			
 			// 获取特定项；默认可获取已删除项
-			$item = $this->basic_model->select_by_id($id);
+            $this->load->model('comment_biz_model');
+			$item = $this->comment_biz_model->select_by_id($id);
 			if ( !empty($item) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;

@@ -1,26 +1,26 @@
 <?php
 	/**
-	 * 商家关注模型类
+	 * 商家评价模型类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
 	 * @copyright ICBG <www.bingshankeji.com>
 	 */
-	class Fav_biz_model extends CI_Model
+	class Comment_biz_model extends CI_Model
 	{
 		/**
 		 * 数据库表名
 		 *
 		 * @var string $table_name 表名
 		 */
-		public $table_name = 'fav_biz';
+		public $table_name = 'comment_biz';
 
 		/**
 		 * 数据库主键名
 		 *
 		 * @var string $id_name 数据库主键名
 		 */
-		public $id_name = 'record_id';
+		public $id_name = 'comment_id';
 
 		/**
 		 * 初始化类
@@ -68,13 +68,9 @@
             if ($allow_deleted === FALSE)
                 $this->db->where($this->table_name.".`time_delete` IS NULL");
 
-			if ($return_ids === TRUE):
-				$this->db->select($this->id_name);
-			else:
-				// 获取必要信息
-				$this->db->select($this->table_name.'.*, biz.name as name, biz.brief_name as brief_name, biz.url_logo as url_logo, biz.status as status');
-				$this->db->join('biz', $this->table_name.'.biz_id = biz.biz_id', 'left outer');
-			endif;
+            // 获取必要信息
+            $this->db->select($this->table_name.'.*, user.nickname as nickname, user.avatar as avatar');
+            $this->db->join('user', $this->table_name.'.user_id = user.user_id', 'left outer');
 
             $query = $this->db->get($this->table_name);
 
@@ -99,7 +95,29 @@
             endif;
 		} // end select
 
-	} // end class Fav_biz_model
+        /**
+         * 根据ID获取特定项，默认可返回已删除项
+         *
+         * @param int $id 需获取的行的ID
+         * @param bool $allow_deleted 是否可返回被标注为删除状态的行；默认为TRUE
+         * @return array 结果行（一维数组）
+         */
+        public function select_by_id($id, $allow_deleted = TRUE)
+        {
+            // 获取必要信息
+            $this->db->select($this->table_name.'.*, user.nickname as nickname, user.avatar as avatar');
+            $this->db->join('user', $this->table_name.'.user_id = user.user_id', 'left outer');
 
-/* End of file Fav_biz_model.php */
-/* Location: ./application/models/Fav_biz_model.php */
+            // 默认可返回已删除项
+            if ($allow_deleted === FALSE) $this->db->where('time_delete', NULL);
+
+            $this->db->where($this->table_name.'.'.$this->id_name, $id);
+
+            $query = $this->db->get($this->table_name);
+            return $query->row_array();
+        } // end select_by_id
+
+	} // end class Comment_biz_model
+
+/* End of file Comment_biz_model.php */
+/* Location: ./application/models/Comment_biz_model.php */
