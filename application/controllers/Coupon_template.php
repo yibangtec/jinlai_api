@@ -19,17 +19,11 @@
 		);
 
 		/**
-		 * 可作为查询结果返回的字段名
-		 */
-		protected $names_to_return = array(
-			'template_id', 'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'description', 'max_amount', 'max_amount_user', 'min_subtotal', 'amount', 'period', 'time_start', 'time_end',
-			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
-		);
-
-		/**
 		 * 创建时必要的字段名
 		 */
-		protected $names_create_required = array('user_id', 'name', 'amount',);
+		protected $names_create_required = array(
+		    'user_id', 'name', 'amount',
+            );
 
 		/**
 		 * 可被编辑的字段名
@@ -41,7 +35,9 @@
 		/**
 		 * 完整编辑单行时必要的字段名
 		 */
-		protected $names_edit_required = array('user_id', 'id', 'name', 'amount',);
+		protected $names_edit_required = array(
+		    'user_id', 'id', 'name', 'amount',
+        );
 
 		public function __construct()
 		{
@@ -121,13 +117,10 @@
 			
 			// 排序条件
 			$order_by = NULL;
-			//$order_by['name'] = 'value';
-
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
 
 			// 获取列表；默认可获取已删除项
-			$items = $this->basic_model->select($condition, $order_by);
+            $this->load->model('coupon_template_model');
+			$items = $this->coupon_template_model->select($condition, $order_by);
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
@@ -151,12 +144,10 @@
 				$this->result['content']['error']['message'] = '必要的请求参数未传入';
 				exit();
 			endif;
-
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
 			
 			// 获取特定项；默认可获取已删除项
-			$item = $this->basic_model->select_by_id($id);
+            $this->load->model('coupon_template_model');
+			$item = $this->coupon_template_model->select_by_id($id);
 			if ( !empty($item) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;

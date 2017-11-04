@@ -484,6 +484,11 @@
 			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
 			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[cancel,note,reprice,refuse,accept,deliver,confirm,delete,restore]');
 			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
+
+			// 用户取消订单时需要输入原因
+			if ($operation === 'cancel')
+                $this->form_validation->set_rules('reason_cancel', '取消原因', 'trim|required|max_length[20]');
+
 			// 用户确认订单、商家改价时需要输入密码
 			if ($operation === 'confirm' || $operation === 'reprice')
 				$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
@@ -727,6 +732,7 @@
 		{
 			$data_to_edit['time_cancel'] = time();
 			$data_to_edit['status'] = '已取消';
+            $data_to_edit['reason_cancel'] = $this->input->post('reason_cancel');
 			return $data_to_edit;
 		} // end operation_cancel
 

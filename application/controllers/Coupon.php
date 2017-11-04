@@ -17,13 +17,6 @@
 			'user_id', 'combo_id', 'template_id', 'category_id', 'biz_id', 'category_biz_id', 'item_id', 'name', 'description', 'amount', 'min_subtotal', 'time_start', 'time_end', 'time_expire', 'order_id', 'time_used', 'time_create', 'time_delete', 'status',
 		);
 
-		/**
-		 * 可作为查询结果返回的字段名
-		 */
-		protected $names_to_return = array(
-			'coupon_id', 'user_id', 'combo_id', 'template_id', 'category_id', 'biz_id', 'category_biz_id', 'item_id', 'name', 'description', 'amount', 'min_subtotal', 'time_start', 'time_end', 'time_expire', 'order_id', 'time_used', 'time_create', 'time_delete', 'status',
-		);
-
 		public function __construct()
 		{
 			parent::__construct();
@@ -107,11 +100,9 @@
 			$order_by = NULL;
 			//$order_by['name'] = 'value';
 
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
-
 			// 获取列表；默认可获取已删除项
-			$items = $this->basic_model->select($condition, $order_by);
+            $this->load->model('coupon_model');
+			$items = $this->coupon_model->select($condition, $order_by);
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
@@ -135,12 +126,10 @@
 				$this->result['content']['error']['message'] = '必要的请求参数未传入';
 				exit();
 			endif;
-
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
 			
 			// 获取特定项；默认可获取已删除项
-			$item = $this->basic_model->select_by_id($id);
+            $this->load->model('coupon_model');
+			$item = $this->coupon_model->select_by_id($id);
 			if ( !empty($item) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
@@ -155,16 +144,15 @@
 		/**
 		 * 检查优惠券模板有效性
 		 *
-		 * @params int/string $template_id 优惠券模板ID
-		 * @params int/string $user_id 用户ID
-		 * @params boolean $in_combo 是否在优惠券包中
+		 * @param int/string $template_id 优惠券模板ID
+		 * @param int/string $user_id 用户ID
+		 * @param int/string $combo_id 所属优惠券包ID
 		 * @return array/boolean 可用的优惠券模板信息或FALSE
 		 */
 		protected function get_template($template_id, $user_id, $combo_id = NULL)
 		{
 			// 获取优惠券模板
-			$this->basic_model->table_name = 'coupon_template';
-			$this->basic_model->id_name = 'template_id';
+            $this->switch_model('coupon_template', 'template_id');
 
 			// 有效期结束时间不早于当前时间
 			$this->db->where('time_delete', NULL)
@@ -173,11 +161,9 @@
 	                        ->or_where('time_end >', time())
 			        ->group_end();
 			$template = $this->basic_model->select_by_id($template_id);
-			//var_dump($template);
 
 			// 还原数据库参数
-			$this->basic_model->table_name = $this->table_name;
-			$this->basic_model->id_name = $this->id_name;
+            $this->reset_model();
 
 			// 若无符合条件的优惠券，返回false
 			if ( empty($template) ):

@@ -272,55 +272,81 @@ class Comment_item extends MY_Controller
             );
             $order = $this->basic_model->match($data_to_search);
 
-            // 为相关商家创建商家评论
-            // 获取商家信息
-            $this->switch_model('biz', 'biz_id');
-            $this->db->select('biz_id, brief_name');
-            $biz = $this->basic_model->find('biz_id', $order['biz_id']);
-            // 创建商家评论
-            $data_to_create = array(
-                'creator_id' => $user_id,
+            if ( empty($order) ):
+                $this->result['status'] = 444;
+                $this->result['content']['error']['message'] = '该订单已评价过，或订单号与用户ID不匹配。';
 
-                'biz_id' => $biz['biz_id'],
-                'user_id' => $user_id,
-                'order_id' => $order_id,
-                'score_service' => !empty($this->input->post('score_service')) ? $this->input->post('score_service') : 4,
-                'score_deliver' => !empty($this->input->post('score_deliver')) ? $this->input->post('score_deliver') : 4,
-            );
-            $this->create_comment_biz($data_to_create);
+            else:
+                // 为相关商家创建商家评论
+                // 获取商家信息
+                $this->switch_model('biz', 'biz_id');
+                $this->db->select('biz_id, brief_name');
+                $biz = $this->basic_model->find('biz_id', $order['biz_id']);
+                // 创建商家评论
+                $data_to_create = array(
+                    'creator_id' => $user_id,
 
-            // 为所有未退款的相关订单商品创建商品评论
-            // 获取订单商品信息
-            $this->switch_model('order_items', 'record_id');
-            $this->db->select('item_id, name');
-            $conditions = array(
-                'order_id' => $order['order_id'],
-            );
-            $order_items = $this->basic_model->select($conditions);
-
-            // 为每个商品创建评价
-            // 各商品评价通用值
-            $this->switch_model('comment_item', 'comment_id');
-            $data_to_create = array(
-                'creator_id' => $user_id,
-
-                'biz_id' => $biz['biz_id'],
-                'user_id' => $user_id,
-                'order_id' => $order_id,
-            );
-            foreach ($order_items as $item):
-                $item_score = $this->comment_item[$item['item_id']]['score'];
-                $item_content = $this->comment_item[$item['item_id']]['content'];
-                $item_image_urls = $this->comment_item[$item['item_id']]['image_urls'];
-
-                $comment_item = array(
-                    'item_id' => $item['item_id'],
-                    'score' => !empty($item_score) ? $item_score : 4,
-                    'content' => !empty($item_content) ? $item_content : '默认好评',
-                    'image_urls' => !empty($item_image_urls) ? $item_image_urls : NULL,
+                    'biz_id' => $biz['biz_id'],
+                    'user_id' => $user_id,
+                    'order_id' => $order_id,
+                    'score_service' => !empty($this->input->post('score_service')) ? $this->input->post('score_service') : 4,
+                    'score_deliver' => !empty($this->input->post('score_deliver')) ? $this->input->post('score_deliver') : 4,
                 );
-                $this->create_comment_item( array_merge($data_to_create, $comment_item) );
-            endforeach;
+                $this->create_comment_biz($data_to_create);
+
+                // 为所有未退款的相关订单商品创建商品评论
+                // 获取订单商品信息
+                $this->switch_model('order_items', 'record_id');
+                $this->db->select('item_id, name');
+                $conditions = array(
+                    'order_id' => $order['order_id'],
+                );
+                $order_items = $this->basic_model->select($conditions);
+
+                // 为每个商品创建评价
+                // 各商品评价通用值
+                $this->switch_model('comment_item', 'comment_id');
+                $data_to_create = array(
+                    'creator_id' => $user_id,
+
+                    'biz_id' => $biz['biz_id'],
+                    'user_id' => $user_id,
+                    'order_id' => $order_id,
+                );
+                foreach ($order_items as $item):
+                    $item_score = $this->comment_item[$item['item_id']]['score'];
+                    $item_content = $this->comment_item[$item['item_id']]['content'];
+                    $item_image_urls = $this->comment_item[$item['item_id']]['image_urls'];
+
+                    $comment_item = array(
+                        'item_id' => $item['item_id'],
+                        'score' => !empty($item_score) ? $item_score : 4,
+                        'content' => !empty($item_content) ? $item_content : '默认好评',
+                        'image_urls' => !empty($item_image_urls) ? $item_image_urls : NULL,
+                    );
+                    $this->create_comment_item( array_merge($data_to_create, $comment_item) );
+                endforeach;
+
+                // 若评论创建成功，标记相应订单为已评价状态
+                if ($this->result['status'] === 200):
+
+                    $this->switch_model('order', 'order_id');
+                    $data_to_edit = array('status' => '已完成');
+                    $result = $this->basic_model->edit($order_id, $data_to_edit);
+                    if ($result !== FALSE):
+                        $this->result['status'] = 200;
+                        $this->result['content']['id'] = $order_id;
+                        $this->result['content']['message'] = trim($this->result['content']['message'], '、').'；订单状态已更新。';
+
+                    else:
+                        $this->result['status'] = 434;
+                        $this->result['content']['error']['message'] = '订单评价失败';
+
+                    endif;
+                endif;
+
+            endif;
+
         endif;
     } // end create_bulk
 
