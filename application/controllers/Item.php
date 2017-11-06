@@ -161,8 +161,14 @@
 			// 类特有筛选项
 			$this->advanced_sorter();
 
-			// 商家仅可操作自己的数据
-			if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
+            // 用户仅可查看已上架商品数据
+            if ($this->app_type === 'client'):
+                $this->db->where('time_publish', 'IS NOT NULL');
+                $this->db->where('time_delete', ' NULL');
+            endif;
+
+            // 商家仅可操作自己的数据
+            if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
 
 			// 排序条件
 			$order_by = NULL;
@@ -228,8 +234,14 @@
 				exit();
 			endif;
 
-			// 商家仅可查看或操作自己的数据
-			if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
+            // 用户仅可查看已上架商品数据
+            if ($this->app_type === 'client'):
+                $this->db->where('time_publish', 'IS NOT NULL');
+                $this->db->where('time_delete', ' NULL');
+            endif;
+
+            // 商家仅可操作自己的数据
+            if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
 
 			// 限制可返回的字段
 			$this->db->select(

@@ -139,7 +139,8 @@
 		{
 			// 检查必要参数是否已传入
 			$id = $this->input->post('id');
-			if ( !isset($id) ):
+            $order_id = $this->input->post('order_id');
+			if ( !isset($id) && !isset($order_id) ):
 				$this->result['status'] = 400;
 				$this->result['content']['error']['message'] = '必要的请求参数未传入';
 				exit();
@@ -151,7 +152,7 @@
 
 			// 获取特定项；默认可获取已删除项
             $this->load->model('refund_model');
-			$item = $this->refund_model->select_by_id($id);
+			$item = $this->refund_model->select_by_id($id, $order_id);
 			if ( !empty($item) ):
 				// 获取涉及退款的订单商品
 				$this->switch_model('order_items', 'record_id');
