@@ -206,7 +206,7 @@
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
 			$this->form_validation->set_rules('category_id', '所属分类', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('title', '标题', 'trim|required|max_length[30]');
-			$this->form_validation->set_rules('excerpt', '摘要', 'trim|required|max_length[255]');
+			$this->form_validation->set_rules('excerpt', '摘要', 'trim|max_length[255]');
 			$this->form_validation->set_rules('content', '内容', 'trim|required|max_length[20000]');
 			$this->form_validation->set_rules('url_name', '自定义域名', 'trim|alpha_dash|max_length[30]');
 			$this->form_validation->set_rules('url_images', '形象图', 'trim|max_length[255]');
@@ -271,12 +271,12 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('category_id', '所属分类', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('title', '标题', 'trim|required');
-			$this->form_validation->set_rules('excerpt', '摘要', 'trim|required');
-			$this->form_validation->set_rules('content', '内容', 'trim|required');
-			$this->form_validation->set_rules('url_name', '自定义域名', 'trim');
-			$this->form_validation->set_rules('url_images', '形象图', 'trim');
+            $this->form_validation->set_rules('category_id', '所属分类', 'trim|is_natural_no_zero');
+            $this->form_validation->set_rules('title', '标题', 'trim|required|max_length[30]');
+            $this->form_validation->set_rules('excerpt', '摘要', 'trim|max_length[255]');
+            $this->form_validation->set_rules('content', '内容', 'trim|required|max_length[20000]');
+            $this->form_validation->set_rules('url_name', '自定义域名', 'trim|alpha_dash|max_length[30]');
+            $this->form_validation->set_rules('url_images', '形象图', 'trim|max_length[255]');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
 				// ...

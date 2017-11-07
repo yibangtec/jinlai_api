@@ -385,10 +385,12 @@
 			$this->form_validation->set_rules('coupon_allowed', '是否可用优惠券', 'trim|in_list[0,1]');
 			$this->form_validation->set_rules('discount_credit', '积分抵扣率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
-			$this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
-			$this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
+            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_to_publish');
+            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_to_suspend');
 			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
+            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
+            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -484,10 +486,12 @@
 			$this->form_validation->set_rules('coupon_allowed', '是否可用优惠券', 'trim|in_list[0,1]');
 			$this->form_validation->set_rules('discount_credit', '积分抵扣率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
-			$this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
-			$this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
+			$this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_to_publish');
+			$this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_to_suspend');
 			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
+            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
+            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -596,10 +600,13 @@
 			$this->form_validation->set_rules('coupon_allowed', '是否可用优惠券', 'trim|in_list[0,1]');
 			$this->form_validation->set_rules('discount_credit', '积分抵扣率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
-			$this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
-			$this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
+            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_to_publish');
+            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_to_suspend');
 			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
+
+            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
+            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -685,17 +692,19 @@
 					case 'publish': // 上架
 						$data_to_edit['time_publish'] = time();
 						$data_to_edit['time_suspend'] = NULL;
-						$data_to_edit['time_to_suspend'] = $data_to_edit['time_to_publish'] = NULL; // 若手动上架，则取消上下架计划
+						$data_to_edit['time_to_publish'] = NULL; // 若手动上架，则取消上架计划
 						break;
 					case 'suspend': // 下架
 						$data_to_edit['time_publish'] = NULL;
 						$data_to_edit['time_suspend'] = time();
-						$data_to_edit['time_to_suspend'] = $data_to_edit['time_to_publish'] = NULL; // 若手动下架，则取消上下架计划
+						$data_to_edit['time_to_suspend'] = NULL; // 若手动下架，则取消下架计划
 						break;
-					case 'delete':
+					case 'delete': // 删除
+                        $data_to_edit['time_publish'] = NULL;
+                        $data_to_edit['time_suspend'] = time(); // 删除商品时设置下架时间为当前时间
 						$data_to_edit['time_delete'] = date('Y-m-d H:i:s');
 						break;
-					case 'restore':
+					case 'restore': // 恢复
 						$data_to_edit['time_delete'] = NULL;
 						break;
 				endswitch;
@@ -705,7 +714,8 @@
 				$ids = explode(',', $ids);
 				
 				// 商家仅可操作自己的数据
-				if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
+				if ($this->app_type === 'biz')
+				    $this->db->where('biz_id', $this->input->post('biz_id'));
 
 				// 默认批量处理全部成功，若有任一处理失败则将处理失败行进行记录
 				$this->result['status'] = 200;
@@ -725,16 +735,8 @@
 			endif;
 		} // end edit_bulk
 
-		/**
-		 * TODO 批量获取多个商品
-		 */
-		protected function get_bulk($ids)
-		{
-			$this->basic_model->select_by_ids();
-		} // get_bulk
-
 		// 检查起始时间
-		protected function time_start($value)
+		protected function time_to_publish($value)
 		{
 			if ( empty($value) ):
 				return true;
@@ -751,10 +753,10 @@
 				endif;
 
 			endif;
-		} // end time_start
+		} // end time_to_publish
 
 		// 检查结束时间
-		protected function time_end($value)
+		protected function time_to_suspend($value)
 		{
 			if ( empty($value) ):
 				return true;
@@ -777,7 +779,7 @@
 				endif;
 
 			endif;
-		} // end time_end
+		} // end time_to_suspend
 
 	} // end class Item
 

@@ -207,8 +207,10 @@
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
-            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
-            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
+            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_to_publish');
+            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_to_suspend');
+            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
+            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -281,8 +283,10 @@
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
-            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
-            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
+            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_to_publish');
+            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_to_suspend');
+            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
+            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 			// 针对特定条件的验证规则
 			if ($this->app_type === '管理员'):
 				// ...
@@ -390,8 +394,10 @@
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
-            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]');
-            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]');
+            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_to_publish');
+            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_to_suspend');
+            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
+            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -419,87 +425,149 @@
 			endif;
 		} // end edit_certain
 
-		/**
-		 * 6 编辑多行数据特定字段
-		 *
-		 * 修改多行数据的单一字段值
-		 */
-		public function edit_bulk()
-		{
-			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('biz'); // 客户端类型
-			$this->client_check($type_allowed);
+        /**
+         * 6 编辑多行数据特定字段
+         *
+         * 修改多行数据的单一字段值
+         */
+        public function edit_bulk()
+        {
+            // 操作可能需要检查客户端及设备信息
+            $type_allowed = array('biz'); // 客户端类型
+            $this->client_check($type_allowed);
 
-			// 管理类客户端操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
+            // 管理类客户端操作可能需要检查操作权限
+            //$role_allowed = array('管理员', '经理'); // 角色要求
+            //$min_level = 10; // 级别要求
+            //$this->permission_check($role_allowed, $min_level);
 
-			// 检查必要参数是否已传入
-			$required_params = $this->names_edit_bulk_required;
-			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
-				if ( empty( ${$param} ) ):
-					$this->result['status'] = 400;
-					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-					exit();
-				endif;
-			endforeach;
+            // 检查必要参数是否已传入
+            $required_params = $this->names_edit_bulk_required;
+            foreach ($required_params as $param):
+                ${$param} = $this->input->post($param);
+                if ( empty( ${$param} ) ):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+                    exit();
+                endif;
+            endforeach;
 
-			// 初始化并配置表单验证库
-			$this->load->library('form_validation');
-			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
-			$this->form_validation->set_rules('operation', '待执行操作', 'trim|in_list[delete,restore]');
-			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('password', '密码', 'trim|min_length[6]|max_length[20]');
+            // 初始化并配置表单验证库
+            $this->load->library('form_validation');
+            $this->form_validation->set_error_delimiters('', '');
+            $this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
+            $this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore,suspend,publish]');
+            $this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
+            $this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
 
-			// 验证表单值格式
-			if ($this->form_validation->run() === FALSE):
-				$this->result['status'] = 401;
-				$this->result['content']['error']['message'] = validation_errors();
-				exit();
+            // 验证表单值格式
+            if ($this->form_validation->run() === FALSE):
+                $this->result['status'] = 401;
+                $this->result['content']['error']['message'] = validation_errors();
+                exit();
 
-			elseif ($this->operator_check() !== TRUE):
-				$this->result['status'] = 453;
-				$this->result['content']['error']['message'] = '与该ID及类型对应的操作者不存在，或操作密码错误';
-				exit();
+            elseif ($this->operator_check() !== TRUE):
+                $this->result['status'] = 453;
+                $this->result['content']['error']['message'] = '与该ID及类型对应的操作者不存在，或操作密码错误';
+                exit();
 
-			else:
-				// 需要编辑的数据；逐一赋值需特别处理的字段
-				$data_to_edit['operator_id'] = $user_id;
+            else:
+                // 需要编辑的数据；逐一赋值需特别处理的字段
+                $data_to_edit['operator_id'] = $user_id;
 
-				// 根据待执行的操作赋值待编辑数据
-				switch ( $operation ):
-					case 'delete':
-						$data_to_edit['time_delete'] = date('Y-m-d H:i:s');
-						break;
-					case 'restore':
-						$data_to_edit['time_delete'] = NULL;
-						break;
-				endswitch;
+                // 根据待执行的操作赋值待编辑数据
+                switch ( $operation ):
+                    case 'publish': // 上架
+                        $data_to_edit['time_publish'] = time();
+                        $data_to_edit['time_suspend'] = NULL;
+                        $data_to_edit['time_to_publish'] = NULL; // 若手动上架，则取消上架计划
+                        break;
+                    case 'suspend': // 下架
+                        $data_to_edit['time_publish'] = NULL;
+                        $data_to_edit['time_suspend'] = time();
+                        $data_to_edit['time_to_suspend'] = NULL; // 若手动下架，则取消下架计划
+                        break;
+                    case 'delete': // 删除
+                        $data_to_edit['time_publish'] = NULL;
+                        $data_to_edit['time_suspend'] = time(); // 删除商品时设置下架时间为当前时间
+                        $data_to_edit['time_delete'] = date('Y-m-d H:i:s');
+                        break;
+                    case 'restore': // 恢复
+                        $data_to_edit['time_delete'] = NULL;
+                        break;
+                endswitch;
 
-				// 依次操作数据并输出操作结果
-				// 将待操作行ID们的CSV格式字符串，转换为待操作行的ID数组
-				$ids = explode(',', $ids);
+                // 依次操作数据并输出操作结果
+                // 将待操作行ID们的CSV格式字符串，转换为待操作行的ID数组
+                $ids = explode(',', $ids);
 
-				// 默认批量处理全部成功，若有任一处理失败则将处理失败行进行记录
-				$this->result['status'] = 200;
-				foreach ($ids as $id):
-					$result = $this->basic_model->edit($id, $data_to_edit);
-					if ($result === FALSE):
-						$this->result['status'] = 434;
-						$this->result['content']['row_failed'][] = $id;
-					endif;
+                // 商家仅可操作自己的数据
+                if ($this->app_type === 'biz')
+                    $this->db->where('biz_id', $this->input->post('biz_id'));
 
-				endforeach;
+                // 默认批量处理全部成功，若有任一处理失败则将处理失败行进行记录
+                $this->result['status'] = 200;
+                foreach ($ids as $id):
+                    $result = $this->basic_model->edit($id, $data_to_edit);
+                    if ($result === FALSE):
+                        $this->result['status'] = 434;
+                        $this->result['content']['row_failed'][] = $id;
+                    endif;
 
-				// 添加全部操作成功后的提示
-				if ($this->result['status'] = 200)
-					$this->result['content']['message'] = '全部操作成功';
+                endforeach;
 
-			endif;
-		} // end edit_bulk
+                // 添加全部操作成功后的提示
+                if ($this->result['status'] = 200)
+                    $this->result['content']['message'] = '全部操作成功';
+
+            endif;
+        } // end edit_bulk
+
+        // 检查起始时间
+        protected function time_to_publish($value)
+        {
+            if ( empty($value) ):
+                return true;
+
+            elseif (strlen($value) !== 10):
+                return false;
+
+            else:
+                // 该时间不可早于当前时间一分钟以内
+                if ($value <= time() + 60):
+                    return false;
+                else:
+                    return true;
+                endif;
+
+            endif;
+        } // end time_to_publish
+
+        // 检查结束时间
+        protected function time_to_suspend($value)
+        {
+            if ( empty($value) ):
+                return true;
+
+            elseif (strlen($value) !== 10):
+                return false;
+
+            else:
+                // 该时间不可早于当前时间一分钟以内
+                if ($value <= time() + 60):
+                    return false;
+
+                // 若已设置开始时间，不可早于开始时间一分钟以内
+                elseif ( !empty($this->input->post('time_to_publish')) && $value <= strtotime($this->input->post('time_to_publish')) + 60):
+                    return false;
+
+                else:
+                    return true;
+
+                endif;
+
+            endif;
+        } // end time_to_suspend
 
 	} // end Class Sku
 
