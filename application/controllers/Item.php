@@ -50,7 +50,9 @@
 		/**
 		 * 完整编辑单行时必要的字段名
 		 */
-		protected $names_edit_required = array('user_id', 'id', 'url_image_main', 'name', 'price', 'stocks',);
+		protected $names_edit_required = array(
+		    'user_id', 'id', 'url_image_main', 'name', 'price', 'stocks',
+        );
 
 		public function __construct()
 		{
@@ -138,10 +140,6 @@
 					exit();
 				endif;
 			endforeach;
-			
-			if ($this->input->post('test_mode') === 'on'):
-				$this->output->enable_profiler(TRUE);
-			endif;
 
 			// 筛选条件
 			$condition = NULL;
@@ -161,14 +159,15 @@
 			// 类特有筛选项
 			$this->advanced_sorter();
 
-            // 用户仅可查看已上架商品数据
+            // 用户仅可查看已上架且未删除商品数据
             if ($this->app_type === 'client'):
-                $this->db->where('time_publish', 'IS NOT NULL');
-                $this->db->where('time_delete', ' NULL');
+                $condition['time_publish'] = 'IS NOT NULL';
+                $condition['time_delete'] = 'NULL';
             endif;
 
-            // 商家仅可操作自己的数据
-            if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
+            // 商家仅可操作自己的商品数据
+            if ($this->app_type === 'biz')
+                $condition['biz_id'] = $this->input->post('biz_id');
 
 			// 排序条件
 			$order_by = NULL;
@@ -234,14 +233,15 @@
 				exit();
 			endif;
 
-            // 用户仅可查看已上架商品数据
+            // 用户仅可查看已上架且未删除商品数据
             if ($this->app_type === 'client'):
-                $this->db->where('time_publish', 'IS NOT NULL');
-                $this->db->where('time_delete', ' NULL');
+                $condition['time_publish'] = 'IS NOT NULL';
+                $condition['time_delete'] = 'NULL';
             endif;
 
-            // 商家仅可操作自己的数据
-            if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
+            // 商家仅可操作自己的商品数据
+            if ($this->app_type === 'biz')
+                $condition['biz_id'] = $this->input->post('biz_id');
 
 			// 限制可返回的字段
 			$this->db->select(
@@ -266,12 +266,14 @@
                         'time_publish' => 'IS NOT NULL',
                     );
                     $this->result['content']['biz']['item_count'] = $this->basic_model->count($conditions, FALSE);
+
                     // 该商家被关注总数
                     $this->switch_model('fav_biz', 'record_id');
                     $conditions = array(
                         'biz_id' => $item['biz_id'],
                     );
                     $this->result['content']['biz']['fav_biz_count'] = $this->basic_model->count($conditions, FALSE);
+
                     // 获取该商家商品描述评价分数
                     $this->switch_model('comment_item', 'comment_id');
                     $this->db->select('AVG(`score`) AS score_description');
@@ -281,6 +283,7 @@
                     );
                     $result = $this->basic_model->select($conditions);
                     $this->result['content']['biz']['score_description'] = !empty($result['score_description'])? $result['score_description']: 4.5;
+
                     // 获取该商家服务态度、物流配送、环境分数（客户端按需取用）
                     $this->switch_model('comment_biz', 'comment_id');
                     $this->db->select('AVG(`score_service`) AS score_service, AVG(`score_deliver`) AS score_deliver, AVG(`score_environment`) AS score_environment');

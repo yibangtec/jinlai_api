@@ -137,7 +137,7 @@
             $this->db->limit($limit, $offset);
 
 			// 默认可返回已删除项
-            if ($allow_deleted === FALSE)
+            if ((isset($condition['time_delete']) && $condition['time_delete'] === 'NULL') || $allow_deleted === FALSE)
                 $this->db->where("`time_delete` IS NULL");
 
             $query = $this->db->get($this->table_name);
