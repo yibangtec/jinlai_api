@@ -65,44 +65,40 @@
 			$this->basic_model->id_name = $this->id_name;
 		}
 
-		/**
-		 * 0 计数
-		 */
-		public function count($condition = NULL)
-		{
-			// 筛选条件
-			if ( empty($condition) ):
-				$condition = NULL;
-			endif;
+        /**
+         * 0 计数
+         */
+        public function count()
+        {
+            // 筛选条件
+            $condition = NULL;
+            // 遍历筛选条件
+            foreach ($this->names_to_sort as $sorter):
+                if ( !empty($this->input->post($sorter)) ):
+                    // 对时间范围做限制
+                    if ($sorter === 'time_create'):
+                        $condition['time_create >'] = $this->input->post($sorter);
+                    elseif ($sorter === 'time_create_end'):
+                        $condition['time_create <'] = $this->input->post($sorter);
+                    else:
+                        $condition[$sorter] = $this->input->post($sorter);
+                    endif;
+                endif;
+            endforeach;
 
-			// （可选）遍历筛选条件
-			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post_get($sorter)) ):
-					// 对时间范围做限制
-					if ($sorter === 'start_time'):
-						$condition['time_create >='] = $this->input->post_get($sorter);
-					elseif ($sorter === 'end_time'):
-						$condition['time_create <='] = $this->input->post_get($sorter);
-					else:
-						$condition[$sorter] = $this->input->post_get($sorter);
-					endif;
+            // 获取列表；默认可获取已删除项
+            $count = $this->basic_model->count($condition);
 
-				endif;
-			endforeach;
+            if ($count !== FALSE):
+                $this->result['status'] = 200;
+                $this->result['content']['count'] = $count;
 
-			// 获取列表；默认可获取已删除项
-			$count = $this->basic_model->count($condition);
+            else:
+                $this->result['status'] = 414;
+                $this->result['content']['error']['message'] = '没有符合条件的数据';
 
-			if ($count !== FALSE):
-				$this->result['status'] = 200;
-				$this->result['content']['count'] = $count;
-
-			else:
-				$this->result['status'] = 414;
-				$this->result['content']['error']['message'] = '没有符合条件的数据';
-
-			endif;
-		} // end count
+            endif;
+        } // end count
 
 		/**
 		 * 1 列表/基本搜索

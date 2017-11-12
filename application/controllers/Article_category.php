@@ -42,8 +42,7 @@
 		 * 完整编辑单行时必要的字段名
 		 */
 		protected $names_edit_required = array(
-			'user_id', 'id',
-			'parent_id', 'name', 'url_name',
+			'user_id', 'id', 'name',
 		);
 
 		public function __construct()

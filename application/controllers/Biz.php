@@ -306,47 +306,6 @@
 			endif;
 		} // end create
 
-		// 查找员工
-		private function stuff_exist($user_id)
-		{
-			// 更改数据库信息
-			$this->basic_model->table_name = 'stuff';
-			$this->basic_model->id_name = 'stuff_id';
-			
-			$result = $this->basic_model->find('user_id', $user_id);
-
-			// 还原数据库信息
-			$this->basic_model->table_name = $this->table_name;
-			$this->basic_model->id_name = $this->id_name;
-
-			return $result;
-		} // end stuff_exist
-		
-		// 创建员工
-		private function stuff_create($user_id, $biz_id, $mobile)
-		{
-			// 更改数据库信息
-			$this->basic_model->table_name = 'stuff';
-			$this->basic_model->id_name = 'stuff_id';
-
-			// 创建员工为管理员并授予最高权限
-			$data_to_create = array(
-				'user_id' => $user_id,
-				'biz_id' => $biz_id,
-				'mobile' => $mobile,
-				'role' => '管理员',
-				'level' => '100',
-				'creator_id' => $user_id,
-			);
-			$result = $this->basic_model->create($data_to_create, TRUE);
-
-			// 还原数据库信息
-			$this->basic_model->table_name = $this->table_name;
-			$this->basic_model->id_name = $this->id_name;
-
-			return $result;
-		} // end stuff_create
-
 		/**
 		 * 4 编辑单行数据
 		 */
@@ -384,11 +343,6 @@
 			$rule_path = APPPATH. 'libraries/form_rules/Biz.php';
 			require($rule_path);
 
-            // TODO 页面装修，临时放于此处
-            $this->form_validation->set_rules('m1figure_url', '店铺模块1形象图', 'trim|max_length[255]');
-            $this->form_validation->set_rules('m1ace_id', '店铺模块1首推商品', 'trim|max_length[11]');
-            $this->form_validation->set_rules('m1ids', '店铺模块1商品们', 'trim|max_length[255]');
-
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
 				$this->result['status'] = 401;
@@ -425,8 +379,6 @@
 					'code_license', 'code_ssn_owner',  'code_ssn_auth',
 					'bank_name', 'bank_account', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
 					'province', 'city', 'county', 'street',
-
-                    'm1figure_url', 'm1ace_id', 'm1ids',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -658,6 +610,40 @@
 
 			endif;
 		} // end edit_bulk
+
+        // 查找员工
+        private function stuff_exist($user_id)
+        {
+            // 切换数据库
+            $this->switch_model('stuff', 'stuff_id');
+            $result = $this->basic_model->find('user_id', $user_id);
+            $this->reset_model();
+
+            return $result;
+        } // end stuff_exist
+
+        // 创建员工
+        private function stuff_create($user_id, $biz_id, $mobile)
+        {
+            // 切换数据库
+            $this->switch_model('stuff', 'stuff_id');
+
+            // 创建员工为管理员并授予最高权限
+            $data_to_create = array(
+                'user_id' => $user_id,
+                'biz_id' => $biz_id,
+                'mobile' => $mobile,
+                'role' => '管理员',
+                'level' => '100',
+                'creator_id' => $user_id,
+            );
+            $result = $this->basic_model->create($data_to_create, TRUE);
+
+            // 还原数据库
+            $this->reset_model();
+
+            return $result;
+        } // end stuff_create
 
 	} // end class Biz
 
