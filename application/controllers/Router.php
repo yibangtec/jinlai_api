@@ -2,54 +2,56 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Item_category_biz/IBK 店内分类类
-	 *
-	 * 商家级商品分类
+	 * Router 路由规则类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
 	 * @copyright ICBG <www.bingshankeji.com>
 	 */
-	class Item_category_biz extends MY_Controller
+	class Router extends MY_Controller
 	{
 		/**
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'biz_id', 'parent_id', 'name', 'url_image',
-			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'name', 'light_preg', 'preg', 'controller', 'function', 'params', 'url_native_ios', 'url_native_android', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'category_id', 'biz_id', 'parent_id', 'name', 'url_image',
-            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'router_id', 'name', 'light_preg', 'preg', 'controller', 'function', 'params', 'url_native_ios', 'url_native_android', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
 		 * 创建时必要的字段名
 		 */
-		protected $names_create_required = array('user_id', 'biz_id', 'name',);
+		protected $names_create_required = array(
+			'user_id', 'name', 'controller', 'function',
+		);
 
 		/**
 		 * 可被编辑的字段名
 		 */
-		protected $names_edit_allowed = array('parent_id', 'name', 'url_image',);
+		protected $names_edit_allowed = array(
+			'name', 'light_preg', 'preg', 'controller', 'function', 'params', 'url_native_ios', 'url_native_android',
+		);
 
 		/**
 		 * 完整编辑单行时必要的字段名
 		 */
-		protected $names_edit_required = array('user_id', 'id', 'name',);
+		protected $names_edit_required = array(
+			'user_id', 'id', 'name', 'controller', 'function',
+		);
 
 		public function __construct()
 		{
 			parent::__construct();
 
 			// 设置主要数据库信息
-			$this->table_name = 'item_category_biz'; // 这里……
-			$this->id_name = 'category_id'; // 这里……
+			$this->table_name = 'router'; // 这里……
+			$this->id_name = 'router_id'; // 这里……
 
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
@@ -63,20 +65,17 @@
 		{
 			// 筛选条件
 			$condition = NULL;
-			//$condition['name'] = 'value';
-
-			// （可选）遍历筛选条件
+			// 遍历筛选条件
 			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post_get($sorter)) ):
+				if ( !empty($this->input->post($sorter)) ):
 					// 对时间范围做限制
-					if ($sorter === 'start_time'):
-						$condition['time_create >='] = $this->input->post_get($sorter);
-					elseif ($sorter === 'end_time'):
-						$condition['time_create <='] = $this->input->post_get($sorter);
+					if ($sorter === 'time_create'):
+						$condition['time_create >'] = $this->input->post($sorter);
+					elseif ($sorter === 'time_create_end'):
+						$condition['time_create <'] = $this->input->post($sorter);
 					else:
-						$condition[$sorter] = $this->input->post_get($sorter);
+						$condition[$sorter] = $this->input->post($sorter);
 					endif;
-
 				endif;
 			endforeach;
 
@@ -103,7 +102,7 @@
 			$required_params = array();
 			foreach ($required_params as $param):
 				${$param} = $this->input->post($param);
-				if ( empty( ${$param} ) ):
+				if ( !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();
@@ -112,15 +111,23 @@
 
 			// 筛选条件
 			$condition = NULL;
-			//$condition['name'] = 'value';
-			// （可选）遍历筛选条件
+			// 遍历筛选条件
 			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post($sorter)) )
-					$condition[$sorter] = $this->input->post($sorter);
+				if ( !empty($this->input->post($sorter)) ):
+					// 对时间范围做限制
+					if ($sorter === 'time_create'):
+						$condition['time_create >'] = $this->input->post($sorter);
+					elseif ($sorter === 'time_create_end'):
+						$condition['time_create <'] = $this->input->post($sorter);
+					else:
+						$condition[$sorter] = $this->input->post($sorter);
+					endif;
+				endif;
 			endforeach;
 
-            // 排序条件
-            $order_by['parent_id'] = 'ASC';
+			// 排序条件
+			$order_by = NULL;
+			//$order_by['name'] = 'value';
 
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );
@@ -145,7 +152,7 @@
 		{
 			// 检查必要参数是否已传入
 			$id = $this->input->post('id');
-			if ( empty($id) ):
+			if ( !isset($id) ):
 				$this->result['status'] = 400;
 				$this->result['content']['error']['message'] = '必要的请求参数未传入';
 				exit();
@@ -173,7 +180,7 @@
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('biz',); // 客户端类型
+			$type_allowed = array('admin',); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -185,7 +192,7 @@
 			$required_params = $this->names_create_required;
 			foreach ($required_params as $param):
 				${$param} = $this->input->post($param);
-				if ( empty( ${$param} ) ):
+				if ( !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();
@@ -196,10 +203,14 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('biz_id', '所属商家ID', 'trim|required|is_natural_no_zero');
-			$this->form_validation->set_rules('parent_id', '所属店内分类', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
-			$this->form_validation->set_rules('url_image', '图片URL', 'trim');
+			$this->form_validation->set_rules('name', '路由规则名称', 'trim|required|max_length[30]');
+			$this->form_validation->set_rules('light_preg', 'URL匹配字符串', 'trim|max_length[30]');
+            $this->form_validation->set_rules('preg', 'URL匹配正则表达式', 'trim|max_length[30]');
+			$this->form_validation->set_rules('controller', '控制器名', 'trim|required|max_length[20]');
+			$this->form_validation->set_rules('function', '方法名', 'trim|required|max_length[20]');
+			$this->form_validation->set_rules('params', '参数名称；所需参数，CSV格式', 'trim|max_length[255]');
+			$this->form_validation->set_rules('url_native_ios', 'iOS功能路径', 'trim|max_length[30]');
+			$this->form_validation->set_rules('url_native_android', 'Android功能路径', 'trim|max_length[30]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -210,10 +221,11 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
+					//'name' => $this->input->post('name'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'biz_id', 'parent_id', 'name', 'url_image',
+					'name', 'light_preg', 'preg', 'controller', 'function', 'params', 'url_native_ios', 'url_native_android',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -237,9 +249,9 @@
 		 */
 		public function edit()
 		{
-			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('biz',); // 客户端类型
-			$this->client_check($type_allowed);
+            // 操作可能需要检查客户端及设备信息
+            $type_allowed = array('admin',); // 客户端类型
+            $this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -250,7 +262,7 @@
 			$required_params = $this->names_edit_required;
 			foreach ($required_params as $param):
 				${$param} = $this->input->post($param);
-				if ( empty( ${$param} ) ):
+				if ( !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();
@@ -260,13 +272,14 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('parent_id', '所属店内分类', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
-			$this->form_validation->set_rules('url_image', '分类图片', 'trim');
-			// 针对特定条件的验证规则
-			if ($this->app_type === '管理员'):
-				// ...
-			endif;
+            $this->form_validation->set_rules('name', '路由规则名称', 'trim|required|max_length[30]');
+            $this->form_validation->set_rules('light_preg', 'URL匹配字符串', 'trim|max_length[30]');
+            $this->form_validation->set_rules('preg', 'URL匹配正则表达式', 'trim|max_length[30]');
+            $this->form_validation->set_rules('controller', '控制器名', 'trim|required|max_length[20]');
+            $this->form_validation->set_rules('function', '方法名', 'trim|required|max_length[20]');
+            $this->form_validation->set_rules('params', '参数名称；所需参数，CSV格式', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_native_ios', 'iOS功能路径', 'trim|max_length[30]');
+            $this->form_validation->set_rules('url_native_android', 'Android功能路径', 'trim|max_length[30]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -277,25 +290,21 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
+					//'name' => $this->input->post('name'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'parent_id', 'name', 'url_image',
+					'name', 'light_preg', 'preg', 'controller', 'function', 'params', 'url_native_ios', 'url_native_android',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
 
-				// 根据客户端类型等条件筛选可操作的字段名
-				if ($this->app_type !== 'admin'):
-					//unset($data_to_edit['name']);
-				endif;
-
 				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);
 				if ($result !== FALSE):
-                    $this->result['status'] = 200;
-                    $this->result['content']['id'] = $id;
-                    $this->result['content']['message'] = '编辑成功';
+					$this->result['status'] = 200;
+					$this->result['content']['id'] = $id;
+					$this->result['content']['message'] = '编辑成功';
 
 				else:
 					$this->result['status'] = 434;
@@ -312,9 +321,9 @@
 		 */
 		public function edit_bulk()
 		{
-			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz',); // 客户端类型
-			$this->client_check($type_allowed);
+            // 操作可能需要检查客户端及设备信息
+            $type_allowed = array('admin',); // 客户端类型
+            $this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -325,7 +334,7 @@
 			$required_params = $this->names_edit_bulk_required;
 			foreach ($required_params as $param):
 				${$param} = $this->input->post($param);
-				if ( empty( ${$param} ) ):
+				if ( !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();
@@ -335,10 +344,10 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
-			$this->form_validation->set_rules('operation', '待执行操作', 'trim|in_list[delete,restore]');
-			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('password', '密码', 'trim|min_length[6]|max_length[20]');
+			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
+			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore]');
+			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
+			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):
@@ -387,7 +396,7 @@
 			endif;
 		} // end edit_bulk
 
-	} // end class Item_category_biz
+	} // end class Router
 
-/* End of file Item_category_biz.php */
-/* Location: ./application/controllers/Item_category_biz.php */
+/* End of file Router.php */
+/* Location: ./application/controllers/Router.php */

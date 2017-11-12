@@ -736,7 +736,7 @@
 		} // end edit_bulk
 
 		// 检查起始时间
-		protected function time_to_publish($value)
+		public function time_to_publish($value)
 		{
 			if ( empty($value) ):
 				return true;
@@ -756,7 +756,7 @@
 		} // end time_to_publish
 
 		// 检查结束时间
-		protected function time_to_suspend($value)
+		public function time_to_suspend($value)
 		{
 			if ( empty($value) ):
 				return true;

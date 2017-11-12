@@ -30,17 +30,23 @@
 		/**
 		 * 创建时必要的字段名
 		 */
-		protected $names_create_required = array('user_id', 'name',);
+		protected $names_create_required = array(
+		    'user_id', 'name',
+        );
 
 		/**
 		 * 可被编辑的字段名
 		 */
-		protected $names_edit_allowed = array('parent_id', 'name', 'description', 'url_name', 'url_image',);
+		protected $names_edit_allowed = array(
+		    'parent_id', 'name', 'description', 'url_name', 'url_image',
+        );
 
 		/**
 		 * 完整编辑单行时必要的字段名
 		 */
-		protected $names_edit_required = array('user_id', 'id', 'name',);
+		protected $names_edit_required = array(
+		    'user_id', 'id', 'name',
+        );
 
 		public function __construct()
 		{
@@ -118,13 +124,14 @@
 			endforeach;
 			
 			// 排序条件
-			$order_by['time_create'] = 'ASC';
+			$order_by['nature'] = 'ASC';
+            $order_by['level'] = 'ASC';
+            $order_by['parent_id'] = 'ASC';
 
 			// 限制可返回的字段
             if ($this->app_type === 'admin')
                 $this->names_to_return = array_merge($this->names_to_return, $this->names_return_for_admin);
 			$this->db->select( implode(',', $this->names_to_return) );
-			//$this->db->group_by('parent_id');
 
 			// 获取列表；默认不获取已删除项
 			$items = $this->basic_model->select($condition, $order_by, FALSE, FALSE);

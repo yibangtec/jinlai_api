@@ -30,6 +30,8 @@
 			'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
 			'longitude', 'latitude', 'nation', 'province', 'city', 'county', 'street',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+
+            'm1figure_url', 'm1ace_id', 'm1ids',
 		);
 
 		/**
@@ -51,6 +53,8 @@
 			'code_license', 'code_ssn_owner', 'code_ssn_auth',
 			'bank_name', 'bank_account', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
 			'longitude', 'latitude', 'nation', 'province', 'city', 'county', 'street',
+
+            'm1figure_url', 'm1ace_id', 'm1ids',
 		);
 
 		/**
@@ -380,6 +384,11 @@
 			$rule_path = APPPATH. 'libraries/form_rules/Biz.php';
 			require($rule_path);
 
+            // TODO 页面装修，临时放于此处
+            $this->form_validation->set_rules('m1figure_url', '店铺模块1形象图', 'trim|max_length[255]');
+            $this->form_validation->set_rules('m1ace_id', '店铺模块1首推商品', 'trim|max_length[11]');
+            $this->form_validation->set_rules('m1ids', '店铺模块1商品们', 'trim|max_length[255]');
+
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
 				$this->result['status'] = 401;
@@ -416,6 +425,8 @@
 					'code_license', 'code_ssn_owner',  'code_ssn_auth',
 					'bank_name', 'bank_account', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
 					'province', 'city', 'county', 'street',
+
+                    'm1figure_url', 'm1ace_id', 'm1ids',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
