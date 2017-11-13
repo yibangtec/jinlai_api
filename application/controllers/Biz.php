@@ -29,9 +29,8 @@
 			'bank_name', 'bank_account',
 			'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
 			'longitude', 'latitude', 'nation', 'province', 'city', 'county', 'street',
+			'ornament_id',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
-
-            'm1figure_url', 'm1ace_id', 'm1ids',
 		);
 
 		/**
@@ -53,8 +52,7 @@
 			'code_license', 'code_ssn_owner', 'code_ssn_auth',
 			'bank_name', 'bank_account', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
 			'longitude', 'latitude', 'nation', 'province', 'city', 'county', 'street',
-
-            'm1figure_url', 'm1ace_id', 'm1ids',
+            'ornament_id',
 		);
 
 		/**
@@ -342,6 +340,7 @@
 			// 载入验证规则
 			$rule_path = APPPATH. 'libraries/form_rules/Biz.php';
 			require($rule_path);
+            $this->form_validation->set_rules('ornament_id', '店铺装修ID', 'trim');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -379,6 +378,7 @@
 					'code_license', 'code_ssn_owner',  'code_ssn_auth',
 					'bank_name', 'bank_account', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
 					'province', 'city', 'county', 'street',
+                    'ornament_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -502,6 +502,8 @@
 			$this->form_validation->set_rules('street', '具体地址；小区名、路名、门牌号等', 'trim|max_length[50]');
 			$this->form_validation->set_rules('longitude', '经度', 'trim|min_length[7]|max_length[10]|decimal');
 			$this->form_validation->set_rules('latitude', '纬度', 'trim|min_length[7]|max_length[10]|decimal');
+
+            $this->form_validation->set_rules('ornament_id', '店铺装修ID', 'trim');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
