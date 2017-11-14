@@ -139,7 +139,7 @@
 
 			// 限制可返回的字段
 			if ($this->app_type === 'client')
-				$this->db->select( implode(',', $this->names_to_return) );
+				$this->db->select( implode(',', $this->names_to_return).', (SELECT member_thumb_url FROM ornament_biz WHERE ornament_biz.ornament_id = biz.ornament_id) AS member_thumb_url , (SELECT vi_color_first FROM ornament_biz WHERE ornament_biz.ornament_id = biz.ornament_id) AS vi_color_first' );
 
 			// 获取列表；默认可获取已删除项
 			$items = $this->basic_model->select($condition, $order_by);
@@ -168,7 +168,8 @@
 				exit();
 			endif;
 
-			$this->db->select( implode(',', $this->names_to_return) );
+            // 限制可返回的字段
+            $this->db->select( implode(',', $this->names_to_return) );
 
 			// 客户端仅获取状态为‘正常’的商家
 			//if ($this->app_type === 'client')
@@ -184,6 +185,12 @@
 			if ( !empty($item) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
+
+				// 客户端同时获取商家店铺装修方案（若有）
+                if (($this->app_type === 'client') && !empty($item['ornament_id']) ):
+                    $this->switch_model('ornament_biz', 'ornament_id');
+                    $this->result['content']['ornament'] = $this->basic_model->select_by_id($item['ornament_id']);
+                endif;
 
 			else:
 				$this->result['status'] = 414;
