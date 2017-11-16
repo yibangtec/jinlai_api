@@ -21,8 +21,7 @@
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id',
-			'biz_id',
+			'user_id', 'biz_id',
 		);
 
 		/**
@@ -35,6 +34,10 @@
 		public function __construct()
 		{
 			parent::__construct();
+
+            // 操作可能需要检查客户端及设备信息
+            $type_allowed = array('client'); // 客户端类型
+            $this->client_check($type_allowed);
 
 			// 设置主要数据库信息
 			$this->table_name = 'fav_biz'; // 这里……
@@ -122,17 +125,15 @@
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
 
-				// TODO 待迭代优化
-				// 为收藏商家获取最新上架产品
-				$this->basic_model->table_name = 'item';
-				$this->basic_model->id_name = 'item_id';
-				$this->db->order_by('time_publish', 'DESC');
+				// 为收藏商家获取最新在售产品，按上架时间倒序排列
+                $this->switch_model('item', 'item_id');
 
 				for ($i=0; $i<count($this->result['content']); $i++):
 					$condition = array(
 						'biz_id' => $this->result['content'][$i]['biz_id'],
-						'time_delete' => 'NULL',
+						'time_suspend' => 'NULL',
 					);
+                    $this->db->order_by('time_publish', 'DESC');
 					$this->result['content'][$i]['recent_items'] = $this->basic_model->select($condition);
 				endfor;
 
@@ -148,10 +149,6 @@
 		 */
 		public function create()
 		{
-			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('client'); // 客户端类型
-			$this->client_check($type_allowed);
-
 			// 检查必要参数是否已传入
 			$required_params = $this->names_create_required;
 			foreach ($required_params as $param):
@@ -224,10 +221,6 @@
 		 */
 		public function edit_bulk()
 		{
-			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('client'); // 客户端类型
-			$this->client_check($type_allowed);
-
 			// 检查必要参数是否已传入
 			$required_params = $this->names_edit_bulk_required;
 			foreach ($required_params as $param):

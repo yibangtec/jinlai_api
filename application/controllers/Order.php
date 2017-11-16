@@ -254,10 +254,15 @@
 				$this->result['content']['error']['message'] = $this->order_data['content']['error']['message'];
 
 			else:
+                // TODO 生成优惠信息
+                if ($this->input->post('test_mode') === 'on'):
+                    var_dump($this->order_data);
+			exit;
+                endif;
+
 				// 生成全局订单数据
 				$common_meta = array(
 					'time_create' => time(),
-					'time_expire' => time() + 60*60*24*3, // 3天内不支付则过期
 
 					'user_id' => $user_id,
 					'user_ip' => empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'), // 优先检查请求是否来自APP
@@ -361,10 +366,6 @@
 		 */
 		private function generate_single_item($item_id, $sku_id = NULL, $count = 1)
 		{
-			// 获取商品信息
-			$this->switch_model('item', 'item_id');
-			$item = $this->basic_model->select_by_id($item_id);
-
 			// 获取规格信息
 			if ( !empty($sku_id) ):
 				$this->switch_model('sku', 'sku_id');
@@ -374,6 +375,41 @@
                 );
 				$sku = $this->basic_model->match($data_to_search);
 			endif;
+
+            // 获取商品信息
+            $this->switch_model('item', 'item_id');
+			if ( !empty($sku) )
+			    $item_id = $sku['item_id']; // 若已获取规格信息，以规格信息中的商品ID为准
+            $item = $this->basic_model->select_by_id($item_id);
+
+            // 获取商品运费模板
+            if ( empty($item['freight_template_id']) ):
+                $unit_freight = 0; // 若商品未设置运费模板，免运费；即每单位运费为0
+            else:
+                $this->switch_model('freight_template_biz', 'template_id');
+                $freight_template = $this->basic_model->select_by_id($item['freight_template_id']);
+                // 获取计重方式
+                switch ($freight_template['type_actual']):
+                    case '计件':
+                        $freight_type = 'count';
+                        break;
+                    case '净重':
+                        $freight_type = 'weight_net';
+                        break;
+                    case '毛重':
+                        $freight_type = 'weight_gross';
+                        break;
+                    case '体积重':
+                        $freight_type = 'weight_volume';
+                        break;
+                endswitch;
+                $unit_freight = 10; // 测试数据
+            endif;
+
+            if ( $this->input->post('test_mode') === 'on' ):
+                var_dump($unit_freight);
+            exit;
+            endif;
 
 			//TODO 计算单品优惠活动折抵
 			//TODO 计算单品优惠券折抵
@@ -388,6 +424,8 @@
 				'tag_price' => $item['tag_price'],
 				'price' => $item['price'],
 				'count' => $count,
+
+				'freight' => $unit_freight,
 
 				//'promotion_id' => $item['promotion_id'], // 营销活动ID
 				//'discount_promotion' => $discount_promotion, // 营销活动折抵金额
@@ -417,7 +455,8 @@
 
 						if ($this->order_data[$i]['biz_id'] === $order_item['biz_id']):
 							$this->order_data[$i]['subtotal'] += $order_item['single_total'];
-							$this->order_data[$i]['total'] += $order_item['single_total'];
+                            $this->order_data[$i]['freight'] += $order_item['freight'];
+							$this->order_data[$i]['total'] += ($order_item['single_total'] + $order_item['freight']);
 							$this->order_data[$i]['order_items'] = array_merge($this->order_data[$i]['order_items'], $order_items);
 							$need_to_create = FALSE; // 无需新建待创建订单
 						endif;
@@ -448,7 +487,8 @@
 					//'coupon_id' => $item['coupon_id'], // 优惠券ID
 					//'discount_coupon' => $discount_coupon, // 优惠券折抵金额
 
-					//'freight' => $freight, // 运费
+					'freight' => $order_item['freight'], // 运费
+
 					'total' => $order_item['single_total'],
 					'order_items' => $order_items,
 					'note_user' => $this->note_user[$order_item['biz_id']], // 用户留言

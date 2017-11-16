@@ -151,6 +151,23 @@
 						$condition['time_create >='] = $this->input->post($sorter);
 					elseif ($sorter === 'end_time'):
 						$condition['time_create <='] = $this->input->post($sorter);
+
+					elseif ($sorter === 'category_biz_id'):
+					    // 获取所有子类ID
+                        $this->switch_model('item_category_biz', 'category_id');
+					    $sub_categories = $this->basic_model->select(
+					        array('parent_id' => $this->input->post($sorter)),
+                            NULL,
+                            TRUE
+                        ); // 仅返回ID
+                        $this->reset_model();
+
+                        $this->db->where('category_biz_id', $this->input->post($sorter));
+
+                        if ( !empty($sub_categories) ):
+                            $this->db->or_where_in('category_biz_id', $sub_categories);
+                        endif;
+
 					else:
 						$condition[$sorter] = $this->input->post($sorter);
 					endif;
@@ -195,16 +212,16 @@
 			if ( !empty($items) ):
 				// 获取各项相应规格
 				$this->switch_model('sku', 'sku_id');
-				$this->db->select('sku_id, biz_id, item_id, url_image, name_first, name_second, name_third, tag_price, price, stocks, weight_net, weight_gross, weight_volume');
 				for ($i=0;$i<count($items);$i++):
-					// 获取订单商品
+                    $this->db->select('sku_id, biz_id, item_id, url_image, name_first, name_second, name_third, tag_price, price, stocks, weight_net, weight_gross, weight_volume');
+
 					$condition = array('item_id' => $items[$i]['item_id']);
 					$items[$i]['skus'] = $this->basic_model->select($condition, NULL);
 				endfor;
 
 				// 若非客户端调用，则输出相应统计信息
-				if ($this->app_type === 'client'):
-					$this->reset_model(); // 重置数据库查询语句
+				if ($this->app_type !== 'client'):
+					$this->reset_model(); // 重置数据库
 					$this->db->select('ROUND( AVG(price), 2 ) as avg_price, MAX(price) as max_price, MIN(price) as min_price');
 					$query = $this->db->get($this->table_name);
 					$this->result['table_meta'] = $query->result_array();

@@ -1,0 +1,68 @@
+{
+    "content": [
+        {
+            "router_id": "7",
+            "name": "商家详情页",
+            "light_preg": "biz/detail",
+            "preg": "biz/detail",
+            "controller": "biz",
+            "function": "detail",
+            "params": "id",
+            "url_native_ios": "BizIndexViewController",
+            "url_native_android": "biz.detail.BizDetailActivity",
+            "time_create": "2017-11-10 16:44:02",
+            "time_delete": null,
+            "time_edit": "2017-11-13 17:42:07",
+            "creator_id": "1",
+            "operator_id": "1"
+        },
+        {
+            "router_id": "8",
+            "name": "商品详情页",
+            "light_preg": "item/detail",
+            "preg": "item/detail",
+            "controller": "item",
+            "function": "detail",
+            "params": "id",
+            "url_native_ios": "DetailViewController",
+            "url_native_android": "item.ItemDetailActivity",
+            "time_create": "2017-11-10 16:56:38",
+            "time_delete": null,
+            "time_edit": "2017-11-13 17:42:07",
+            "creator_id": "1",
+            "operator_id": "1"
+        },
+        {
+            "router_id": "9",
+            "name": "领取优惠券页",
+            "light_preg": "coupon/create",
+            "preg": "coupon/create",
+            "controller": "coupon",
+            "function": "create",
+            "params": null
+            "url_native_ios": "CouponTemplateViewController",
+            "url_native_android": null,
+            "time_create": "2017-11-10 16:56:38",
+            "time_delete": null,
+            "time_edit": "2017-11-13 01:00:00",
+            "creator_id": "1",
+            "operator_id": "1"
+        },
+        {
+            "router_id": "10",
+            "name": "订单详情页",
+            "light_preg": "order/detail",
+            "preg": "order/detail",
+            "controller": "order",
+            "function": "detail",
+            "params": "id",
+            "url_native_ios": "OrderDetailViewController",
+            "url_native_android": "orders.OrderDetailsActivity",
+            "time_create": "2017-11-14 16:49:32",
+            "time_delete": null,
+            "time_edit": "2017-11-14 16:53:47",
+            "creator_id": null,
+            "operator_id": null
+        }
+    ]
+}

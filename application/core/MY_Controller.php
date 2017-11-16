@@ -432,7 +432,7 @@
 					);
 				endforeach;
 
-				// 生成单品信息
+				// 生成订单单品信息
 				foreach ($items_to_create as $item_to_create):
 					$this->generate_single_item($item_to_create['item_id'], $item_to_create['sku_id'], $item_to_create['count']);
 				endforeach;
@@ -442,7 +442,6 @@
 
 		/**
 		 * 生成单品订单信息
-         * TODO 移除已失效项
 		 *
 		 * @param varchar/int $item_id 商品ID；商家ID需要从商品资料中获取
 		 * @param varchar/int $sku_id 规格ID
@@ -471,11 +470,11 @@
 				'tag_price' => $item['tag_price'],
 				'price' => $item['price'],
 				'stocks' => $item['stocks'],
-				'count' => $count,
                 'quantity_max' => $item['quantity_max'],
                 'quantity_min' => $item['quantity_min'],
+                'count' => $count,
 
-                'valid' => ( empty($item['time_publish']) || !empty($item['time_delete']) || $count > $item['stocks'])? FALSE: TRUE, // 未上架、已删除、库存少于欲购量的商品视为失效商品
+                'valid' => ( empty($item['time_publish']) || !empty($item['time_delete']))? FALSE: TRUE, // 未上架、已删除的商品视为失效商品
 			);
 
 			// 生成规格信息，并判断当前商品/规格是否有效
@@ -491,7 +490,7 @@
 
                 // 若商品有效，则判断规格是否有效
 				if ($order_item['valid'] === TRUE):
-				    if ( empty($sku['time_publish']) || !empty($sku['time_delete']) || $count > $sku['stocks'])
+				    if ( empty($sku['time_publish']) || !empty($sku['time_delete']))
 				        $order_item['valid'] = FALSE;
                 endif;
 			endif;

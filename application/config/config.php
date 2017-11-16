@@ -28,7 +28,7 @@ define('ENCRYPTION_KEY', ''); // 秘钥用于加密相关功能，可为空
 
 /* 第三方功能相关常量 */
 // 高德地图服务端API key
-define('AMAP_KEY_SERVER', '6bfd6c2aed6dedf602dc22b2fe3cee4b');
+define('AMAP_KEY_SERVER', 'b94afbbcc615ce340fc91156089eea18');
 
 // 微信公众平台参数
 define('WECHAT_APP_ID', '');

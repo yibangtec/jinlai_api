@@ -185,6 +185,7 @@
 			if ( !empty($item) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
+                $this->result['content']['ornament'] = '';
 
 				// 客户端同时获取商家店铺装修方案（若有）
                 if (($this->app_type === 'client') && !empty($item['ornament_id']) ):

@@ -35,6 +35,10 @@
 		{
 			parent::__construct();
 
+            // 操作可能需要检查客户端及设备信息
+            $type_allowed = array('client'); // 客户端类型
+            $this->client_check($type_allowed);
+
 			// 设置主要数据库信息
 			$this->table_name = 'fav_item'; // 这里……
 			$this->id_name = 'record_id'; // 这里……
@@ -133,10 +137,6 @@
 		 */
 		public function create()
 		{
-			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('client'); // 客户端类型
-			$this->client_check($type_allowed);
-
 			// 检查必要参数是否已传入
 			$required_params = $this->names_create_required;
 			foreach ($required_params as $param):
@@ -209,10 +209,6 @@
 		 */
 		public function edit_bulk()
 		{
-			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('client'); // 客户端类型
-			$this->client_check($type_allowed);
-
 			// 检查必要参数是否已传入
 			$required_params = $this->names_edit_bulk_required;
 			foreach ($required_params as $param):

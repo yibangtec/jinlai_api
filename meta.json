@@ -1,0 +1,257 @@
+{
+    "content": [
+        {
+            "meta_id": "1",
+            "name": "greating_image_url",
+            "value": "https://www.ybslux.com/uploadfiles/images/app/76b0dc43-0476-4f15-9f2b-c4784d0e8065.jpg",
+            "description": "启动页图片URL",
+            "time_create": "2017-06-29 15:37:24",
+            "time_delete": null,
+            "time_edit": "2017-11-14 20:33:04",
+            "creator_id": "1",
+            "operator_id": null
+        },
+        {
+            "meta_id": "2",
+            "name": "greating_target_url",
+            "value": "biz/detail?id=13",
+            "description": "启动页链接",
+            "time_create": "2017-06-29 15:37:24",
+            "time_delete": null,
+            "time_edit": "2017-11-14 03:22:34",
+            "creator_id": "1",
+            "operator_id": null
+        },
+        {
+            "meta_id": "3",
+            "name": "recent_version_ios",
+            "value": "1.0.0",
+            "description": "最新iOS客户端版本号",
+            "time_create": "2017-06-29 15:45:49",
+            "time_delete": null,
+            "time_edit": "2017-11-06 23:30:07",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "4",
+            "name": "recent_version_android",
+            "value": "1.0.0",
+            "description": "最新Android客户端版本号",
+            "time_create": "2017-06-29 15:45:50",
+            "time_delete": null,
+            "time_edit": "2017-11-06 23:30:07",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "5",
+            "name": "recent_url_ios",
+            "value": null,
+            "description": "最新iOS客户端下载URL",
+            "time_create": "2017-06-29 15:45:50",
+            "time_delete": null,
+            "time_edit": "2017-11-14 03:22:34",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "6",
+            "name": "recent_url_android",
+            "value": null,
+            "description": "最新Android客户端下载URL",
+            "time_create": "2017-06-29 15:45:50",
+            "time_delete": null,
+            "time_edit": "2017-11-14 03:22:34",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "7",
+            "name": "next_greating_image_url",
+            "value": null,
+            "description": "待用启动页图片URL",
+            "time_create": "2017-06-29 15:45:50",
+            "time_delete": null,
+            "time_edit": "2017-11-14 03:24:19",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "8",
+            "name": "time_expire_to_delete",
+            "value": "259200",
+            "description": "订单过期后自动删除秒数；3个自然日",
+            "time_create": "2017-06-29 15:51:51",
+            "time_delete": null,
+            "time_edit": "2017-11-06 23:30:07",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "9",
+            "name": "time_created_to_expire",
+            "value": "10800",
+            "description": "订单创建后自动过期秒数；3个小时",
+            "time_create": "2017-06-29 15:51:52",
+            "time_delete": null,
+            "time_edit": "2017-11-06 23:30:07",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "10",
+            "name": "tel_public_customer",
+            "value": null,
+            "description": "客户服务电话",
+            "time_create": "2017-06-29 16:01:04",
+            "time_delete": null,
+            "time_edit": "2017-06-29 16:01:04",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "11",
+            "name": "tel_public_inform",
+            "value": null,
+            "description": "平台举报电话",
+            "time_create": "2017-06-29 16:01:04",
+            "time_delete": null,
+            "time_edit": "2017-11-06 23:30:07",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "12",
+            "name": "tel_public_biz",
+            "value": null,
+            "description": "商家服务电话",
+            "time_create": "2017-06-29 16:01:04",
+            "time_delete": null,
+            "time_edit": "2017-06-29 16:01:04",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "13",
+            "name": "time_pay_to_deliver",
+            "value": "259200",
+            "description": "订单未发货后自动退款秒数；3个自然日",
+            "time_create": "2017-11-06 23:30:07",
+            "time_delete": null,
+            "time_edit": "2017-11-06 23:30:07",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "14",
+            "name": "time_deliver_to_confirm",
+            "value": "604800",
+            "description": "订单发货后自动确认秒数；7个自然日",
+            "time_create": "2017-11-06 23:30:07",
+            "time_delete": null,
+            "time_edit": "2017-11-06 23:30:07",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "15",
+            "name": "time_confirm_to_comment",
+            "value": "2592000",
+            "description": "订单确认后自动评价秒数；30个自然日",
+            "time_create": "2017-11-06 23:30:07",
+            "time_delete": null,
+            "time_edit": "2017-11-06 23:30:07",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "16",
+            "name": "api_url_develop",
+            "value": "https://api.517ybang.com/",
+            "description": "开发环境API URL",
+            "time_create": "2017-11-06 23:30:07",
+            "time_delete": null,
+            "time_edit": "2017-11-14 03:22:34",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "17",
+            "name": "api_url_production",
+            "value": "https://api.517ybang.com/",
+            "description": "生产环境API URL",
+            "time_create": "2017-11-06 23:30:07",
+            "time_delete": null,
+            "time_edit": "2017-11-14 03:22:34",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "18",
+            "name": "min_version_ios",
+            "value": "1.0.0",
+            "description": "最低iOS客户端版本号",
+            "time_create": "2017-11-13 00:07:21",
+            "time_delete": null,
+            "time_edit": "2017-11-13 00:07:21",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "19",
+            "name": "min_version_android",
+            "value": "1.0.0",
+            "description": "最低Android客户端版本号",
+            "time_create": "2017-11-13 00:07:21",
+            "time_delete": null,
+            "time_edit": "2017-11-13 00:07:21",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "20",
+            "name": "media_url_develop",
+            "value": "https://jinlaisandbox-images.b0.upaiyun.com/",
+            "description": "开发环境媒体文件URL",
+            "time_create": "2017-11-14 03:22:33",
+            "time_delete": null,
+            "time_edit": "2017-11-14 20:14:37",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "21",
+            "name": "media_url_production",
+            "value": "https://jinlaisandbox-images.b0.upaiyun.com/",
+            "description": "生产环境媒体文件URL",
+            "time_create": "2017-11-14 03:22:33",
+            "time_delete": null,
+            "time_edit": "2017-11-14 20:14:36",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "22",
+            "name": "web_url_develop",
+            "value": "https://www.517ybang.com/",
+            "description": "开发环境网站URL",
+            "time_create": "2017-11-14 03:22:33",
+            "time_delete": null,
+            "time_edit": "2017-11-14 20:14:36",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "23",
+            "name": "web_url_production",
+            "value": "https://www.517ybang.com/",
+            "description": "生产环境网站URL",
+            "time_create": "2017-11-14 03:22:33",
+            "time_delete": null,
+            "time_edit": "2017-11-14 20:14:36",
+            "creator_id": null,
+            "operator_id": null
+        }
+    ]
+}
