@@ -474,7 +474,7 @@
                 'quantity_min' => $item['quantity_min'],
                 'count' => $count,
 
-                'valid' => ( empty($item['time_publish']) || !empty($item['time_delete']))? FALSE: TRUE, // 未上架、已删除的商品视为失效商品
+                'valid' => ( empty($item['stocks']) || empty($item['time_publish']) || !empty($item['time_delete']))? FALSE: TRUE, // 无库存、未上架、已删除的商品视为失效商品
 			);
 
 			// 生成规格信息，并判断当前商品/规格是否有效
@@ -485,12 +485,13 @@
 					'sku_image' => $sku['url_image'],
 					'tag_price' => $sku['tag_price'],
 					'price' => $sku['price'],
+                    'stocks' => $sku['stocks'],
 				);
 				$order_item = array_merge($order_item, $order_sku);
 
                 // 若商品有效，则判断规格是否有效
 				if ($order_item['valid'] === TRUE):
-				    if ( empty($sku['time_publish']) || !empty($sku['time_delete']))
+				    if ( empty($item['stocks']) || empty($sku['time_publish']) || !empty($sku['time_delete']))
 				        $order_item['valid'] = FALSE;
                 endif;
 			endif;
