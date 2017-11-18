@@ -231,7 +231,7 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('name', '商家全称', 'trim|required|min_length[5]|max_length[35]|is_unique[biz.name]');
-			$this->form_validation->set_rules('brief_name', '简称', 'trim|required|max_length[15]|is_unique[biz.brief_name]');
+			$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[15]|is_unique[biz.brief_name]');
 			$this->form_validation->set_rules('description', '简介', 'trim|max_length[255]');
 			$this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]|is_unique[biz.tel_public]');
 			$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|required|is_natural|exact_length[11]|is_unique[biz.tel_protected_biz]');
@@ -340,8 +340,8 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			if ($this->app_type === 'admin'):
-				$this->form_validation->set_rules('name', '商家名称', 'trim|required|min_length[5]|max_length[35]');
-				$this->form_validation->set_rules('brief_name', '简称', 'trim|required|max_length[15]');
+				$this->form_validation->set_rules('name', '商家全称', 'trim|required|min_length[5]|max_length[35]');
+				$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[15]');
 				$this->form_validation->set_rules('url_name', '店铺域名', 'trim|max_length[20]|alpha_dash');
 				$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|required|exact_length[11]|is_natural');
 			endif;
@@ -471,14 +471,14 @@
 			$this->form_validation->set_data($data_to_validate);
 			if ($this->app_type === 'admin'):
 				$this->form_validation->set_rules('name', '商家名称', 'trim|min_length[5]|max_length[35]');
-				$this->form_validation->set_rules('brief_name', '商家简称', 'trim|max_length[15]');
+				$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|max_length[15]');
 				$this->form_validation->set_rules('url_name', '店铺域名', 'trim|max_length[20]|alpha_dash');
 				$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|exact_length[11]|is_natural');
 			endif;
 			$this->form_validation->set_rules('url_logo', 'LOGO', 'trim|max_length[255]');
 			$this->form_validation->set_rules('slogan', '宣传语', 'trim|max_length[30]');
 			$this->form_validation->set_rules('description', '简介', 'trim|max_length[255]');
-			$this->form_validation->set_rules('notification', '公告', 'trim|max_length[255]');
+			$this->form_validation->set_rules('notification', '店铺公告', 'trim|max_length[255]');
 
 			$this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|min_length[10]|max_length[13]');
 			$this->form_validation->set_rules('tel_protected_fiscal', '财务联系手机号', 'trim|exact_length[11]|is_natural');

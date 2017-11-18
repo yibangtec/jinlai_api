@@ -127,13 +127,10 @@
 
 			// 排序条件
 			$order_by = NULL;
-			//$order_by['name'] = 'value';
-
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
 
 			// 获取列表；默认可获取已删除项
-			$items = $this->basic_model->select($condition, $order_by);
+            $this->load->model('member_biz_model');
+			$items = $this->member_biz_model->select($condition, $order_by);
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
