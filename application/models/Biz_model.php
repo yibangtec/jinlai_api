@@ -1,26 +1,26 @@
 <?php
 	/**
-	 * 商家会员模型类
+	 * 商家模型类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
 	 * @copyright ICBG <www.bingshankeji.com>
 	 */
-	class Member_biz_model extends CI_Model
+	class Biz_model extends CI_Model
 	{
 		/**
 		 * 数据库表名
 		 *
 		 * @var string $table_name 表名
 		 */
-		public $table_name = 'member_biz';
+		public $table_name = 'biz';
 
 		/**
 		 * 数据库主键名
 		 *
 		 * @var string $id_name 数据库主键名
 		 */
-		public $id_name = 'member_id';
+		public $id_name = 'biz_id';
 
 		/**
 		 * 初始化类
@@ -72,9 +72,8 @@
 				$this->db->select($this->id_name);
 			else:
 				// 获取必要信息
-				$this->db->select($this->table_name.'.*, biz.brief_name as brief_name, biz.url_logo as url_logo, ornament_biz.vi_color_first as vi_color_first, ornament_biz.member_logo_url as member_logo_url, ornament_biz.member_thumb_url as member_thumb_url');
-				$this->db->join('biz', $this->table_name.'.biz_id = biz.biz_id', 'left outer');
-                $this->db->join('ornament_biz', 'ornament_biz.ornament_id = biz.ornament_id', 'left outer');
+                $this->db->select($this->table_name.'.*, ornament_biz.member_logo_url as member_logo_url, ornament_biz.member_thumb_url as member_thumb_url, ornament_biz.vi_color_first as vi_color_first');
+                $this->db->join('ornament_biz', $this->table_name.'.ornament_id = ornament_biz.ornament_id', 'left outer');
 			endif;
 
             $query = $this->db->get($this->table_name);
@@ -100,7 +99,7 @@
             endif;
 		} // end select
 
-	} // end class Member_biz_model
+	} // end class Biz_model
 
-/* End of file Member_biz_model.php */
-/* Location: ./application/models/Member_biz_model.php */
+/* End of file Biz_model.php */
+/* Location: ./application/models/Biz_model.php */

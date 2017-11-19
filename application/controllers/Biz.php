@@ -14,8 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'longitude', 'latitude', 'nation', 'province', 'city', 'county',
-			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+			'longitude', 'latitude', 'nation', 'province', 'city', 'county', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
 		/**
@@ -137,12 +136,14 @@
 			// 排序条件
 			$order_by = NULL;
 
-			// 限制可返回的字段
-			if ($this->app_type === 'client')
-				$this->db->select( implode(',', $this->names_to_return).', (SELECT member_thumb_url FROM ornament_biz WHERE ornament_biz.ornament_id = biz.ornament_id) AS member_thumb_url , (SELECT vi_color_first FROM ornament_biz WHERE ornament_biz.ornament_id = biz.ornament_id) AS vi_color_first' );
-
 			// 获取列表；默认可获取已删除项
-			$items = $this->basic_model->select($condition, $order_by);
+            if ($this->app_type === 'client'):
+                $this->load->model('biz_model');
+                $items = $this->biz_model->select($condition, $order_by);
+            else:
+                $items = $this->basic_model->select($condition, $order_by);
+            endif;
+
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;

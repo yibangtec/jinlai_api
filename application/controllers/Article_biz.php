@@ -2,40 +2,40 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Article/ATC 平台文章类
+	 * Article_biz/ATB 商家文章类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
 	 * @copyright ICBG <www.bingshankeji.com>
 	 */
-	class Article extends MY_Controller
+	class Article_biz extends MY_Controller
 	{
 		/**
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'category_id', 'title', 'excerpt', 'content', 'url_name', 'url_images', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'biz_id', 'title', 'excerpt', 'content', 'url_images', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'article_id', 'category_id', 'title', 'excerpt', 'content', 'url_name', 'url_images', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'article_id', 'biz_id', 'title', 'excerpt', 'content', 'url_images', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id', 'title', 'content'
+			'user_id', 'biz_id', 'title', 'content'
 		);
 
 		/**
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'category_id', 'title', 'excerpt', 'content', 'url_name', 'url_images',
+			'title', 'excerpt', 'content', 'url_images',
 		);
 
 		/**
@@ -50,7 +50,7 @@
 			parent::__construct();
 
 			// 设置主要数据库信息
-			$this->table_name = 'article'; // 这里……
+			$this->table_name = 'article_biz'; // 这里……
 			$this->id_name = 'article_id'; // 这里……
 
 			// 主要数据库信息到基础模型类
@@ -160,7 +160,7 @@
 			
 			// 获取特定项；默认可获取已删除项
 			if ( !empty($url_name) ):
-				$item = $this->basic_model->find('url_name', $url_name);
+				$item = $this->basic_model->find($url_name);
 			else:
 				$item = $this->basic_model->select_by_id($id);
 			endif;
@@ -181,7 +181,7 @@
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin',); // 客户端类型
+			$type_allowed = array('biz',); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -204,11 +204,10 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-            $this->form_validation->set_rules('category_id', '所属分类', 'trim|is_natural_no_zero');
+            $this->form_validation->set_rules('biz_id', '所属商家', 'trim|is_natural_no_zero');
             $this->form_validation->set_rules('title', '标题', 'trim|required|min_length[4]|max_length[30]');
             $this->form_validation->set_rules('excerpt', '摘要', 'trim|min_length[10]|max_length[255]');
             $this->form_validation->set_rules('content', '内容', 'trim|required|min_length[10]|max_length[20000]');
-            $this->form_validation->set_rules('url_name', '自定义域名', 'trim|alpha_dash|max_length[30]');
             $this->form_validation->set_rules('url_images', '形象图', 'trim|max_length[255]');
 
 			// 若表单提交不成功
@@ -220,11 +219,10 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
-					'url_name' => strtolower( $this->input->post('url_name') ),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_id', 'title', 'excerpt', 'content', 'url_images'
+					'biz_id', 'title', 'excerpt', 'content', 'url_images'
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -249,7 +247,7 @@
 		public function edit()
 		{
 			// 操作可能需要检查客户端及设备信息
-            $type_allowed = array('admin',); // 客户端类型
+            $type_allowed = array('biz',); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -271,11 +269,9 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-            $this->form_validation->set_rules('category_id', '所属分类', 'trim|is_natural_no_zero');
             $this->form_validation->set_rules('title', '标题', 'trim|required|min_length[4]|max_length[30]');
             $this->form_validation->set_rules('excerpt', '摘要', 'trim|min_length[10]|max_length[255]');
             $this->form_validation->set_rules('content', '内容', 'trim|required|min_length[10]|max_length[20000]');
-            $this->form_validation->set_rules('url_name', '自定义域名', 'trim|alpha_dash|max_length[30]');
             $this->form_validation->set_rules('url_images', '形象图', 'trim|max_length[255]');
 
 			// 若表单提交不成功
@@ -287,11 +283,10 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
-					'url_name' => strtolower( $this->input->post('url_name') ),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_id', 'title', 'excerpt', 'content', 'url_images'
+					'title', 'excerpt', 'content', 'url_images'
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -319,7 +314,7 @@
 		public function edit_certain()
 		{
 			// 操作可能需要检查客户端及设备信息
-            $type_allowed = array('admin',); // 客户端类型
+            $type_allowed = array('biz',); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -364,11 +359,9 @@
 			// 动态设置待验证字段名及字段值
 			$data_to_validate["{$name}"] = $value;
 			$this->form_validation->set_data($data_to_validate);
-            $this->form_validation->set_rules('category_id', '所属分类', 'trim|is_natural_no_zero');
             $this->form_validation->set_rules('title', '标题', 'trim|required|min_length[4]|max_length[30]');
             $this->form_validation->set_rules('excerpt', '摘要', 'trim|min_length[10]|max_length[255]');
             $this->form_validation->set_rules('content', '内容', 'trim|required|min_length[10]|max_length[20000]');
-            $this->form_validation->set_rules('url_name', '自定义域名', 'trim|alpha_dash|max_length[30]');
             $this->form_validation->set_rules('url_images', '形象图', 'trim|max_length[255]');
 
 			// 若表单提交不成功
@@ -406,7 +399,7 @@
 		public function edit_bulk()
 		{
 			// 操作可能需要检查客户端及设备信息
-            $type_allowed = array('admin',); // 客户端类型
+            $type_allowed = array('admin', 'biz',); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -480,7 +473,7 @@
 			endif;
 		} // end edit_bulk
 
-	} // end class Article
+	} // end class Article_biz
 
-/* End of file Article.php */
-/* Location: ./application/controllers/Article.php */
+/* End of file Article_biz.php */
+/* Location: ./application/controllers/Article_biz.php */
