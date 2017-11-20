@@ -272,24 +272,14 @@
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
 
-				// 获取该商品所属商家信息
+				// 获取该商品所属商家基本信息、在售商品总数、被关注数、各项评分
 				$this->switch_model('biz', 'biz_id');
-				$this->db->select('brief_name, url_logo, slogan, tel_public');
+				$this->db->select(
+				    'brief_name, url_logo, slogan, tel_public,
+				    (SELECT COUNT(*) FROM item WHERE item.biz_id = biz.biz_id AND time_publish IS NOT NULL) AS item_count,
+				    (SELECT COUNT(*) FROM fav_biz WHERE fav_biz.biz_id = biz.biz_id AND time_delete IS NOT NULL) AS fav_biz_count'
+                );
 				$this->result['content']['biz'] = $this->basic_model->select_by_id($item['biz_id']);
-                    // 该商家商品总数
-                    $this->reset_model();
-                    $conditions = array(
-                        'biz_id' => $item['biz_id'],
-                        'time_publish' => 'IS NOT NULL',
-                    );
-                    $this->result['content']['biz']['item_count'] = $this->basic_model->count($conditions, FALSE);
-
-                    // 该商家被关注总数
-                    $this->switch_model('fav_biz', 'record_id');
-                    $conditions = array(
-                        'biz_id' => $item['biz_id'],
-                    );
-                    $this->result['content']['biz']['fav_biz_count'] = $this->basic_model->count($conditions, FALSE);
 
                     // 获取该商家商品描述评价分数
                     $this->switch_model('comment_item', 'comment_id');

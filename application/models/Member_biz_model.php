@@ -72,7 +72,7 @@
 				$this->db->select($this->id_name);
 			else:
 				// 获取必要信息
-				$this->db->select($this->table_name.'.*, biz.brief_name as brief_name, biz.url_logo as url_logo, ornament_biz.vi_color_first as vi_color_first, ornament_biz.member_logo_url as member_logo_url, ornament_biz.member_thumb_url as member_thumb_url');
+				$this->db->select($this->table_name.'.*, biz.brief_name as brief_name, biz.url_logo as url_logo, ornament_biz.vi_color_first as vi_color_first, ornament_biz.vi_color_second as vi_color_second, ornament_biz.member_logo_url as member_logo_url, ornament_biz.member_thumb_url as member_thumb_url');
 				$this->db->join('biz', $this->table_name.'.biz_id = biz.biz_id', 'left outer');
                 $this->db->join('ornament_biz', 'ornament_biz.ornament_id = biz.ornament_id', 'left outer');
 			endif;

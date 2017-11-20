@@ -125,7 +125,7 @@
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
 
-				// 为收藏商家获取最新在售产品，按上架时间倒序排列
+				// 为收藏商家获取最新上架数量及4项最新上架商品，按上架时间倒序排列
                 $this->switch_model('item', 'item_id');
 
 				for ($i=0; $i<count($this->result['content']); $i++):
@@ -133,7 +133,12 @@
 						'biz_id' => $this->result['content'][$i]['biz_id'],
 						'time_suspend' => 'NULL',
 					);
+                    $this->result['content'][$i]['recent_items_count'] = $this->basic_model->count($condition);
+
+                    // 限制需要返回的字段
+                    $this->db->select('item_id, url_image_main, price');
                     $this->db->order_by('time_publish', 'DESC');
+                    $this->db->limit(4, 0);
 					$this->result['content'][$i]['recent_items'] = $this->basic_model->select($condition);
 				endfor;
 

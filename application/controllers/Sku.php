@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'biz_id', 'item_id', 'url_image', 'name_first', 'name_second', 'name_third', 'price', 'stocks', 'weight_net', 'weight_gross', 'weight_volume',
+			'biz_id', 'item_id', 'url_image', 'name_first', 'name_second', 'name_third', 'tag_price', 'price', 'stocks', 'weight_net', 'weight_gross', 'weight_volume',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -22,7 +22,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'sku_id', 'biz_id', 'item_id', 'url_image', 'name_first', 'name_second', 'name_third', 'price', 'stocks', 'weight_net', 'weight_gross', 'weight_volume',
+			'sku_id', 'biz_id', 'item_id', 'url_image', 'name_first', 'name_second', 'name_third', 'tag_price', 'price', 'stocks', 'weight_net', 'weight_gross', 'weight_volume',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -35,7 +35,7 @@
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'item_id', 'url_image', 'name_first', 'name_second', 'name_third', 'price', 'stocks', 'weight_net', 'weight_gross', 'weight_volume',
+			'item_id', 'url_image', 'name_first', 'name_second', 'name_third', 'tag_price', 'price', 'stocks', 'weight_net', 'weight_gross', 'weight_volume',
 		);
 
 		/**
@@ -202,6 +202,7 @@
 			$this->form_validation->set_rules('name_first', '名称第一部分', 'trim|required|max_length[10]');
 			$this->form_validation->set_rules('name_second', '名称第二部分', 'trim|max_length[10]');
 			$this->form_validation->set_rules('name_third', '名称第三部分', 'trim|max_length[10]');
+            $this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('price', '价格（元）', 'trim|required|greater_than[0]|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('stocks', '库存量（单位）', 'trim|required|greater_than_equal_to[0]|less_than_equal_to[65535]');
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
@@ -221,6 +222,7 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
+                    'tag_price' => empty($this->input->post('tag_price'))? '0.00': $this->input->post('tag_price'),
                     'time_to_publish' => empty($this->input->post('time_to_publish'))? NULL: $this->input->post('time_to_publish'),
                     'time_to_suspend' => empty($this->input->post('time_to_suspend'))? NULL: $this->input->post('time_to_suspend'),
                     'time_publish' => empty($this->input->post('time_to_publish'))? time(): NULL, // 若未预订上架时间，则直接上架
@@ -278,6 +280,7 @@
 			$this->form_validation->set_rules('name_first', '名称第一部分', 'trim|required|max_length[10]');
 			$this->form_validation->set_rules('name_second', '名称第二部分', 'trim|max_length[10]');
 			$this->form_validation->set_rules('name_third', '名称第三部分', 'trim|max_length[10]');
+            $this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('price', '价格（元）', 'trim|required|greater_than[0]|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('stocks', '库存量（单位）', 'trim|required|greater_than_equal_to[0]|less_than_equal_to[65535]');
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
@@ -301,6 +304,7 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
+                    'tag_price' => empty($this->input->post('tag_price'))? '0.00': $this->input->post('tag_price'),
                     'time_to_publish' => empty($this->input->post('time_to_publish'))? NULL: $this->input->post('time_to_publish'),
                     'time_to_suspend' => empty($this->input->post('time_to_suspend'))? NULL: $this->input->post('time_to_suspend'),
                     'time_publish' => empty($this->input->post('time_to_publish'))? time(): NULL, // 若未预订上架时间，则直接上架
@@ -389,6 +393,7 @@
 			$this->form_validation->set_rules('name_first', '名称第一部分', 'trim|max_length[10]');
 			$this->form_validation->set_rules('name_second', '名称第二部分', 'trim|max_length[10]');
 			$this->form_validation->set_rules('name_third', '名称第三部分', 'trim|max_length[10]');
+            $this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('price', '价格（元）', 'trim|greater_than[0]|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('stocks', '库存量（单位）', 'trim|greater_than_equal_to[0]|less_than_equal_to[65535]');
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');

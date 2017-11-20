@@ -97,7 +97,7 @@
 		 * 1 列表/基本搜索
 		 */
 		public function index()
-		{	
+		{
 			// 检查必要参数是否已传入
 			$required_params = array();
 			foreach ($required_params as $param):
