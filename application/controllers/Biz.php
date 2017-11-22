@@ -41,6 +41,14 @@
 			'fullname_owner', 'code_license', 'code_ssn_owner',
 		);
 
+        /**
+         * 快速创建时必要的字段名
+         */
+        protected $names_quick_create_required = array(
+            'user_id',
+            'brief_name', 'tel_public', 'tel_protected_biz', 'tel_protected_order', 'tel_protected_fiscal',
+        );
+
 		/**
 		 * 可被编辑的字段名
 		 */
@@ -232,7 +240,7 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('name', '商家全称', 'trim|required|min_length[5]|max_length[35]|is_unique[biz.name]');
-			$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[15]|is_unique[biz.brief_name]');
+			$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[20]|is_unique[biz.brief_name]');
 			$this->form_validation->set_rules('description', '简介', 'trim|max_length[255]');
 			$this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]|is_unique[biz.tel_public]');
 			$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|required|is_natural|exact_length[11]|is_unique[biz.tel_protected_biz]');
@@ -313,6 +321,94 @@
 			endif;
 		} // end create
 
+        /**
+         * 7 快速创建
+         */
+        public function create_quick()
+        {
+            // 操作可能需要检查客户端及设备信息
+            $type_allowed = array('admin', 'biz'); // 客户端类型
+            $this->client_check($type_allowed);
+
+            // 检查必要参数是否已传入
+            $required_params = $this->names_quick_create_required;
+            foreach ($required_params as $param):
+                ${$param} = $this->input->post($param);
+                if ( empty( ${$param} ) ):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+                    exit();
+                endif;
+            endforeach;
+
+            // 检查想要创建商家的用户是否已是其它商家的员工
+            if ( !empty( $this->stuff_exist($user_id) ) ):
+                $this->result['status'] = 401;
+                $this->result['content']['error']['message'] = '该用户已是其它商家的管理员或员工，不可创建新商家';
+                exit();
+            endif;
+
+            // 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
+            $this->load->library('form_validation');
+            $this->form_validation->set_error_delimiters('', '');
+            $this->form_validation->set_rules('url_logo', '商家LOGO', 'trim|max_length[255]');
+            $this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[20]|is_unique[biz.brief_name]');
+            $this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]|is_unique[biz.tel_public]');
+            $this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|required|is_natural|exact_length[11]|is_unique[biz.tel_protected_biz]');
+            $this->form_validation->set_rules('tel_protected_fiscal', '财务联系手机号', 'trim|required|is_natural|exact_length[11]|is_unique[biz.tel_protected_fiscal]');
+            $this->form_validation->set_rules('tel_protected_order', '订单通知手机号', 'trim|required|is_natural|exact_length[11]|is_unique[biz.tel_protected_order]');
+
+            // 若表单提交不成功
+            if ($this->form_validation->run() === FALSE):
+                $this->result['status'] = 401;
+                $this->result['content']['error']['message'] = validation_errors();
+
+            else:
+                // 需要创建的数据；逐一赋值需特别处理的字段
+                $data_to_create = array(
+                    'creator_id' => $user_id,
+                );
+                // 自动生成无需特别处理的数据
+                $data_need_no_prepare = array(
+                    'name', 'url_logo', 'brief_name', 'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
+                );
+                foreach ($data_need_no_prepare as $name)
+                    $data_to_create[$name] = $this->input->post($name);
+                // 从待创建数据中去除biz表中没有的user_id值，该值用于稍后创建员工关系
+                unset($data_to_create['user_id']);
+
+                // 创建商家
+                $biz_id = $this->basic_model->create($data_to_create, TRUE);
+                if ($biz_id !== FALSE):
+                    $this->result['status'] = 200;
+                    $this->result['content']['id'] = $biz_id;
+                    $this->result['content']['message'] = '创建商家成功，我们将尽快受理您的入驻申请';
+
+                    $mobile = $tel_protected_biz;
+
+                    // 创建员工
+                    $stuff_id = $this->stuff_create($user_id, $biz_id, $mobile);
+                    if ($stuff_id !== FALSE):
+                        $this->result['content']['message'] .= '，您已成为该商家的管理员';
+                    endif;
+
+                    // 发送商家通知短信
+                    $content = '恭喜您成功创建商家，我们已为您生成入驻申请并安排事务最少的同事为您受理，敬请稍候。';
+                    @$this->sms_send($mobile, $content); // 容忍发送失败
+
+                    // 发送招商经理通知短信
+                    $mobile = '15192098644';
+                    $content = '商家“'.$this->input->post('brief_name').'(商家编号'.$biz_id.')”已提交入驻申请，请尽快跟进，对方商务联系手机号为'.$tel_protected_biz.'。';
+                    @$this->sms_send($mobile, $content); // 容忍发送失败
+
+                else:
+                    $this->result['status'] = 424;
+                    $this->result['content']['error']['message'] = '创建商家失败';
+
+                endif;
+            endif;
+        } // end create_quick
+
 		/**
 		 * 4 编辑单行数据
 		 */
@@ -342,7 +438,7 @@
 			$this->form_validation->set_error_delimiters('', '');
 			if ($this->app_type === 'admin'):
 				$this->form_validation->set_rules('name', '商家全称', 'trim|required|min_length[5]|max_length[35]');
-				$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[15]');
+				$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[20]');
 				$this->form_validation->set_rules('url_name', '店铺域名', 'trim|max_length[20]|alpha_dash');
 				$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|required|exact_length[11]|is_natural');
 			endif;
@@ -472,11 +568,11 @@
 			$this->form_validation->set_data($data_to_validate);
 			if ($this->app_type === 'admin'):
 				$this->form_validation->set_rules('name', '商家名称', 'trim|min_length[5]|max_length[35]');
-				$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|max_length[15]');
+				$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|max_length[20]');
 				$this->form_validation->set_rules('url_name', '店铺域名', 'trim|max_length[20]|alpha_dash');
 				$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|exact_length[11]|is_natural');
 			endif;
-			$this->form_validation->set_rules('url_logo', 'LOGO', 'trim|max_length[255]');
+			$this->form_validation->set_rules('url_logo', '商家LOGO', 'trim|max_length[255]');
 			$this->form_validation->set_rules('slogan', '宣传语', 'trim|max_length[30]');
 			$this->form_validation->set_rules('description', '简介', 'trim|max_length[255]');
 			$this->form_validation->set_rules('notification', '店铺公告', 'trim|max_length[255]');

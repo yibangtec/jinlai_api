@@ -178,7 +178,7 @@
 				$this->result['content']['error']['message'] = validation_errors();
 
 			else:
-				// 需要创建的数据；逐一赋值需特别处理的字段
+				// 需要创建的数据
 				$data_to_create = array(
 					'user_id' => $this->input->post('user_id'),
 					'biz_id' => $this->input->post('biz_id'),

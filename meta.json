@@ -14,11 +14,11 @@
         {
             "meta_id": "2",
             "name": "greating_target_url",
-            "value": "biz/detail?id=13",
+            "value": "biz/detail?id=2",
             "description": "启动页链接",
             "time_create": "2017-06-29 15:37:24",
             "time_delete": null,
-            "time_edit": "2017-11-14 03:22:34",
+            "time_edit": "2017-11-16 15:28:04",
             "creator_id": "1",
             "operator_id": null
         },
@@ -250,6 +250,28 @@
             "time_create": "2017-11-14 03:22:33",
             "time_delete": null,
             "time_edit": "2017-11-14 20:14:36",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "24",
+            "name": "inner_urls_develop",
+            "value": "https://www.517ybang.com/,https://biz.517ybang.com/,https://admin.517ybang.com/",
+            "description": "开发环境内部网站URL",
+            "time_create": "2017-11-20 23:13:28",
+            "time_delete": null,
+            "time_edit": "2017-11-20 23:13:28",
+            "creator_id": null,
+            "operator_id": null
+        },
+        {
+            "meta_id": "25",
+            "name": "inner_urls_production",
+            "value": "https://www.517ybang.com/,https://biz.517ybang.com/,https://admin.517ybang.com/",
+            "description": "生产环境内部网站URL",
+            "time_create": "2017-11-20 23:13:28",
+            "time_delete": null,
+            "time_edit": "2017-11-20 23:13:28",
             "creator_id": null,
             "operator_id": null
         }

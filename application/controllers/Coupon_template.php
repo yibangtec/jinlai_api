@@ -196,7 +196,7 @@
 			$this->form_validation->set_rules('max_amount_user', '单个用户限量', 'trim|greater_than_equal_to[0]|less_than_equal_to[99]');
 			$this->form_validation->set_rules('category_biz_id', '限用商家商品分类', 'trim');
 			$this->form_validation->set_rules('item_id', '限用商品', 'trim');
-			$this->form_validation->set_rules('period', '领取后有效期', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('period', '有效期', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('time_start', '有效期开始时间', 'trim|exact_length[10]|integer|callback_time_start');
 			$this->form_validation->set_rules('time_end', '有效期结束时间', 'trim|exact_length[10]|integer|callback_time_end');
 			$this->form_validation->set_message('time_start', '开始时间需详细到分，且晚于当前时间1分钟后');
@@ -227,7 +227,7 @@
 					$data_to_create[$name] = $this->input->post($name);
 				// 根据客户端类型等条件筛选可操作的字段名
 				if ($this->app_type !== 'admin'):
-					unset($data_to_edit['category_id']);
+					unset($data_to_create['category_id']);
 				endif;
 
 				$result = $this->basic_model->create($data_to_create, TRUE);
@@ -280,7 +280,7 @@
 			$this->form_validation->set_rules('max_amount_user', '单个用户限量', 'trim|greater_than_equal_to[0]|less_than_equal_to[99]');
 			$this->form_validation->set_rules('category_biz_id', '限用店内商品分类', 'trim');
 			$this->form_validation->set_rules('item_id', '限用商品', 'trim');
-			$this->form_validation->set_rules('period', '领取后有效期', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('period', '有效期', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('time_start', '有效期开始时间', 'trim|exact_length[10]|integer|callback_time_start');
 			$this->form_validation->set_rules('time_end', '有效期结束时间', 'trim|exact_length[10]|integer|callback_time_end');
 			$this->form_validation->set_message('time_start', '开始时间需详细到分，且晚于当前时间1分钟后');

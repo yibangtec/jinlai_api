@@ -304,9 +304,9 @@
 					$data_to_edit[$name] = $this->input->post($name);
 
 				// 根据客户端类型等条件筛选可操作的字段名
-				if ($this->app_type !== 'admin'):
-					//unset($data_to_edit['name']);
-				endif;
+//				if ($this->app_type !== 'admin'):
+//					unset($data_to_edit['name']);
+//				endif;
 
 				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);

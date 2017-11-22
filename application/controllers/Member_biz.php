@@ -222,29 +222,47 @@
 				$this->result['content']['error']['message'] = validation_errors();
 
 			else:
-				// 需要创建的数据；逐一赋值需特别处理的字段
-				$data_to_create = array(
-					'creator_id' => $user_id,
-					'level' => empty($this->input->post('level'))? 0: $this->input->post('level'),
-				);
-				// 自动生成无需特别处理的数据
-				$data_need_no_prepare = array(
-					'user_id', 'biz_id', 'mobile',
-				);
-				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+                // 需要创建的数据
+                $data_to_create = array(
+                    'user_id' => $user_id,
+                    'biz_id' => $biz_id,
+                );
 
-				$result = $this->basic_model->create($data_to_create, TRUE);
-				if ($result !== FALSE):
-					$this->result['status'] = 200;
-					$this->result['content']['id'] = $result;
-					$this->result['content']['message'] = '创建成功';
+                // 检查是否有重复项
+                $result = $this->basic_model->match($data_to_create);
+                if ( !empty($result) ):
+                    // 若已领取过且被删除，则恢复
+                    if ($result['time_delete'] !== NULL):
+                        $data_to_edit['time_delete'] = NULL;
+                        @$result = $this->basic_model->edit($result[$this->id_name], $data_to_edit);
 
-				else:
-					$this->result['status'] = 424;
-					$this->result['content']['error']['message'] = '创建失败';
+                        $this->result['status'] = 200;
+                        $this->result['content']['id'] = $result[$this->id_name];
+                        $this->result['content']['message'] = '恢复领取成功';
+                    else:
+                        $this->result['status'] = 414;
+                        $this->result['content']['error']['message'] = '已经领过会员卡了';
+                    endif;
 
-				endif;
+                else:
+                    $data_to_create['mobile'] = $mobile;
+                    $data_to_create['level'] = empty($this->input->post('level'))? 0: $this->input->post('level');
+                    $data_to_create['time_create'] = time();
+                    $data_to_create['creator_id'] = $user_id;
+
+                    $result = $this->basic_model->create($data_to_create, TRUE);
+                    if ($result !== FALSE):
+                        $this->result['status'] = 200;
+                        $this->result['content']['id'] = $result;
+                        $this->result['content']['message'] = '领取成功';
+
+                    else:
+                        $this->result['status'] = 424;
+                        $this->result['content']['error']['message'] = '领取失败';
+
+                    endif;
+
+                endif;
 			endif;
 		} // end create
 
@@ -277,7 +295,7 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
             $this->form_validation->set_rules('mobile', '登记手机号', 'trim|required|exact_length[11]|is_natural_no_zero');
-            $this->form_validation->set_rules('level', '会员等级', 'trim|max_length[1]|is_natural_no_zero');
+            $this->form_validation->set_rules('level', '会员等级', 'trim|required|max_length[1]|is_natural_no_zero');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
