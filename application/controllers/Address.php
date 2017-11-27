@@ -199,7 +199,7 @@
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
 			$this->form_validation->set_rules('brief', '简称', 'trim|max_length[10]');
-			$this->form_validation->set_rules('fullname', '姓名', 'trim|required|min_length[2]|max_length[15]');
+			$this->form_validation->set_rules('fullname', '收货人姓名', 'trim|required|min_length[2]|max_length[15]');
 			$this->form_validation->set_rules('mobile', '手机号', 'trim|required|exact_length[11]|is_natural');
 			$this->form_validation->set_rules('nation', '国别', 'trim');
 			$this->form_validation->set_rules('province', '省', 'trim|required|max_length[10]');
@@ -312,7 +312,7 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('brief', '简称', 'trim|max_length[10]');
-			$this->form_validation->set_rules('fullname', '姓名', 'trim|required|min_length[2]|max_length[15]');
+			$this->form_validation->set_rules('fullname', '收货人姓名', 'trim|required|min_length[2]|max_length[15]');
 			$this->form_validation->set_rules('mobile', '手机号', 'trim|required|exact_length[11]|is_natural');
 			$this->form_validation->set_rules('nation', '国别', 'trim');
 			$this->form_validation->set_rules('province', '省', 'trim|required|max_length[10]');

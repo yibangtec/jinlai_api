@@ -321,7 +321,7 @@ class Comment_item extends MY_Controller
                     $comment_item = array(
                         'item_id' => $item['item_id'],
                         'score' => !empty($item_score) ? $item_score : 4,
-                        'content' => !empty($item_content) ? $item_content : '默认好评',
+                        'content' => !empty($item_content) ? $item_content : '满意，好评！',
                         'image_urls' => !empty($item_image_urls) ? $item_image_urls : NULL,
                     );
                     $this->create_comment_item( array_merge($data_to_create, $comment_item) );

@@ -121,6 +121,49 @@ class Coupon_model extends CI_Model
         return $query->row_array();
     } // end select_by_id
 
+    /**
+     * 获取面值最高的有效优惠券
+     *
+     * @param string/int $user_id
+     * @param string/int $biz_id
+     * @param string $subtotal
+     */
+    public function get_max_valid($user_id, $biz_id, $subtotal)
+    {
+        $condition = array(
+            'status' => '正常',
+            'time_delete' => 'NULL', // 未被删除
+            'order_id' => 'NULL', // 未被使用
+            'user_id' => $user_id,
+            'biz_id' => $biz_id,
+            'amount <' => $subtotal, // 面值低于订单小计
+            'min_subtotal <' => $subtotal, // 起用金额低于订单小计
+            'time_end >' => time(),
+        );
+        foreach ($condition as $name => $value):
+            if ($value === 'NULL'):
+                $this->db->where($this->table_name.'.'."$name IS NULL");
+
+            elseif ($value === 'IS NOT NULL'):
+                $this->db->where($this->table_name.'.'."$name IS NOT NULL");
+
+            else:
+                $this->db->where($this->table_name.'.'.$name, $value);
+            endif;
+        endforeach;
+
+        // 未指定起用日期，或未超过起用日期
+        $this->db->group_start()
+                ->where('time_start IS NULL')
+                ->or_where('time_start <', time())
+            ->group_end();
+
+        $this->db->order_by('amount', 'DESC');
+
+        $query = $this->db->get($this->table_name);
+        return $query->row_array();
+    } // end get_max_valid
+
 } // end class Coupon_model
 
 /* End of file Coupon_model.php */

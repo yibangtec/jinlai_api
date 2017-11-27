@@ -124,9 +124,12 @@
 			endforeach;
 			
 			// 排序条件
-			$order_by['nature'] = 'ASC';
-            $order_by['level'] = 'ASC';
-            $order_by['parent_id'] = 'ASC';
+            $order_by = NULL;
+            if ($this->app_type === 'client'):
+                $order_by['nature'] = 'ASC';
+                $order_by['level'] = 'ASC';
+                $order_by['parent_id'] = 'ASC';
+            endif;
 
 			// 限制可返回的字段
             if ($this->app_type === 'admin')

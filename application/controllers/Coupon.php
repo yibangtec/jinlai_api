@@ -313,11 +313,11 @@
 				endif;
 
 			else:
-				// 计算失效时间
+				// 计算有效期结束时间
 				if ( !empty($template['time_end']) ):
-					$time_to_end = $template['time_end']; // 若指定了有效期结束日期，直接赋值
+					$time_to_end = $template['time_end']; // 若指定了有效期结束日期，直接赋值，忽略有效期开始时间及有效期
 				else:
-					$time_to_end = empty($template['period'])? NULL: time() + $template['period']; // 若未指定有效期，则长期有效
+					$time_to_end = empty($template['period'])? time() + 2592000: time() + $template['period']; // 若未指定有效期，则默认30天
 				endif;
 
 				// 需要创建的数据；逐一赋值需特别处理的字段

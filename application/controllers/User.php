@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'password', 'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob', 'avatar', 'mobile', 'email', 'wechat_union_id', 'address_id', 'bank_name', 'bank_account', 'last_login_timestamp', 'last_login_ip',
+			'password', 'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob', 'avatar', 'level', 'mobile', 'email', 'wechat_union_id', 'address_id', 'bank_name', 'bank_account', 'last_login_timestamp', 'last_login_ip',
 			'time_create', 'time_delete', 'time_edit', 'operator_id',
 		);
 
@@ -22,7 +22,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'user_id', 'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob', 'avatar', 'mobile', 'email', 'wechat_union_id', 'address_id', 'bank_name', 'bank_account', 'last_login_timestamp', 'last_login_ip',
+			'user_id', 'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob', 'avatar', 'level', 'mobile', 'email', 'wechat_union_id', 'address_id', 'bank_name', 'bank_account', 'last_login_timestamp', 'last_login_ip',
 			'time_create', 'time_delete', 'time_edit', 'operator_id',
 		);
 

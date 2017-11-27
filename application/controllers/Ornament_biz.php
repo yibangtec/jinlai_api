@@ -203,7 +203,6 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('biz_id', '所属商家ID', 'trim|required');
             $this->form_validation->set_rules('name', '方案名称', 'trim|required|max_length[30]');
             $this->form_validation->set_rules('vi_color_first', '第一识别色', 'trim|min_length[3]|max_length[6]');
             $this->form_validation->set_rules('vi_color_second', '第二识别色', 'trim|min_length[3]|max_length[6]');
@@ -244,11 +243,16 @@
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
 
-				$result = $this->basic_model->create($data_to_create, TRUE);
-				if ($result !== FALSE):
+				$created_id = $this->basic_model->create($data_to_create, TRUE);
+				if ($created_id !== FALSE):
 					$this->result['status'] = 200;
-					$this->result['content']['id'] = $result;
+					$this->result['content']['id'] = $created_id;
 					$this->result['content']['message'] = '创建成功';
+
+					// 若为商家端，检查当前商家是否已有使用中的店铺装修；若无，则设置刚创建的装修方案为默认装修
+                    if ($this->app_type === 'biz'):
+                        $this->default_this($biz_id, $created_id);
+                    endif;
 
 				else:
 					$this->result['status'] = 424;
@@ -522,6 +526,27 @@
 
 			endif;
 		} // end edit_bulk
+
+        /**
+         * 设置特定装修方案为特定商家的默认装修方案
+         *
+         * @param string $biz_id
+         * @param string $id
+         */
+        public function default_this($biz_id, $id)
+        {
+            $this->switch_model('biz', 'biz_id');
+            $biz = $this->basic_model->select_by_id($biz_id);
+
+            if ( !empty($biz) && empty($biz['ornament_id']) ):
+                $data_to_edit['ornament_id'] = $id;
+                $result = $this->basic_model->edit($biz_id, $data_to_edit);
+                if ($result !== FALSE):
+                    $this->result['content']['message'] .= '，已设为默认店铺装修方案';
+                endif;
+
+            endif;
+        } // default_this
 
 	} // end class Ornament_biz
 

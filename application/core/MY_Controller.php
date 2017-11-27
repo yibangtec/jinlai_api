@@ -342,7 +342,7 @@
 		} // end permission_check
 
 		/**
-		 * 操作者有效性检查；通过操作者类型、ID、密码进行验证
+		 * 操作者有效性检查；通过操作者用户ID、密码进行验证
 		 */
 		protected function operator_check()
 		{
@@ -356,7 +356,7 @@
 			);
 			$result = $this->basic_model->match($data_to_search);
 
-			// 切换数据库
+			// 重置数据库
 			$this->reset_model();
 
 			if ( !empty($result) ):

@@ -254,12 +254,6 @@
 				$this->result['content']['error']['message'] = $this->order_data['content']['error']['message'];
 
 			else:
-                // TODO 生成优惠信息
-                if ($this->input->post('test_mode') === 'on'):
-                    var_dump($this->order_data);
-			exit;
-                endif;
-
 				// 生成全局订单数据
 				$common_meta = array(
 					'time_create' => time(),
@@ -278,12 +272,21 @@
 				for ($i=0; $i<$bizs_count; $i++):
 					// 合并通用订单及每笔订单数据
 					$data_to_create = array_merge($common_meta, $this->order_data[$i]);
-					//var_dump($data_to_create);
 
 					// 取出订单商品数据
 					$order_items = $data_to_create['order_items'];
 					unset($data_to_create['order_items']);
-					//var_dump($order_items);
+
+                    // 应用用户面额最高的有效商家优惠券（若有）
+                    $this->load->model('coupon_model');
+                    $coupon = $this->coupon_model->get_max_valid($user_id, $data_to_create['biz_id'], $data_to_create['subtotal']);
+                    if ( !empty($coupon) ):
+                        $data_to_create['coupon_id'] = $coupon['coupon_id'];
+                        $data_to_create['discount_coupon'] = $coupon['amount'];
+                        $data_to_create['total'] -= $coupon['amount'];
+                    endif;
+                    //if ($this->input->post('test_mode') === 'on'):
+                    //endif;
 
 					// 创建订单
 					$this->reset_model();// 重置数据库参数
@@ -293,6 +296,16 @@
 						$this->result['status'] = 200;
 						$this->result['content']['ids'][] = $order_id;
 						$this->result['content']['message'] = '创建成功';
+
+                        // 标记优惠券为已使用
+                        if ( !empty($coupon) ):
+                            $this->switch_model('coupon', 'coupon_id');
+                            $data_to_edit = array(
+                                'order_id' => $order_id,
+                                'time_used' => time(),
+                            );
+                            $result = $this->basic_model->edit($coupon['coupon_id'], $data_to_edit);
+                        endif;
 
 						// 创建订单商品
 						$this->switch_model('order_items', 'record_id');
@@ -406,10 +419,10 @@
                 $unit_freight = 10; // 测试数据
             endif;
 
-            if ( $this->input->post('test_mode') === 'on' ):
-                var_dump($unit_freight);
-            exit;
-            endif;
+//            if ( $this->input->post('test_mode') === 'on' ):
+//                var_dump($unit_freight);
+//                exit;
+//            endif;
 
 			//TODO 计算单品优惠活动折抵
 			//TODO 计算单品优惠券折抵
@@ -606,6 +619,17 @@
 				// 默认批量处理全部成功，若有任一处理失败则将处理失败行进行记录
 				$this->result['status'] = 200;
 				foreach ($ids as $id):
+                    // 若改价，需获取原订单信息并完整计算待支付金额
+                    if ($operation === 'reprice'):
+                        $current_order = $this->basic_model->select_by_id($id);
+                        $data_to_edit['total'] =
+                            $current_order['subtotal']
+                            - $current_order['discount_promotion']
+                            - $current_order['discount_coupon']
+                            + $current_order['freight']
+                            - $data_to_edit['discount_reprice'];
+                    endif;
+
 					$result = $this->basic_model->edit($id, $data_to_edit);
 					if ($result === FALSE):
 						$this->result['status'] = 434;
@@ -654,6 +678,23 @@
 
 			// 获取商品信息
 			$this->cart_decode($cart_string);
+
+            // 计算待生成子订单总数，即订单相关商家数
+            $bizs_count = count($this->order_data);
+
+            // 以商家为单位预生成订单数据
+            for ($i=0; $i<$bizs_count; $i++):
+                // 获取用户面额最高的有效商家优惠券（若有）
+                $this->load->model('coupon_model');
+                $coupon = $this->coupon_model->get_max_valid($user_id, $this->order_data[$i]['biz_id'], $this->order_data[$i]['subtotal']);
+                if ( !empty($coupon) )
+                    $this->order_data[$i]['total'] -= $coupon['amount'];
+                // 无论是否有相应优惠券，均生成相应返回信息字段
+                $this->order_data[$i]['coupon_id'] = $coupon['coupon_id'];
+                $this->order_data[$i]['coupon_name'] = $coupon['name'];
+                $this->order_data[$i]['discount_coupon'] = $coupon['amount'];
+
+            endfor;
 
 			$this->result['status'] = 200;
 			$this->result['content']['addresses'] = $addresses;
@@ -840,6 +881,8 @@
 		 */
 		private function operation_deliver()
 		{
+            $this->sms['content'] = '卖家已通过'.$data_to_edit['deliver_method'].'发货';
+
 			$data_to_edit['time_deliver'] = time();
 			$data_to_edit['deliver_method'] = $this->input->post('deliver_method'); // 发货方式
 			$data_to_edit['deliver_biz'] = $this->input->post('deliver_biz'); // 物流服务商
@@ -858,7 +901,7 @@
 		{
 			if ($this->operator_check() !== TRUE):
 				$this->result['status'] = 453;
-				$this->result['content']['error']['message'] = '与该ID及类型对应的操作者不存在，或操作密码错误/未传入密码';
+                $this->result['content']['error']['message'] = '密码不正确；若您忘记密码，可通过 个人中心->设置 重新设置';
 				exit();
 			else:
 				$data_to_edit['time_confirm'] = time();

@@ -213,11 +213,12 @@
 
 			else:
 				// 需要创建的数据；逐一赋值需特别处理的字段
+                $period = (empty($this->input->post('period')) && empty($this->input->post('time_end')) )? 2592000: $this->input->post('period'); // 有效期默认为30个自然日；但若指定了有效期结束时间，则忽略领取后有效期
 				$data_to_create = array(
 					'creator_id' => $user_id,
-					'period' => (empty($this->input->post('period')) && empty($this->input->post('time_end')) )? '2592000': $this->input->post('period'), // 有效期默认为30个自然日；但若指定了有效期结束时间，则忽略领取后有效期
+					'period' => $period,
 					'time_start' => empty($this->input->post('time_start'))? 0: $this->input->post('time_start'),
-					'time_end' => empty($this->input->post('time_end'))? NULL: $this->input->post('time_end'),
+					'time_end' => empty($this->input->post('time_end'))? time() + $period: $this->input->post('time_end'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
@@ -297,11 +298,12 @@
 
 			else:
 				// 需要编辑的数据；逐一赋值需特别处理的字段
+                $period = (empty($this->input->post('period')) && empty($this->input->post('time_end')) )? 2592000: $this->input->post('period'); // 有效期默认为30个自然日；但若指定了有效期结束时间，则忽略领取后有效期
 				$data_to_edit = array(
 					'operator_id' => $user_id,
-					'period' => (empty($this->input->post('period')) && empty($this->input->post('time_end')) )? '2592000': $this->input->post('period'), // 有效期默认为30个自然日；但若指定了有效期结束时间，则忽略领取后有效期
+					'period' => $period,
 					'time_start' => empty($this->input->post('time_start'))? 0: $this->input->post('time_start'),
-					'time_end' => empty($this->input->post('time_end'))? NULL: $this->input->post('time_end'),
+                    'time_end' => empty($this->input->post('time_end'))? time() + $period: $this->input->post('time_end'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
