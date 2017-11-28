@@ -14,14 +14,14 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'type_actual', 'time_latest_deliver', 'exempt_amount', 'exempt_subtotal', 'max_amount', 'start_amount', 'fee_start', 'fee_unit', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'nation', 'province', 'city', 'county', 'longitude', 'latitude', 'time_latest_deliver', 'type_actual', 'max_amount', 'start_amount', 'unit_amount', 'fee_start', 'fee_unit', 'exempt_amount', 'exempt_subtotal', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'template_id', 'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'type_actual', 'time_latest_deliver', 'exempt_amount', 'exempt_subtotal',  'max_amount', 'start_amount', 'fee_start', 'fee_unit', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+            'template_id', 'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'nation', 'province', 'city', 'county', 'longitude', 'latitude', 'time_latest_deliver', 'type_actual', 'max_amount', 'start_amount', 'unit_amount', 'fee_start', 'fee_unit', 'exempt_amount', 'exempt_subtotal', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -36,7 +36,7 @@
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'name', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'type_actual', 'time_latest_deliver', 'exempt_amount', 'exempt_subtotal', 'max_amount', 'start_amount', 'fee_start', 'fee_unit',
+            'name', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'nation', 'province', 'city', 'county', 'longitude', 'latitude', 'time_latest_deliver', 'type_actual', 'max_amount', 'start_amount', 'unit_amount', 'fee_start', 'fee_unit', 'exempt_amount', 'exempt_subtotal',
 		);
 
 		/**
@@ -205,14 +205,21 @@
 			$this->form_validation->set_rules('time_valid_end', '有效期结束时间', 'trim');
 			$this->form_validation->set_rules('period_valid', '有效期（天）', 'trim');
 			$this->form_validation->set_rules('expire_refund_rate', '过期退款比例', 'trim');
-			$this->form_validation->set_rules('type_actual', '运费计算方式', 'trim');
-			$this->form_validation->set_rules('time_latest_deliver', '最晚发货时间', 'trim');
-			$this->form_validation->set_rules('max_amount', '每单最高配送量', 'trim|less_than_equal_to[9999]');
-			$this->form_validation->set_rules('start_amount', '起始量', 'trim|less_than_equal_to[9999]');
-			$this->form_validation->set_rules('fee_start', '起始量运费', 'trim|less_than_equal_to[9999]');
-			$this->form_validation->set_rules('fee_unit', '超出后运费', 'trim|less_than_equal_to[9999]');
-			$this->form_validation->set_rules('exempt_amount', '包邮量', 'trim|less_than_equal_to[9999]');
-			$this->form_validation->set_rules('exempt_subtotal', '包邮小计', 'trim|less_than_equal_to[99999.99]');
+            $this->form_validation->set_rules('nation', '国别', 'trim');
+            $this->form_validation->set_rules('province', '省', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('city', '市', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('county', '区/县', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('longitude', '经度', 'trim|min_length[7]|max_length[10]|decimal');
+            $this->form_validation->set_rules('latitude', '纬度', 'trim|min_length[7]|max_length[10]|decimal');
+			$this->form_validation->set_rules('time_latest_deliver', '发货时间', 'trim');
+            $this->form_validation->set_rules('type_actual', '运费计算方式', 'trim|in_list[计件,净重,毛重,体积重]');
+			$this->form_validation->set_rules('max_amount', '每单最高配送量', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('start_amount', '首量', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
+            $this->form_validation->set_rules('unit_amount', '续量', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('fee_start', '首量运费', 'trim|greater_than_equal_to[0]|less_than_equal_to[999]');
+			$this->form_validation->set_rules('fee_unit', '续量运费', 'trim|greater_than_equal_to[0]|less_than_equal_to[999]');
+			$this->form_validation->set_rules('exempt_amount', '包邮量', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
+			$this->form_validation->set_rules('exempt_subtotal', '包邮订单小计', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -229,10 +236,24 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'type_actual', 'exempt_amount', 'exempt_subtotal', 'max_amount', 'start_amount', 'fee_start', 'fee_unit',
+					'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'nation', 'province', 'city', 'county', 'longitude', 'latitude', 'type_actual', 'max_amount', 'start_amount', 'unit_amount', 'fee_start', 'fee_unit', 'exempt_amount', 'exempt_subtotal',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
+
+                // 若已传入经纬度，直接进行设置；若未设置经纬度，则通过地址（若有）借助高德地图相关API转换获取
+                if ( !empty($this->input->post('longitude')) && !empty($this->input->post('latitude')) ):
+                    $data_to_create['latitude'] = $this->input->post('latitude');
+                    $data_to_create['longitude'] = $this->input->post('longitude');
+                elseif ( !empty($this->input->post('province')) && !empty($this->input->post('city')) && !empty($this->input->post('street')) ):
+                    // 拼合待转换地址（省、市、区/县）
+                    $address = $this->input->post('province'). $this->input->post('city'). $this->input->post('county');
+                    $location = $this->amap_geocode($address, $this->input->post('city'));
+                    if ( $location !== FALSE ):
+                        $data_to_create['latitude'] = $location['latitude'];
+                        $data_to_create['longitude'] = $location['longitude'];
+                    endif;
+                endif;
 
 				$result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):
@@ -276,23 +297,26 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('name', '名称', 'trim|required');
-			$this->form_validation->set_rules('time_valid_from', '有效期起始时间', 'trim');
-			$this->form_validation->set_rules('time_valid_end', '有效期结束时间', 'trim');
-			$this->form_validation->set_rules('period_valid', '有效期（天）', 'trim');
-			$this->form_validation->set_rules('expire_refund_rate', '过期退款比例', 'trim');
-			$this->form_validation->set_rules('type_actual', '运费计算方式', 'trim');
-			$this->form_validation->set_rules('time_latest_deliver', '最晚发货时间', 'trim');
-			$this->form_validation->set_rules('max_amount', '每单最高配送量', 'trim|less_than_equal_to[9999]');
-			$this->form_validation->set_rules('start_amount', '起始量', 'trim|less_than_equal_to[9999]');
-			$this->form_validation->set_rules('fee_start', '起始量运费', 'trim|less_than_equal_to[9999]');
-			$this->form_validation->set_rules('fee_unit', '超出后运费', 'trim|less_than_equal_to[9999]');
-			$this->form_validation->set_rules('exempt_amount', '包邮量', 'trim|less_than_equal_to[9999]');
-			$this->form_validation->set_rules('exempt_subtotal', '包邮小计', 'trim|less_than_equal_to[99999.99]');
-			// 针对特定条件的验证规则
-			if ($this->app_type === '管理员'):
-				// ...
-			endif;
+            $this->form_validation->set_rules('name', '名称', 'trim|required');
+            $this->form_validation->set_rules('time_valid_from', '有效期起始时间', 'trim');
+            $this->form_validation->set_rules('time_valid_end', '有效期结束时间', 'trim');
+            $this->form_validation->set_rules('period_valid', '有效期（天）', 'trim');
+            $this->form_validation->set_rules('expire_refund_rate', '过期退款比例', 'trim');
+            $this->form_validation->set_rules('nation', '国别', 'trim');
+            $this->form_validation->set_rules('province', '省', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('city', '市', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('county', '区/县', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('longitude', '经度', 'trim|min_length[7]|max_length[10]|decimal');
+            $this->form_validation->set_rules('latitude', '纬度', 'trim|min_length[7]|max_length[10]|decimal');
+            $this->form_validation->set_rules('time_latest_deliver', '发货时间', 'trim');
+            $this->form_validation->set_rules('type_actual', '运费计算方式', 'trim|in_list[计件,净重,毛重,体积重]');
+            $this->form_validation->set_rules('max_amount', '每单最高配送量', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
+            $this->form_validation->set_rules('start_amount', '首量', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
+            $this->form_validation->set_rules('unit_amount', '续量', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
+            $this->form_validation->set_rules('fee_start', '首量运费', 'trim|greater_than_equal_to[0]|less_than_equal_to[999]');
+            $this->form_validation->set_rules('fee_unit', '续量运费', 'trim|greater_than_equal_to[0]|less_than_equal_to[999]');
+            $this->form_validation->set_rules('exempt_amount', '包邮量', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
+            $this->form_validation->set_rules('exempt_subtotal', '包邮订单小计', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -309,15 +333,24 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'time_valid_from', 'time_valid_end', 'type_actual', 'exempt_amount', 'exempt_subtotal', 'max_amount', 'start_amount', 'fee_start', 'fee_unit',
+                    'name', 'type', 'time_valid_from', 'time_valid_end', 'nation', 'province', 'city', 'county', 'longitude', 'latitude','type_actual', 'max_amount', 'start_amount', 'unit_amount', 'fee_start', 'fee_unit', 'exempt_amount', 'exempt_subtotal',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
 
-				// 根据客户端类型等条件筛选可操作的字段名
-				if ($this->app_type !== 'admin'):
-					//unset($data_to_edit['name']);
-				endif;
+                // 若已传入经纬度，直接进行设置；若未设置经纬度，则通过地址（若有）借助高德地图相关API转换获取
+                if ( !empty($this->input->post('longitude')) && !empty($this->input->post('latitude')) ):
+                    $data_to_edit['latitude'] = $this->input->post('latitude');
+                    $data_to_edit['longitude'] = $this->input->post('longitude');
+                elseif ( !empty($this->input->post('province')) && !empty($this->input->post('city')) && !empty($this->input->post('county')) ):
+                    // 拼合待转换地址（省、市、区/县）
+                    $address = $this->input->post('province'). $this->input->post('city'). $this->input->post('county');
+                    $location = $this->amap_geocode($address, $this->input->post('city'));
+                    if ( $location !== FALSE ):
+                        $data_to_edit['latitude'] = $location['latitude'];
+                        $data_to_edit['longitude'] = $location['longitude'];
+                    endif;
+                endif;
 
 				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);
