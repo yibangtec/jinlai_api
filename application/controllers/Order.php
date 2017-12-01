@@ -248,7 +248,7 @@
 				$this->result['status'] = 411;
 				$this->result['content']['error']['message'] = '收货地址不可用';
 
-			// 尝试生成订单数据
+			// 生成订单数据
 			elseif ($this->generate_order_data() === FALSE):
 				$this->result['status'] = 411;
 				$this->result['content']['error']['message'] = $this->order_data['content']['error']['message'];
@@ -273,7 +273,7 @@
 					// 合并通用订单及每笔订单数据
 					$data_to_create = array_merge($common_meta, $this->order_data[$i]);
 
-					// 取出订单商品数据
+					// 取出订单商品数据，稍后存入订单商品信息表
 					$order_items = $data_to_create['order_items'];
 					unset($data_to_create['order_items']);
 
@@ -285,8 +285,73 @@
                         $data_to_create['discount_coupon'] = $coupon['amount'];
                         $data_to_create['total'] -= $coupon['amount'];
                     endif;
-                    //if ($this->input->post('test_mode') === 'on'):
-                    //endif;
+
+                    // 计算运费
+                    $this->switch_model('biz', 'biz_id');
+                    $biz = $this->basic_model->select_by_id($data_to_create['biz_id']);
+                    if ( empty($biz['freight_template_id']) ):
+                        // 若商家未设置默认运费模板，免运费
+                        $data_to_create['freight'] = 0;
+
+                    else:
+                        // 获取默认运费模板
+                        $this->switch_model('freight_template_biz', 'template_id');
+                        $freight_template = $this->basic_model->select_by_id($biz['freight_template_id']);
+
+                        // 检查订单小计是否达到免运费标准
+                        if ($data_to_create['subtotal'] >= $freight_template['exempt_subtotal']):
+                            $data_to_create['freight'] = 0;
+
+                        else:
+                            // 根据运费计算方式，获取计费单位数
+                            if ($freight_template['type_actual'] === '计件'):
+                                $total_amount = $data_to_create['count'];
+
+                            else:
+                                switch ($freight_template['type_actual']):
+                                    case '净重':
+                                        $freight_type = 'weight_net';
+                                        break;
+                                    case '毛重':
+                                        $freight_type = 'weight_gross';
+                                        break;
+                                    case '体积重':
+                                        $freight_type = 'weight_volume';
+                                        break;
+                                endswitch;
+                                $total_amount = $data_to_create[$freight_type];
+                            endif;
+
+                            // 检查计费单位数是否达到免运费标准
+                            if ($total_amount >= $freight_template['exempt_amount']):
+                                $data_to_create['freight'] = 0;
+                                $freight_free = TRUE;
+                            endif;
+
+                            // 若不可免运费，开始计算运费
+                            if ( ! isset($freight_free) ):
+                                // 首费
+                                $data_to_create['freight'] = $freight_template['fee_start'];
+
+                                // 若超出首量，计算续量费用（每续量*续量费用）
+                                $amount_to_charge = $total_amount - $freight_template['start_amount'];
+                                if ($amount_to_charge > 0):
+                                    // 采用进一法计算费用
+                                    $data_to_create['freight'] += $freight_template['fee_unit'] * ceil($amount_to_charge / $freight_template['unit_amount']);
+                                endif;
+
+                                // 更新订单应付金额
+                                $data_to_create['total'] += $data_to_create['freight'];
+                            endif;
+
+                        endif;
+
+                    endif;
+                    unset($data_to_create['count']);
+                    unset($data_to_create['weight_net']);
+                    unset($data_to_create['weight_gross']);
+                    unset($data_to_create['weight_volume']);
+                    // end 计算运费
 
 					// 创建订单
 					$this->reset_model();// 重置数据库参数
@@ -395,38 +460,6 @@
 			    $item_id = $sku['item_id']; // 若已获取规格信息，以规格信息中的商品ID为准
             $item = $this->basic_model->select_by_id($item_id);
 
-            // 获取商品运费模板
-            if ( empty($item['freight_template_id']) ):
-                $unit_freight = 0; // 若商品未设置运费模板，免运费；即每单位运费为0
-            else:
-                $this->switch_model('freight_template_biz', 'template_id');
-                $freight_template = $this->basic_model->select_by_id($item['freight_template_id']);
-                // 获取计重方式
-                switch ($freight_template['type_actual']):
-                    case '计件':
-                        $freight_type = 'count';
-                        break;
-                    case '净重':
-                        $freight_type = 'weight_net';
-                        break;
-                    case '毛重':
-                        $freight_type = 'weight_gross';
-                        break;
-                    case '体积重':
-                        $freight_type = 'weight_volume';
-                        break;
-                endswitch;
-                $unit_freight = 10; // 测试数据
-            endif;
-
-//            if ( $this->input->post('test_mode') === 'on' ):
-//                var_dump($unit_freight);
-//                exit;
-//            endif;
-
-			//TODO 计算单品优惠活动折抵
-			//TODO 计算单品优惠券折抵
-			//TODO 计算单品运费
 			// 生成订单商品信息
 			$order_item = array(
 				'biz_id' => $item['biz_id'],
@@ -436,29 +469,41 @@
 				'slogan' => $item['slogan'],
 				'tag_price' => $item['tag_price'],
 				'price' => $item['price'],
+
 				'count' => $count,
-
-				'freight' => $unit_freight,
-
-				//'promotion_id' => $item['promotion_id'], // 营销活动ID
-				//'discount_promotion' => $discount_promotion, // 营销活动折抵金额
-
-				//'coupon_id' => $item['coupon_id'], // 优惠券ID
-				//'discount_coupon' => $discount_coupon, // 优惠券折抵金额
+                'weight_net' => $item['weight_net'] * $count,
+                'weight_gross' => $item['weight_gross'] * $count,
+                'weight_volume' => $item['weight_volume'] * $count,
 			);
 			if ( !empty($sku) ):
 				$order_sku = array(
 					'sku_id' => $sku_id,
-					'sku_name' => $sku['name_first']. $sku['name_second']. $sku['name_third'],
+					'sku_name' => $sku['name_first']. ' '.$sku['name_second']. ' '.$sku['name_third'],
 					'sku_image' => $sku['url_image'],
 					'tag_price' => $sku['tag_price'],
 					'price' => $sku['price'],
+
+                    // 若未填写规格重量，直接使用商品重量
+                    'weight_net' => ($sku['weight_net'] === '0.00')? $order_item['weight_net']: $sku['weight_net'] * $count,
+                    'weight_gross' => ($sku['weight_gross'] === '0.00')? $order_item['weight_gross']: $sku['weight_gross'] * $count,
+                    'weight_volume' => ($sku['weight_volume'] === '0.00')? $order_item['weight_volume']: $sku['weight_volume'] * $count,
 				);
 				$order_item = array_merge($order_item, $order_sku);
 			endif;
-			// 生成订单商品信息
-			$order_item['single_total'] = $order_item['price'] * $order_item['count']; // 计算当前商品应付金额
-			$order_items[] = array_filter($order_item); // 去掉空数组元素
+
+            // 计算当前商品应付金额
+			$order_item['single_total'] = $order_item['price'] * $order_item['count'];
+
+            if ( $this->input->post('test_mode') === 'on' ):
+                var_dump($order_item);
+                //exit;
+            endif;
+
+            // 保存订单商品信息；去掉空数组元素及冗余数据
+			$weight_net = $order_item['weight_net'];unset($order_item['weight_net']);
+            $weight_gross = $order_item['weight_gross'];unset($order_item['weight_gross']);
+            $weight_volume = $order_item['weight_volume'];unset($order_item['weight_volume']);
+			$order_items[] = array_filter($order_item);
 
 			// 若当前商家已有待创建订单，更新部分订单信息及订单商品信息
 			$need_to_create = TRUE;
@@ -468,20 +513,22 @@
 
 						if ($this->order_data[$i]['biz_id'] === $order_item['biz_id']):
 							$this->order_data[$i]['subtotal'] += $order_item['single_total'];
-                            $this->order_data[$i]['freight'] += $order_item['freight'];
-							$this->order_data[$i]['total'] += ($order_item['single_total'] + $order_item['freight']);
+                            $this->order_data[$i]['count'] += $order_item['count'];
+                            $this->order_data[$i]['weight_net'] += $weight_net;
+                            $this->order_data[$i]['weight_gross'] += $weight_gross;
+                            $this->order_data[$i]['weight_volume'] += $weight_volume;
+							$this->order_data[$i]['total'] += $order_item['single_total'];
+
 							$this->order_data[$i]['order_items'] = array_merge($this->order_data[$i]['order_items'], $order_items);
-							$need_to_create = FALSE; // 无需新建待创建订单
+							$need_to_create = FALSE; // 无需创建新商家的订单
 						endif;
 
 					endif;
 				endfor;
 			endif;
 
-			//TODO 计算商家优惠活动折抵
-			//TODO 计算商家优惠券折抵
-			//TODO 计算商家运费
-
+			//TODO 计算单品、商家优惠活动折抵
+			//TODO 计算单品、商家优惠券折抵
 			// 若当前商家没有待创建订单，新建待创建订单
 			if ($need_to_create === TRUE):
 				// 获取需要写入订单信息的商家信息
@@ -499,8 +546,10 @@
 
 					//'coupon_id' => $item['coupon_id'], // 优惠券ID
 					//'discount_coupon' => $discount_coupon, // 优惠券折抵金额
-
-					'freight' => $order_item['freight'], // 运费
+                    'count' => $order_item['count'],
+                    'weight_net' => $weight_net,
+                    'weight_gross' => $weight_gross,
+                    'weight_volume' => $weight_volume,
 
 					'total' => $order_item['single_total'],
 					'order_items' => $order_items,
@@ -885,8 +934,8 @@
 
 			$data_to_edit['time_deliver'] = time();
 			$data_to_edit['deliver_method'] = $this->input->post('deliver_method'); // 发货方式
-			$data_to_edit['deliver_biz'] = $this->input->post('deliver_biz'); // 物流服务商
-			$data_to_edit['waybill_id'] = $this->input->post('waybill_id'); // 物流运单号；deliver_method为自行配送或用户自提时可留空
+			$data_to_edit['deliver_biz'] = $this->input->post('deliver_biz'); // 物流服务商；若用户自提，不需要填写服务商
+			$data_to_edit['waybill_id'] = $this->input->post('waybill_id'); // 物流运单号；用户自提，或同城配送的服务商选择自营时，不需要填写运单号
 			$data_to_edit['status'] = '待收货';
 			return $data_to_edit;
 		} // end operation_deliver

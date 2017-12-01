@@ -28,7 +28,7 @@
 			'bank_name', 'bank_account',
 			'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
 			'longitude', 'latitude', 'nation', 'province', 'city', 'county', 'street',
-			'ornament_id',
+            'freight_template_id', 'ornament_id',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
@@ -46,7 +46,7 @@
          */
         protected $names_quick_create_required = array(
             'user_id',
-            'brief_name', 'tel_public', 'tel_protected_biz', 'tel_protected_order', 'tel_protected_fiscal',
+            'brief_name', 'tel_public',
         );
 
 		/**
@@ -59,7 +59,7 @@
 			'code_license', 'code_ssn_owner', 'code_ssn_auth',
 			'bank_name', 'bank_account', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
 			'longitude', 'latitude', 'nation', 'province', 'city', 'county', 'street',
-            'ornament_id',
+            'freight_template_id', 'ornament_id',
 		);
 
 		/**
@@ -239,6 +239,7 @@
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
+            $this->form_validation->set_rules('url_logo', '店铺LOGO', 'trim|max_length[255]');
 			$this->form_validation->set_rules('name', '商家全称', 'trim|required|min_length[5]|max_length[35]|is_unique[biz.name]');
 			$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[20]|is_unique[biz.brief_name]');
 			$this->form_validation->set_rules('description', '简介', 'trim|max_length[255]');
@@ -277,7 +278,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'brief_name', 'tel_public', 'tel_protected_biz',
+                    'url_logo', 'name', 'brief_name', 'tel_public', 'tel_protected_biz',
 					'description', 'bank_name', 'bank_account',
 					'fullname_owner', 'fullname_auth',
 					'code_license', 'code_ssn_owner', 'code_ssn_auth',
@@ -351,12 +352,9 @@
             // 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
             $this->load->library('form_validation');
             $this->form_validation->set_error_delimiters('', '');
-            $this->form_validation->set_rules('url_logo', '商家LOGO', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_logo', '店铺LOGO', 'trim|max_length[255]');
             $this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[20]|is_unique[biz.brief_name]');
             $this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]|is_unique[biz.tel_public]');
-            $this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|required|is_natural|exact_length[11]|is_unique[biz.tel_protected_biz]');
-            $this->form_validation->set_rules('tel_protected_fiscal', '财务联系手机号', 'trim|required|is_natural|exact_length[11]|is_unique[biz.tel_protected_fiscal]');
-            $this->form_validation->set_rules('tel_protected_order', '订单通知手机号', 'trim|required|is_natural|exact_length[11]|is_unique[biz.tel_protected_order]');
 
             // 若表单提交不成功
             if ($this->form_validation->run() === FALSE):
@@ -367,10 +365,14 @@
                 // 需要创建的数据；逐一赋值需特别处理的字段
                 $data_to_create = array(
                     'creator_id' => $user_id,
+                    'tel_public' => $tel_public,
+                    'tel_protected_biz' => $tel_public,
+                    'tel_protected_fiscal' => $tel_public,
+                    'tel_protected_order' => $tel_public,
                 );
                 // 自动生成无需特别处理的数据
                 $data_need_no_prepare = array(
-                    'name', 'url_logo', 'brief_name', 'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
+                    'url_logo', 'brief_name',
                 );
                 foreach ($data_need_no_prepare as $name)
                     $data_to_create[$name] = $this->input->post($name);
@@ -445,6 +447,7 @@
 			// 载入验证规则
 			$rule_path = APPPATH. 'libraries/form_rules/Biz.php';
 			require($rule_path);
+            $this->form_validation->set_rules('freight_template_id', '运费模板ID', 'trim');
             $this->form_validation->set_rules('ornament_id', '店铺装修ID', 'trim');
 
 			// 若表单提交不成功
@@ -483,7 +486,7 @@
 					'code_license', 'code_ssn_owner',  'code_ssn_auth',
 					'bank_name', 'bank_account', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
 					'province', 'city', 'county', 'street',
-                    'ornament_id',
+                    'freight_template_id', 'ornament_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -521,7 +524,7 @@
 		public function edit_certain()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz'); // 客户端类型
+			$type_allowed = array('admin', 'biz',); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -572,7 +575,7 @@
 				$this->form_validation->set_rules('url_name', '店铺域名', 'trim|max_length[20]|alpha_dash');
 				$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|exact_length[11]|is_natural');
 			endif;
-			$this->form_validation->set_rules('url_logo', '商家LOGO', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_logo', '店铺LOGO', 'trim|max_length[255]');
 			$this->form_validation->set_rules('slogan', '宣传语', 'trim|max_length[30]');
 			$this->form_validation->set_rules('description', '简介', 'trim|max_length[255]');
 			$this->form_validation->set_rules('notification', '店铺公告', 'trim|max_length[255]');
@@ -608,6 +611,7 @@
 			$this->form_validation->set_rules('longitude', '经度', 'trim|min_length[7]|max_length[10]|decimal');
 			$this->form_validation->set_rules('latitude', '纬度', 'trim|min_length[7]|max_length[10]|decimal');
 
+            $this->form_validation->set_rules('freight_template_id', '运费模板ID', 'trim');
             $this->form_validation->set_rules('ornament_id', '店铺装修ID', 'trim');
 
 			// 若表单提交不成功

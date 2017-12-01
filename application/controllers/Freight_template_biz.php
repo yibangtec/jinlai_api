@@ -333,7 +333,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-                    'name', 'type', 'time_valid_from', 'time_valid_end', 'nation', 'province', 'city', 'county', 'longitude', 'latitude','type_actual', 'max_amount', 'start_amount', 'unit_amount', 'fee_start', 'fee_unit', 'exempt_amount', 'exempt_subtotal',
+                    'name', 'time_valid_from', 'time_valid_end', 'nation', 'province', 'city', 'county', 'longitude', 'latitude','type_actual', 'max_amount', 'start_amount', 'unit_amount', 'fee_start', 'fee_unit', 'exempt_amount', 'exempt_subtotal',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);

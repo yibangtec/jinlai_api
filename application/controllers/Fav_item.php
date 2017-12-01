@@ -24,6 +24,13 @@
 			'user_id', 'item_id',
 		);
 
+        /**
+         * 批量创建时必要的字段名
+         */
+		protected $names_create_bulk_required = array(
+		    'user_id', 'ids',
+        );
+
 		/**
 		 * 编辑多行特定字段时必要的字段名
 		 */
@@ -137,6 +144,15 @@
 		 */
 		public function create()
 		{
+            // 操作可能需要检查客户端及设备信息
+            $type_allowed = array('client',); // 客户端类型
+            $this->client_check($type_allowed);
+
+            // 管理类客户端操作可能需要检查操作权限
+            //$role_allowed = array('管理员', '经理'); // 角色要求
+            //$min_level = 10; // 级别要求
+            //$this->permission_check($role_allowed, $min_level);
+
 			// 检查必要参数是否已传入
 			$required_params = $this->names_create_required;
 			foreach ($required_params as $param):
@@ -202,6 +218,86 @@
 			endif;
 		} // end create
 
+        /**
+         * 7 批量创建
+         *
+         * 为单一用户创建多个商品收藏记录
+         */
+        public function create_bulk()
+        {
+            // 操作可能需要检查客户端及设备信息
+            $type_allowed = array('client',); // 客户端类型
+            $this->client_check($type_allowed);
+
+            // 管理类客户端操作可能需要检查操作权限
+            //$role_allowed = array('管理员', '经理'); // 角色要求
+            //$min_level = 10; // 级别要求
+            //$this->permission_check($role_allowed, $min_level);
+
+            // 检查必要参数是否已传入
+            $required_params = $this->names_create_bulk_required;
+            foreach ($required_params as $param):
+                ${$param} = $this->input->post($param);
+                if ( !isset( ${$param} ) ):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+                    exit();
+                endif;
+            endforeach;
+
+            // 初始化并配置表单验证库
+            $this->load->library('form_validation');
+            $this->form_validation->set_error_delimiters('', '');
+            $this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
+            $this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
+
+            // 若表单提交不成功
+            if ($this->form_validation->run() === FALSE):
+                $this->result['status'] = 401;
+                $this->result['content']['error']['message'] = validation_errors();
+
+            else:
+                // 依次操作数据并输出操作结果
+                // 将待操作行ID们的CSV格式字符串，转换为待操作行的ID数组
+                $ids = explode(',', $ids);
+
+                // 默认批量处理全部成功，若有任一处理失败则将处理失败行进行记录
+                $this->result['status'] = 200;
+                foreach ($ids as $id):
+                    // 需要创建的数据；逐一赋值需特别处理的字段
+                    $data_to_create = array(
+                        'user_id' => $user_id,
+                        'item_id' => $id,
+                    );
+
+                    // 检查是否有重复项
+                    $result = $this->basic_model->match($data_to_create);
+                    if ( !empty($result) ):
+                        // 若已关注过且被删除，则恢复
+                        if ($result['time_delete'] !== NULL):
+                            $data_to_edit['time_delete'] = NULL;
+                            @$result = $this->basic_model->edit($result['record_id'], $data_to_edit);
+                        endif;
+
+                    else:
+                        $data_to_create['time_create'] = time();
+                        $result = $this->basic_model->create($data_to_create, TRUE);
+                        if ($result === FALSE):
+                            $this->result['status'] = 434;
+                            $this->result['content']['row_failed'][] = $id;
+                        endif;
+
+                    endif;
+
+                endforeach;
+
+                // 添加全部操作成功后的提示
+                if ($this->result['status'] = 200)
+                    $this->result['content']['message'] = '全部操作成功';
+
+            endif;
+        } // end create_bulk
+
 		/**
 		 * 6 编辑多行数据特定字段
 		 *
@@ -209,6 +305,15 @@
 		 */
 		public function edit_bulk()
 		{
+            // 操作可能需要检查客户端及设备信息
+            $type_allowed = array('client',); // 客户端类型
+            $this->client_check($type_allowed);
+
+            // 管理类客户端操作可能需要检查操作权限
+            //$role_allowed = array('管理员', '经理'); // 角色要求
+            //$min_level = 10; // 级别要求
+            //$this->permission_check($role_allowed, $min_level);
+
 			// 检查必要参数是否已传入
 			$required_params = $this->names_edit_bulk_required;
 			foreach ($required_params as $param):
