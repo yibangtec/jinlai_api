@@ -353,7 +353,7 @@
             // 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
             $this->load->library('form_validation');
             $this->form_validation->set_error_delimiters('', '');
-            $this->form_validation->set_rules('category_ids[]', '主营商品类目', 'trim|required|max_length[255]');
+            $this->form_validation->set_rules('category_ids', '主营商品类目', 'trim|required|max_length[255]');
             $this->form_validation->set_rules('url_logo', '店铺LOGO', 'trim|max_length[255]');
             $this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[20]|is_unique[biz.brief_name]');
             $this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]|is_unique[biz.tel_public]');
@@ -441,7 +441,7 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			if ($this->app_type === 'admin'):
-                $this->form_validation->set_rules('category_ids[]', '主营商品类目', 'trim|required|max_length[255]');
+                $this->form_validation->set_rules('category_ids', '主营商品类目', 'trim|required|max_length[255]');
 				$this->form_validation->set_rules('name', '商家全称', 'trim|required|min_length[5]|max_length[35]');
 				$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[20]');
 				$this->form_validation->set_rules('url_name', '店铺域名', 'trim|max_length[20]|alpha_dash');
@@ -496,6 +496,7 @@
 
 				// 根据客户端类型等条件筛选可操作的字段名
 				if ($this->app_type !== 'admin'):
+                    unset($data_to_edit['category_ids']);
 					unset($data_to_edit['name']);
 					unset($data_to_edit['brief_name']);
 					unset($data_to_edit['url_name']);
@@ -573,7 +574,7 @@
 			$data_to_validate["{$name}"] = $value;
 			$this->form_validation->set_data($data_to_validate);
 			if ($this->app_type === 'admin'):
-                $this->form_validation->set_rules('category_ids[]', '主营商品类目', 'trim|required|max_length[255]');
+                $this->form_validation->set_rules('category_ids', '主营商品类目', 'trim|required|max_length[255]');
 				$this->form_validation->set_rules('name', '商家名称', 'trim|min_length[5]|max_length[35]');
 				$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|max_length[20]');
 				$this->form_validation->set_rules('url_name', '店铺域名', 'trim|max_length[20]|alpha_dash');

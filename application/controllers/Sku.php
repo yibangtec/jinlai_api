@@ -118,6 +118,12 @@
 				if ( !empty($this->input->post($sorter)) )
 					$condition[$sorter] = $this->input->post($sorter);
 			endforeach;
+
+			// 若请求来自客户端，仅返回可购规格
+			if ($this->app_type === 'client'):
+                $condition['time_delete'] = 'NULL';
+			    $condition['stocks >'] = 0;
+            endif;
 			
 			// 排序条件
             $order_by['time_create'] = 'DESC';
