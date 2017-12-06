@@ -122,7 +122,7 @@
 			// 若请求来自客户端，仅返回可购规格
 			if ($this->app_type === 'client'):
                 $condition['time_delete'] = 'NULL';
-			    $condition['stocks >'] = 0;
+			    $condition['stocks >'] = 1; // 防止超卖，库存需大于1
             endif;
 			
 			// 排序条件
@@ -208,7 +208,7 @@
             $this->form_validation->set_rules('name_second', '名称第二部分', 'trim|max_length[15]');
             $this->form_validation->set_rules('name_third', '名称第三部分', 'trim|max_length[15]');
             $this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[99999.99]');
-			$this->form_validation->set_rules('price', '价格（元）', 'trim|required|greater_than[0]|less_than_equal_to[99999.99]');
+            $this->form_validation->set_rules('price', '价格（元）', 'trim|required|greater_than_equal_to[1]|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('stocks', '库存量（单位）', 'trim|required|greater_than_equal_to[0]|less_than_equal_to[65535]');
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
@@ -399,7 +399,7 @@
             $this->form_validation->set_rules('name_second', '名称第二部分', 'trim|max_length[15]');
             $this->form_validation->set_rules('name_third', '名称第三部分', 'trim|max_length[15]');
             $this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[99999.99]');
-			$this->form_validation->set_rules('price', '价格（元）', 'trim|greater_than[0]|less_than_equal_to[99999.99]');
+            $this->form_validation->set_rules('price', '价格（元）', 'trim|required|greater_than_equal_to[1]|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('stocks', '库存量（单位）', 'trim|greater_than_equal_to[0]|less_than_equal_to[65535]');
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');

@@ -187,12 +187,12 @@
                 $condition['biz_id'] = $this->input->post('biz_id');
 
 			// 排序条件
-			$order_by['time_create'] = 'DESC';
 			// （可选）遍历筛选条件
 			foreach ($this->names_to_order as $sorter):
 				if ( !empty($this->input->post('orderby_'.$sorter)) )
 					$order_by[$sorter] = $this->input->post('orderby_'.$sorter);
 			endforeach;
+            $order_by['time_create'] = 'DESC';
 
 			// 获取列表；默认可获取已删除项
 			$ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID
@@ -381,7 +381,7 @@
 			$this->form_validation->set_rules('slogan', '商品宣传语/卖点', 'trim|max_length[30]');
 			$this->form_validation->set_rules('description', '商品描述', 'trim|max_length[20000]');
 			$this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[99999.99]');
-			$this->form_validation->set_rules('price', '商城价/现价（元）', 'trim|required|greater_than[0]|less_than_equal_to[99999.99]');
+            $this->form_validation->set_rules('price', '商城价/现价（元）', 'trim|required|greater_than_equal_to[1]|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('stocks', '库存量（单位）', 'trim|required|greater_than_equal_to[0]|less_than_equal_to[65535]');
 			$this->form_validation->set_rules('unit_name', '销售单位', 'trim|max_length[10]');
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
@@ -482,7 +482,7 @@
 			$this->form_validation->set_rules('slogan', '商品宣传语/卖点', 'trim|max_length[30]');
 			$this->form_validation->set_rules('description', '商品描述', 'trim|max_length[20000]');
 			$this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[99999.99]');
-			$this->form_validation->set_rules('price', '商城价/现价（元）', 'trim|required|greater_than[0]|less_than_equal_to[99999.99]');
+            $this->form_validation->set_rules('price', '商城价/现价（元）', 'trim|required|greater_than_equal_to[1]|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('stocks', '库存量（单位）', 'trim|required|greater_than_equal_to[0]|less_than_equal_to[65535]');
 			$this->form_validation->set_rules('unit_name', '销售单位', 'trim|max_length[10]');
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
@@ -596,7 +596,7 @@
 			$this->form_validation->set_rules('slogan', '商品宣传语/卖点', 'trim|max_length[30]');
 			$this->form_validation->set_rules('description', '商品描述', 'trim|max_length[20000]');
 			$this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[99999.99]');
-			$this->form_validation->set_rules('price', '商城价/现价（元）', 'trim|greater_than[0]|less_than_equal_to[99999.99]');
+            $this->form_validation->set_rules('price', '商城价/现价（元）', 'trim|required|greater_than_equal_to[1]|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('stocks', '库存量（单位）', 'trim|greater_than_equal_to[0]|less_than_equal_to[65535]');
 			$this->form_validation->set_rules('unit_name', '销售单位', 'trim|max_length[10]');
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');

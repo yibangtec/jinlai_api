@@ -9,12 +9,7 @@
             "function": "detail",
             "params": "id",
             "url_native_ios": "BizIndexViewController",
-            "url_native_android": "biz.detail.BizDetailActivity",
-            "time_create": "2017-11-10 16:44:02",
-            "time_delete": null,
-            "time_edit": "2017-11-13 17:42:07",
-            "creator_id": "1",
-            "operator_id": "1"
+            "url_native_android": "biz.detail.BizDetailActivity"
         },
         {
             "router_id": "8",
@@ -25,12 +20,7 @@
             "function": "detail",
             "params": "id",
             "url_native_ios": "DetailViewController",
-            "url_native_android": "item.ItemDetailActivity",
-            "time_create": "2017-11-10 16:56:38",
-            "time_delete": null,
-            "time_edit": "2017-11-13 17:42:07",
-            "creator_id": "1",
-            "operator_id": "1"
+            "url_native_android": "item.ItemDetailActivity"
         },
         {
             "router_id": "9",
@@ -41,12 +31,7 @@
             "function": "create",
             "params": "",
             "url_native_ios": "CouponTemplateViewController",
-            "url_native_android": null,
-            "time_create": "2017-11-10 16:56:38",
-            "time_delete": null,
-            "time_edit": "2017-11-16 15:56:23",
-            "creator_id": "1",
-            "operator_id": "1"
+            "url_native_android": "coupon.CouponTemplateActivity"
         },
         {
             "router_id": "10",
@@ -57,12 +42,7 @@
             "function": "detail",
             "params": "id",
             "url_native_ios": "OrderDetailViewController",
-            "url_native_android": "orders.OrderDetailsActivity",
-            "time_create": "2017-11-14 16:49:32",
-            "time_delete": null,
-            "time_edit": "2017-11-19 23:52:35",
-            "creator_id": "1",
-            "operator_id": "1"
+            "url_native_android": "orders.OrderDetailsActivity"
         },
         {
             "router_id": "11",
@@ -73,12 +53,7 @@
             "function": "index",
             "params": null,
             "url_native_ios": "CouponTemplateViewController",
-            "url_native_android": null,
-            "time_create": "2017-11-15 21:02:04",
-            "time_delete": null,
-            "time_edit": "2017-11-19 23:52:35",
-            "creator_id": "1",
-            "operator_id": "1"
+            "url_native_android": "coupon.CouponTemplateActivity"
         },
         {
             "router_id": "12",
@@ -89,12 +64,7 @@
             "function": "detail",
             "params": "id",
             "url_native_ios": "articleDetialViewController",
-            "url_native_android": "web.CommWebActivity",
-            "time_create": "2017-11-19 23:50:22",
-            "time_delete": null,
-            "time_edit": "2017-11-21 15:44:44",
-            "creator_id": "1",
-            "operator_id": "1"
+            "url_native_android": "web.ArticalWebActivity"
         },
         {
             "router_id": "13",
@@ -105,12 +75,7 @@
             "function": "detail",
             "params": "id",
             "url_native_ios": "PageDetialViewController",
-            "url_native_android": null,
-            "time_create": "2017-11-19 23:50:22",
-            "time_delete": null,
-            "time_edit": "2017-11-21 17:22:48",
-            "creator_id": "1",
-            "operator_id": "1"
+            "url_native_android": "web.PageWebActivity"
         },
         {
             "router_id": "14",
@@ -121,12 +86,7 @@
             "function": "detail",
             "params": "id",
             "url_native_ios": "ArticleBizViewController",
-            "url_native_android": null,
-            "time_create": "2017-11-19 23:50:22",
-            "time_delete": null,
-            "time_edit": "2017-11-22 15:43:18",
-            "creator_id": "1",
-            "operator_id": "1"
+            "url_native_android": "web.ArticalBizWebActivity"
         },
         {
             "router_id": "15",
@@ -137,12 +97,7 @@
             "function": "detail",
             "params": "id",
             "url_native_ios": "PageBizViewController ",
-            "url_native_android": null,
-            "time_create": "2017-11-19 23:50:22",
-            "time_delete": null,
-            "time_edit": "2017-11-22 15:43:18",
-            "creator_id": "1",
-            "operator_id": "1"
+            "url_native_android": "web.PageBizWebActivity"
         }
     ]
 }

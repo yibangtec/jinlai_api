@@ -148,11 +148,6 @@
             $type_allowed = array('client',); // 客户端类型
             $this->client_check($type_allowed);
 
-            // 管理类客户端操作可能需要检查操作权限
-            //$role_allowed = array('管理员', '经理'); // 角色要求
-            //$min_level = 10; // 级别要求
-            //$this->permission_check($role_allowed, $min_level);
-
 			// 检查必要参数是否已传入
 			$required_params = $this->names_create_required;
 			foreach ($required_params as $param):
@@ -168,7 +163,6 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('user_id', '所属用户ID', 'trim|required');
 			$this->form_validation->set_rules('item_id', '相关商品ID', 'trim|required');
 
 			// 若表单提交不成功
@@ -179,7 +173,7 @@
 			else:
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
-					'user_id' => $this->input->post('user_id'),
+					'user_id' => $user_id,
 					'item_id' => $this->input->post('item_id'),
 				);
 
@@ -229,11 +223,6 @@
             $type_allowed = array('client',); // 客户端类型
             $this->client_check($type_allowed);
 
-            // 管理类客户端操作可能需要检查操作权限
-            //$role_allowed = array('管理员', '经理'); // 角色要求
-            //$min_level = 10; // 级别要求
-            //$this->permission_check($role_allowed, $min_level);
-
             // 检查必要参数是否已传入
             $required_params = $this->names_create_bulk_required;
             foreach ($required_params as $param):
@@ -249,7 +238,6 @@
             $this->load->library('form_validation');
             $this->form_validation->set_error_delimiters('', '');
             $this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
-            $this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
 
             // 若表单提交不成功
             if ($this->form_validation->run() === FALSE):

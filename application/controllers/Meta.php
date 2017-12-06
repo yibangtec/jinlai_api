@@ -130,7 +130,11 @@
 			//$order_by['name'] = 'value';
 
 			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
+            if ($this->app_type === 'client'):
+                $this->db->select('meta_id, name, value');
+            else:
+                $this->db->select( implode(',', $this->names_to_return) );
+            endif;
 
 			// 获取列表；默认可获取已删除项
 			$items = $this->basic_model->select($condition, $order_by);
