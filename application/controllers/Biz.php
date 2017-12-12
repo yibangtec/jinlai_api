@@ -194,7 +194,7 @@
 			if ( !empty($item) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
-                $this->result['content']['ornament'] = array();
+                $this->result['content']['ornament'] = new stdClass(); // 若无装修方案，返回一个空对象
 
 				// 客户端同时获取商家店铺装修方案（若有）
                 if (($this->app_type === 'client') && !empty($item['ornament_id']) ):
@@ -388,7 +388,7 @@
                     $this->result['content']['id'] = $biz_id;
                     $this->result['content']['message'] = '创建商家成功，我们将尽快受理您的入驻申请';
 
-                    $mobile = $tel_protected_biz;
+                    $mobile = $tel_public;
 
                     // 创建员工
                     $stuff_id = $this->stuff_create($user_id, $biz_id, $mobile);
@@ -402,7 +402,7 @@
 
                     // 发送招商经理通知短信
                     $mobile = '15192098644';
-                    $content = '商家“'.$this->input->post('brief_name').'(商家编号'.$biz_id.')”已提交入驻申请，请尽快跟进，对方商务联系手机号为'.$tel_protected_biz.'。';
+                    $content = '商家“'.$this->input->post('brief_name').'(商家编号'.$biz_id.')”已提交入驻申请，请尽快跟进，对方商务联系手机号为'.$mobile.'。';
                     @$this->sms_send($mobile, $content); // 容忍发送失败
 
                 else:

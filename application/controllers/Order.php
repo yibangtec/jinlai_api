@@ -603,6 +603,10 @@
 			if ($operation === 'note')
 				$this->form_validation->set_rules('note_stuff', '员工备注', 'trim|required|max_length[255]');
 
+            // 商家退单时需验证字段
+            if ($operation === 'refuse')
+                $this->form_validation->set_rules('note_stuff', '员工备注', 'trim|max_length[255]');
+
 			// 商家改价时需验证字段
 			if ($operation === 'reprice')
 				$this->form_validation->set_rules('discount_reprice', '改价折扣金额（元）', 'trim|required|greater_than[0.01]|less_than_equal_to[99999.99]');
@@ -638,7 +642,7 @@
 						$data_to_edit['repricer_id'] = $user_id;
 						break;
 
-					case 'refuse': // 商家拒单
+					case 'refuse': // 商家退单
 						$data_to_edit = array_merge($data_to_edit, $this->operation_refuse());
 						break;
 					case 'accept': // 商家接单
@@ -900,12 +904,13 @@
 		} // end operation_reprice
 
 		/**
-		 * 商家拒单
+		 * 商家退单
 		 *
-		 * time_refuse、status
+		 * note_stuff、time_refuse、status
 		 */
 		private function operation_refuse()
 		{
+            $data_to_edit['note_stuff'] = $this->input->post('note_stuff');
 			$data_to_edit['time_refuse'] = time();
 			$data_to_edit['status'] = '已拒绝';
 			return $data_to_edit;

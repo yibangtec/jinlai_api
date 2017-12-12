@@ -3,7 +3,7 @@
         {
             "meta_id": "1",
             "name": "greating_image_url",
-            "value": "https://www.ybslux.com/uploadfiles/images/app/aac30334-1ed7-4735-921b-b144725254f1.jpg"
+            "value": "https://www.ybslux.com/uploadfiles/images/app/09496302-5c85-4872-89a0-69ba9fc8e9f1.jpg"
         },
         {
             "meta_id": "2",
@@ -129,6 +129,11 @@
             "meta_id": "26",
             "name": "slogan",
             "value": "青岛人自己的品控网购平台"
+        },
+        {
+            "meta_id": "27",
+            "name": "logo_url",
+            "value": "icon/jinlai_client/icon108@3x.png"
         }
     ]
 }
