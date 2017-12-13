@@ -614,8 +614,8 @@
 			// 商家发货时需验证字段
 			if ($operation === 'deliver'):
 				$this->form_validation->set_rules('deliver_method', '发货方式', 'trim|required|max_length[30]');
-				$this->form_validation->set_rules('deliver_biz', '物流服务商', 'trim|max_length[30]');
-				$this->form_validation->set_rules('waybill_id', '物流运单号', 'trim|max_length[30]alpha_numeric');
+				$this->form_validation->set_rules('deliver_biz', '服务商', 'trim|max_length[30]');
+				$this->form_validation->set_rules('waybill_id', '运单号', 'trim|max_length[30]alpha_numeric');
 			endif;
 
 			// 验证表单值格式
@@ -935,10 +935,12 @@
 		 */
 		private function operation_deliver()
 		{
-            $this->sms['content'] = '卖家已通过'.$data_to_edit['deliver_method'].'发货';
+            $deliver_method = $this->input->post('deliver_method');
+
+            $this->sms['content'] = '卖家已通过'. $deliver_method .'发货';
 
 			$data_to_edit['time_deliver'] = time();
-			$data_to_edit['deliver_method'] = $this->input->post('deliver_method'); // 发货方式
+			$data_to_edit['deliver_method'] = $deliver_method; // 发货方式
 			$data_to_edit['deliver_biz'] = $this->input->post('deliver_biz'); // 物流服务商；若用户自提，不需要填写服务商
 			$data_to_edit['waybill_id'] = $this->input->post('waybill_id'); // 物流运单号；用户自提，或同城配送的服务商选择自营时，不需要填写运单号
 			$data_to_edit['status'] = '待收货';

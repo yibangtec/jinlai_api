@@ -202,6 +202,15 @@
                     $this->result['content']['ornament'] = $this->basic_model->select_by_id($item['ornament_id']);
                 endif;
 
+                // 获取商家及平台优惠券模板信息
+                $this->switch_model('coupon_template', 'template_id');
+                if ($this->app_type === 'client') $this->db->where('time_delete IS NULL');
+                $this->db->group_start()
+                    ->where('biz_id IS NULL') // 平台优惠券
+                    ->or_where('biz_id', $item['biz_id']) // 商家优惠券
+                    ->group_end();
+                $this->result['content']['coupon_templates'] = $this->basic_model->select(NULL, NULL);
+
 			else:
 				$this->result['status'] = 414;
 				$this->result['content']['error']['message'] = '没有符合条件的数据';
