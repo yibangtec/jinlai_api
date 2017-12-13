@@ -98,6 +98,39 @@
             "params": "id",
             "url_native_ios": "PageBizViewController ",
             "url_native_android": "web.PageBizWebActivity"
+        },
+        {
+            "router_id": "16",
+            "name": "商家会员卡列表页",
+            "light_preg": "member_biz/index",
+            "preg": "member_biz/index",
+            "controller": "member_biz",
+            "function": "index",
+            "params": null,
+            "url_native_ios": "MembersViewController",
+            "url_native_android": "fragment.MemberFragment"
+        },
+        {
+            "router_id": "17",
+            "name": "商家会员卡详情页",
+            "light_preg": "member_biz/detail",
+            "preg": "member_biz/detail",
+            "controller": "member_biz",
+            "function": "detail",
+            "params": "id",
+            "url_native_ios": "MembersDetailVC",
+            "url_native_android": "member.MemberActivity"
+        },
+        {
+            "router_id": "18",
+            "name": "首页",
+            "light_preg": null,
+            "preg": null,
+            "controller": "home",
+            "function": "index",
+            "params": null,
+            "url_native_ios": "HomeViewController",
+            "url_native_android": "fragment.IndexFragment"
         }
     ]
 }

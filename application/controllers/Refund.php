@@ -115,11 +115,14 @@
 			$items = $this->refund_model->select($condition, $order_by);
 			if ( !empty($items) ):
 				// 获取涉及退款的订单商品
-				$this->switch_model('order_items', 'record_id');
+				$this->switch_model('order_items', 'item_id');
 				for ($i=0;$i<count($items);$i++):
 					// 获取订单商品
                     $this->db->select('item_id, name, item_image, slogan, sku_id, sku_name, sku_image, price, count, single_total');
-					$items[$i]['order_items'] = $this->basic_model->select_by_ids( $items[$i]['item_ids'] );
+				    $condition = array(
+				        'order_id' => $items[$i]['order_id'],
+                    );
+					$items[$i]['order_items'] = $this->basic_model->select_by_ids($items[$i]['item_ids'], $condition);
 				endfor;
 
 				$this->result['status'] = 200;

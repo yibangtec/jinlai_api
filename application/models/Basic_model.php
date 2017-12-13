@@ -181,20 +181,43 @@
 			return $query->row_array();
 		} // end select_by_id
 
-		/**
-		 * 根据CSV格式的ID们字符串获取列表，默认可返回已删除项
-		 */
-		public function select_by_ids($ids, $allow_deleted = TRUE)
+        /**
+         * 根据CSV格式的ID们字符串获取列表，默认可返回已删除项
+         *
+         * @param string $ids
+         * @param array $condition
+         * @param bool $allow_deleted
+         * @return mixed
+         */
+		public function select_by_ids($ids, $condition = NULL, $allow_deleted = TRUE)
 		{
+            // 拆分筛选条件（若有）
+            if ($condition !== NULL):
+                foreach ($condition as $name => $value):
+                    if ($value === 'NULL'):
+                        $this->db->where("$name IS NULL");
+
+                    elseif ($value === 'IS NOT NULL'):
+                        $this->db->where("$name IS NOT NULL");
+
+                    else:
+                        $this->db->where($name, $value);
+
+                    endif;
+                endforeach;
+            endif;
+
             // 默认可返回已删除项
             if ($allow_deleted === FALSE)
                 $this->db->where("`time_delete` IS NULL");
 
 			// 拆分字符串为数组
 			$ids = explode(',', trim($ids, ',')); // 清除多余的前后半角逗号
+            $this->db->group_start();
 			foreach ($ids as $id):
 				$this->db->or_where($this->id_name, $id);
 			endforeach;
+            $this->db->group_end();
 
 			$query = $this->db->get($this->table_name);
 			return $query->result_array();
@@ -305,7 +328,8 @@
 			else:
 				return $update_result;
 			endif;
-		} // end edit;
+		} // end edit
+
 	} // end Class Basic_model
 
 /* End of file Basic_model.php */
