@@ -71,10 +71,6 @@
 
 			if ($return_ids === TRUE):
 				$this->db->select($this->id_name);
-			else:
-				// 获取必要信息
-				$this->db->select($this->table_name.'.*, refund.status as refund_status');
-                $this->db->join('refund', $this->table_name.'.order_id = refund.order_id', 'left outer');
 			endif;
 
             $query = $this->db->get($this->table_name);
@@ -110,9 +106,7 @@
         public function select_by_id($id, $allow_deleted = TRUE)
         {
             // 获取必要信息
-            $this->db->select($this->table_name.'.*, refund.status as refund_status, biz.tel_public as tel_public');
-            $this->db->join('biz', $this->table_name.'.biz_id = biz.biz_id', 'left outer');
-            $this->db->join('refund', $this->table_name.'.order_id = refund.order_id', 'left outer');
+            $this->db->select($this->table_name.'.*, (SELECT tel_public from biz WHERE biz.biz_id = order.biz_id)');
 
             // 默认可返回已删除项
             if ($allow_deleted === FALSE) $this->db->where('time_delete', NULL);

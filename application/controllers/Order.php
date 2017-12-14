@@ -175,12 +175,6 @@
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
 
-				if ($this->app_type === 'client'):
-					$this->result['content']['operations'] = $this->operations_for_client($item['status']);
-				elseif ($this->app_type === 'biz'):
-					$this->result['content']['operations'] = $this->operations_for_biz($item['status']);
-				endif;
-
 			else:
 				$this->result['status'] = 414;
 				$this->result['content']['error']['message'] = '没有符合条件的数据';
@@ -212,7 +206,7 @@
 			$item_id = $this->input->post('item_id');
 			$cart_string = $this->input->post('cart_string');
 			if ( !empty($item_id) ):
-				// 若为单品订单，尝试获取待下单SKU及数量
+				// 若为单品订单，尝试获取待下单规格及数量
 				$sku_id = $this->input->post('sku_id');
 				$count = $this->input->post('count')? $this->input->post('count'): 1;
 
@@ -964,7 +958,7 @@
 			endif;
 		} // end operation_confirm
 		
-		// 根据订单状态，获取客户端可用操作
+		// DEPRECATED 根据订单状态，获取客户端可用操作
 	    private function operations_for_client($status)
 		{
 			switch ($status):
@@ -992,7 +986,7 @@
 			return $operations;
 	    } // end operations_for_client
 
-		// 根据订单状态，获取商家端可用操作
+        // DEPRECATED 根据订单状态，获取商家端可用操作
 	    private function operations_for_biz($status)
 		{
 			switch ($status):
