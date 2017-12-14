@@ -102,6 +102,10 @@
          */
         public function select_by_id($id = NULL, $order_id = NULL, $allow_deleted = TRUE)
         {
+            // 获取退款信息及相关商家信息
+            $this->db->select($this->table_name.'.*, biz.brief_name as brief_name, biz.url_logo as url_logo, biz.tel_public as tel_public');
+            $this->db->join('biz', $this->table_name.'.biz_id = biz.biz_id', 'left outer');
+
             // 默认可返回已删除项
             if ($allow_deleted === FALSE) $this->db->where('time_delete', NULL);
 
