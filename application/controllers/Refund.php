@@ -14,14 +14,14 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'user_id', 'biz_id', 'record_id', 'type', 'cargo_status', 'reason', 'max_total_refund', 'total_refund', 'description', 'url_images', 'status', 'time_create', 'time_cancel', 'time_close', 'time_refuse', 'time_accept', 'time_refund', 'time_edit', 'operator_id',
+			'user_id', 'biz_id', 'record_id', 'type', 'cargo_status', 'reason', 'description', 'url_images', 'total_applied', 'total_approved', 'status', 'time_create', 'time_cancel', 'time_close', 'time_refuse', 'time_accept', 'time_refund', 'time_edit', 'operator_id',
 		);
 
 		/**
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-		    'user_id', 'biz_id', 'record_id', 'type', 'cargo_status', 'reason',
+		    'user_id', 'record_id', 'type', 'cargo_status', 'reason',
         );
 
 		public function __construct()
@@ -111,10 +111,9 @@
             $this->load->model('refund_model');
 			$items = $this->refund_model->select($condition, $order_by);
 			if ( !empty($items) ):
-				// 获取相应订单商品
+                // 获取涉及退款的订单商品
 				$this->switch_model('order_items', 'item_id');
 				for ($i=0;$i<count($items);$i++):
-					// 获取订单商品
                     $this->db->select('item_id, name, item_image, slogan, sku_id, sku_name, sku_image, price, count, single_total');
                     $items[$i]['order_item'] = $this->basic_model->select_by_id($items[$i]['record_id']);
 				endfor;
@@ -136,8 +135,8 @@
 		{
 			// 检查必要参数是否已传入
 			$id = $this->input->post('id');
-            $order_id = $this->input->post('order_id');
-			if ( !isset($id) && !isset($order_id) ):
+            $record_id = $this->input->post('record_id');
+			if ( !isset($id) && !isset($record_id) ):
 				$this->result['status'] = 400;
 				$this->result['content']['error']['message'] = '必要的请求参数未传入';
 				exit();
@@ -145,11 +144,11 @@
 
 			// 获取特定项；默认可获取已删除项
             $this->load->model('refund_model');
-			$item = $this->refund_model->select_by_id($id, $order_id);
+			$item = $this->refund_model->select_by_id($id, $record_id);
 			if ( !empty($item) ):
 				// 获取涉及退款的订单商品
 				$this->switch_model('order_items', 'record_id');
-                $this->db->select('item_id, name, item_image, slogan, sku_id, sku_name, sku_image, price, count');
+                $this->db->select('item_id, name, item_image, slogan, sku_id, sku_name, sku_image, price, count, single_total');
                 $item['order_item'] = $this->basic_model->select_by_id($item['record_id']);
 
 				// 获取用户信息
@@ -193,7 +192,6 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('biz_id', '相关商家ID', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('record_id', '订单商品ID', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('type', '类型', 'trim|required');
 			$this->form_validation->set_rules('cargo_status', '货物状态', 'trim|required');
@@ -207,31 +205,63 @@
 				$this->result['content']['error']['message'] = validation_errors();
 
 			else:
-				// 需要创建的数据；逐一赋值需特别处理的字段
-				$data_to_create = array(
-					'time_create' => time(),
+                // 获取涉及退款的订单商品
+                $this->switch_model('order_items', 'record_id');
+                $this->db->select('order_id, biz_id, user_id, item_id, name, item_image, slogan, sku_id, sku_name, sku_image, price, count, single_total');
+                $this->db->where('refund_status', '未申请');
+                $this->db->where('user_id', $user_id);
+                $order_item = $this->basic_model->select_by_id($record_id);
+                $this->reset_model();
 
-					'user_id' => $user_id,
-					//'name' => $this->input->post('name'),
-				);
-				// 自动生成无需特别处理的数据
-				$data_need_no_prepare = array(
-					'biz_id', 'record_id', 'type', 'cargo_status', 'reason', 'description', 'url_images',
-				);
-				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+                $total_applied = $this->input->post('total_applied');
 
-				$result = $this->basic_model->create($data_to_create, TRUE);
-				if ($result !== FALSE):
-					$this->result['status'] = 200;
-					$this->result['content']['id'] = $result;
-					$this->result['content']['message'] = '创建成功';
+                // 检查是否存在涉及退款的订单商品
+                if ( empty($order_item) ):
+                    $this->result['status'] = 414;
+					$this->result['content']['error']['message'] = '未获取到可匹配的订单商品信息';
 
-				else:
-					$this->result['status'] = 424;
-					$this->result['content']['error']['message'] = '创建失败';
+                // 若传入了申请退款金额，检查有效性
+                elseif (!empty($total_applied) && ($total_applied > $order_item['single_total'])):
+                    $this->result['status'] = 424;
+                    $this->result['content']['error']['message'] = '申请的退款金额不可高于商品小计金额';
 
-				endif;
+                else:
+                    // 需要创建的数据；逐一赋值需特别处理的字段
+                    $data_to_create = array(
+                        'time_create' => time(),
+
+                        'user_id' => $user_id,
+                        'order_id' => $order_item['order_id'],
+                        'biz_id' => $order_item['biz_id'],
+
+                        'total_applied' => !empty($total_applied)? $total_applied: $order_item['single_total'],
+                    );
+                    // 自动生成无需特别处理的数据
+                    $data_need_no_prepare = array(
+                        'record_id', 'type', 'cargo_status', 'reason', 'description', 'url_images',
+                    );
+                    foreach ($data_need_no_prepare as $name)
+                        $data_to_create[$name] = $this->input->post($name);
+
+                    $result = $this->basic_model->create($data_to_create, TRUE);
+                    if ($result !== FALSE):
+                        $this->result['status'] = 200;
+                        $this->result['content']['id'] = $result;
+                        $this->result['content']['message'] = '创建成功';
+
+                        // 更新相应订单商品为退款中状态
+                        $this->switch_model('order_items', 'record_id');
+                        $data_to_edit = array(
+                            'refund_status' => '退款中',
+                        );
+                        @$result = $this->basic_model->edit($record_id, $data_to_edit);
+
+                    else:
+                        $this->result['status'] = 424;
+                        $this->result['content']['error']['message'] = '创建失败';
+
+                    endif;
+                endif;
 			endif;
 		} // end create
 

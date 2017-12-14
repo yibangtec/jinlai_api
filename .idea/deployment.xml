@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="jinlai_api">
+  <component name="PublishConfigData" autoUpload="Always" serverName="jinlai_api" uploadOnCheckin="ea2f57b5-5f7f-43a4-8ad3-64444d786584">
     <serverData>
       <paths name="jinlai_api">
         <serverdata>
@@ -10,6 +10,7 @@
         </serverdata>
       </paths>
     </serverData>
+    <option name="myUploadOnCheckinName" value="jinlai_api" />
     <option name="myAutoUpload" value="ALWAYS" />
   </component>
 </project>

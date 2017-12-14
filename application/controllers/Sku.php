@@ -295,10 +295,6 @@
             $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_to_suspend');
             $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
             $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
-			// 针对特定条件的验证规则
-			if ($this->app_type === '管理员'):
-				// ...
-			endif;
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -320,11 +316,6 @@
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
-
-				// 根据客户端类型等条件筛选可操作的字段名
-				if ($this->app_type !== 'admin'):
-					//unset($data_to_edit['name']);
-				endif;
 
 				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);

@@ -238,8 +238,7 @@
 						"account",
 						"login"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -300,8 +299,7 @@
 						"account",
 						"password_reset"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -384,8 +382,7 @@
 						"account",
 						"login_wechat"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -431,8 +428,7 @@
 						"address",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -525,8 +521,7 @@
 						"address",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -624,8 +619,7 @@
 						"address",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -716,8 +710,7 @@
 						"address",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -773,8 +766,7 @@
 						"address",
 						"edit_bulk"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -860,8 +852,7 @@
 						"article_biz",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -1019,8 +1010,7 @@
 						"article_biz",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -1081,8 +1071,7 @@
 						"article_biz",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -1143,8 +1132,7 @@
 						"article_biz",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -1195,8 +1183,7 @@
 						"article_biz",
 						"edit_bulk"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -1227,8 +1214,7 @@
 						"article",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -1309,8 +1295,7 @@
 						"article_biz",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -1341,8 +1326,7 @@
 						"article",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -1436,8 +1420,7 @@
 						"article",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -1503,8 +1486,7 @@
 						"article",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -1585,8 +1567,7 @@
 						"article",
 						"edit_certain"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -1622,8 +1603,7 @@
 						"article_category",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -1659,8 +1639,7 @@
 						"article_category",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -1701,8 +1680,7 @@
 						"article_category",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -1754,8 +1732,7 @@
 						"article_category",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -1811,8 +1788,7 @@
 						"article_category",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -1934,8 +1910,7 @@
 						"biz",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -1976,8 +1951,7 @@
 						"biz",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -2125,8 +2099,7 @@
 						"biz",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -2151,7 +2124,6 @@
 						{
 							"key": "url_logo",
 							"value": "",
-							"description": "",
 							"type": "text"
 						},
 						{
@@ -2167,13 +2139,11 @@
 						{
 							"key": "category_ids",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "test_mode",
 							"value": "on",
-							"description": "",
 							"type": "text",
 							"disabled": true
 						}
@@ -2388,8 +2358,7 @@
 						"biz",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -2445,8 +2414,7 @@
 						"biz",
 						"edit_certain"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -2518,8 +2486,7 @@
 						"biz",
 						"edit_bulk"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -2590,8 +2557,7 @@
 						"branch",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -2692,8 +2658,7 @@
 						"comment_biz",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -2799,8 +2764,7 @@
 						"comment_biz",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -2841,8 +2805,7 @@
 						"comment_biz",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -2918,8 +2881,7 @@
 						"comment_biz",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -2990,8 +2952,7 @@
 						"comment_biz",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -3052,8 +3013,7 @@
 						"comment_biz",
 						"edit_bulk"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -3149,8 +3109,7 @@
 						"comment_item",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -3256,8 +3215,7 @@
 						"comment_item",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -3298,8 +3256,7 @@
 						"comment_item",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -3370,8 +3327,7 @@
 						"comment_item",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -3432,8 +3388,7 @@
 						"comment_item",
 						"edit_bulk"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -3497,8 +3452,7 @@
 						"comment_item",
 						"create_bulk"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -3594,8 +3548,7 @@
 						"coupon_combo",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -3701,8 +3654,7 @@
 						"coupon_combo",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -3815,8 +3767,7 @@
 						"coupon_combo",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -3892,8 +3843,7 @@
 						"coupon_combo",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -3949,8 +3899,7 @@
 						"coupon_combo",
 						"edit_bulk"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -4076,8 +4025,7 @@
 						"coupon",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -4218,8 +4166,7 @@
 						"coupon",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -4260,8 +4207,7 @@
 						"coupon",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -4319,8 +4265,7 @@
 						"coupon",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -4361,8 +4306,7 @@
 						"coupon_template",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -4447,8 +4391,7 @@
 						"coupon_template",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -4664,8 +4607,7 @@
 						"coupon_template",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -4721,8 +4663,7 @@
 						"coupon_template",
 						"edit_bulk"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -4758,8 +4699,7 @@
 						"cart",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -4800,8 +4740,7 @@
 						"cart",
 						"sync_down"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -4853,8 +4792,7 @@
 						"cart",
 						"sync_up"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -5238,8 +5176,7 @@
 						"fav_biz",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -5362,8 +5299,7 @@
 						"fav_biz",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -5409,8 +5345,7 @@
 						"fav_biz",
 						"edit_bulk"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -5446,8 +5381,7 @@
 						"fav_item",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -5483,8 +5417,7 @@
 						"fav_item",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -5572,8 +5505,7 @@
 						"fav_item",
 						"edit_bulk"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -5656,8 +5588,7 @@
 						"item_category_biz",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -5693,8 +5624,7 @@
 						"item_category_biz",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -5735,8 +5665,7 @@
 						"item_category_biz",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -5859,8 +5788,7 @@
 						"item_category_biz",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -5922,13 +5850,11 @@
 						{
 							"key": "level",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "time_delete",
 							"value": "NULL",
-							"description": "",
 							"type": "text"
 						}
 					]
@@ -5988,8 +5914,7 @@
 						"item_category",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -6053,8 +5978,7 @@
 						"item_category",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -6116,8 +6040,7 @@
 						"item_category",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -6268,8 +6191,7 @@
 						"item",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -6494,8 +6416,7 @@
 						"item",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -6543,8 +6464,7 @@
 						"item",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -6720,8 +6640,7 @@
 						"item",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -6822,8 +6741,7 @@
 						"item",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -6879,8 +6797,7 @@
 						"item",
 						"edit_certain"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -6943,8 +6860,7 @@
 						"item",
 						"edit_bulk"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -7020,8 +6936,7 @@
 						"member_biz",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -7134,13 +7049,11 @@
 						{
 							"key": "user_id",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "biz_id",
 							"value": "2",
-							"description": "",
 							"type": "text"
 						}
 					]
@@ -7210,8 +7123,7 @@
 						"member_biz",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -7262,8 +7174,7 @@
 						"member_biz",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -7314,8 +7225,7 @@
 						"member_biz",
 						"edit_bulk"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -7371,8 +7281,7 @@
 						"meta",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -7438,8 +7347,7 @@
 						"meta",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -7475,8 +7383,7 @@
 						"meta",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -7527,8 +7434,7 @@
 						"meta",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -7584,8 +7490,7 @@
 						"meta",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -7636,8 +7541,7 @@
 						"meta",
 						"edit_bulk"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -7938,8 +7842,7 @@
 						"order",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -7975,8 +7878,7 @@
 						"order",
 						"stock_update"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -8325,8 +8227,7 @@
 						"order",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -8361,8 +8262,7 @@
 						{
 							"key": "cart_string",
 							"value": "21|92|0|1,21|90|0|1,21|91|0|3",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "item_id",
@@ -8421,28 +8321,41 @@
 					"mode": "formdata",
 					"formdata": [
 						{
-							"key": "skip_sign",
-							"value": "please",
-							"type": "text"
-						},
-						{
 							"key": "app_type",
 							"value": "client",
 							"type": "text"
 						},
 						{
 							"key": "user_id",
-							"value": "24",
+							"value": "48",
 							"type": "text"
 						},
 						{
 							"key": "operation",
-							"value": "restore",
+							"value": "deliver",
 							"type": "text"
 						},
 						{
 							"key": "ids",
-							"value": "163",
+							"value": "56",
+							"type": "text"
+						},
+						{
+							"key": "deliver_method",
+							"value": "物流快递",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "deliver_biz",
+							"value": "天天",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "waybill_id",
+							"value": "117977258597",
+							"description": "",
 							"type": "text"
 						},
 						{
@@ -8471,8 +8384,7 @@
 						"order",
 						"edit_bulk"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -8519,8 +8431,7 @@
 						"order",
 						"prepare"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -8571,8 +8482,7 @@
 						"order",
 						"valid"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -8703,8 +8613,7 @@
 						"ornament_biz",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -8845,8 +8754,7 @@
 						"ornament_biz",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -8882,8 +8790,7 @@
 						"ornament_biz",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -9113,8 +9020,7 @@
 						"ornament_biz",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -9165,8 +9071,7 @@
 						"ornament_biz",
 						"edit_bulk"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -9252,8 +9157,7 @@
 						"page",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -9359,8 +9263,7 @@
 						"page",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -9396,8 +9299,7 @@
 						"page",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -9463,8 +9365,7 @@
 						"page",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -9535,8 +9436,7 @@
 						"page",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -9587,8 +9487,7 @@
 						"page",
 						"edit_bulk"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -9689,8 +9588,7 @@
 						"promotion",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -9801,8 +9699,7 @@
 						"promotion",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -9843,8 +9740,7 @@
 						"promotion",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -9935,8 +9831,7 @@
 						"promotion",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -10032,8 +9927,7 @@
 						"promotion",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -10084,8 +9978,7 @@
 						"promotion",
 						"edit_bulk"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -10286,8 +10179,7 @@
 						"promotion_biz",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -10498,8 +10390,7 @@
 						"promotion_biz",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -10540,8 +10431,7 @@
 						"promotion_biz",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -10632,8 +10522,7 @@
 						"promotion_biz",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -10809,8 +10698,7 @@
 						"promotion_biz",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -10866,8 +10754,7 @@
 						"promotion_biz",
 						"edit_bulk"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -10993,8 +10880,7 @@
 						"refund",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -11018,7 +10904,7 @@
 						},
 						{
 							"key": "user_id",
-							"value": "40",
+							"value": "1",
 							"type": "text"
 						},
 						{
@@ -11155,15 +11041,23 @@
 							"type": "text"
 						},
 						{
-							"key": "id",
-							"value": "5",
-							"type": "text"
-						},
-						{
-							"key": "order_id",
-							"value": "154",
+							"key": "test_mode",
+							"value": "on",
+							"description": "",
 							"type": "text",
 							"disabled": true
+						},
+						{
+							"key": "id",
+							"value": "6",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "record_id",
+							"value": "1",
+							"description": "",
+							"type": "text"
 						}
 					]
 				},
@@ -11179,8 +11073,7 @@
 						"refund",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -11198,23 +11091,20 @@
 							"type": "text"
 						},
 						{
+							"key": "test_mode",
+							"value": "on",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
 							"key": "user_id",
 							"value": "1",
 							"type": "text"
 						},
 						{
-							"key": "biz_id",
-							"value": "2",
-							"type": "text"
-						},
-						{
-							"key": "order_id",
-							"value": "83",
-							"type": "text"
-						},
-						{
-							"key": "item_ids",
-							"value": "2",
+							"key": "record_id",
+							"value": "1",
 							"type": "text"
 						},
 						{
@@ -11241,6 +11131,12 @@
 							"key": "url_images",
 							"value": "",
 							"type": "text"
+						},
+						{
+							"key": "total_applied",
+							"value": "",
+							"description": "",
+							"type": "text"
 						}
 					]
 				},
@@ -11262,6 +11158,99 @@
 			"response": []
 		},
 		{
+			"name": "RFR1 退款记录列表",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "app_type",
+							"value": "client",
+							"type": "text"
+						},
+						{
+							"key": "test_mode",
+							"value": "on",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "limit",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "offset",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "refund_id",
+							"value": "12",
+							"type": "text"
+						},
+						{
+							"key": "biz_id",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "user_id",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "content",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "time_create",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "time_delete",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "time_edit",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "creator_id",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "operator_id",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.517ybang.com/refund_record/index",
+					"protocol": "https",
+					"host": [
+						"api",
+						"517ybang",
+						"com"
+					],
+					"path": [
+						"refund_record",
+						"index"
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
 			"name": "RGN0 地区计数",
 			"request": {
 				"method": "POST",
@@ -11272,62 +11261,52 @@
 						{
 							"key": "app_type",
 							"value": "admin",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "nation",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "province",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "city",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "county",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "time_create",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "time_delete",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "time_edit",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "creator_id",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "operator_id",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						}
 					]
 				},
@@ -11342,105 +11321,6 @@
 					"path": [
 						"region",
 						"count"
-					]
-				},
-				"description": null
-			},
-			"response": []
-		},
-		{
-			"name": "RGN1 地区列表",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "app_type",
-							"value": "client",
-							"type": "text",
-							"description": ""
-						},
-						{
-							"key": "limit",
-							"value": "",
-							"type": "text",
-							"description": ""
-						},
-						{
-							"key": "offset",
-							"value": "",
-							"type": "text",
-							"description": ""
-						},
-						{
-							"key": "nation",
-							"value": "",
-							"type": "text",
-							"description": ""
-						},
-						{
-							"key": "province",
-							"value": "",
-							"type": "text",
-							"description": ""
-						},
-						{
-							"key": "city",
-							"value": "",
-							"type": "text",
-							"description": ""
-						},
-						{
-							"key": "county",
-							"value": "",
-							"type": "text",
-							"description": ""
-						},
-						{
-							"key": "time_create",
-							"value": "",
-							"type": "text",
-							"description": ""
-						},
-						{
-							"key": "time_delete",
-							"value": "",
-							"type": "text",
-							"description": ""
-						},
-						{
-							"key": "time_edit",
-							"value": "",
-							"type": "text",
-							"description": ""
-						},
-						{
-							"key": "creator_id",
-							"value": "",
-							"type": "text",
-							"description": ""
-						},
-						{
-							"key": "operator_id",
-							"value": "",
-							"type": "text",
-							"description": ""
-						}
-					]
-				},
-				"url": {
-					"raw": "https://api.517ybang.com/region/index",
-					"protocol": "https",
-					"host": [
-						"api",
-						"517ybang",
-						"com"
-					],
-					"path": [
-						"region",
-						"index"
 					]
 				},
 				"description": null
@@ -11495,43 +11375,37 @@
 						{
 							"key": "app_type",
 							"value": "admin",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "user_id",
 							"value": "1",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "nation",
 							"value": "中国",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "province",
 							"value": "天津",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "city",
 							"value": "天津市",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "county",
 							"value": "其它区",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						}
 					]
 				},
 				"url": {
-					"raw": "https://api.517ybang.com/region/create",
+					"raw": "https://api.517ybang.com/page/create",
 					"protocol": "https",
 					"host": [
 						"api",
@@ -11539,7 +11413,7 @@
 						"com"
 					],
 					"path": [
-						"region",
+						"page",
 						"create"
 					]
 				},
@@ -11558,44 +11432,37 @@
 						{
 							"key": "app_type",
 							"value": "admin",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "user_id",
 							"value": "1",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "id",
 							"value": "2",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "nation",
 							"value": "中国",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "province",
 							"value": "北京",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "city",
 							"value": "北京市",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "county",
 							"value": "西城区",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						}
 					]
 				},
@@ -11627,32 +11494,27 @@
 						{
 							"key": "app_type",
 							"value": "admin",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "user_id",
 							"value": "1",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "ids",
 							"value": "1,2",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "operation",
 							"value": "restore",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "password",
 							"value": "123456",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						}
 					]
 				},
@@ -11765,8 +11627,7 @@
 						"router",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -11872,8 +11733,7 @@
 						"router",
 						"index"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -11909,8 +11769,7 @@
 						"router",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -12011,8 +11870,7 @@
 						"router",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -12093,8 +11951,7 @@
 						"router",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -12109,92 +11966,110 @@
 						{
 							"key": "app_type",
 							"value": "client",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "biz_id",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "item_id",
 							"value": "91",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "url_image",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "name_first",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "name_second",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "name_third",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "tag_price",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "price",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "stocks",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "weight_net",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "weight_gross",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "weight_volume",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "time_create",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "time_delete",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "time_edit",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "creator_id",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "operator_id",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						}
 					]
 				},
@@ -12210,8 +12085,7 @@
 						"sku",
 						"count"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -12225,128 +12099,108 @@
 					"formdata": [
 						{
 							"key": "app_type",
-							"value": "biz",
-							"description": "",
+							"value": "client",
 							"type": "text"
 						},
 						{
 							"key": "limit",
 							"value": "3",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "offset",
 							"value": "0",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "biz_id",
 							"value": "21",
 							"type": "text",
-							"description": ""
+							"disabled": true
 						},
 						{
 							"key": "item_id",
 							"value": "129",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "url_image",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "name_first",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "name_second",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "name_third",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "tag_price",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "price",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "stocks",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "weight_net",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "weight_gross",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "weight_volume",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "time_create",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "time_delete",
 							"value": "NULL",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "time_edit",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "creator_id",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "operator_id",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "test_mode",
 							"value": "on",
-							"description": "",
 							"type": "text",
 							"disabled": true
 						}
@@ -12401,8 +12255,7 @@
 						"sku",
 						"detail"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -12417,72 +12270,86 @@
 						{
 							"key": "app_type",
 							"value": "biz",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "user_id",
 							"value": "1",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "biz_id",
 							"value": "21",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "item_id",
 							"value": "91",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "url_image",
 							"value": "url_image/201711/1128/163028.jpeg",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "name_first",
 							"value": "500深紫红/犀牛灰/黑色",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "name_second",
 							"value": "49",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "name_third",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "tag_price",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "price",
 							"value": "1199",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "stocks",
 							"value": "1",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "weight_net",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "weight_gross",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "weight_volume",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						}
 					]
 				},
@@ -12498,8 +12365,7 @@
 						"sku",
 						"create"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -12514,67 +12380,80 @@
 						{
 							"key": "app_type",
 							"value": "biz",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "user_id",
 							"value": "1",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "id",
 							"value": "56",
+							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "url_image",
 							"value": "url_image/201711/1128/163028.jpeg",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "name_first",
 							"value": "500深紫红/犀牛灰/黑色",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "name_second",
 							"value": "49",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "name_third",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "tag_price",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "price",
 							"value": "1199",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "stocks",
 							"value": "1",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "weight_net",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "weight_gross",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "weight_volume",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						}
 					]
 				},
@@ -12590,8 +12469,7 @@
 						"sku",
 						"edit"
 					]
-				},
-				"description": null
+				}
 			},
 			"response": []
 		},
@@ -12863,13 +12741,11 @@
 						{
 							"key": "limit",
 							"value": "3",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "offset",
 							"value": "0",
-							"description": "",
 							"type": "text"
 						}
 					]

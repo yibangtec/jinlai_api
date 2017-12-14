@@ -96,11 +96,11 @@
          * 根据ID获取特定项，默认可返回已删除项
          *
          * @param int $id 需获取的行的ID
-         * @param int $order_id 需获取的数据的order_id
+         * @param int $record_id 需获取的数据的record_id
          * @param bool $allow_deleted 是否可返回被标注为删除状态的行；默认为TRUE
          * @return array 结果行
          */
-        public function select_by_id($id = NULL, $order_id = NULL, $allow_deleted = TRUE)
+        public function select_by_id($id = NULL, $record_id = NULL, $allow_deleted = TRUE)
         {
             // 获取退款信息及相关商家信息
             $this->db->select($this->table_name.'.*, biz.brief_name as brief_name, biz.url_logo as url_logo, biz.tel_public as tel_public');
@@ -113,7 +113,7 @@
             if ( $id !== NULL):
                 $this->db->where($this->id_name, $id);
             else:
-                $this->db->where($this->table_name.'.order_id', $order_id);
+                $this->db->where($this->table_name.'.record_id', $record_id);
             endif;
 
             $query = $this->db->get($this->table_name);
