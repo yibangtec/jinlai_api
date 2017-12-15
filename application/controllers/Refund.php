@@ -112,7 +112,7 @@
 			$items = $this->refund_model->select($condition, $order_by);
 			if ( !empty($items) ):
                 // 获取涉及退款的订单商品
-				$this->switch_model('order_items', 'item_id');
+				$this->switch_model('order_items', 'record_id');
 				for ($i=0;$i<count($items);$i++):
                     $this->db->select('item_id, name, item_image, slogan, sku_id, sku_name, sku_image, price, count, single_total');
                     $items[$i]['order_item'] = $this->basic_model->select_by_id($items[$i]['record_id']);
@@ -218,7 +218,7 @@
                 // 检查是否存在涉及退款的订单商品
                 if ( empty($order_item) ):
                     $this->result['status'] = 414;
-					$this->result['content']['error']['message'] = '未获取到可匹配的订单商品信息';
+					$this->result['content']['error']['message'] = '未获取到可申请退款的订单商品信息';
 
                 // 若传入了申请退款金额，检查有效性
                 elseif (!empty($total_applied) && ($total_applied > $order_item['single_total'])):
