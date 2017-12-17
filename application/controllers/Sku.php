@@ -119,14 +119,20 @@
 					$condition[$sorter] = $this->input->post($sorter);
 			endforeach;
 
-			// 若请求来自客户端，仅返回可购规格
+			// 若请求来自客户端，仅返回未删除
 			if ($this->app_type === 'client'):
                 $condition['time_delete'] = 'NULL';
-			    $condition['stocks >'] = 1; // 防止超卖，库存需大于1
             endif;
 			
 			// 排序条件
-            $order_by['time_create'] = 'DESC';
+            // 若请求不来自管理端，按规格名称排列
+            if ($this->app_type === 'admin'):
+                $order_by['time_create'] = 'DESC';
+            else:
+                $order_by['name_first'] = 'ASC';
+                $order_by['name_second'] = 'ASC';
+                $order_by['name_third'] = 'ASC';
+            endif;
 
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );
