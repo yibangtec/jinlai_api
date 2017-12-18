@@ -176,15 +176,10 @@
 			// 类特有筛选项
 			$this->advanced_sorter();
 
-            // 用户仅可查看已上架且未删除商品数据
+            // 用户仅可查看未删除商品数据
             if ($this->app_type === 'client'):
-                $condition['time_publish'] = 'IS NOT NULL';
                 $condition['time_delete'] = 'NULL';
             endif;
-
-            // 商家仅可操作自己的商品数据
-            if ($this->app_type === 'biz')
-                $condition['biz_id'] = $this->input->post('biz_id');
 
 			// 排序条件
 			// （可选）遍历筛选条件
@@ -250,15 +245,10 @@
 				exit();
 			endif;
 
-            // 用户仅可查看已上架且未删除商品数据
+            // 用户仅可查看未删除商品数据
             if ($this->app_type === 'client'):
-                $condition['time_publish'] = 'IS NOT NULL';
                 $condition['time_delete'] = 'NULL';
             endif;
-
-            // 商家仅可操作自己的商品数据
-            if ($this->app_type === 'biz')
-                $condition['biz_id'] = $this->input->post('biz_id');
 
 			// 限制可返回的字段
 			$this->db->select(
@@ -279,7 +269,7 @@
                     $this->db->select(
                         'brief_name, url_logo, slogan, tel_public,
                         (SELECT COUNT(*) FROM item WHERE item.biz_id = biz.biz_id AND time_publish IS NOT NULL) AS item_count,
-                        (SELECT COUNT(*) FROM fav_biz WHERE fav_biz.biz_id = biz.biz_id AND time_delete IS NOT NULL) AS fav_biz_count'
+                        (SELECT COUNT(*) FROM fav_biz WHERE fav_biz.biz_id = biz.biz_id AND time_delete IS NULL) AS fav_biz_count'
                     );
                     $this->result['content']['biz'] = $this->basic_model->select_by_id($item['biz_id']);
 
@@ -303,29 +293,30 @@
 
                     // 获取该商品相关SKU列表
                     $this->switch_model('sku', 'sku_id');
-                    if ($this->app_type === 'client') $this->db->where('time_delete IS NULL'); // 若为客户端发起的请求，则仅获取可用数据，下同
                     $conditions = array(
                         'item_id' => $item['item_id'],
-                        'stocks >' => 1, // 防止超卖，库存需大于1
+                        'time_delete' => 'NULL',
                     );
                     $this->db->select('sku_id, biz_id, item_id, url_image, name_first, name_second, name_third, tag_price, price, stocks, weight_net, weight_gross, weight_volume');
                     $this->result['content']['skus'] = $this->basic_model->select($conditions, NULL);
 
                     // 获取当前商家营销活动
                     $this->switch_model('promotion_biz', 'promotion_id');
-                    if ($this->app_type === 'client') $this->db->where('time_delete IS NULL');
-                    $conditions = array('biz_id' => $item['biz_id'],);
+                    $conditions = array(
+                        'biz_id' => $item['biz_id'],
+                        'time_delete' => 'NULL',
+                    );
                     $this->db->select('promotion_id, type, name, time_start, time_end');
                     $this->result['content']['biz_promotions'] = $this->basic_model->select($conditions, NULL);
 
                     // 获取平台营销活动
                     $this->switch_model('promotion', 'promotion_id');
-                    if ($this->app_type === 'client') $this->db->where('time_delete IS NULL');
+                    $this->db->where('time_delete IS NULL');
                     $this->result['content']['promotions'] = $this->basic_model->select(NULL, NULL);
 
                     // 获取商家及平台优惠券模板信息
                     $this->switch_model('coupon_template', 'template_id');
-                    if ($this->app_type === 'client') $this->db->where('time_delete IS NULL');
+                    $this->db->where('time_delete IS NULL');
                     $this->db->group_start()
                         ->where('biz_id IS NULL') // 平台优惠券
                         ->or_where('biz_id', $item['biz_id']) // 商家优惠券
@@ -334,7 +325,10 @@
 
                     // 获取商品评价
                     $this->switch_model('comment_item', 'comment_id');
-                    $conditions = array('item_id' => $id);
+                    $conditions = array(
+                        'item_id' => $id,
+                        'time_delete' => 'NULL',
+                    );
                     $this->load->model('comment_item_model');
                     $this->result['content']['comments'] = $this->comment_item_model->select($conditions, NULL);
 
@@ -420,8 +414,12 @@
 					'figure_video_urls' => trim($this->input->post('figure_video_urls'), ','),
 					'tag_price' => empty($this->input->post('tag_price'))? '0.00': $this->input->post('tag_price'),
 					'unit_name' => empty($this->input->post('unit_name'))? '份': $this->input->post('unit_name'),
+                    'weight_net' => empty($this->input->post('weight_net'))? '0.00': $this->input->post('weight_net'),
+                    'weight_gross' => empty($this->input->post('weight_gross'))? '0.00': $this->input->post('weight_gross'),
+                    'weight_volume' => empty($this->input->post('weight_volume'))? '0.00': $this->input->post('weight_volume'),
 					'quantity_max' => empty($this->input->post('quantity_max'))? '50': $this->input->post('quantity_max'),
 					'quantity_min' => empty($this->input->post('quantity_min'))? '1': $this->input->post('quantity_min'),
+                    'coupon_allowed' => empty($this->input->post('coupon_allowed'))? '1': $this->input->post('coupon_allowed'), // 默认允许使用优惠券
 					'discount_credit' => empty($this->input->post('discount_credit'))? '0.00': $this->input->post('discount_credit'),
 					'commission_rate' => empty($this->input->post('commission_rate'))? '0.00': $this->input->post('commission_rate'),
 					'time_to_publish' => empty($this->input->post('time_to_publish'))? NULL: $this->input->post('time_to_publish'),
@@ -430,7 +428,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'url_image_main', 'name', 'slogan', 'description', 'price', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'coupon_allowed', 'promotion_id', 'freight_template_id',
+					'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'url_image_main', 'name', 'slogan', 'description', 'price', 'stocks', 'promotion_id', 'freight_template_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -521,9 +519,13 @@
 					'figure_video_urls' => trim($this->input->post('figure_video_urls'), ','),
 					'tag_price' => empty($this->input->post('tag_price'))? '0.00': $this->input->post('tag_price'),
 					'unit_name' => empty($this->input->post('unit_name'))? '份': $this->input->post('unit_name'),
+                    'weight_net' => empty($this->input->post('weight_net'))? '0.00': $this->input->post('weight_net'),
+                    'weight_gross' => empty($this->input->post('weight_gross'))? '0.00': $this->input->post('weight_gross'),
+                    'weight_volume' => empty($this->input->post('weight_volume'))? '0.00': $this->input->post('weight_volume'),
 					'quantity_max' => empty($this->input->post('quantity_max'))? '50': $this->input->post('quantity_max'),
 					'quantity_min' => empty($this->input->post('quantity_min'))? '1': $this->input->post('quantity_min'),
-					'discount_credit' => empty($this->input->post('discount_credit'))? '0.00': $this->input->post('discount_credit'),
+                    'coupon_allowed' => empty($this->input->post('coupon_allowed'))? '1': $this->input->post('coupon_allowed'), // 默认允许使用优惠券
+                    'discount_credit' => empty($this->input->post('discount_credit'))? '0.00': $this->input->post('discount_credit'),
 					'commission_rate' => empty($this->input->post('commission_rate'))? '0.00': $this->input->post('commission_rate'),
 					'time_to_publish' => empty($this->input->post('time_to_publish'))? NULL: $this->input->post('time_to_publish'),
 					'time_to_suspend' => empty($this->input->post('time_to_suspend'))? NULL: $this->input->post('time_to_suspend'),
@@ -531,7 +533,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_biz_id', 'code_biz', 'url_image_main', 'name', 'slogan', 'description', 'price', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'coupon_allowed', 'promotion_id', 'freight_template_id',
+					'category_biz_id', 'code_biz', 'url_image_main', 'name', 'slogan', 'description', 'price', 'stocks', 'promotion_id', 'freight_template_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);

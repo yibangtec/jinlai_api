@@ -137,6 +137,7 @@
 				$this->switch_model('order_items', 'record_id');
 				for ($i=0;$i<count($items);$i++):
 					// 获取订单商品
+                    $this->basic_model->limit = $this->basic_model->offset = 0;
 					$condition = array('order_id' => $items[$i]['order_id']);
 					$items[$i]['order_items'] = $this->basic_model->select($condition, NULL);
 				endfor;
@@ -593,10 +594,6 @@
 			if ($operation === 'cancel')
                 $this->form_validation->set_rules('reason_cancel', '取消原因', 'trim|required|max_length[20]');
 
-			// 用户确认订单、商家改价时需要输入密码
-			if ($operation === 'confirm' || $operation === 'reprice')
-				$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
-
 			// 商家备注时需验证字段
 			if ($operation === 'note')
 				$this->form_validation->set_rules('note_stuff', '员工备注', 'trim|required|max_length[255]');
@@ -606,8 +603,10 @@
                 $this->form_validation->set_rules('note_stuff', '员工备注', 'trim|max_length[255]');
 
 			// 商家改价时需验证字段
-			if ($operation === 'reprice')
+			if ($operation === 'reprice'):
 				$this->form_validation->set_rules('discount_reprice', '改价折扣金额（元）', 'trim|required|greater_than[0.01]|less_than_equal_to[99999.99]');
+                $this->form_validation->set_rules('note_stuff', '员工备注', 'trim|max_length[255]');
+			endif;
 
 			// 商家发货时需验证字段
 			if ($operation === 'deliver'):
@@ -615,6 +614,10 @@
 				$this->form_validation->set_rules('deliver_biz', '服务商', 'trim|max_length[30]');
 				$this->form_validation->set_rules('waybill_id', '运单号', 'trim|max_length[30]alpha_numeric');
 			endif;
+
+            // 用户确认订单时需要输入密码
+            if ($operation === 'confirm')
+                $this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):
@@ -793,8 +796,6 @@
 					'code_string' => $code_string,
 					'status' => '待使用',
 					'time_pay' => 'IS NOT NULL',
-					'payment_type' => 'IS NOT NULL',
-					'payment_account' => 'IS NOT NULL',
 					'payment_id' => 'IS NOT NULL',
 				);
 				$order = $this->basic_model->match($data_to_search);
@@ -886,19 +887,13 @@
 		/**
 		 * 商家改价
 		 *
-		 * 需要验证密码
 		 * discount_reprice、repricer_id
 		 */
 		private function operation_reprice()
 		{
-			if ($this->operator_check() !== TRUE):
-				$this->result['status'] = 453;
-				$this->result['content']['error']['message'] = '与该ID及类型对应的操作者不存在，或操作密码错误/未传入密码';
-				exit();
-			else:
-				$data_to_edit['discount_reprice'] = $this->input->post('discount_reprice');
-				return $data_to_edit;
-			endif;
+            $data_to_edit['discount_reprice'] = $this->input->post('discount_reprice');
+            $data_to_edit['note_stuff'] = $this->input->post('note_stuff');
+            return $data_to_edit;
 		} // end operation_reprice
 
 		/**
@@ -933,9 +928,7 @@
 		 */
 		private function operation_deliver()
 		{
-            $deliver_method = $this->input->post('deliver_method');
-
-            $this->sms['content'] = '卖家已通过'. $deliver_method .'发货';
+            $this->sms['content'] = '卖家已通过'. $this->input->post('deliver_method') .'发货';
 
 			$data_to_edit['time_deliver'] = time();
 			$data_to_edit['deliver_method'] = $deliver_method; // 发货方式
@@ -963,56 +956,6 @@
 				return $data_to_edit;
 			endif;
 		} // end operation_confirm
-		
-		// DEPRECATED 根据订单状态，获取客户端可用操作
-	    private function operations_for_client($status)
-		{
-			switch ($status):
-				case '待付款':
-					$operations = array('cancel', 'pay',);
-					break;
-				case '待接单':
-				case '待发货':
-				case '待使用':
-					$operations = array('refund',);
-					break;
-				case '待收货':
-					$operations = array('refund', 'confirm',);
-					break;
-				case '待评价':
-					$operations = array('refund', 'comment',);
-					break;
-				case '已完成':
-					$operations = array('refund', 'delete',);
-					break;
-				default:
-					$operations = array('delete',);
-			endswitch;
-
-			return $operations;
-	    } // end operations_for_client
-
-        // DEPRECATED 根据订单状态，获取商家端可用操作
-	    private function operations_for_biz($status)
-		{
-			switch ($status):
-				case '待付款':
-					$operations = array('reprice',);
-					break;
-				case '待接单':
-					$operations = array('refuse', 'accept',);
-					break;
-				case '待发货':
-					$operations = array('deliver',);
-					break;
-				case '待使用':
-					$operations = array('valid',);
-					break;
-			endswitch;
-			
-			$operations[] = 'note'; // 商家可以对任何状态的订单添加备注
-			return $operations;
-	    } // end operations_for_biz
 
 	} // end class Order
 
