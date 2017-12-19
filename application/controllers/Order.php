@@ -171,11 +171,17 @@
 			if ( !empty($item) ):
 				// 获取订单商品信息
                 $this->switch_model('order_items', 'record_id');
-				// 筛选条件
 				$condition = array(
 					'order_id' => $item['order_id'],
 				);
 				$item['order_items'] = $this->basic_model->select($condition, NULL);
+
+                // 若请求并非来自客户端，一并获取用户信息
+                if ($this->app_type !== 'client'):
+                    $this->switch_model('user', 'user_id');
+                    $this->db->select('user_id, nickname, avatar');
+                    $item['user'] = $this->basic_model->select_by_id($item['user_id']);
+                endif;
 
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;

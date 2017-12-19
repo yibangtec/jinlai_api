@@ -146,12 +146,11 @@
             $this->load->model('refund_model');
 			$item = $this->refund_model->select_by_id($id, $record_id);
 			if ( !empty($item) ):
-				// 获取涉及退款的订单商品
+				// 获取订单商品
 				$this->switch_model('order_items', 'record_id');
-                $this->db->select('item_id, name, item_image, slogan, sku_id, sku_name, sku_image, price, count, single_total');
                 $item['order_item'] = $this->basic_model->select_by_id($item['record_id']);
 
-				// 获取用户信息
+                // 若请求并非来自客户端，一并获取用户信息
 				if ($this->app_type !== 'client'):
 					$this->switch_model('user', 'user_id');
 					$this->db->select('user_id, nickname, avatar');

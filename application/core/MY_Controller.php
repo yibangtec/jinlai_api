@@ -474,7 +474,8 @@
                 'quantity_min' => $item['quantity_min'],
                 'count' => $count,
 
-                'valid' => ( empty($item['stocks']) || empty($item['time_publish']) || !empty($item['time_delete']))? FALSE: TRUE, // 无库存、未上架、已删除的商品视为失效商品
+                // 无库存、未上架、已删除的商品视为失效商品
+                'valid' => ( empty($item['stocks']) || empty($item['time_publish']) || !empty($item['time_delete']))? FALSE: TRUE,
 			);
 
 			// 生成规格信息，并判断当前商品/规格是否有效
@@ -486,19 +487,15 @@
 					'tag_price' => $sku['tag_price'],
 					'price' => $sku['price'],
                     'stocks' => $sku['stocks'],
+
+					// 无库存、未上架、已删除的规格视为失效规格
+                    'valid' => ( empty($sku['stocks']) || empty($sku['time_publish']) || !empty($sku['time_delete']))? FALSE: TRUE,
 				);
 				$order_item = array_merge($order_item, $order_sku);
-
-                // 若商品有效，则判断规格是否有效
-				if ($order_item['valid'] === TRUE):
-				    if ( empty($item['stocks']) || empty($sku['time_publish']) || !empty($sku['time_delete']))
-				        $order_item['valid'] = FALSE;
-                endif;
 			endif;
 
 			// 生成订单商品信息
 			$order_item['single_total'] = $order_item['price'] * $order_item['count']; // 计算当前商品应付金额
-			//$order_items[] = array_filter($order_item);
             $order_items[] = $order_item;
 
 			// 若当前商家已有待创建订单，更新部分订单信息及订单商品信息

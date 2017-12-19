@@ -5210,7 +5210,8 @@
 						{
 							"key": "user_id",
 							"value": "1",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "time_create",
@@ -5223,6 +5224,12 @@
 							"value": "1406059199",
 							"type": "text",
 							"disabled": true
+						},
+						{
+							"key": "biz_id",
+							"value": "2",
+							"description": "",
+							"type": "text"
 						}
 					]
 				},
@@ -6557,153 +6564,64 @@
 					"mode": "formdata",
 					"formdata": [
 						{
-							"key": "category_id",
-							"value": "1",
+							"key": "app_type",
+							"value": "biz",
+							"description": "",
 							"type": "text"
 						},
 						{
-							"key": "brand_id",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "biz_id",
-							"value": "1",
-							"type": "text"
-						},
-						{
-							"key": "category_biz_id",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "code_biz",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "url_image_main",
-							"value": "logo/170712_031505334.jpg",
-							"type": "text"
-						},
-						{
-							"key": "figure_image_urls",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "figure_video_urls",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "name",
-							"value": "Powerbeats³ by Dr.Dre",
-							"type": "text"
-						},
-						{
-							"key": "slogan",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "description",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "tag_price",
-							"value": "1488",
-							"type": "text"
-						},
-						{
-							"key": "price",
-							"value": "1488",
-							"type": "text"
-						},
-						{
-							"key": "unit_name",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "weight_net",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "weight_gross",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "weight_volume",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "stocks",
-							"value": "1200",
-							"type": "text"
-						},
-						{
-							"key": "quantity_max",
-							"value": "1",
-							"type": "text"
-						},
-						{
-							"key": "quantity_min",
-							"value": "1",
-							"type": "text"
-						},
-						{
-							"key": "coupon_allowed",
-							"value": "1",
-							"type": "text"
-						},
-						{
-							"key": "discount_credit",
-							"value": "0.01",
-							"type": "text"
-						},
-						{
-							"key": "commission_rate",
-							"value": "0.01",
-							"type": "text"
-						},
-						{
-							"key": "time_to_publish",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "time_to_suspend",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "promotion_id",
-							"value": "",
-							"type": "text"
+							"key": "test_mode",
+							"value": "on",
+							"type": "text",
+							"description": "",
+							"disabled": true
 						},
 						{
 							"key": "user_id",
 							"value": "1",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
-							"key": "app_type",
-							"value": "biz",
-							"type": "text"
+							"key": "biz_id",
+							"value": "2",
+							"type": "text",
+							"description": ""
 						},
 						{
-							"key": "device_platform",
-							"value": "web",
-							"type": "text"
+							"key": "category_id",
+							"value": "1",
+							"type": "text",
+							"description": ""
 						},
 						{
-							"key": "app_version",
-							"value": "0.0.1",
+							"key": "category_biz_id",
+							"value": "3",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "url_image_main",
+							"value": "url_image_main/201712/1218/214548.png",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "name",
+							"value": "满1000免运费",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "price",
+							"value": "1",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "stocks",
+							"value": "0",
+							"description": "",
 							"type": "text"
 						}
 					]
@@ -7989,6 +7907,13 @@
 					"mode": "formdata",
 					"formdata": [
 						{
+							"key": "test_mode",
+							"value": "on",
+							"type": "text",
+							"description": "",
+							"disabled": true
+						},
+						{
 							"key": "app_type",
 							"value": "client",
 							"type": "text",
@@ -7996,13 +7921,13 @@
 						},
 						{
 							"key": "limit",
-							"value": "10",
+							"value": "2",
 							"type": "text",
 							"description": ""
 						},
 						{
 							"key": "offset",
-							"value": "",
+							"value": "2",
 							"type": "text",
 							"description": ""
 						},
@@ -8026,7 +7951,7 @@
 						},
 						{
 							"key": "user_id",
-							"value": "1",
+							"value": "39",
 							"type": "text",
 							"description": ""
 						},
@@ -8317,13 +8242,6 @@
 							"value": "",
 							"type": "text",
 							"description": ""
-						},
-						{
-							"key": "test_mode",
-							"value": "on",
-							"type": "text",
-							"description": "",
-							"disabled": true
 						}
 					]
 				},
@@ -12785,9 +12703,16 @@
 					"mode": "formdata",
 					"formdata": [
 						{
-							"key": "user_id",
-							"value": "10",
+							"key": "id",
+							"value": "2",
+							"description": "",
 							"type": "text"
+						},
+						{
+							"key": "user_id",
+							"value": "2",
+							"type": "text",
+							"disabled": true
 						}
 					]
 				},
