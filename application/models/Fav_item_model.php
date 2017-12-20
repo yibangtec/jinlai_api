@@ -66,7 +66,7 @@
 
             // 默认可返回已删除项
             if ($allow_deleted === FALSE)
-                $this->db->where($this->table_name.".`time_delete` IS NULL");
+                $this->db->where($this->table_name.".time_delete IS NULL");
 
             // 获取必要信息
             $this->db->select($this->table_name.'.*, item.name as name, item.tag_price as tag_price, item.price as price, item.url_image_main as url_image_main, item.stocks as stocks, item.time_publish as time_publish, item.time_to_publish as time_to_publish, item.status as status');
@@ -93,7 +93,8 @@
                 return $ids;
 
             endif;
-		}
+		} // end index
+
 	} // end class Fav_item_model
 
 /* End of file Fav_item_model.php */

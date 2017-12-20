@@ -271,6 +271,23 @@
 
 			return $array;
 		} // end explode_csv
+
+        /**
+         * 将可读日期转为精确到分钟的Unix时间戳
+         *
+         * @param $time_string 'Y-m-d H:i'或'Y-m-d H:i:s'格式，例如2018-01-01 06:06:06
+         * @return string
+         */
+        public function strto_minute($time_string)
+        {
+            if (strlen($time_string) === 16):
+                $timestamp = strtotime($time_string. ':00');
+            else:
+                $timestamp = strtotime(substr($time_string, 0, 16) .':00');
+            endif;
+
+            return $timestamp;
+        } // end strto_minute
 		
 		/**
          * 更换所用数据库
@@ -472,14 +489,18 @@
 				'stocks' => $item['stocks'],
                 'quantity_max' => $item['quantity_max'],
                 'quantity_min' => $item['quantity_min'],
+                'time_publish' => $item['time_publish'],
+                'time_to_publish' => $item['time_to_publish'],
+                'time_to_suspend' => $item['time_to_suspend'],
                 'count' => $count,
-
-                // 无库存、未上架、已删除的商品视为失效商品
-                'valid' => ( empty($item['stocks']) || empty($item['time_publish']) || !empty($item['time_delete']))? FALSE: TRUE,
 			);
 
-			// 生成规格信息，并判断当前商品/规格是否有效
-			if ( !empty($sku) ):
+			// 判断当前商品/规格是否有效，并完善规格信息（若有）
+			if ( empty($sku) ):
+                // 无库存、当前未上架且未预订上架时间、已删除的商品视为失效商品
+                $order_item['valid'] = ( empty($item['stocks']) || empty($item['time_publish']) || !empty($item['time_delete']))? FALSE: TRUE;
+
+            else:
 				$order_sku = array(
 					'sku_id' => $sku_id,
 					'sku_name' => $sku['name_first']. $sku['name_second']. $sku['name_third'],
@@ -488,14 +509,14 @@
 					'price' => $sku['price'],
                     'stocks' => $sku['stocks'],
 
-					// 无库存、未上架、已删除的规格视为失效规格
-                    'valid' => ( empty($sku['stocks']) || empty($sku['time_publish']) || !empty($sku['time_delete']))? FALSE: TRUE,
+					// 无库存、已删除，或所属商品当前未上架且未预订上架时间的规格视为失效规格
+                    'valid' => ( empty($sku['stocks']) || empty($item['time_publish']) || !empty($sku['time_delete']))? FALSE: TRUE,
 				);
 				$order_item = array_merge($order_item, $order_sku);
 			endif;
 
 			// 生成订单商品信息
-			$order_item['single_total'] = $order_item['price'] * $order_item['count']; // 计算当前商品应付金额
+			$order_item['single_total'] = $order_item['price'] * $order_item['count']; // 计算当前商品应付金额（单品小计）
             $order_items[] = $order_item;
 
 			// 若当前商家已有待创建订单，更新部分订单信息及订单商品信息

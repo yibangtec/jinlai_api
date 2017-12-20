@@ -398,7 +398,7 @@
 			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
             $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
-            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
+            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于预订上架时间（若有）');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -500,10 +500,10 @@
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_to_publish');
 			$this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_to_suspend');
+            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
+            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于预订上架时间（若有）');
 			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
-            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
-            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -618,11 +618,10 @@
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
             $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_to_publish');
             $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_to_suspend');
+            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
+            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于预订上架时间（若有）');
 			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
-
-            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
-            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -786,7 +785,7 @@
 					return false;
 
 				// 若已设置开始时间，不可早于开始时间一分钟以内
-				elseif ( !empty($this->input->post('time_to_publish')) && $value <= strtotime($this->input->post('time_to_publish')) + 60):
+				elseif ( !empty($this->input->post('time_to_publish')) && $value < strtotime($this->input->post('time_to_publish')) + 60):
 					return false;
 
 				else:
