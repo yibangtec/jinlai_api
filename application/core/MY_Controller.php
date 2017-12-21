@@ -497,7 +497,7 @@
 
 			// 判断当前商品/规格是否有效，并完善规格信息（若有）
 			if ( empty($sku) ):
-                // 无库存、当前未上架且未预订上架时间、已删除的商品视为失效商品
+                // 无库存、当前未上架、已删除的商品视为失效商品
                 $order_item['valid'] = ( empty($item['stocks']) || empty($item['time_publish']) || !empty($item['time_delete']))? FALSE: TRUE;
 
             else:
@@ -509,7 +509,7 @@
 					'price' => $sku['price'],
                     'stocks' => $sku['stocks'],
 
-					// 无库存、已删除，或所属商品当前未上架且未预订上架时间的规格视为失效规格
+					// 无库存、已删除，或所属商品当前未上架的规格视为失效规格
                     'valid' => ( empty($sku['stocks']) || empty($item['time_publish']) || !empty($sku['time_delete']))? FALSE: TRUE,
 				);
 				$order_item = array_merge($order_item, $order_sku);

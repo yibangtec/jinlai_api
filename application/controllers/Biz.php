@@ -196,7 +196,17 @@
 				$this->result['content'] = $item;
                 $this->result['content']['ornament'] = new stdClass(); // 若无装修方案，返回一个空对象
 
-				// 客户端同时获取商家店铺装修方案（若有）
+				// 客户端同时返回已上架商品数量
+                if ($this->app_type === 'client'):
+                    $this->switch_model('item', 'item_id');
+                    $condition = array(
+                        'biz_id' => $id,
+                        'time_publish' => 'IS NOT NULL',
+                    );
+                    $this->result['content']['item_count'] = $this->basic_model->count($condition);
+                endif;
+
+                // 客户端同时获取商家店铺装修方案（若有）
                 if (($this->app_type === 'client') && !empty($item['ornament_id']) ):
                     $this->switch_model('ornament_biz', 'ornament_id');
                     $this->result['content']['ornament'] = $this->basic_model->select_by_id($item['ornament_id']);
@@ -209,6 +219,8 @@
                     ->where('biz_id IS NULL') // 平台优惠券
                     ->or_where('biz_id', $item['biz_id']) // 商家优惠券
                     ->group_end();
+                $this->db->order_by('amount', 'DESC'); // 按金额降序排序
+                $this->db->limit(3, 0); // 仅获取3个优惠券模板
                 $this->result['content']['coupon_templates'] = $this->basic_model->select(NULL, NULL);
 
 			else:
