@@ -433,8 +433,9 @@
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
 
-				// 若非定时上架商品，则将当前时间作为上架时间
-				if ( empty($data_to_create['time_to_publish']) ) $data_to_create['time_publish'] = time();
+                // 若未传入slogan，自动生成slogan
+                if ( empty($this->input->post('slogan')) )
+                    $data_to_create['slogan'] = $this->slogan_generate($data_to_create);
 
 				$result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):
@@ -503,7 +504,7 @@
             $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
             $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于预订上架时间（若有）');
 			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
+			//$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -517,6 +518,7 @@
 
 					'figure_image_urls' => trim($this->input->post('figure_image_urls'), ','),
 					'figure_video_urls' => trim($this->input->post('figure_video_urls'), ','),
+
 					'tag_price' => empty($this->input->post('tag_price'))? '0.00': $this->input->post('tag_price'),
 					'unit_name' => empty($this->input->post('unit_name'))? '份': $this->input->post('unit_name'),
                     'weight_net' => empty($this->input->post('weight_net'))? '0.00': $this->input->post('weight_net'),
@@ -533,11 +535,14 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_biz_id', 'code_biz', 'url_image_main', 'name', 'slogan', 'description', 'price', 'stocks', 'promotion_id', 'freight_template_id',
+					'category_biz_id', 'code_biz', 'url_image_main', 'name', 'slogan', 'description', 'price', 'stocks', 'promotion_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
-				
+
+                // 若未传入slogan，自动生成slogan
+                if ( empty($this->input->post('slogan')) )
+                    $data_to_edit['slogan'] = $this->slogan_generate($data_to_edit);
 				
 				// 商家仅可操作自己的数据
 				if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
@@ -750,6 +755,12 @@
 			endif;
 		} // end edit_bulk
 
+
+        /*
+         * 以下为工具方法
+         */
+
+
 		// 检查起始时间
 		public function time_to_publish($value)
 		{
@@ -785,7 +796,7 @@
 					return false;
 
 				// 若已设置开始时间，不可早于开始时间一分钟以内
-				elseif ( !empty($this->input->post('time_to_publish')) && $value < strtotime($this->input->post('time_to_publish')) + 60):
+				elseif ( !empty($this->input->post('time_to_publish')) && $value < $this->input->post('time_to_publish') + 60):
 					return false;
 
 				else:
@@ -795,6 +806,33 @@
 
 			endif;
 		} // end time_to_suspend
+
+        /**
+         * 生成slogan字段值
+         *
+         * @param $data_to_edit
+         * @return string
+         */
+        public function slogan_generate($data_to_edit)
+        {
+            // 初始化
+            $slogan = '';
+
+            // 若有预订上下架时间，反映预订上下架时间
+            if ( ! empty($data_to_edit['time_to_public']))
+                $slogan .= '，'. date('Y-m-d H:i:s', $data_to_edit['time_to_public']). '开售';
+            if ( ! empty($data_to_edit['time_to_suspend']))
+                $slogan .= '，'. date('Y-m-d H:i:s', $data_to_edit['time_to_suspend']). '后下架';
+
+            // 若有限购信息，反映限购信息
+            if ( ! empty($this->input->post('quantity_max')) && $this->input->post('quantity_max') != 50):
+                $slogan .= '，限购'. $this->input->post('quantity_max'). $data_to_edit['unit_name'];
+            elseif ( ! empty($this->input->post('quantity_min')) && $this->input->post('quantity_min') != 1):
+                $slogan .= '，'. $this->input->post('quantity_min'). $data_to_edit['unit_name']. '起售';
+            endif;
+
+            return trim($slogan, '，'); // 清理冗余全角逗号
+        } // end slogan_generate
 
 	} // end class Item
 

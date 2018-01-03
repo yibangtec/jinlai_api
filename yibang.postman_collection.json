@@ -5435,6 +5435,12 @@
 							"type": "text"
 						},
 						{
+							"key": "test_mode",
+							"value": "on",
+							"description": "",
+							"type": "text"
+						},
+						{
 							"key": "user_id",
 							"value": "1",
 							"type": "text"
@@ -6295,12 +6301,12 @@
 						},
 						{
 							"key": "limit",
-							"value": "",
+							"value": "3",
 							"type": "text"
 						},
 						{
 							"key": "offset",
-							"value": "",
+							"value": "3",
 							"type": "text"
 						},
 						{
@@ -6321,7 +6327,8 @@
 						{
 							"key": "category_biz_id",
 							"value": "4",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "name",
@@ -6457,8 +6464,7 @@
 							"key": "orderby_price",
 							"value": "DESC",
 							"type": "text",
-							"description": "按价格排序；DESC为降序，ASC为升序，下同",
-							"disabled": true
+							"description": "按价格排序；DESC为降序，ASC为升序，下同"
 						},
 						{
 							"key": "orderby_time_publish",
@@ -6515,24 +6521,24 @@
 					"mode": "formdata",
 					"formdata": [
 						{
+							"key": "test_mode",
+							"value": "on",
+							"type": "text",
+							"disabled": true
+						},
+						{
 							"key": "app_type",
 							"value": "client",
 							"type": "text"
 						},
 						{
 							"key": "id",
-							"value": "9",
+							"value": "190",
 							"type": "text"
 						},
 						{
 							"key": "biz_id",
 							"value": "2",
-							"type": "text",
-							"disabled": true
-						},
-						{
-							"key": "test_mode",
-							"value": "on",
 							"type": "text",
 							"disabled": true
 						}
@@ -8392,48 +8398,56 @@
 						{
 							"key": "app_type",
 							"value": "client",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "user_id",
-							"value": "48",
-							"type": "text"
+							"value": "1",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "ids",
+							"value": "73",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "operation",
 							"value": "deliver",
-							"type": "text"
-						},
-						{
-							"key": "ids",
-							"value": "56",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "deliver_method",
 							"value": "物流快递",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "deliver_biz",
-							"value": "天天",
-							"type": "text"
+							"value": "达达",
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "waybill_id",
-							"value": "117977258597",
-							"type": "text"
-						},
-						{
-							"key": "password",
-							"value": "111111",
+							"value": "123456",
 							"type": "text",
-							"disabled": true
+							"description": ""
 						},
 						{
 							"key": "test_mode",
 							"value": "on",
 							"type": "text",
+							"description": "",
 							"disabled": true
 						}
 					]

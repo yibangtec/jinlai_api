@@ -694,6 +694,20 @@
 					if ($result === FALSE):
 						$this->result['status'] = 434;
 						$this->result['content']['row_failed'][] = $id;
+
+                    elseif ($operation === 'deliver'):
+                        // 若发货成功，获取订单信息并向收件人发送短信通知
+                        $current_order = $this->basic_model->select_by_id($id);
+
+                        // 发货成功后短信提醒买家
+                        $sms_mobile = $current_order['mobile'];
+                        if ($data_to_edit['deliver_method'] === '用户自提'):
+                            $sms_content = '商家“'. $current_order['biz_name']. '”已为您的自行提货订单'. $id. '准备好货品，请拨冗提货。';
+                        else:
+                            $deliver_info = $data_to_edit['deliver_biz']. (!empty($data_to_edit['waybill_id'])? $data_to_edit['waybill_id']: NULL);
+                            $sms_content = '您在“'. $current_order['biz_name']. '”的订单'.$id.'已通过'. $deliver_info. '发货，请准备查收。';
+                        endif;
+                        $this->sms_send($sms_mobile, $sms_content);
 					endif;
 				endforeach;
 
@@ -701,7 +715,7 @@
 				if ($this->result['status'] = 200)
 					$this->result['content']['message'] = '全部操作成功';
 
-			endif;
+			    endif;
 		} // end edit_bulk
 
 		/**
@@ -834,21 +848,30 @@
 			endif;
 		} // end valid
 
-		// 获取特定地址信息
+
+        /*
+         * 以下为工具方法
+         */
+
+
+        // 获取特定地址信息
 		private function get_address($id, $user_id)
 		{
-			// 从API服务器获取相应列表信息
+			// 从数据库获取相应信息
+            $this->switch_model('address', 'address_id');
 			$conditions = array(
 				'address_id' => $id,
 				'user_id' => $user_id,
 				'time_delete' => NULL,
 			);
-
-			$this->switch_model('address', 'address_id');
 			$result = $this->basic_model->match($conditions);
 			$this->reset_model();
 
-			if ( !empty($result) ):
+			// 若获取成功，将地址信息写入类属性
+			if ( empty($result) ):
+                return FALSE;
+
+            else:
 				$this->order_address = array(
 					'fullname' => $result['fullname'],
 					'mobile' => $result['mobile'],
@@ -859,9 +882,6 @@
 					'longitude' => $result['longitude'],
 					'latitude' => $result['latitude'],
 				);
-
-			else:
-				return FALSE;
 
 			endif;
 		} // end get_address
@@ -934,10 +954,8 @@
 		 */
 		private function operation_deliver()
 		{
-            $this->sms['content'] = '卖家已通过'. $this->input->post('deliver_method') .'发货';
-
 			$data_to_edit['time_deliver'] = time();
-			$data_to_edit['deliver_method'] = $deliver_method; // 发货方式
+			$data_to_edit['deliver_method'] = $this->input->post('deliver_method'); // 发货方式
 			$data_to_edit['deliver_biz'] = $this->input->post('deliver_biz'); // 物流服务商；若用户自提，不需要填写服务商
 			$data_to_edit['waybill_id'] = $this->input->post('waybill_id'); // 物流运单号；用户自提，或同城配送的服务商选择自营时，不需要填写运单号
 			$data_to_edit['status'] = '待收货';

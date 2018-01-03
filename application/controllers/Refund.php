@@ -295,9 +295,21 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
-			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore]');
+			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[refuse,accept,confirm]');
 			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
+            $this->form_validation->set_rules('note_stuff', '员工备注', 'trim|max_length[255]');
+
+            // 商家同意退款时需验证字段；非批量同意退款时可以修改同意退款金额
+            if ($operation === 'accept' && strpos(trim($ids, ','), ',') === false)
+                $this->form_validation->set_rules('total_approved', '同意退款金额', 'trim|required|greater_than[0.01]|less_than_equal_to[99999.99]');
+
+            // 商家发货时需验证字段
+            if ($operation === 'confirm'):
+                $this->form_validation->set_rules('deliver_method', '发货方式', 'trim|required|max_length[30]');
+                $this->form_validation->set_rules('deliver_biz', '服务商', 'trim|max_length[30]');
+                $this->form_validation->set_rules('waybill_id', '运单号', 'trim|max_length[30]alpha_numeric');
+            endif;
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):
@@ -313,15 +325,26 @@
 			else:
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit['operator_id'] = $user_id;
+                $data_to_edit['note_stuff'] = $this->input->post('note_stuff');
 
 				// 根据待执行的操作赋值待编辑数据
 				switch ( $operation ):
-					case 'delete':
-						$data_to_edit['time_delete'] = date('Y-m-d H:i:s');
-						break;
-					case 'restore':
-						$data_to_edit['time_delete'] = NULL;
-						break;
+                    case 'refuse': // 商家拒绝
+                        $data_to_edit = array_merge($data_to_edit, $this->operation_refuse());
+                        break;
+                    case 'accept': // 商家同意
+                        $data_to_edit = array_merge($data_to_edit, $this->operation_accept());
+                        break;
+                    case 'confirm': // 商家收货
+                        $data_to_edit = array_merge($data_to_edit, $this->operation_confirm());
+                        break;
+
+                    case 'delete': // 用户删除
+                        $data_to_edit['time_delete'] = date('Y-m-d H:i:s');
+                        break;
+                    case 'restore': // 用户找回
+                        $data_to_edit['time_delete'] = NULL;
+                        break;
 				endswitch;
 
 				// 依次操作数据并输出操作结果
@@ -331,10 +354,41 @@
 				// 默认批量处理全部成功，若有任一处理失败则将处理失败行进行记录
 				$this->result['status'] = 200;
 				foreach ($ids as $id):
+                    $current_refund = $this->basic_model->select_by_id($id);
+
+                    // 若同意退款，需根据货物状态决定待退货还是待退款
+                    if ($operation === 'accept'):
+				        $target_status = ($current_refund['cargo_status'] === '已收货')? '待退货': '待退款';
+                        $data_to_edit['status'] = $target_status;
+                    endif;
+
 					$result = $this->basic_model->edit($id, $data_to_edit);
 					if ($result === FALSE):
 						$this->result['status'] = 434;
 						$this->result['content']['row_failed'][] = $id;
+
+                    else:
+                        $record_id = $current_refund['record_id'];
+
+                        // 更新相应订单商品退款状态
+                        $this->switch_model('order_items', 'record_id');
+                        if ($operation === 'refuse'):
+                            $data_to_edit = array(
+                                'refund_status' => '已拒绝',
+                            );
+
+                        elseif ($operation === 'confirm'):
+                            $data_to_edit = array(
+                                'refund_status' => '待退款',
+                            );
+
+                        elseif ($operation === 'accept'):
+                            $data_to_edit = array(
+                                'refund_status' => $target_status,
+                            );
+                        endif;
+                        $this->basic_model->edit($record_id, $data_to_edit);
+
 					endif;
 
 				endforeach;
@@ -345,6 +399,55 @@
 
 			endif;
 		} // end edit_bulk
+
+
+        /*
+         * 以下为工具方法
+         */
+
+
+        /**
+         * 商家拒绝退款
+         *
+         * note_stuff、time_refuse、status
+         */
+        private function operation_refuse()
+        {
+            $data_to_edit['time_refuse'] = time();
+            $data_to_edit['status'] = '已拒绝';
+            return $data_to_edit;
+        } // end operation_refuse
+
+        /**
+         * 商家同意退款
+         *
+         * time_accept、status
+         */
+        private function operation_accept()
+        {
+            $data_to_edit['time_accept'] = time();
+
+            // 非批量同意退款时可以修改同意退款金额
+            if (strpos( trim($this->input->post('ids'), ','), ',' ) === false)
+                $data_to_edit['total_approved'] = $this->input->post('total_approved');
+
+            return $data_to_edit;
+        } // end operation_accept
+
+        /**
+         * 商家确认收货
+         *
+         * time_confirm、deliver_method、deliver_biz、waybill_id、status
+         */
+        private function operation_confirm()
+        {
+            $data_to_edit['time_confirm'] = time();
+            $data_to_edit['deliver_method'] = $deliver_method; // 发货方式
+            $data_to_edit['deliver_biz'] = $this->input->post('deliver_biz'); // 物流服务商；若用户自提，不需要填写服务商
+            $data_to_edit['waybill_id'] = $this->input->post('waybill_id'); // 物流运单号；用户自提，或同城配送的服务商选择自营时，不需要填写运单号
+            $data_to_edit['status'] = '待退款';
+            return $data_to_edit;
+        } // end operation_confirm
 
 	} // end class Refund
 

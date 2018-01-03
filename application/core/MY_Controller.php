@@ -104,6 +104,10 @@
 
 		public function __destruct()
 		{
+		    // 若返回了错误信息，则标注为服务端错误信息
+            if ( ! empty($this->result['content']['error']['message']))
+                $this->result['content']['error']['message'] .= ' ERROR_API';
+
 			// 将请求参数一并返回以便调试
 			$this->result['param']['get'] = $this->input->get();
 			$this->result['param']['post'] = $this->input->post();
