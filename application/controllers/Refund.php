@@ -104,6 +104,10 @@
 				endif;
 			endforeach;
 
+            // 商家端若未请求特定状态的退款，则不返回部分状态的退款
+            if ($this->app_type === 'biz' && empty($this->input->post('status')))
+                $this->db->where_not_in($this->table_name.'.status', array('已取消', '已拒绝', '已关闭'));
+
 			// 排序条件
 			$order_by = NULL;
 
@@ -114,7 +118,7 @@
                 // 获取涉及退款的订单商品
 				$this->switch_model('order_items', 'record_id');
 				for ($i=0;$i<count($items);$i++):
-                    $this->db->select('item_id, name, item_image, slogan, sku_id, sku_name, sku_image, price, count, single_total');
+                    $this->db->select('record_id, order_id, item_id, name, item_image, slogan, sku_id, sku_name, sku_image, price, count, single_total, refund_status');
                     $items[$i]['order_item'] = $this->basic_model->select_by_id($items[$i]['record_id']);
 				endfor;
 
@@ -148,6 +152,7 @@
 			if ( !empty($item) ):
 				// 获取订单商品
 				$this->switch_model('order_items', 'record_id');
+                $this->db->select('record_id, order_id, item_id, name, item_image, slogan, sku_id, sku_name, sku_image, price, count, single_total, refund_status');
                 $item['order_item'] = $this->basic_model->select_by_id($item['record_id']);
 
                 // 若请求并非来自客户端，一并获取用户信息
@@ -295,7 +300,7 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
-			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[refuse,accept,confirm]');
+			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[note,refuse,accept,confirm]');
 			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
             $this->form_validation->set_rules('note_stuff', '员工备注', 'trim|max_length[255]');
@@ -354,6 +359,7 @@
 				// 默认批量处理全部成功，若有任一处理失败则将处理失败行进行记录
 				$this->result['status'] = 200;
 				foreach ($ids as $id):
+                    $this->reset_model(); // 重置数据库参数
                     $current_refund = $this->basic_model->select_by_id($id);
 
                     // 若同意退款，需根据货物状态决定待退货还是待退款
@@ -362,12 +368,12 @@
                         $data_to_edit['status'] = $target_status;
                     endif;
 
-					$result = $this->basic_model->edit($id, $data_to_edit);
+                    $result = $this->basic_model->edit($id, $data_to_edit);
 					if ($result === FALSE):
 						$this->result['status'] = 434;
 						$this->result['content']['row_failed'][] = $id;
 
-                    else:
+                    elseif ($operation !== 'note'):
                         $record_id = $current_refund['record_id'];
 
                         // 更新相应订单商品退款状态
@@ -441,11 +447,18 @@
          */
         private function operation_confirm()
         {
+            // 获取发货方式
+            $deliver_method = $this->input->post('deliver_biz');
+
             $data_to_edit['time_confirm'] = time();
-            $data_to_edit['deliver_method'] = $deliver_method; // 发货方式
-            $data_to_edit['deliver_biz'] = $this->input->post('deliver_biz'); // 物流服务商；若用户自提，不需要填写服务商
-            $data_to_edit['waybill_id'] = $this->input->post('waybill_id'); // 物流运单号；用户自提，或同城配送的服务商选择自营时，不需要填写运单号
-            $data_to_edit['status'] = '待退款';
+            $data_to_edit['deliver_method'] = $deliver_method;
+
+            // 若用户自提，跳过部分信息
+            if ($deliver_method !== '用户自提'):
+                $data_to_edit['deliver_biz'] = $this->input->post('deliver_biz'); // 物流服务商
+                $data_to_edit['waybill_id'] = $this->input->post('waybill_id'); // 物流运单号；同城配送的服务商选择自营时，运单号不是必要信息
+            endif;
+
             return $data_to_edit;
         } // end operation_confirm
 

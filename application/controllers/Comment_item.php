@@ -114,9 +114,12 @@ class Comment_item extends MY_Controller
             endif;
         endforeach;
 
+        // 商家端若未请求特定状态的退款，则不返回部分状态的退款
+        if ($this->app_type === 'biz' && empty($this->input->post('status')))
+            $this->db->where_not_in($this->table_name.'.status', array('冻结',));
+
         // 排序条件
         $order_by = NULL;
-        //$order_by['name'] = 'value';
 
         // 获取列表；默认可获取已删除项
         $this->load->model('comment_item_model');

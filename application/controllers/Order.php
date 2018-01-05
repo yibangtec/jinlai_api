@@ -125,7 +125,7 @@
 
 			// 商家端若未请求特定状态的订单，则不返回部分状态的订单
 			if ($this->app_type === 'biz' && empty($this->input->post('status')))
-			    $this->db->where_not_in('status', array('已取消', '已拒绝', '已关闭'));
+			    $this->db->where_not_in($this->table_name.'.status', array('已取消', '已拒绝', '已关闭'));
 			
 			// 排序条件
 			$order_by['time_create'] = 'DESC';

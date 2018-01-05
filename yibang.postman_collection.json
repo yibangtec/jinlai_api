@@ -4090,11 +4090,6 @@
 					"mode": "formdata",
 					"formdata": [
 						{
-							"key": "skip_sign",
-							"value": "please",
-							"type": "text"
-						},
-						{
 							"key": "app_type",
 							"value": "client",
 							"type": "text"
@@ -4131,7 +4126,7 @@
 						},
 						{
 							"key": "biz_id",
-							"value": "2",
+							"value": "",
 							"type": "text"
 						},
 						{
@@ -8397,7 +8392,7 @@
 					"formdata": [
 						{
 							"key": "app_type",
-							"value": "client",
+							"value": "biz",
 							"type": "text",
 							"description": ""
 						},
@@ -8409,7 +8404,7 @@
 						},
 						{
 							"key": "ids",
-							"value": "73",
+							"value": "38",
 							"type": "text",
 							"description": ""
 						},
@@ -8433,13 +8428,13 @@
 						},
 						{
 							"key": "deliver_biz",
-							"value": "达达",
+							"value": "圆通",
 							"type": "text",
 							"description": ""
 						},
 						{
 							"key": "waybill_id",
-							"value": "123456",
+							"value": "19654846759785TZ",
 							"type": "text",
 							"description": ""
 						},
@@ -11000,6 +10995,18 @@
 					"mode": "formdata",
 					"formdata": [
 						{
+							"key": "test_mode",
+							"value": "on",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "app_type",
+							"value": "biz",
+							"description": "",
+							"type": "text"
+						},
+						{
 							"key": "limit",
 							"value": "",
 							"type": "text"
@@ -11011,12 +11018,12 @@
 						},
 						{
 							"key": "user_id",
-							"value": "1",
+							"value": "",
 							"type": "text"
 						},
 						{
 							"key": "biz_id",
-							"value": "",
+							"value": "21",
 							"type": "text"
 						},
 						{
@@ -11110,10 +11117,10 @@
 							"type": "text"
 						},
 						{
-							"key": "test_mode",
-							"value": "on",
-							"type": "text",
-							"disabled": true
+							"key": "time_delete",
+							"value": "NULL",
+							"description": "",
+							"type": "text"
 						}
 					]
 				},
@@ -11155,14 +11162,14 @@
 						},
 						{
 							"key": "id",
-							"value": "6",
-							"type": "text",
-							"disabled": true
+							"value": "20",
+							"type": "text"
 						},
 						{
 							"key": "record_id",
 							"value": "23",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						}
 					]
 				},
@@ -11255,6 +11262,96 @@
 					"path": [
 						"refund",
 						"create"
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "RFD6 退款批量操作",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "test_mode",
+							"value": "on",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "app_type",
+							"value": "biz",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "user_id",
+							"value": "1",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "ids",
+							"value": "20",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "operation",
+							"value": "accept",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "total_approved",
+							"value": "8",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "deliver_method",
+							"value": "物流快递",
+							"type": "text",
+							"description": "",
+							"disabled": true
+						},
+						{
+							"key": "deliver_biz",
+							"value": "圆通",
+							"type": "text",
+							"description": "",
+							"disabled": true
+						},
+						{
+							"key": "waybill_id",
+							"value": "19654846759785TZ",
+							"type": "text",
+							"description": "",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.517ybang.com/refund/edit_bulk",
+					"protocol": "https",
+					"host": [
+						"api",
+						"517ybang",
+						"com"
+					],
+					"path": [
+						"refund",
+						"edit_bulk"
 					]
 				},
 				"description": null

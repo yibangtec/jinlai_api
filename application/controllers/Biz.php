@@ -201,7 +201,7 @@
                     $this->switch_model('item', 'item_id');
                     $condition = array(
                         'biz_id' => $id,
-                        'time_publish' => 'IS NOT NULL',
+                        'time_delete' => 'NULL',
                     );
                     $this->result['content']['item_count'] = $this->basic_model->count($condition);
                 endif;

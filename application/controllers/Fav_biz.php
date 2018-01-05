@@ -131,7 +131,7 @@
 				for ($i=0; $i<count($this->result['content']); $i++):
 					$condition = array(
 						'biz_id' => $this->result['content'][$i]['biz_id'],
-						'time_suspend' => 'NULL',
+						'time_delete' => 'NULL',
 					);
                     $this->result['content'][$i]['recent_items_count'] = $this->basic_model->count($condition);
 
