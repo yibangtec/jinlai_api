@@ -138,8 +138,9 @@
                     // 限制需要返回的字段
                     $this->db->select('item_id, url_image_main, price');
                     $this->db->order_by('time_publish', 'DESC');
-                    $this->db->limit(4, 0);
+                    $this->basic_model->limit = 4; // 只返回4个最近上架商品
 					$this->result['content'][$i]['recent_items'] = $this->basic_model->select($condition);
+					$this->basic_model->limit = NULL;
 				endfor;
 
 			else:
