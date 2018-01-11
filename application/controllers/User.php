@@ -100,7 +100,7 @@
 		 * 1 列表/基本搜索
 		 */
 		public function index()
-		{	
+		{
 			// 检查必要参数是否已传入
 			$required_params = array();
 			foreach ($required_params as $param):
@@ -121,7 +121,7 @@
 			endforeach;
 			
 			// 排序条件
-			$order_by = NULL;
+			$order_by['time_create'] = 'DESC';
 
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );

@@ -86,7 +86,7 @@
             $this->db->reset_query(); // 重置查询
 		    $this->basic_model->table_name = $table_name;
 			$this->basic_model->id_name = $id_name;
-		} // switch_model
+		} // end switch_model
 		
 		/**
 		 * 3 创建微信支付订单

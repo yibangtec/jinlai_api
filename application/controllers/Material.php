@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * TODO Material 类
+	 * Material/MTR 素材类
 	 *
 	 * 处理AJAX文件上传
 	 *
@@ -22,7 +22,7 @@
 		private $path_to_file;
 
 		// 初始化总体上传结果，默认上传成功
-		protected $result = array(
+		public $result = array(
 			'status' => 200,
 		);
 
@@ -50,11 +50,12 @@
 			// 设置目标路径
 			chmod($this->target_directory, 0777); // 设置权限为可写
 			$this->target_url = $_SERVER['DOCUMENT_ROOT']. '/'. $this->target_directory;
-		}
+		} // end __construct
 
 		// 上传入口
 		public function index()
 		{
+		    //var_dump($_FILES);
 			// 若有文件被上传，继续处理文件
 			if ( !empty($_FILES) ):
 
@@ -112,7 +113,7 @@
 				$this->result['content']['error']['message'] = $content;
 
 			endif;
-		}
+		} // end index
 
 		// 上传具体文件
 		private function upload_process($field_index)
@@ -132,8 +133,18 @@
 			$result = $this->upload->do_upload($field_index);
 
 			if ($result === TRUE):
+                $local_url = $this->path_to_file. $this->upload->data('file_name'); // 返回上传后的文件路径
+                $exif_data = read_exif_data('uploads/'.$local_url); // 获取图片的exif数据
+                $raw_longitude = $exif_data['GPSLongitude']; // 度分秒格式的经度
+                $raw_latitude = $exif_data['GPSLatitude']; // 度分秒格式的纬度
+                $longitude = $raw_longitude[0] + $raw_longitude[1]/60 + $raw_longitude[2]/3600/100; // 小数格式经度；从EXIF中获取的秒数据需要再除以100
+                $latitude = $raw_latitude[0] + $raw_latitude[1]/60 + ($raw_latitude[2]/3600/100); // 小数格式纬度
+
 				$data['status'] = 200;
-				$data['content'] = $this->path_to_file. $this->upload->data('file_name'); // 返回上传后的文件路径
+				$data['content']['local_url'] = $local_url;
+                $data['content']['longitude'] = round($longitude, 6);
+                $data['content']['latitude'] = round($latitude, 6);
+                $data['content']['exif_data'] = $exif_data;
 			else:
 				$data['status'] = 400;
 				$data['content']['file'] = $_FILES[$field_index]; // 返回源文件信息
@@ -141,5 +152,9 @@
 			endif;
 
 			return $data;
-		}
-	}
+		} // end upload_process
+
+	} // end class Material
+
+/* End of file Material.php */
+/* Location: ./application/controllers/Material.php */
