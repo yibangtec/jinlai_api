@@ -193,6 +193,11 @@
 
                     // 更新订单信息
                     $this->order_update($data_to_edit, $type, $order_id);
+
+                    // 发送短信通知（调试用）
+                    $sms_mobile = '17664073966';
+                    $sms_content = $type. '订单 '. $order_id. ' 已通过支付宝付款 '. $data_to_edit['total_payed']. ' 元';
+                    @$this->sms_send($sms_mobile, $sms_content);
                 endif;
 
                 echo 'success'; // 请不要修改或删除
@@ -397,6 +402,18 @@
                 $this->db->reconnect();
             endforeach;
         } // end stocks_update
+
+        /**
+         * 发送短信
+         */
+        protected function sms_send($mobile, $content)
+        {
+            // 为短信内容添加后缀签名
+            $content .= '【'. SITE_NAME. '】';
+
+            $this->load->library('luosimao');
+            @$result = $this->luosimao->send($mobile, $content);
+        } // end sms_send
 
 	} // end class Alipay
 

@@ -13,6 +13,25 @@
 	class MY_Controller extends CI_Controller
 	{
         /**
+         * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
+         */
+        protected $names_to_sort = array();
+
+        /**
+         * @var array 可根据最小值筛选的字段名
+         */
+        protected $min_needed = array(
+            'time_create',
+        );
+
+        /**
+         * @var array 可根据最大值筛选的字段名
+         */
+        protected $max_needed = array(
+            'time_create',
+        );
+
+        /**
          * @var array 仅在管理类客户端返回的字段
          */
 	    protected $names_return_for_admin = array(
@@ -262,38 +281,6 @@
 		} // end sign_generate
 		
 		/**
-         * 拆分CSV为数组
-         */
-		protected function explode_csv($text, $seperator = ',')
-		{
-			// 清理可能存在的空字符、冗余分隔符
-			$text = trim($text);
-			$text = trim($text, $seperator);
-
-			// 拆分文本为数组并清理可被转换为布尔型FALSE的数组元素（空数组、空字符、NULL、0、’0‘等）
-			$array = array_filter( explode(',', $text) );
-
-			return $array;
-		} // end explode_csv
-
-        /**
-         * 将可读日期转为精确到分钟的Unix时间戳
-         *
-         * @param $time_string 'Y-m-d H:i'或'Y-m-d H:i:s'格式，例如2018-01-01 06:06:06
-         * @return string
-         */
-        public function strto_minute($time_string)
-        {
-            if (strlen($time_string) === 16):
-                $timestamp = strtotime($time_string. ':00');
-            else:
-                $timestamp = strtotime(substr($time_string, 0, 16) .':00');
-            endif;
-
-            return $timestamp;
-        } // end strto_minute
-		
-		/**
          * 更换所用数据库
          */
 		protected function switch_model($table_name, $id_name)
@@ -386,6 +373,67 @@
 				return FALSE;
 			endif;
 		} // end operator_check
+
+        /**
+         * 生成根据筛选项
+         *
+         * 根据names_to_sort类属性生成筛选条件
+         *
+         * @param array $condition 默认筛选条件
+         * @return array
+         */
+        protected function condition_generate($condition = array())
+        {
+            // 遍历筛选条件
+            foreach ($this->names_to_sort as $sorter):
+                if ( in_array($sorter, $this->min_needed) || in_array($sorter, $this->max_needed) || !empty($this->input->post($sorter))):
+
+                    // 若可筛选最小值（含），尝试获取传入的相应字段值
+                    if ( in_array($sorter, $this->min_needed) ) $condition[$sorter.' >='] = $this->input->post($sorter.'_min');
+
+                    // 若可筛选最大值（含），尝试获取传入的相应字段值
+                    if ( in_array($sorter, $this->max_needed) ) $condition[$sorter.' <='] = $this->input->post($sorter.'_max');
+
+                    $condition[$sorter] = $this->input->post($sorter);
+
+                endif;
+            endforeach;
+
+            // 清理空元素并返回筛选条件
+            return array_filter($condition);
+        } // end condition_generate
+
+        /**
+         * 拆分CSV为数组
+         */
+        protected function explode_csv($text, $seperator = ',')
+        {
+            // 清理可能存在的空字符、冗余分隔符
+            $text = trim($text);
+            $text = trim($text, $seperator);
+
+            // 拆分文本为数组并清理可被转换为布尔型FALSE的数组元素（空数组、空字符、NULL、0、’0‘等）
+            $array = array_filter( explode(',', $text) );
+
+            return $array;
+        } // end explode_csv
+
+        /**
+         * 将可读日期转为精确到分钟的Unix时间戳
+         *
+         * @param $time_string 'Y-m-d H:i'或'Y-m-d H:i:s'格式，例如2018-01-01 06:06:06
+         * @return string
+         */
+        public function strto_minute($time_string)
+        {
+            if (strlen($time_string) === 16):
+                $timestamp = strtotime($time_string. ':00');
+            else:
+                $timestamp = strtotime(substr($time_string, 0, 16) .':00');
+            endif;
+
+            return $timestamp;
+        } // end strto_minute
 		
 		/**
          * 发送短信

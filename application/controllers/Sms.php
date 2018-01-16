@@ -62,7 +62,7 @@
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
-		}
+		} // end __construct
 		
 		/**
 		 * 1 列表/基本搜索
@@ -80,14 +80,8 @@
 				endif;
 			endforeach;
 
-			// 筛选条件
-			$condition = NULL;
-			// （可选）遍历筛选条件
-			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post($sorter)) ):
-					$condition[$sorter] = $this->input->post($sorter);
-				endif;
-			endforeach;
+            // 生成筛选条件
+            $condition = $this->condition_generate();
 
 			// 排序条件
 			$order_by = NULL;

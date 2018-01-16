@@ -18,11 +18,25 @@
 			'time_create', 'time_delete', 'time_publish', 'time_suspend', 'time_edit', 'creator_id', 'operator_id',
 		);
 
+        /**
+         * @var array 可根据最大值筛选的字段名
+         */
+        protected $max_needed = array(
+            'time_create', 'tag_price', 'price',
+        );
+
+        /**
+         * @var array 可根据最小值筛选的字段名
+         */
+        protected $min_needed = array(
+            'time_create', 'tag_price', 'price',
+        );
+
 		/**
 		 * 可作为排序条件的字段名
 		 */
 		protected $names_to_order = array(
-			'price', 'time_publish', 'time_to_suspend', 'unit_sold',
+            'tag_price', 'price', 'time_publish', 'time_to_suspend', 'unit_sold',
 		);
 
 		/**
@@ -72,17 +86,28 @@
 		 */
 		protected function advanced_sorter()
 		{
-			if ( !empty($this->input->post('name')) ):
+			// 若传入了商品名，模糊查询
+		    if ( !empty($this->input->post('name')) ):
 				$this->db->like('name', $this->input->post('name'));
 			endif;
 
-			if ( !empty($this->input->post('price_min')) ):
-				$this->db->where('price >=', $this->input->post('price_min'));
-			endif;
+            // 若传入了商家级商品分类，则同时筛选属于该分类及该分类子分类的商品
+			if ( !empty($this->input->post('category_biz_id')) ):
+                // 获取所有子类ID
+                $this->switch_model('item_category_biz', 'category_id');
+                $sub_categories = $this->basic_model->select(
+                    array('parent_id' => $this->input->post($sorter)),
+                    NULL,
+                    TRUE
+                ); // 仅返回ID
+                $this->reset_model();
 
-			if ( !empty($this->input->post('price_max')) ):
-				$this->db->where('price <=', $this->input->post('price_max'));
-			endif;
+                $this->db->where('category_biz_id', $this->input->post($sorter));
+
+                if ( !empty($sub_categories) ):
+                    $this->db->or_where_in('category_biz_id', $sub_categories);
+                endif;
+            endif;
 		} // end advanced_sorter
 
 		/**
@@ -90,21 +115,8 @@
 		 */
 		public function count()
 		{
-			// 筛选条件
-			$condition = NULL;
-			// （可选）遍历筛选条件
-			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post($sorter)) ):
-					// 对时间范围做限制
-					if ($sorter === 'start_time'):
-						$condition['time_create >='] = $this->input->post($sorter);
-					elseif ($sorter === 'end_time'):
-						$condition['time_create <='] = $this->input->post($sorter);
-					else:
-						$condition[$sorter] = $this->input->post($sorter);
-					endif;
-				endif;
-			endforeach;
+            // 生成筛选条件
+            $condition = $this->condition_generate();
 			// 类特有筛选项
 			$this->advanced_sorter();
 			
@@ -141,40 +153,10 @@
 				endif;
 			endforeach;
 
-			// 筛选条件
-			$condition = NULL;
-			// （可选）遍历筛选条件
-			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post($sorter)) ):
-					// 对时间范围做限制
-					if ($sorter === 'start_time'):
-						$condition['time_create >='] = $this->input->post($sorter);
-					elseif ($sorter === 'end_time'):
-						$condition['time_create <='] = $this->input->post($sorter);
-
-					elseif ($sorter === 'category_biz_id'):
-					    // 获取所有子类ID
-                        $this->switch_model('item_category_biz', 'category_id');
-					    $sub_categories = $this->basic_model->select(
-					        array('parent_id' => $this->input->post($sorter)),
-                            NULL,
-                            TRUE
-                        ); // 仅返回ID
-                        $this->reset_model();
-
-                        $this->db->where('category_biz_id', $this->input->post($sorter));
-
-                        if ( !empty($sub_categories) ):
-                            $this->db->or_where_in('category_biz_id', $sub_categories);
-                        endif;
-
-					else:
-						$condition[$sorter] = $this->input->post($sorter);
-					endif;
-				endif;
-			endforeach;
-			// 类特有筛选项
-			$this->advanced_sorter();
+            // 生成筛选条件
+            $condition = $this->condition_generate();
+            // 类特有筛选项
+            $this->advanced_sorter();
 
             // 用户仅可查看未删除商品数据
             if ($this->app_type === 'client'):

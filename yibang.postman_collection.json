@@ -866,133 +866,6 @@
 			"response": []
 		},
 		{
-			"name": "DTA1 数据分析列表",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "limit",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "offset",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "biz_id",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "title",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "excerpt",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "content",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "url_images",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "time_create",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "time_delete",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "time_edit",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "creator_id",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "operator_id",
-							"value": "",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "https://api.517ybang.com/data/index",
-					"protocol": "https",
-					"host": [
-						"api",
-						"517ybang",
-						"com"
-					],
-					"path": [
-						"data",
-						"index"
-					]
-				},
-				"description": null
-			},
-			"response": []
-		},
-		{
-			"name": "DTA2 数据分析详情",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "id",
-							"value": "1",
-							"type": "text",
-							"description": ""
-						},
-						{
-							"key": "test_mode",
-							"value": "on",
-							"description": "",
-							"type": "text",
-							"disabled": true
-						}
-					]
-				},
-				"url": {
-					"raw": "https://api.517ybang.com/data/detail",
-					"protocol": "https",
-					"host": [
-						"api",
-						"517ybang",
-						"com"
-					],
-					"path": [
-						"data",
-						"detail"
-					]
-				},
-				"description": null
-			},
-			"response": []
-		},
-		{
 			"name": "ATB2 商家文章详情",
 			"request": {
 				"method": "POST",
@@ -3066,9 +2939,10 @@
 					"mode": "formdata",
 					"formdata": [
 						{
-							"key": "skip_sign",
-							"value": "please",
-							"type": "text"
+							"key": "test_mode",
+							"value": "on",
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "app_type",
@@ -3098,6 +2972,18 @@
 						{
 							"key": "score",
 							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "score_min",
+							"value": "4",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "score_max",
+							"value": "5",
+							"description": "",
 							"type": "text"
 						},
 						{
@@ -3163,11 +3049,6 @@
 					"mode": "formdata",
 					"formdata": [
 						{
-							"key": "skip_sign",
-							"value": "please",
-							"type": "text"
-						},
-						{
 							"key": "app_type",
 							"value": "biz",
 							"type": "text"
@@ -3189,7 +3070,7 @@
 						},
 						{
 							"key": "user_id",
-							"value": "37",
+							"value": "",
 							"type": "text"
 						},
 						{
@@ -3240,6 +3121,18 @@
 						{
 							"key": "operator_id",
 							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "score_min",
+							"value": "2",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "score_max",
+							"value": "3",
+							"description": "",
 							"type": "text"
 						}
 					]
@@ -4847,6 +4740,140 @@
 					"path": [
 						"cart",
 						"sync_up"
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "DTA1 数据分析列表",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "test_mode",
+							"value": "on",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "limit",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "offset",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "biz_id",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "title",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "excerpt",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "content",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "url_images",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "time_create",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "time_delete",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "time_edit",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "creator_id",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "operator_id",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.517ybang.com/data/index",
+					"protocol": "https",
+					"host": [
+						"api",
+						"517ybang",
+						"com"
+					],
+					"path": [
+						"data",
+						"index"
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "DTA2 数据分析详情",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "1",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "test_mode",
+							"value": "on",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.517ybang.com/data/detail",
+					"protocol": "https",
+					"host": [
+						"api",
+						"517ybang",
+						"com"
+					],
+					"path": [
+						"data",
+						"detail"
 					]
 				},
 				"description": null
@@ -7561,6 +7588,45 @@
 			"response": []
 		},
 		{
+			"name": "MTR3 素材创建",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "app_type",
+							"value": "client",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "file0",
+							"value": "",
+							"description": "",
+							"type": "file"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.517ybang.com/material/index",
+					"protocol": "https",
+					"host": [
+						"api",
+						"517ybang",
+						"com"
+					],
+					"path": [
+						"material",
+						"index"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
 			"name": "ORD0 商品订单计数",
 			"request": {
 				"method": "POST",
@@ -7924,17 +7990,19 @@
 							"key": "limit",
 							"value": "2",
 							"type": "text",
-							"description": ""
+							"description": "",
+							"disabled": true
 						},
 						{
 							"key": "offset",
 							"value": "2",
 							"type": "text",
-							"description": ""
+							"description": "",
+							"disabled": true
 						},
 						{
 							"key": "biz_id",
-							"value": "",
+							"value": "1",
 							"type": "text",
 							"description": ""
 						},
@@ -7954,7 +8022,8 @@
 							"key": "user_id",
 							"value": "39",
 							"type": "text",
-							"description": ""
+							"description": "",
+							"disabled": true
 						},
 						{
 							"key": "user_ip",
@@ -11308,7 +11377,7 @@
 						},
 						{
 							"key": "operation",
-							"value": "accept",
+							"value": "confirm",
 							"type": "text",
 							"description": ""
 						},
@@ -11316,14 +11385,14 @@
 							"key": "total_approved",
 							"value": "8",
 							"description": "",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "deliver_method",
-							"value": "物流快递",
+							"value": "用户自提",
 							"type": "text",
-							"description": "",
-							"disabled": true
+							"description": ""
 						},
 						{
 							"key": "deliver_biz",
@@ -11338,6 +11407,12 @@
 							"type": "text",
 							"description": "",
 							"disabled": true
+						},
+						{
+							"key": "note_stuff",
+							"value": "测试用户自提发货",
+							"description": "",
+							"type": "text"
 						}
 					]
 				},
@@ -12026,6 +12101,13 @@
 				"body": {
 					"mode": "formdata",
 					"formdata": [
+						{
+							"key": "test_mode",
+							"value": "on",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
 						{
 							"key": "app_type",
 							"value": "admin",
@@ -12739,6 +12821,13 @@
 				"body": {
 					"mode": "formdata",
 					"formdata": [
+						{
+							"key": "test_mode",
+							"value": "on",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
 						{
 							"key": "app_type",
 							"value": "client",

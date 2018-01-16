@@ -87,16 +87,11 @@
 		 */
 		public function count()
 		{
-			// 筛选条件
-			$condition = NULL;
+            // 生成筛选条件
+            $condition = $this->condition_generate();
 			// 客户端仅获取状态为‘正常’的商家
 			if ($this->app_type === 'client')
 				$condition['status'] = '正常';
-			// （可选）遍历筛选条件
-			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post($sorter)) )
-					$condition[$sorter] = $this->input->post($sorter);
-			endforeach;
 
 			// 获取列表；默认可获取已删除项
 			$count = $this->basic_model->count($condition);
@@ -128,18 +123,11 @@
 				endif;
 			endforeach;
 
-			// 筛选条件
-			$condition = NULL;
+            // 生成筛选条件
+            $condition = $this->condition_generate();
 
 			// 客户端仅获取状态为‘正常’的商家
 			//if ($this->app_type === 'client') $condition['status'] = '正常';
-
-			// （可选）遍历筛选条件
-			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post($sorter)) ):
-					$condition[$sorter] = $this->input->post($sorter);
-				endif;
-			endforeach;
 
 			// 排序条件
 			$order_by = NULL;

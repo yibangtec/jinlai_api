@@ -61,24 +61,8 @@
 		 */
 		public function count()
 		{
-			// 筛选条件
-			$condition = NULL;
-			//$condition['name'] = 'value';
-
-			// （可选）遍历筛选条件
-			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post_get($sorter)) ):
-					// 对时间范围做限制
-					if ($sorter === 'start_time'):
-						$condition['time_create >='] = $this->input->post_get($sorter);
-					elseif ($sorter === 'end_time'):
-						$condition['time_create <='] = $this->input->post_get($sorter);
-					else:
-						$condition[$sorter] = $this->input->post_get($sorter);
-					endif;
-
-				endif;
-			endforeach;
+            // 生成筛选条件
+            $condition = $this->condition_generate();
 
 			// 获取列表；默认可获取已删除项
 			$count = $this->basic_model->count($condition);
@@ -110,14 +94,8 @@
 				endif;
 			endforeach;
 
-			// 筛选条件
-			$condition = NULL;
-			//$condition['name'] = 'value';
-			// （可选）遍历筛选条件
-			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post($sorter)) )
-					$condition[$sorter] = $this->input->post($sorter);
-			endforeach;
+            // 生成筛选条件
+            $condition = $this->condition_generate();
 
 			// 若请求来自客户端，仅返回未删除
 			if ($this->app_type === 'client'):

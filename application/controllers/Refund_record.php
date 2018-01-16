@@ -61,21 +61,8 @@
 				endif;
 			endforeach;
 
-			// 筛选条件
-			$condition = NULL;
-			// 遍历筛选条件
-			foreach ($this->names_to_sort as $sorter):
-				if ( !empty($this->input->post($sorter)) ):
-					// 对时间范围做限制
-					if ($sorter === 'time_create'):
-						$condition['time_create >'] = $this->input->post($sorter);
-					elseif ($sorter === 'time_create_end'):
-						$condition['time_create <'] = $this->input->post($sorter);
-					else:
-						$condition[$sorter] = $this->input->post($sorter);
-					endif;
-				endif;
-			endforeach;
+            // 生成筛选条件
+            $condition = $this->condition_generate();
 
 			// 排序条件
 			$order_by = NULL;
