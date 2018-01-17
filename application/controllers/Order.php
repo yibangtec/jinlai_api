@@ -240,7 +240,7 @@
 					'user_id' => $user_id,
 					'user_ip' => empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'), // 优先检查请求是否来自APP
 				);
-				// 合并通用订单数据及收货地址数据
+				// 合并收货地址数据
 				$common_meta = array_merge($common_meta, $this->order_address);
 				unset($this->order_address); // 释放内存资源，下同
 
@@ -372,170 +372,6 @@
 
 			endif;
 		} // end create
-
-		// 生成订单数据
-		private function generate_order_data()
-		{
-			// 只要传入了商品ID，即视为单品订单
-			$item_id = $this->input->post('item_id'); // 获取商品ID
-			if ( !empty($item_id) ):
-				$item_id = $this->input->post('item_id'); // 获取商品ID
-				$sku_id = empty($this->input->post('sku_id'))? NULL: $this->input->post('sku_id'); // 获取规格ID（若有）
-				$count = empty($this->input->post('count'))? 1: $this->input->post('count'); // 获取数量
-
-				$this->generate_single_item($item_id, $sku_id, $count);
-
-			// 生成多品订单
-			elseif ( !empty($this->input->post('cart_string')) ):
-				// 初始化商品信息数组
-				$items_to_create = array();
-
-				// 拆分各商品信息
-				$cart_items = $this->explode_csv( $this->input->post('cart_string') );
-				foreach ($cart_items as $cart_item):
-					// 分解出item_id、sku_id、count等
-					list($biz_id, $item_id, $sku_id, $count) = explode('|', $cart_item);
-					$items_to_create[] = array(
-						'biz_id' => $biz_id,
-						'item_id' => $item_id,
-						'sku_id' => $sku_id,
-						'count' => $count,
-					);
-				endforeach;
-
-				// 生成订单单品信息
-				foreach ($items_to_create as $item_to_create):
-					$this->generate_single_item($item_to_create['item_id'], $item_to_create['sku_id'], $item_to_create['count']);
-				endforeach;
-
-			else:
-				return FALSE;
-
-			endif;
-		} // generate_order_data
-
-		/**
-		 * 生成订单单品信息
-		 *
-		 * @param varchar/int $item_id 商品ID；商家ID需要从商品资料中获取
-		 * @param varchar/int $sku_id 规格ID
-		 * @param int $count 份数；默认为1，后续需核对每单最低限量
-		 */
-		private function generate_single_item($item_id, $sku_id = NULL, $count = 1)
-		{
-			// 获取规格信息
-			if ( !empty($sku_id) ):
-				$this->switch_model('sku', 'sku_id');
-			    $data_to_search = array(
-			        'sku_id' => $sku_id,
-                    'item_id' => $item_id,
-                );
-				$sku = $this->basic_model->match($data_to_search);
-			endif;
-
-            // 获取商品信息
-            $this->switch_model('item', 'item_id');
-			if ( !empty($sku) )
-			    $item_id = $sku['item_id']; // 若已获取规格信息，以规格信息中的商品ID为准
-            $item = $this->basic_model->select_by_id($item_id);
-
-			// 生成订单商品信息
-			$order_item = array(
-				'biz_id' => $item['biz_id'],
-				'item_id' => $item_id,
-				'name' => $item['name'],
-				'item_image' => $item['url_image_main'],
-				'slogan' => $item['slogan'],
-				'tag_price' => $item['tag_price'],
-				'price' => $item['price'],
-
-				'count' => $count,
-                'weight_net' => $item['weight_net'] * $count,
-                'weight_gross' => $item['weight_gross'] * $count,
-                'weight_volume' => $item['weight_volume'] * $count,
-			);
-			if ( !empty($sku) ):
-				$order_sku = array(
-					'sku_id' => $sku_id,
-					'sku_name' => $sku['name_first']. ' '.$sku['name_second']. ' '.$sku['name_third'],
-					'sku_image' => $sku['url_image'],
-					'tag_price' => $sku['tag_price'],
-					'price' => $sku['price'],
-
-                    // 若未填写规格重量，直接使用商品重量
-                    'weight_net' => ($sku['weight_net'] === '0.00')? $order_item['weight_net']: $sku['weight_net'] * $count,
-                    'weight_gross' => ($sku['weight_gross'] === '0.00')? $order_item['weight_gross']: $sku['weight_gross'] * $count,
-                    'weight_volume' => ($sku['weight_volume'] === '0.00')? $order_item['weight_volume']: $sku['weight_volume'] * $count,
-				);
-				$order_item = array_merge($order_item, $order_sku);
-			endif;
-
-            // 计算当前商品应付金额
-			$order_item['single_total'] = $order_item['price'] * $order_item['count'];
-
-            if ( $this->input->post('test_mode') === 'on' ):
-                var_dump($order_item);
-                //exit;
-            endif;
-
-            // 保存订单商品信息；去掉空数组元素及冗余数据
-			$weight_net = $order_item['weight_net'];unset($order_item['weight_net']);
-            $weight_gross = $order_item['weight_gross'];unset($order_item['weight_gross']);
-            $weight_volume = $order_item['weight_volume'];unset($order_item['weight_volume']);
-			$order_items[] = array_filter($order_item);
-
-			// 若当前商家已有待创建订单，更新部分订单信息及订单商品信息
-			$need_to_create = TRUE;
-			if ( ! empty($this->order_data) ):
-				for ($i=0;$i<count($this->order_data);$i++):
-					if ( !empty($this->order_data[$i]) ):
-
-						if ($this->order_data[$i]['biz_id'] === $order_item['biz_id']):
-							$this->order_data[$i]['subtotal'] += $order_item['single_total'];
-                            $this->order_data[$i]['count'] += $order_item['count'];
-                            $this->order_data[$i]['weight_net'] += $weight_net;
-                            $this->order_data[$i]['weight_gross'] += $weight_gross;
-                            $this->order_data[$i]['weight_volume'] += $weight_volume;
-							$this->order_data[$i]['total'] += $order_item['single_total'];
-
-							$this->order_data[$i]['order_items'] = array_merge($this->order_data[$i]['order_items'], $order_items);
-							$need_to_create = FALSE; // 无需创建新商家的订单
-						endif;
-
-					endif;
-				endfor;
-			endif;
-
-			//TODO 计算单品、商家优惠活动折抵
-			//TODO 计算单品、商家优惠券折抵
-			// 若当前商家没有待创建订单，新建待创建订单
-			if ($need_to_create === TRUE):
-				// 获取需要写入订单信息的商家信息
-				$this->switch_model('biz', 'biz_id');
-				$biz = $this->basic_model->select_by_id($item['biz_id']);
-
-				$this->order_data[] = array(
-					'biz_id' => $order_item['biz_id'],
-					'biz_name' => $biz['brief_name'],
-					'biz_url_logo' => $biz['url_logo'],
-					'subtotal' => $order_item['single_total'],
-
-					//'promotion_id' => $item['promotion_id'], // 营销活动ID
-					//'discount_promotion' => $discount_promotion, // 营销活动折抵金额
-
-					//'coupon_id' => $item['coupon_id'], // 优惠券ID
-					//'discount_coupon' => $discount_coupon, // 优惠券折抵金额
-                    'count' => $order_item['count'],
-                    'weight_net' => $weight_net,
-                    'weight_gross' => $weight_gross,
-                    'weight_volume' => $weight_volume,
-
-					'total' => $order_item['single_total'],
-					'order_items' => $order_items,
-					'note_user' => $this->note_user[$order_item['biz_id']], // 用户留言
-				);
-			endif;
-		} // end generate_single_item
 
 		/**
 		 * 6 编辑多行数据特定字段
@@ -761,7 +597,7 @@
 			$this->client_check($type_allowed);
 
 			// 检查必要参数是否已传入
-			$required_params = array('biz_id', 'user_id', 'code_string');
+			$required_params = array('biz_id', 'code_string',);
 			foreach ($required_params as $param):
 				${$param} = $this->input->post($param);
 				if ( !isset( ${$param} ) ):
@@ -788,18 +624,26 @@
 				$data_to_search = array(
 					'biz_id' => $biz_id,
 					'code_string' => $code_string,
-					'status' => '待使用',
-					'time_pay' => 'IS NOT NULL',
-					'payment_id' => 'IS NOT NULL',
 				);
-				$order = $this->basic_model->match($data_to_search);
+				$item = $this->basic_model->match($data_to_search);
 
-				if ( empty($order) ):
-					$this->result['status'] = 414;
-					$this->result['content']['error']['message'] = '验证码无效';
-					exit();
+				// 若验证码不正确
+				if ( empty($item) ):
+                    $this->result['status'] = 414;
+                    $this->result['content']['error']['message'] = '验证码无效';
 
-				else:
+                // 若验证码不可被使用
+                elseif ($item['status'] !== '待使用'):
+                    $this->result['status'] = 414;
+                    $this->result['content']['error']['message'] = '验证码已使用或不可用';
+
+                // 若验证码已过期
+                elseif ($item['time_expire'] < time()):
+                    $this->result['status'] = 414;
+                    $this->result['content']['error']['message'] = '验证码无效';
+
+                else:
+                    // 更新订单及验证码为已使用状态
 					$data_to_edit = array(
 						'operator_id' => $user_id,
 
@@ -836,7 +680,7 @@
 			$conditions = array(
 				'address_id' => $id,
 				'user_id' => $user_id,
-				'time_delete' => NULL,
+				'time_delete' => 'NULL',
 			);
 			$result = $this->basic_model->match($conditions);
 			$this->reset_model();
@@ -859,6 +703,173 @@
 
 			endif;
 		} // end get_address
+
+
+
+        // 生成订单数据
+        private function generate_order_data()
+        {
+            // 只要传入了商品ID，即视为单品订单
+            $item_id = $this->input->post('item_id'); // 获取商品ID
+            if ( !empty($item_id) ):
+                $item_id = $this->input->post('item_id'); // 获取商品ID
+                $sku_id = empty($this->input->post('sku_id'))? NULL: $this->input->post('sku_id'); // 获取规格ID（若有）
+                $count = empty($this->input->post('count'))? 1: $this->input->post('count'); // 获取数量
+
+                $this->generate_single_item($item_id, $sku_id, $count);
+
+            // 生成多品订单
+            elseif ( !empty($this->input->post('cart_string')) ):
+                // 初始化商品信息数组
+                $items_to_create = array();
+
+                // 拆分各商品信息
+                $cart_items = $this->explode_csv( $this->input->post('cart_string') );
+                foreach ($cart_items as $cart_item):
+                    // 分解出item_id、sku_id、count等
+                    list($biz_id, $item_id, $sku_id, $count) = explode('|', $cart_item);
+                    $items_to_create[] = array(
+                        'biz_id' => $biz_id,
+                        'item_id' => $item_id,
+                        'sku_id' => $sku_id,
+                        'count' => $count,
+                    );
+                endforeach;
+
+                // 生成订单单品信息
+                foreach ($items_to_create as $item_to_create):
+                    $this->generate_single_item($item_to_create['item_id'], $item_to_create['sku_id'], $item_to_create['count']);
+                endforeach;
+
+            else:
+                return FALSE;
+
+            endif;
+        } // generate_order_data
+
+        /**
+         * 生成订单单品信息
+         *
+         * @param varchar/int $item_id 商品ID；商家ID需要从商品资料中获取
+         * @param varchar/int $sku_id 规格ID
+         * @param int $count 份数；默认为1，后续需核对每单最低限量
+         */
+        private function generate_single_item($item_id, $sku_id = NULL, $count = 1)
+        {
+            // 获取规格信息
+            if ( !empty($sku_id) ):
+                $this->switch_model('sku', 'sku_id');
+                $data_to_search = array(
+                    'sku_id' => $sku_id,
+                    'item_id' => $item_id,
+                );
+                $sku = $this->basic_model->match($data_to_search);
+            endif;
+
+            // 获取商品信息
+            $this->switch_model('item', 'item_id');
+            if ( !empty($sku) )
+                $item_id = $sku['item_id']; // 若已获取规格信息，以规格信息中的商品ID为准
+            $item = $this->basic_model->select_by_id($item_id);
+
+            // 生成订单商品信息
+            $order_item = array(
+                'biz_id' => $item['biz_id'],
+                'item_id' => $item_id,
+                'name' => $item['name'],
+                'item_image' => $item['url_image_main'],
+                'slogan' => $item['slogan'],
+                'tag_price' => $item['tag_price'],
+                'price' => $item['price'],
+
+                'count' => $count,
+                'weight_net' => $item['weight_net'] * $count,
+                'weight_gross' => $item['weight_gross'] * $count,
+                'weight_volume' => $item['weight_volume'] * $count,
+            );
+            if ( !empty($sku) ):
+                $order_sku = array(
+                    'sku_id' => $sku_id,
+                    'sku_name' => $sku['name_first']. ' '.$sku['name_second']. ' '.$sku['name_third'],
+                    'sku_image' => $sku['url_image'],
+                    'tag_price' => $sku['tag_price'],
+                    'price' => $sku['price'],
+
+                    // 若未填写规格重量，直接使用商品重量
+                    'weight_net' => ($sku['weight_net'] === '0.00')? $order_item['weight_net']: $sku['weight_net'] * $count,
+                    'weight_gross' => ($sku['weight_gross'] === '0.00')? $order_item['weight_gross']: $sku['weight_gross'] * $count,
+                    'weight_volume' => ($sku['weight_volume'] === '0.00')? $order_item['weight_volume']: $sku['weight_volume'] * $count,
+                );
+                $order_item = array_merge($order_item, $order_sku);
+            endif;
+
+            // 计算当前商品应付金额
+            $order_item['single_total'] = $order_item['price'] * $order_item['count'];
+
+            // 测试模式下，输出订单商品信息
+            if ( $this->input->post('test_mode') === 'on' ):
+                var_dump($order_item);
+                //exit;
+            endif;
+
+            // 保存订单商品信息；去掉空数组元素及冗余数据
+            $weight_net = $order_item['weight_net'];unset($order_item['weight_net']);
+            $weight_gross = $order_item['weight_gross'];unset($order_item['weight_gross']);
+            $weight_volume = $order_item['weight_volume'];unset($order_item['weight_volume']);
+            $order_items[] = array_filter($order_item);
+
+            // 若当前商家已有待创建订单，更新部分订单信息及订单商品信息
+            $need_to_create = TRUE;
+            if ( ! empty($this->order_data) ):
+                for ($i=0; $i<count($this->order_data); $i++):
+                    if ( !empty($this->order_data[$i]) ):
+
+                        if ($this->order_data[$i]['biz_id'] === $order_item['biz_id']):
+                            $this->order_data[$i]['subtotal'] += $order_item['single_total'];
+                            $this->order_data[$i]['count'] += $order_item['count'];
+                            $this->order_data[$i]['weight_net'] += $weight_net;
+                            $this->order_data[$i]['weight_gross'] += $weight_gross;
+                            $this->order_data[$i]['weight_volume'] += $weight_volume;
+                            $this->order_data[$i]['total'] += $order_item['single_total'];
+
+                            $this->order_data[$i]['order_items'] = array_merge($this->order_data[$i]['order_items'], $order_items);
+                            $need_to_create = FALSE; // 无需创建新商家的订单
+                        endif;
+
+                    endif;
+                endfor;
+            endif;
+
+            //TODO 计算单品、商家优惠活动折抵
+            //TODO 计算单品、商家优惠券折抵
+            // 若当前商家没有待创建订单，新建待创建订单
+            if ($need_to_create === TRUE):
+                // 获取需要写入订单信息的商家信息
+                $this->switch_model('biz', 'biz_id');
+                $biz = $this->basic_model->select_by_id($item['biz_id']);
+
+                $this->order_data[] = array(
+                    'biz_id' => $order_item['biz_id'],
+                    'biz_name' => $biz['brief_name'],
+                    'biz_url_logo' => $biz['url_logo'],
+                    'subtotal' => $order_item['single_total'],
+
+                    //'promotion_id' => $item['promotion_id'], // 营销活动ID
+                    //'discount_promotion' => $discount_promotion, // 营销活动折抵金额
+
+                    //'coupon_id' => $item['coupon_id'], // 优惠券ID
+                    //'discount_coupon' => $discount_coupon, // 优惠券折抵金额
+                    'count' => $order_item['count'],
+                    'weight_net' => $weight_net,
+                    'weight_gross' => $weight_gross,
+                    'weight_volume' => $weight_volume,
+
+                    'total' => $order_item['single_total'],
+                    'order_items' => $order_items,
+                    'note_user' => $this->note_user[$order_item['biz_id']], // 用户留言
+                );
+            endif;
+        } // end generate_single_item
 
 		/**
 		 * 用户取消

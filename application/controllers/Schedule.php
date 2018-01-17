@@ -21,13 +21,13 @@
 		// 短信后缀签名
 		protected $suffix = '【进来商城】';
 		// 接收短信的手机号
-		protected $mobile;
+		protected $sms_mobile;
 		// 批量接收短信的手机号，CSV格式
 		protected $mobile_list;
 		// 批量发送短信的预订时间
 		protected $time = NULL;
 		// 短信内容
-		protected $content;
+		protected $sms_content;
 
 		public function __construct()
 		{
@@ -65,14 +65,11 @@
          */
 		public function hour()
 		{
-			$this->mobile = '17664073966';
-			$this->content = '现在时间 '. date('Y-m-d H:i:s');
-			// 为短信内容添加后缀签名
-			$this->content .= $this->suffix;
+			$this->sms_mobile = '17664073966';
+			$this->sms_content = '现在时间 '. date('Y-m-d H:i:s');
 
 			// 发送短信
-			$this->load->library('luosimao');
-			@$result = $this->luosimao->send($this->mobile, $this->content);
+            //@$this->sms_send();
 
 		} // end hour
 
@@ -83,16 +80,11 @@
          */
         public function minute()
         {
-            /*
-            $this->mobile = '17664073966';
-            $this->content = '计划任务 '. $this->router->method. ' 已于 '. date('Y-m-d H:i:s'). ' 执行';
-            // 为短信内容添加后缀签名
-            $this->content .= $this->suffix;
+            $this->sms_mobile = '17664073966';
+            $this->sms_content = '计划任务 '. $this->router->method. ' 已于 '. date('Y-m-d H:i:s'). ' 执行';
 
             // 发送短信
-            $this->load->library('luosimao');
-            @$result = $this->luosimao->send($this->mobile, $this->content);
-            */
+            //@$this->sms_send();
         } // end minute
 
         /**
@@ -106,6 +98,18 @@
             $this->basic_model->table_name = $table_name;
             $this->basic_model->id_name = $id_name;
         } // end switch_model
+
+        /**
+         * 发送短信
+         */
+        protected function sms_send()
+        {
+            // 为短信内容添加后缀签名
+            $this->sms_content .= '【'. SITE_NAME. '】';
+
+            $this->load->library('luosimao');
+            @$result = $this->luosimao->send($this->sms_mobile, $this->sms_content);
+        } // end sms_send
 
 	} // end class Schedule
 

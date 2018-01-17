@@ -230,7 +230,7 @@
                         // 更新相应订单商品为退款中状态
                         $this->switch_model('order_items', 'record_id');
                         $data_to_edit = array(
-                            'refund_status' => '退款中',
+                            'refund_status' => '待处理',
                         );
                         @$result = $this->basic_model->edit($record_id, $data_to_edit);
 
