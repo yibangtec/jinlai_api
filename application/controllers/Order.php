@@ -680,7 +680,7 @@
 			$conditions = array(
 				'address_id' => $id,
 				'user_id' => $user_id,
-				'time_delete' => 'NULL',
+				'time_delete' => NULL,
 			);
 			$result = $this->basic_model->match($conditions);
 			$this->reset_model();
@@ -703,8 +703,6 @@
 
 			endif;
 		} // end get_address
-
-
 
         // 生成订单数据
         private function generate_order_data()

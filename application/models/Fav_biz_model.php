@@ -99,6 +99,30 @@
             endif;
 		} // end select
 
+        /**
+         * 修改（一般用于FVI5）
+         *
+         * @param int $user_id 待修改项所属用户ID
+         * @param int $biz_id 待修改项所属商家ID
+         * @param array $data 待修改数据
+         * @param bool $return_rows 若修改成功，是否返回被编辑的行数量；默认不返回
+         * @return int|bool 修改结果
+         */
+        public function edit($user_id, $biz_id, $data, $return_rows = FALSE)
+        {
+            // 尝试更新
+            $this->db->where('user_id', $user_id);
+            $this->db->where('biz_id', $biz_id);
+            $update_result = $this->db->update($this->table_name, $data);
+
+            // 直接返回结果，或返回编辑过的行数量
+            if ($return_rows === TRUE && $update_result === TRUE):
+                $this->db->affected_rows();
+            else:
+                return $update_result;
+            endif;
+        } // end edit
+
 	} // end class Fav_biz_model
 
 /* End of file Fav_biz_model.php */

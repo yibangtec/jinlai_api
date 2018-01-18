@@ -24,6 +24,13 @@
 			'user_id', 'biz_id',
 		);
 
+        /**
+         * 编辑单行特定字段时必要的字段名
+         */
+        protected $names_edit_required = array(
+            'user_id', 'biz_id',
+        );
+
 		/**
 		 * 编辑多行特定字段时必要的字段名
 		 */
@@ -46,7 +53,7 @@
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
-		}
+		} // end __construct
 
 		/**
 		 * 0 计数
@@ -162,17 +169,19 @@
 				// 检查是否有重复项
 				$result = $this->basic_model->match($data_to_create);
 				if ( !empty($result) ):
+                    $this->result['status'] = 200;
+
 					// 若已关注过且被删除，则恢复
 					if ($result['time_delete'] !== NULL):
 						$data_to_edit['time_delete'] = NULL;
 						@$result = $this->basic_model->edit($result['record_id'], $data_to_edit);
 
-						$this->result['status'] = 200;
 						$this->result['content']['id'] = $result['record_id'];
 						$this->result['content']['message'] = '关注成功';
+
 					else:
-						$this->result['status'] = 414;
 						$this->result['content']['error']['message'] = '已经关注过了';
+
 					endif;
 					
 				else:
@@ -194,7 +203,60 @@
 			endif;
 		} // end create
 
-		/**
+        /**
+         * 5 编辑单行数据特定字段 / 删除单个收藏
+         *
+         * 修改单行数据的单一字段值
+         */
+        public function edit_certain()
+        {
+            // 操作可能需要检查客户端及设备信息
+            $type_allowed = array('client',); // 客户端类型
+            $this->client_check($type_allowed);
+
+            // 检查必要参数是否已传入
+            $required_params = $this->names_edit_required;
+            foreach ($required_params as $param):
+                ${$param} = $this->input->post($param);
+                if ( !isset( ${$param} ) ):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+                    exit();
+                endif;
+            endforeach;
+
+            // 初始化并配置表单验证库
+            $this->load->library('form_validation');
+            $this->form_validation->set_error_delimiters('', '');
+            $this->form_validation->set_rules('biz_id', '商家ID', 'trim|required|is_natural_no_zero');
+
+            // 若表单提交不成功
+            if ($this->form_validation->run() === FALSE):
+                $this->result['status'] = 401;
+                $this->result['content']['error']['message'] = validation_errors();
+
+            else:
+                // 需要编辑的数据
+                $data_to_edit['operator_id'] = $user_id;
+                $data_to_edit['time_delete'] = date('Y-m-d H:i:s');
+
+                $this->load->model('fav_biz_model');
+                $result = $this->fav_biz_model->edit($user_id, $biz_id, $data_to_edit);
+
+                if ($result !== FALSE):
+                    $this->result['status'] = 200;
+                    $this->result['content']['id'] = $result;
+                    $this->result['content']['message'] = '编辑成功';
+
+                else:
+                    $this->result['status'] = 434;
+                    $this->result['content']['error']['message'] = '编辑失败';
+
+                endif;
+            endif;
+        } // end edit_certain
+
+        /**
 		 * 6 编辑多行数据特定字段
 		 *
 		 * 修改多行数据的单一字段值

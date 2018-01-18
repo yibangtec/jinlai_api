@@ -5397,6 +5397,55 @@
 			"response": []
 		},
 		{
+			"name": "FVB5 商家关注单行删除",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "test_mode",
+							"value": "on",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "app_type",
+							"value": "client",
+							"type": "text"
+						},
+						{
+							"key": "user_id",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "biz_id",
+							"value": "128",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.517ybang.com/fav_biz/edit_certain",
+					"protocol": "https",
+					"host": [
+						"api",
+						"517ybang",
+						"com"
+					],
+					"path": [
+						"fav_biz",
+						"edit_certain"
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
 			"name": "FVB6 商家关注删除",
 			"request": {
 				"method": "POST",
@@ -5566,6 +5615,55 @@
 			"response": []
 		},
 		{
+			"name": "FVI5 商品收藏单行删除",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "test_mode",
+							"value": "on",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "app_type",
+							"value": "client",
+							"type": "text"
+						},
+						{
+							"key": "user_id",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "item_id",
+							"value": "563",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.517ybang.com/fav_item/edit_certain",
+					"protocol": "https",
+					"host": [
+						"api",
+						"517ybang",
+						"com"
+					],
+					"path": [
+						"fav_item",
+						"edit_certain"
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
 			"name": "FVI6 商品收藏批量操作",
 			"request": {
 				"method": "POST",
@@ -5574,18 +5672,25 @@
 					"mode": "formdata",
 					"formdata": [
 						{
+							"key": "test_mode",
+							"value": "on",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
 							"key": "app_type",
 							"value": "client",
 							"type": "text"
 						},
 						{
 							"key": "user_id",
-							"value": "20",
+							"value": "1",
 							"type": "text"
 						},
 						{
 							"key": "ids",
-							"value": "20,19",
+							"value": "563",
 							"type": "text"
 						},
 						{
