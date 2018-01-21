@@ -199,10 +199,6 @@
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
 			$this->form_validation->set_rules('type', '活动类型', 'trim|required');
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]|integer|callback_time_start');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]|integer|callback_time_end');
-			$this->form_validation->set_message('time_start', '开始时间需详细到分，且晚于当前时间1分钟后');
-			$this->form_validation->set_message('time_end', '结束时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 			$this->form_validation->set_rules('description', '说明', 'trim');
 			$this->form_validation->set_rules('url_image', '形象图', 'trim');
 			$this->form_validation->set_rules('url_image_wide', '宽屏形象图', 'trim');
@@ -220,12 +216,11 @@
 			$this->form_validation->set_rules('coupon_combo_id', '赠送优惠券套餐', 'trim');
 			$this->form_validation->set_rules('deposit', '订金/预付款（元）', 'trim');
 			$this->form_validation->set_rules('balance', '尾款（元）', 'trim');
-			$this->form_validation->set_rules('time_book_start', '支付预付款开始时间', 'trim');
-			$this->form_validation->set_rules('time_book_end', '支付预付款结束时间', 'trim');
-			$this->form_validation->set_rules('time_complete_start', '支付尾款开始时间', 'trim');
-			$this->form_validation->set_rules('time_complete_end', '支付尾款结束时间', 'trim');
-			$this->form_validation->set_rules('groupbuy_order_amount', '团购成团订单数（单）', 'trim');
-			$this->form_validation->set_rules('groupbuy_quantity_max', '团购个人最高限量（份/位）', 'trim');
+            $this->form_validation->set_rules('groupbuy_order_amount', '团购成团订单数（单）', 'trim');
+            $this->form_validation->set_rules('groupbuy_quantity_max', '团购个人最高限量（份/位）', 'trim');
+
+            // 验证时间相关字段值
+            $this->validate_times();
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -289,10 +284,6 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]|integer|callback_time_start');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]|integer|callback_time_end');
-			$this->form_validation->set_message('time_start', '开始时间需详细到分，且晚于当前时间1分钟后');
-			$this->form_validation->set_message('time_end', '结束时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 			$this->form_validation->set_rules('description', '说明', 'trim');
 			$this->form_validation->set_rules('url_image', '形象图', 'trim');
 			$this->form_validation->set_rules('url_image_wide', '宽屏形象图', 'trim');
@@ -310,16 +301,11 @@
 			$this->form_validation->set_rules('coupon_combo_id', '赠送优惠券套餐', 'trim');
 			$this->form_validation->set_rules('deposit', '订金/预付款（元）', 'trim');
 			$this->form_validation->set_rules('balance', '尾款（元）', 'trim');
-			$this->form_validation->set_rules('time_book_start', '支付预付款开始时间', 'trim');
-			$this->form_validation->set_rules('time_book_end', '支付预付款结束时间', 'trim');
-			$this->form_validation->set_rules('time_complete_start', '支付尾款开始时间', 'trim');
-			$this->form_validation->set_rules('time_complete_end', '支付尾款结束时间', 'trim');
 			$this->form_validation->set_rules('groupbuy_order_amount', '团购成团订单数（单）', 'trim');
 			$this->form_validation->set_rules('groupbuy_quantity_max', '团购个人最高限量（份/位）', 'trim');
-			// 针对特定条件的验证规则
-			if ($this->app_type === '管理员'):
-				// ...
-			endif;
+
+            // 验证时间相关字段值
+            $this->validate_times();
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -339,11 +325,6 @@
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
-
-				// 根据客户端类型等条件筛选可操作的字段名
-				if ($this->app_type !== 'admin'):
-					//unset($data_to_edit['name']);
-				endif;
 
 				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);
@@ -441,52 +422,46 @@
 
 			endif;
 		} // end edit_bulk
-		
-		// 检查起始时间
-		public function time_start($value)
-		{
-			if ( empty($value) ):
-				return true;
 
-			elseif (strlen($value) !== 10):
-				return false;
+        /**
+         * 以下为工具类
+         */
 
-			else:
-				// 该时间不可早于当前时间一分钟以内
-				if ($value <= time() + 60):
-					return false;
-				else:
-					return true;
-				endif;
+        /**
+         * 验证时间相关字段值
+         */
+        private function validate_times()
+        {
+            // 活动开始时间、结束时间的格式验证
+            $this->form_validation->set_rules(
+                'time_start', '活动开始时间', 'trim|exact_length[10]|integer|callback_time_start'
+            );
+            $this->form_validation->set_rules(
+                'time_end', '活动结束时间', 'trim|exact_length[10]|integer|callback_time_end[time_start]'
+            );
+            $this->form_validation->set_message('time_start', '活动开始时间需详细到分');
+            $this->form_validation->set_message('time_end', '活动结束时间需详细到分，且晚于开始时间（若有）');
 
-			endif;
-		} // end time_start
+            // 预付款支付开始时间、结束时间的格式验证
+            $this->form_validation->set_rules(
+                'time_book_start', '预付款支付开始时间', 'trim|exact_length[10]|integer|callback_time_start[time_start]'
+            );
+            $this->form_validation->set_rules(
+                'time_book_end', '预付款支付结束时间', 'trim|exact_length[10]|integer|callback_time_end[time_book_start]'
+            );
+            $this->form_validation->set_message('time_start', '预付款支付开始时间需详细到分，且晚于活动开始时间');
+            $this->form_validation->set_message('time_end', '预付款支付结束时间需详细到分，且晚于开始时间（若有）');
 
-		// 检查结束时间
-		public function time_end($value)
-		{
-			if ( empty($value) ):
-				return true;
-
-			elseif (strlen($value) !== 10):
-				return false;
-
-			else:
-				// 该时间不可早于当前时间一分钟以内
-				if ($value <= time() + 60):
-					return false;
-
-				// 若已设置开始时间，不可早于开始时间一分钟以内
-				elseif ( !empty($this->input->post('time_start')) && $value <= $this->input->post('time_start') + 60):
-					return false;
-
-				else:
-					return true;
-
-				endif;
-
-			endif;
-		} // end time_end
+            // 尾款支付开始时间、结束时间的格式验证
+            $this->form_validation->set_rules(
+                'time_complete_start', '尾款支付开始时间', 'trim|exact_length[10]|integer|callback_time_start[time_book_end]'
+            );
+            $this->form_validation->set_rules(
+                'time_complete_end', '尾款支付结束时间', 'trim|exact_length[10]|integer|callback_time_end[time_complete_start]'
+            );
+            $this->form_validation->set_message('time_start', '尾款支付开始时间需详细到分，且晚于预付款支付结束时间');
+            $this->form_validation->set_message('time_end', '尾款支付结束时间需详细到分，且晚于开始时间（若有）');
+        } // end validate_times
 
 	} // end class Promotion_biz
 

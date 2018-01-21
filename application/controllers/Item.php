@@ -81,35 +81,6 @@
 			$this->basic_model->id_name = $this->id_name;
 		}
 
-		/*
-		 * 类特有筛选器
-		 */
-		protected function advanced_sorter()
-		{
-			// 若传入了商品名，模糊查询
-		    if ( !empty($this->input->post('name')) ):
-				$this->db->like('name', $this->input->post('name'));
-			endif;
-
-            // 若传入了商家级商品分类，则同时筛选属于该分类及该分类子分类的商品
-			if ( !empty($this->input->post('category_biz_id')) ):
-                // 获取所有子类ID
-                $this->switch_model('item_category_biz', 'category_id');
-                $sub_categories = $this->basic_model->select(
-                    array('parent_id' => $this->input->post($sorter)),
-                    NULL,
-                    TRUE
-                ); // 仅返回ID
-                $this->reset_model();
-
-                $this->db->where('category_biz_id', $this->input->post($sorter));
-
-                if ( !empty($sub_categories) ):
-                    $this->db->or_where_in('category_biz_id', $sub_categories);
-                endif;
-            endif;
-		} // end advanced_sorter
-
 		/**
 		 * 0 计数
 		 */
@@ -118,7 +89,7 @@
             // 生成筛选条件
             $condition = $this->condition_generate();
 			// 类特有筛选项
-			$this->advanced_sorter();
+            $condition = $this->advanced_sorter($condition);
 			
 			// 商家仅可操作自己的数据
 			if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
@@ -156,7 +127,7 @@
             // 生成筛选条件
             $condition = $this->condition_generate();
             // 类特有筛选项
-            $this->advanced_sorter();
+            $condition = $this->advanced_sorter($condition);
 
             // 用户仅可查看未删除商品数据
             if ($this->app_type === 'client'):
@@ -375,12 +346,12 @@
 			$this->form_validation->set_rules('coupon_allowed', '是否可用优惠券', 'trim|in_list[0,1]');
 			$this->form_validation->set_rules('discount_credit', '积分抵扣率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
-            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_to_publish');
-            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_to_suspend');
+            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_start');
+            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_end[time_to_publish]');
+            $this->form_validation->set_message('time_start', '预定上架时间需详细到分');
+            $this->form_validation->set_message('time_end', '预定下架时间需详细到分，且晚于预订上架时间（若有）');
 			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
-            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
-            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于预订上架时间（若有）');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -481,10 +452,10 @@
 			$this->form_validation->set_rules('coupon_allowed', '是否可用优惠券', 'trim|in_list[0,1]');
 			$this->form_validation->set_rules('discount_credit', '积分抵扣率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
-			$this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_to_publish');
-			$this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_to_suspend');
-            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
-            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于预订上架时间（若有）');
+            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_start');
+            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_end[time_to_publish]');
+            $this->form_validation->set_message('time_start', '预定上架时间需详细到分');
+            $this->form_validation->set_message('time_end', '预定下架时间需详细到分，且晚于预订上架时间（若有）');
 			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
 			//$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
 
@@ -603,10 +574,10 @@
 			$this->form_validation->set_rules('coupon_allowed', '是否可用优惠券', 'trim|in_list[0,1]');
 			$this->form_validation->set_rules('discount_credit', '积分抵扣率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
-            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_to_publish');
-            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_to_suspend');
-            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
-            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于预订上架时间（若有）');
+            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_start');
+            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_end[time_to_publish]');
+            $this->form_validation->set_message('time_start', '预定上架时间需详细到分');
+            $this->form_validation->set_message('time_end', '预定下架时间需详细到分，且晚于预订上架时间（若有）');
 			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
 
@@ -621,7 +592,8 @@
 				$data_to_edit[$name] = $value;
 				
 				// 商家仅可操作自己的数据
-				if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
+				if ($this->app_type === 'biz')
+				    $this->db->where('biz_id', $this->input->post('biz_id'));
 
 				// 获取ID
 				$result = $this->basic_model->edit($id, $data_to_edit);
@@ -742,52 +714,37 @@
          * 以下为工具方法
          */
 
+        /**
+         * 类特有筛选器
+         *
+         * @param array $condition 当前筛选条件数组
+         * @return array 生成的筛选条件数组
+         */
+        protected function advanced_sorter($condition = array())
+        {
+            // 若传入了商家级商品分类，则同时筛选属于该分类及该分类子分类的商品
+            if ( !empty($condition['category_biz_id']) ):
+                // 获取所有子类ID
+                $this->switch_model('item_category_biz', 'category_id');
+                $sub_categories = $this->basic_model->select(
+                    array('parent_id' => $condition['category_biz_id']),
+                    NULL,
+                    TRUE
+                ); // 仅返回ID
+                $this->reset_model();
 
-		// 检查起始时间
-		public function time_to_publish($value)
-		{
-			if ( empty($value) ):
-				return true;
+                if ( !empty($sub_categories) ):
+                    $this->db->or_where_in('category_biz_id', $sub_categories);
+                endif;
+            endif;
 
-			elseif (strlen($value) !== 10):
-				return false;
+            // 若传入了商品名，模糊查询
+            if ( !empty($this->input->post('name')) ):
+                $this->db->like('name', $this->input->post('name'));
+            endif;
 
-			else:
-				// 该时间不可早于当前时间一分钟以内
-				if ($value <= time() + 60):
-					return false;
-				else:
-					return true;
-				endif;
-
-			endif;
-		} // end time_to_publish
-
-		// 检查结束时间
-		public function time_to_suspend($value)
-		{
-			if ( empty($value) ):
-				return true;
-
-			elseif (strlen($value) !== 10):
-				return false;
-
-			else:
-				// 该时间不可早于当前时间一分钟以内
-				if ($value <= time() + 60):
-					return false;
-
-				// 若已设置开始时间，不可早于开始时间一分钟以内
-				elseif ( !empty($this->input->post('time_to_publish')) && $value < $this->input->post('time_to_publish') + 60):
-					return false;
-
-				else:
-					return true;
-
-				endif;
-
-			endif;
-		} // end time_to_suspend
+            return $condition;
+        } // end advanced_sorter
 
         /**
          * 生成slogan字段值

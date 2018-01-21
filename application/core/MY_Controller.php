@@ -424,7 +424,7 @@
          * @param $time_string 'Y-m-d H:i'或'Y-m-d H:i:s'格式，例如2018-01-01 06:06:06
          * @return string
          */
-        public function strto_minute($time_string)
+        protected function strto_minute($time_string)
         {
             if (strlen($time_string) === 16):
                 $timestamp = strtotime($time_string. ':00');
@@ -434,6 +434,76 @@
 
             return $timestamp;
         } // end strto_minute
+
+        /**
+         * 检查起始时间
+         *
+         * 用于表单格式验证
+         *
+         * @param $value
+         * @param string $min_time_name 不可晚于的UNIX时间戳值
+         * @return bool
+         */
+        public function time_start($value, $min_time_name = '')
+        {
+            if ( empty($value) ):
+                return true;
+
+            // 须为UNIX时间戳
+            elseif (strlen($value) !== 10):
+                return false;
+
+            // 该时间须晚于当前时间
+            elseif ($value <= time()):
+                return false;
+
+            // 若已设置最小开始时间，不可晚于该时间（含）
+            elseif (
+                !empty($min_time_name)
+                && !empty( $this->input->post($min_time_name) )
+                && $value <= $this->input->post($min_time_name)
+            ):
+                return false;
+
+            else:
+                return true;
+
+            endif;
+        } // end time_to_start
+
+        /**
+         * 检查结束时间
+         *
+         * 用于表单格式验证
+         * @param $value
+         * @param string $min_time_name 不可晚于的UNIX时间戳值
+         * @return bool
+         */
+        public function time_end($value, $min_time_name = 'time_start')
+        {
+            if ( empty($value) ):
+                return true;
+
+            elseif (strlen($value) !== 10):
+                return false;
+
+            // 该时间须晚于当前时间
+            elseif ($value <= time()):
+                return false;
+
+            // 若已设置最小开始时间，不可晚于该时间（含）
+            elseif (
+                !empty($min_time_name)
+                && !empty( $this->input->post($min_time_name) )
+                && $value <= $this->input->post($min_time_name)
+            ):
+                return false;
+
+            else:
+                return true;
+
+            endif;
+        } // end time_to_end
 		
 		/**
          * 发送短信
