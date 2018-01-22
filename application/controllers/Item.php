@@ -79,7 +79,7 @@
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
-		}
+		} // end __construct
 
 		/**
 		 * 0 计数
@@ -143,7 +143,7 @@
             $order_by['time_create'] = 'DESC';
 
 			// 获取列表；默认可获取已删除项
-			$ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID
+			$ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
 			if ( empty($ids) ):
 				// 限制可返回的字段，获取销量
 				$this->db->select(
@@ -262,7 +262,7 @@
                     $this->db->select('promotion_id, type, name, time_start, time_end');
                     $this->result['content']['biz_promotions'] = $this->basic_model->select($conditions, NULL);
 
-                    // 获取平台营销活动
+                    // 获取平台级营销活动
                     $this->switch_model('promotion', 'promotion_id');
                     $this->db->where('time_delete IS NULL');
                     $this->result['content']['promotions'] = $this->basic_model->select(NULL, NULL);

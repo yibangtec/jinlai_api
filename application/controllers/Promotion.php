@@ -56,7 +56,7 @@
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
-		}
+		} // end __construct
 
 		/**
 		 * 0 计数
@@ -101,13 +101,18 @@
 			
 			// 排序条件
 			$order_by = NULL;
-			//$order_by['name'] = 'value';
 
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );
 
-			// 获取列表；默认可获取已删除项
-			$items = $this->basic_model->select($condition, $order_by);
+            // 获取列表；默认不获取已删除项
+            $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
+            if ( empty($ids) ):
+                $items = $this->basic_model->select($condition, $order_by);
+            else:
+                $items = $this->basic_model->select_by_ids($ids);
+            endif;
+
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;

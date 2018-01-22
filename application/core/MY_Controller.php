@@ -469,7 +469,7 @@
                 return true;
 
             endif;
-        } // end time_to_start
+        } // end time_start
 
         /**
          * 检查结束时间
@@ -503,7 +503,7 @@
                 return true;
 
             endif;
-        } // end time_to_end
+        } // end time_end
 		
 		/**
          * 发送短信

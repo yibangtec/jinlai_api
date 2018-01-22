@@ -28,7 +28,7 @@
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
-		}
+		} // end __construct
 
 		/**
 		 * 0 计数

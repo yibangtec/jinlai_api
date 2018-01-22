@@ -34,7 +34,7 @@
 		public function __construct()
 		{
 			parent::__construct();
-		}
+		} // end __construct
 
 		/**
 		 * 返回符合单一条件的数据（单行）

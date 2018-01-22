@@ -163,7 +163,7 @@
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('biz'); // 客户端类型
+			$type_allowed = array('biz',); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -197,10 +197,6 @@
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
-            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_to_publish');
-            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_to_suspend');
-            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
-            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -211,10 +207,8 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
+
                     'tag_price' => empty($this->input->post('tag_price'))? '0.00': $this->input->post('tag_price'),
-                    'time_to_publish' => empty($this->input->post('time_to_publish'))? NULL: $this->input->post('time_to_publish'),
-                    'time_to_suspend' => empty($this->input->post('time_to_suspend'))? NULL: $this->input->post('time_to_suspend'),
-                    'time_publish' => empty($this->input->post('time_to_publish'))? time(): NULL, // 若未预订上架时间，则直接上架
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
@@ -275,10 +269,6 @@
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
-            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_to_publish');
-            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_to_suspend');
-            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
-            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -289,10 +279,8 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
+
                     'tag_price' => empty($this->input->post('tag_price'))? '0.00': $this->input->post('tag_price'),
-                    'time_to_publish' => empty($this->input->post('time_to_publish'))? NULL: $this->input->post('time_to_publish'),
-                    'time_to_suspend' => empty($this->input->post('time_to_suspend'))? NULL: $this->input->post('time_to_suspend'),
-                    'time_publish' => empty($this->input->post('time_to_publish'))? time(): NULL, // 若未预订上架时间，则直接上架
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
@@ -379,10 +367,6 @@
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
-            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_to_publish');
-            $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_to_suspend');
-            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且晚于当前时间1分钟后');
-            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于当前时间1分钟后，亦不可早于开始时间（若有）');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -462,19 +446,7 @@
 
                 // 根据待执行的操作赋值待编辑数据
                 switch ( $operation ):
-                    case 'publish': // 上架
-                        $data_to_edit['time_publish'] = time();
-                        $data_to_edit['time_suspend'] = NULL;
-                        $data_to_edit['time_to_publish'] = NULL; // 若手动上架，则取消上架计划
-                        break;
-                    case 'suspend': // 下架
-                        $data_to_edit['time_publish'] = NULL;
-                        $data_to_edit['time_suspend'] = time();
-                        $data_to_edit['time_to_suspend'] = NULL; // 若手动下架，则取消下架计划
-                        break;
                     case 'delete': // 删除
-                        $data_to_edit['time_publish'] = NULL;
-                        $data_to_edit['time_suspend'] = time(); // 删除商品时设置下架时间为当前时间
                         $data_to_edit['time_delete'] = date('Y-m-d H:i:s');
                         break;
                     case 'restore': // 恢复
@@ -507,52 +479,6 @@
 
             endif;
         } // end edit_bulk
-
-        // 检查起始时间
-        public function time_to_publish($value)
-        {
-            if ( empty($value) ):
-                return true;
-
-            elseif (strlen($value) !== 10):
-                return false;
-
-            else:
-                // 该时间不可早于当前时间一分钟以内
-                if ($value <= time() + 60):
-                    return false;
-                else:
-                    return true;
-                endif;
-
-            endif;
-        } // end time_to_publish
-
-        // 检查结束时间
-        public function time_to_suspend($value)
-        {
-            if ( empty($value) ):
-                return true;
-
-            elseif (strlen($value) !== 10):
-                return false;
-
-            else:
-                // 该时间不可早于当前时间一分钟以内
-                if ($value <= time() + 60):
-                    return false;
-
-                // 若已设置开始时间，不可早于开始时间一分钟以内
-                elseif ( !empty($this->input->post('time_to_publish')) && $value <= strtotime($this->input->post('time_to_publish')) + 60):
-                    return false;
-
-                else:
-                    return true;
-
-                endif;
-
-            endif;
-        } // end time_to_suspend
 
 	} // end Class Sku
 

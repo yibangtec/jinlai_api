@@ -40,52 +40,116 @@
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
+
+            // 调试信息输出开关
+            $this->output->enable_profiler(TRUE);
 		} // end __construct
 
 		/**
-		 * 截止3.1.3为止，CI_Controller类无析构函数，所以无需继承相应方法
+		 * 截止3.1.7为止，CI_Controller类无析构函数，所以无需继承相应方法
 		 */
 		public function __destruct()
 		{
-			// 调试信息输出开关
-			//$this->output->enable_profiler(TRUE);
+
 		} // end __destruct
 
-		// 路由
+		// 执行所有计划任务
 		public function index()
 		{
-			$this->hour();
+			$this->daily();
+		    $this->hour();
             $this->minute();
 		} // end index
 
+        /**
+         * 每自然日任务
+         */
+        public function daily()
+        {
+            // 每天更新所有实物类商品总销量
+            $this->renew_sold_overall();
+        } // end daily
+
+        /**
+         * 更新实物类商品总销量
+         *
+         * 即item.sold_overall字段值
+         */
+        public function renew_sold_overall()
+        {
+            // 获取所有商品
+            $this->switch_model('item', 'item_id');
+            $condition = array(
+                //'status' => '正常', // TODO 仅处理status为正常的商品
+            );
+            $this->db->select('item_id'); // 仅获取ID即可
+            $items = $this->basic_model->select($condition);
+
+            // 更新所有商品总销量
+            if ( !empty($items) ):
+                foreach ($items as $item):
+                    // 获取总销量
+                    $sold_overall = $this->count_sold($item['item_id']);
+
+                    // 更新总销量
+                    $this->switch_model('item', 'item_id');
+                    $this->update_record($item['item_id'], 'sold_overall', $sold_overall);
+                endforeach;
+            endif;
+        } // end renew_sold_overall
+
 		/**
 		 * 每小时任务
-		 *
-		 * 测试发送报时短信
          */
 		public function hour()
 		{
-			$this->sms_mobile = '17664073966';
-			$this->sms_content = '现在时间 '. date('Y-m-d H:i:s');
+			// 每3小时更新所有实物类商品月销量
+            if (date('H')%3 === 0)
+                $this->renew_sold_monthly();
 
 			// 发送短信
-            //@$this->sms_send();
+            $this->sms_mobile = '17664073966';
+            $this->sms_content = '现在时间 '. date('Y-m-d H:i:s');
+            if (date('H') === '18')
+                @$this->sms_send();
 
 		} // end hour
 
         /**
-         * 每分钟任务
+         * 更新实物类商品月销量
          *
-         * 测试发送报时短信
+         * 即item.sold_monthly字段值
+         */
+        public function renew_sold_monthly()
+        {
+
+        } // end renew_sold_monthly
+
+        /**
+         * 每分钟任务
          */
         public function minute()
         {
+            // 每5分钟更新所有实物类商品日销量
+            if (date('i')%5 === 0)
+                $this->renew_sold_daily();
+
             $this->sms_mobile = '17664073966';
             $this->sms_content = '计划任务 '. $this->router->method. ' 已于 '. date('Y-m-d H:i:s'). ' 执行';
 
             // 发送短信
             //@$this->sms_send();
         } // end minute
+
+        /**
+         * 更新实物类商品日销量
+         *
+         * 即item.sold_daily字段值
+         */
+        public function renew_sold_daily()
+        {
+
+        } // end renew_sold_daily
 
         /**
          * 以下为工具方法
@@ -110,6 +174,59 @@
             $this->load->library('luosimao');
             @$result = $this->luosimao->send($this->sms_mobile, $this->sms_content);
         } // end sms_send
+
+        /**
+         * 统计特定商品/规格总下单量
+         *
+         * 只要被下单即纳入统计
+         *
+         * @param $id 待统计项ID
+         * @param string $stuff_to_count 需要统计的数据类型，默认为商品item，可选规格sku
+         * @param null $period_start 统计起始时间点，若未传入则不限制；UNIX时间戳
+         * @param null $period_end 统计截止时间点，若未传入则不限制；UNIX时间戳
+         * @return int
+         */
+        private function count_sold($id, $stuff_to_count = 'item', $period_start = NULL, $period_end = NULL)
+        {
+            $condition = array(
+                $stuff_to_count.'_id' => $id,
+            );
+
+            // 若传入了统计起始时间点
+            if ( ! empty($period_start) )
+                $condition['time_create >'] = $period_start;
+
+            // 若传入了统计截止时间点
+            if ( ! empty($period_end) )
+                $condition['time_create <='] = $period_end;
+
+            // 切换数据库至订单商品信息表
+            $this->switch_model('order_items', 'record_id');
+
+            // 仅获取返回的统计数量
+            $this->db->select('SUM(count) as count');
+            $result = $this->basic_model->match($condition);
+
+            return empty($result['count'])? 0: $result['count'];
+        } // end count_sold
+
+        /**
+         * 更新单行信息
+         *
+         * 表名、主键名使用相关类属性，因此一般与switch_model方法结合使用
+         *
+         * @param $id
+         * @param $name
+         * @param $value
+         */
+        private function update_record($id, $name, $value)
+        {
+            $data_to_edit = array(
+                $name => $value,
+            );
+
+            $this->basic_model->edit($id, $data_to_edit);
+        } // end update_record
 
 	} // end class Schedule
 
