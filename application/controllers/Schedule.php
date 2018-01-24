@@ -42,7 +42,7 @@
 			$this->basic_model->id_name = $this->id_name;
 
             // 调试信息输出开关
-            $this->output->enable_profiler(TRUE);
+            //$this->output->enable_profiler(TRUE);
 		} // end __construct
 
 		/**
@@ -70,34 +70,6 @@
             $this->renew_sold_overall();
         } // end daily
 
-        /**
-         * 更新实物类商品总销量
-         *
-         * 即item.sold_overall字段值
-         */
-        public function renew_sold_overall()
-        {
-            // 获取所有商品
-            $this->switch_model('item', 'item_id');
-            $condition = array(
-                //'status' => '正常', // TODO 仅处理status为正常的商品
-            );
-            $this->db->select('item_id'); // 仅获取ID即可
-            $items = $this->basic_model->select($condition);
-
-            // 更新所有商品总销量
-            if ( !empty($items) ):
-                foreach ($items as $item):
-                    // 获取总销量
-                    $sold_overall = $this->count_sold($item['item_id']);
-
-                    // 更新总销量
-                    $this->switch_model('item', 'item_id');
-                    $this->update_record($item['item_id'], 'sold_overall', $sold_overall);
-                endforeach;
-            endif;
-        } // end renew_sold_overall
-
 		/**
 		 * 每小时任务
          */
@@ -116,16 +88,6 @@
 		} // end hour
 
         /**
-         * 更新实物类商品月销量
-         *
-         * 即item.sold_monthly字段值
-         */
-        public function renew_sold_monthly()
-        {
-
-        } // end renew_sold_monthly
-
-        /**
          * 每分钟任务
          */
         public function minute()
@@ -142,16 +104,6 @@
         } // end minute
 
         /**
-         * 更新实物类商品日销量
-         *
-         * 即item.sold_daily字段值
-         */
-        public function renew_sold_daily()
-        {
-
-        } // end renew_sold_daily
-
-        /**
          * 以下为工具方法
          */
 
@@ -162,6 +114,26 @@
             $this->basic_model->table_name = $table_name;
             $this->basic_model->id_name = $id_name;
         } // end switch_model
+
+        /**
+         * 获取信息列表
+         *
+         * @param string $table_name 信息所属表名
+         * @param string $table_id 信息所属表ID
+         * @param array $condition 筛选条件
+         * @param boolean $ids_only 是否仅需返回CSV格式的主键ID
+         * @return mixed
+         */
+        protected function get_items($table_name = 'item', $table_id = 'item_id', $condition = array(), $ids_only = FALSE)
+        {
+            // 初始化数据表
+            $this->switch_model($table_name, $table_id);
+
+            // 判断是否仅需返回主键ID
+            if ($ids_only === TRUE) $this->db->select($table_id); // 仅获取ID即可
+
+            return $this->basic_model->select($condition);
+        } // end get_items
 
         /**
          * 发送短信
@@ -176,14 +148,98 @@
         } // end sms_send
 
         /**
+         * 更新实物类商品总销量
+         *
+         * 即item.sold_overall字段值
+         */
+        protected function renew_sold_overall()
+        {
+            // 获取所有商品
+            $condition = array(
+                //'status' => '正常', // TODO 仅处理status为正常的商品
+            );
+            $items = $this->get_items('item', 'item_id', $condition, TRUE);
+
+            // 更新所有商品总销量
+            if ( !empty($items) ):
+                foreach ($items as $item):
+                    // 获取总销量
+                    $sold_overall = $this->count_sold($item['item_id']);
+
+                    // 更新总销量
+                    $this->switch_model('item', 'item_id');
+                    $this->update_record($item['item_id'], 'sold_overall', $sold_overall);
+                endforeach;
+            endif;
+        } // end renew_sold_overall
+
+        /**
+         * 更新实物类商品月销量
+         *
+         * 即item.sold_monthly字段值
+         */
+        public function renew_sold_monthly()
+        {
+            // 统计起始时间
+            $period_start = time() - 2678400; // 31个自然日，即60*60*24*31秒之前
+
+            // 获取所有商品
+            $condition = array(
+                //'status' => '正常', // TODO 仅处理status为正常的商品
+            );
+            $items = $this->get_items('item', 'item_id', $condition, TRUE);
+
+            // 更新所有商品总销量
+            if ( !empty($items) ):
+                foreach ($items as $item):
+                    // 获取总销量
+                    $sold_overall = $this->count_sold($item['item_id'], 'item', $period_start);
+
+                    // 更新总销量
+                    $this->switch_model('item', 'item_id');
+                    $this->update_record($item['item_id'], 'sold_monthly', $sold_overall);
+                endforeach;
+            endif;
+        } // end renew_sold_monthly
+
+        /**
+         * 更新实物类商品日销量
+         *
+         * 即item.sold_daily字段值
+         */
+        public function renew_sold_daily()
+        {
+            // 统计起始时间
+            $period_start = time() - 86400; // 1个自然日，即60*60*24秒之前
+
+            // 获取所有商品
+            $condition = array(
+                //'status' => '正常', // TODO 仅处理status为正常的商品
+            );
+            $items = $this->get_items('item', 'item_id', $condition, TRUE);
+
+            // 更新所有商品总销量
+            if ( !empty($items) ):
+                foreach ($items as $item):
+                    // 获取总销量
+                    $sold_overall = $this->count_sold($item['item_id'], 'item', $period_start);
+
+                    // 更新总销量
+                    $this->switch_model('item', 'item_id');
+                    $this->update_record($item['item_id'], 'sold_daily', $sold_overall);
+                endforeach;
+            endif;
+        } // end renew_sold_daily
+
+        /**
          * 统计特定商品/规格总下单量
          *
          * 只要被下单即纳入统计
          *
-         * @param $id 待统计项ID
+         * @param int/string $id 待统计项ID
          * @param string $stuff_to_count 需要统计的数据类型，默认为商品item，可选规格sku
-         * @param null $period_start 统计起始时间点，若未传入则不限制；UNIX时间戳
-         * @param null $period_end 统计截止时间点，若未传入则不限制；UNIX时间戳
+         * @param string $period_start 统计起始时间点，若未传入则不限制；UNIX时间戳
+         * @param string $period_end 统计截止时间点，若未传入则不限制；UNIX时间戳
          * @return int
          */
         private function count_sold($id, $stuff_to_count = 'item', $period_start = NULL, $period_end = NULL)
@@ -215,9 +271,9 @@
          *
          * 表名、主键名使用相关类属性，因此一般与switch_model方法结合使用
          *
-         * @param $id
-         * @param $name
-         * @param $value
+         * @param int/string $id
+         * @param string $name
+         * @param string $value
          */
         private function update_record($id, $name, $value)
         {

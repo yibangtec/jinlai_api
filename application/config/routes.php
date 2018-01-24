@@ -62,7 +62,6 @@ $route['mobile_reset'] = 'account/mobile_reset'; // 换绑手机号（仅限登�
 $route['password_reset'] = 'account/password_reset'; // 重置密码（仅限登录前）
 $route['password_change'] = 'account/password_change'; // 修改密码（仅限登录后）
 $route['account/edit'] = 'account/edit'; // 编辑账户资料
-$route['mine'] = 'account/mine'; // 个人中心（仅限登录后）
 
 /* 以下按控制器类名称字母降序排列 */
 
@@ -94,7 +93,6 @@ $route['item/trash'] = 'item/trash'; // 回收站
 $route['item'] = 'item/index'; // 列表
 
 /* Order 订单 */
-$route['order/mine'] = 'order/mine'; // 我的
 $route['order/detail'] = 'order/detail'; // 详情
 $route['order'] = 'order/index'; // 列表
 

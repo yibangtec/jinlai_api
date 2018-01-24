@@ -6055,21 +6055,36 @@
 					"mode": "formdata",
 					"formdata": [
 						{
+							"key": "test_mode",
+							"value": "on",
+							"type": "text",
+							"description": "",
+							"disabled": true
+						},
+						{
 							"key": "app_type",
 							"value": "client",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "level",
 							"value": "1",
+							"type": "text",
 							"description": "",
-							"type": "text"
+							"disabled": true
 						},
 						{
 							"key": "time_delete",
 							"value": "NULL",
-							"description": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "ids",
+							"value": "189,175,173,36,3,2",
+							"type": "text",
+							"description": ""
 						}
 					]
 				},
@@ -6422,6 +6437,12 @@
 					"mode": "formdata",
 					"formdata": [
 						{
+							"key": "test_mode",
+							"value": "on",
+							"type": "text",
+							"disabled": true
+						},
+						{
 							"key": "app_type",
 							"value": "client",
 							"type": "text"
@@ -6429,17 +6450,20 @@
 						{
 							"key": "limit",
 							"value": "3",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "offset",
 							"value": "3",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "category_id",
-							"value": "",
-							"type": "text"
+							"value": "189",
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "brand_id",
@@ -6449,17 +6473,18 @@
 						{
 							"key": "biz_id",
 							"value": "2",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "category_biz_id",
-							"value": "4",
+							"value": "2",
 							"type": "text",
 							"disabled": true
 						},
 						{
 							"key": "name",
-							"value": "",
+							"value": "手机",
 							"type": "text"
 						},
 						{
@@ -6608,15 +6633,23 @@
 							"disabled": true
 						},
 						{
-							"key": "orderby_unit_sold",
+							"key": "orderby_sold_overall",
 							"value": "DESC",
-							"description": "按销量排序",
+							"description": "按总销量排序",
 							"type": "text",
 							"disabled": true
 						},
 						{
-							"key": "test_mode",
-							"value": "on",
+							"key": "orderby_sold_monthly",
+							"value": "DESC",
+							"description": "按月销量排序",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "orderby_sold_daily",
+							"value": "DESC",
+							"description": "按日销量排序",
 							"type": "text",
 							"disabled": true
 						}
@@ -9865,6 +9898,13 @@
 					"mode": "formdata",
 					"formdata": [
 						{
+							"key": "test_mode",
+							"value": "on",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
 							"key": "limit",
 							"value": "",
 							"type": "text"
@@ -9947,6 +9987,12 @@
 						{
 							"key": "operator_id",
 							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "ids",
+							"value": "",
+							"description": "",
 							"type": "text"
 						}
 					]

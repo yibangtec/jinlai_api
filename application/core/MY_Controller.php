@@ -676,6 +676,26 @@
 			endif;
 		} // end generate_single_item
 
+        /**
+         * 获取信息列表
+         *
+         * @param string $table_name 信息所属表名
+         * @param string $table_id 信息所属表ID
+         * @param array $condition 筛选条件
+         * @param boolean $ids_only 是否仅需返回CSV格式的主键ID
+         * @return mixed
+         */
+        protected function get_items($table_name = 'item', $table_id = 'item_id', $condition = array(), $ids_only = FALSE)
+        {
+            // 初始化数据表
+            $this->switch_model($table_name, $table_id);
+
+            // 判断是否仅需返回主键ID
+            if ($ids_only === TRUE) $this->db->select($table_id); // 仅获取ID即可
+
+            return $this->basic_model->select($condition);
+        } // end get_items
+
 	} // end class MY_Controller
 
 /* End of file MY_Controller.php */
