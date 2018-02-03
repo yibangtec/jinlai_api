@@ -92,7 +92,7 @@
             $condition = $this->advanced_sorter($condition);
 			
 			// 商家仅可操作自己的数据
-			if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
+            if ($this->app_type === 'biz') $condition['biz_id'] = $this->input->post('biz_id');
 
 			// 获取列表；默认可获取已删除项
 			$count = $this->basic_model->count($condition);
@@ -130,9 +130,7 @@
             $condition = $this->advanced_sorter($condition);
 
             // 用户仅可查看未删除商品数据
-            if ($this->app_type === 'client'):
-                $condition['time_delete'] = 'NULL';
-            endif;
+            if ($this->app_type === 'client') $condition['time_delete'] = 'NULL';
 
 			// 排序条件
 			// （可选）遍历筛选条件
@@ -140,7 +138,6 @@
 				if ( !empty($this->input->post('orderby_'.$sorter)) )
 					$order_by[$sorter] = $this->input->post('orderby_'.$sorter);
 			endforeach;
-            $order_by['time_create'] = 'DESC';
 
 			// 获取列表；默认可获取已删除项
 			$ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
@@ -199,9 +196,7 @@
 			endif;
 
             // 用户仅可查看未删除商品数据
-            if ($this->app_type === 'client'):
-                $condition['time_delete'] = 'NULL';
-            endif;
+            if ($this->app_type === 'client') $condition['time_delete'] = 'NULL';
 
 			// 限制可返回的字段
 			$this->db->select(
@@ -500,6 +495,7 @@
 				// 商家仅可操作自己的数据
 				if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
 
+                // 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);
 				if ($result !== FALSE):
                     $this->result['status'] = 200;
@@ -534,7 +530,9 @@
 			$required_params = $this->names_edit_certain_required;
 			foreach ($required_params as $param):
 				${$param} = $this->input->post($param);
-				if ( $param !== 'value' && empty( ${$param} ) ): // value 可以为空；必要字段会在字段验证中另行检查
+
+                // value 可以为空；必要字段会在字段验证中另行检查
+				if ( $param !== 'value' && !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();

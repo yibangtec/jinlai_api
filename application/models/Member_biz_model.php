@@ -26,10 +26,10 @@
 		 * 初始化类
 		 * @param void
 		 */
-		public function __construct()
-		{
-			parent::__construct();
-		}
+        public function __construct()
+        {
+            // CI_Model类无构造函数，无需继承
+        } // end __construct
 
 		// 获取列表
 		public function select($condition = NULL, $order_by = NULL, $return_ids = FALSE, $allow_deleted = FALSE)
