@@ -6120,7 +6120,7 @@
 						},
 						{
 							"key": "id",
-							"value": "10",
+							"value": "14",
 							"type": "text"
 						},
 						{
@@ -6439,8 +6439,7 @@
 						{
 							"key": "test_mode",
 							"value": "on",
-							"type": "text",
-							"disabled": true
+							"type": "text"
 						},
 						{
 							"key": "app_type",
@@ -6461,14 +6460,15 @@
 						},
 						{
 							"key": "category_id",
-							"value": "189",
+							"value": "14",
 							"type": "text",
 							"disabled": true
 						},
 						{
 							"key": "brand_id",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "biz_id",
@@ -6484,7 +6484,7 @@
 						},
 						{
 							"key": "name",
-							"value": "手机",
+							"value": "BP机",
 							"type": "text"
 						},
 						{
@@ -6616,7 +6616,8 @@
 							"key": "orderby_price",
 							"value": "DESC",
 							"type": "text",
-							"description": "按价格排序；DESC为降序，ASC为升序，下同"
+							"description": "按价格排序；DESC为降序，ASC为升序，下同",
+							"disabled": true
 						},
 						{
 							"key": "orderby_time_publish",
@@ -6636,8 +6637,7 @@
 							"key": "orderby_sold_overall",
 							"value": "DESC",
 							"description": "按总销量排序",
-							"type": "text",
-							"disabled": true
+							"type": "text"
 						},
 						{
 							"key": "orderby_sold_monthly",
