@@ -108,7 +108,6 @@
 
 			// 排序条件
 			$order_by = NULL;
-			//$order_by['name'] = 'value';
 
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );

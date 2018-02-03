@@ -129,10 +129,11 @@
             // 类特有筛选项
             $condition = $this->advanced_sorter($condition);
 
-            // 用户仅可查看未删除商品数据
+            // 用户仅可查看未删除项
             if ($this->app_type === 'client') $condition['time_delete'] = 'NULL';
 
 			// 排序条件
+            $order_by = NULL;
 			// （可选）遍历筛选条件
 			foreach ($this->names_to_order as $sorter):
 				if ( !empty($this->input->post('orderby_'.$sorter)) )
@@ -189,13 +190,14 @@
 		{
 			// 检查必要参数是否已传入
 			$id = $this->input->post('id');
-			if ( empty($id) ):
+            $barcode = $this->input->post('barcode');
+			if ( empty($id) && empty($barcode) ):
 				$this->result['status'] = 400;
 				$this->result['content']['error']['message'] = '必要的请求参数未传入';
 				exit();
 			endif;
 
-            // 用户仅可查看未删除商品数据
+            // 用户仅可查看未删除项
             if ($this->app_type === 'client') $condition['time_delete'] = 'NULL';
 
 			// 限制可返回的字段
@@ -205,7 +207,11 @@
 			);
 
 			// 获取特定项；默认可获取已删除项
-			$item = $this->basic_model->select_by_id($id);
+            if ( !empty($barcode) ):
+                $item = $this->basic_model->find('barcode', $barcode);
+            else:
+                $item = $this->basic_model->select_by_id($id);
+            endif;
 			if ( !empty($item) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
