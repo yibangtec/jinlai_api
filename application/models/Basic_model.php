@@ -33,7 +33,7 @@
 		 */
 		public function __construct()
 		{
-			parent::__construct();
+			// CI_Model类无构造函数，无需继承
 		} // end __construct
 
 		/**
