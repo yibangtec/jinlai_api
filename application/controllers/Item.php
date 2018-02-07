@@ -145,8 +145,7 @@
 			if ( empty($ids) ):
 				// 限制可返回的字段，获取销量
 				$this->db->select(
-					implode(',', $this->names_to_return).
-					',(SELECT SUM(`count`) FROM `order_items` WHERE `time_accepted` IS NOT NULL AND `item_id`= `item`.`item_id`) as unit_sold'
+					implode(',', $this->names_to_return)
 				);
 				$items = $this->basic_model->select($condition, $order_by);
 			else:
@@ -737,8 +736,12 @@
                 ); // 仅返回ID
                 $this->reset_model();
 
+                // 若存在子分类，则将子分类加入查询语句
                 if ( !empty($sub_categories) ):
+                    $this->db->where('category_biz_id', $condition['category_biz_id']);
                     $this->db->or_where_in('category_biz_id', $sub_categories);
+
+                    unset($condition['category_biz_id']); // 从查询条件数组中移除系统级商品分类信息
                 endif;
             endif;
 
