@@ -14,7 +14,7 @@
 		 * 执行CURL
 		 *
 		 * @param string $url 待请求的URL
-		 * @param string $method 待发送的CURL请求类型；默认为get，可设为'post'
+		 * @param string $method 待发送的CURL请求类型；默认为post，可设为'get'
 		 * @param array $params 待发送的CURL请求参数数组，当且以POST方式发送的时候需传入此数组
 		 * @param string $return 需返回的数据格式；默认为数组格式，可传入'object'以设置为以对象格式返回
 		 * @return object/array 返回的CURL请求结果
@@ -30,7 +30,7 @@
 			
 			// 需要通过POST方式发送的数据
 			if ($method === 'post'):
-				$params['app_type'] = 'biz'; // 应用类型默认为biz
+				$params['app_type'] = 'admin'; // 应用类型默认为admin
 				curl_setopt($curl, CURLOPT_POST, count($params));
 				curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
 			endif;
@@ -54,7 +54,7 @@
 			return $result;
 		} // end go
 
-	} // end Class Curl
+	} // end class Curl
 	
 /* End of file Curl.php */
 /* Location: ./application/libraries/Curl.php */

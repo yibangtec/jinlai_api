@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "签名生成测试工具",
+			"name": "工具 签名生成测试",
 			"event": [
 				{
 					"listen": "test",
@@ -75,7 +75,7 @@
 			"response": []
 		},
 		{
-			"name": "数据表结构导出工具",
+			"name": "工具 数据表结构导出",
 			"event": [
 				{
 					"listen": "test",
@@ -134,6 +134,70 @@
 					]
 				},
 				"description": "将相应数据表结构输出为CSV"
+			},
+			"response": []
+		},
+		{
+			"name": "工具 页面抓取",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "test_mode",
+							"value": "on",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "client_type",
+							"value": "client",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "url",
+							"value": "http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2016/14/1401.html",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "charset",
+							"value": "gb2312",
+							"description": "原页面字符编码，若留空则为utf-8",
+							"type": "text"
+						},
+						{
+							"key": "start_html",
+							"value": "<tr class='countytr'><td><a",
+							"description": "需获取内容的起点，若留空则为<body",
+							"type": "text"
+						},
+						{
+							"key": "end_html",
+							"value": "</table",
+							"description": "需获取内容的终点，若留空则为</body",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.517ybang.com/tool/curl",
+					"protocol": "https",
+					"host": [
+						"api",
+						"517ybang",
+						"com"
+					],
+					"path": [
+						"tool",
+						"curl"
+					]
+				},
+				"description": ""
 			},
 			"response": []
 		},
@@ -445,6 +509,13 @@
 					"mode": "formdata",
 					"formdata": [
 						{
+							"key": "test_mode",
+							"value": "on",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
 							"key": "app_type",
 							"value": "client",
 							"type": "text"
@@ -452,12 +523,14 @@
 						{
 							"key": "limit",
 							"value": "5",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "offset",
 							"value": "0",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "user_id",
@@ -11699,6 +11772,13 @@
 					"mode": "formdata",
 					"formdata": [
 						{
+							"key": "test_mode",
+							"value": "on",
+							"type": "text",
+							"description": "",
+							"disabled": true
+						},
+						{
 							"key": "app_type",
 							"value": "admin",
 							"type": "text",
@@ -11706,9 +11786,10 @@
 						},
 						{
 							"key": "nation",
-							"value": "",
+							"value": "中国",
 							"type": "text",
-							"description": ""
+							"description": "",
+							"disabled": true
 						},
 						{
 							"key": "province",
@@ -11717,8 +11798,26 @@
 							"description": ""
 						},
 						{
-							"key": "city",
+							"key": "province_index",
 							"value": "",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "province_abbr",
+							"value": "",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "province_brief",
+							"value": "",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "city",
+							"value": "石家庄市",
 							"type": "text",
 							"description": ""
 						},
@@ -11778,6 +11877,119 @@
 			"response": []
 		},
 		{
+			"name": "RGN1 地区列表",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "test_mode",
+							"value": "on",
+							"type": "text",
+							"description": "",
+							"disabled": true
+						},
+						{
+							"key": "app_type",
+							"value": "admin",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "nation",
+							"value": "中国",
+							"type": "text",
+							"description": "",
+							"disabled": true
+						},
+						{
+							"key": "province",
+							"value": "河北省",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "province_index",
+							"value": "",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "province_abbr",
+							"value": "",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "province_brief",
+							"value": "",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "city",
+							"value": "石家庄市",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "county",
+							"value": "",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "time_create",
+							"value": "",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "time_delete",
+							"value": "",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "time_edit",
+							"value": "",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "creator_id",
+							"value": "",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "operator_id",
+							"value": "",
+							"type": "text",
+							"description": ""
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.517ybang.com/region/index",
+					"protocol": "https",
+					"host": [
+						"api",
+						"517ybang",
+						"com"
+					],
+					"path": [
+						"region",
+						"index"
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
 			"name": "RGN2 地区详情",
 			"request": {
 				"method": "POST",
@@ -11786,13 +11998,20 @@
 					"mode": "formdata",
 					"formdata": [
 						{
+							"key": "test_mode",
+							"value": "on",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
 							"key": "app_type",
 							"value": "client",
 							"type": "text"
 						},
 						{
 							"key": "id",
-							"value": "2",
+							"value": "256",
 							"type": "text"
 						}
 					]
@@ -11842,19 +12061,37 @@
 						},
 						{
 							"key": "province",
-							"value": "天津",
+							"value": "河北省",
 							"type": "text",
 							"description": ""
 						},
 						{
+							"key": "province_index",
+							"value": "hb",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "province_abbr",
+							"value": "冀",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "province_brief",
+							"value": "河北",
+							"description": "",
+							"type": "text"
+						},
+						{
 							"key": "city",
-							"value": "天津市",
+							"value": "其它",
 							"type": "text",
 							"description": ""
 						},
 						{
 							"key": "county",
-							"value": "其它区",
+							"value": "辛集市",
 							"type": "text",
 							"description": ""
 						}
@@ -11886,6 +12123,13 @@
 					"mode": "formdata",
 					"formdata": [
 						{
+							"key": "test_mode",
+							"value": "on",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
 							"key": "app_type",
 							"value": "admin",
 							"type": "text",
@@ -11899,7 +12143,7 @@
 						},
 						{
 							"key": "id",
-							"value": "2",
+							"value": "256",
 							"type": "text",
 							"description": ""
 						},
@@ -11911,19 +12155,37 @@
 						},
 						{
 							"key": "province",
-							"value": "北京",
+							"value": "河北省",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "province_index",
+							"value": "hb",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "province_abbr",
+							"value": "冀",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "province_brief",
+							"value": "河北",
 							"type": "text",
 							"description": ""
 						},
 						{
 							"key": "city",
-							"value": "北京市",
+							"value": "其它",
 							"type": "text",
 							"description": ""
 						},
 						{
 							"key": "county",
-							"value": "西城区",
+							"value": "辛集市",
 							"type": "text",
 							"description": ""
 						}

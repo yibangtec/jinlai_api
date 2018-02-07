@@ -14,14 +14,14 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'nation', 'province', 'city', 'county', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'nation', 'province', 'province_index', 'province_abbr', 'province_brief', 'city', 'county', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'region_id', 'nation', 'province', 'city', 'county', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'region_id', 'nation', 'province', 'province_index', 'province_abbr', 'province_brief', 'city', 'county', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -29,14 +29,14 @@
 		 */
 		protected $names_create_required = array(
 			'user_id',
-			'nation', 'province', 'city', 'county',
+			'nation', 'province', 'province_index', 'province_abbr', 'province_brief', 'city', 'county',
 		);
 
 		/**
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'nation', 'province', 'city', 'county',
+			'nation', 'province', 'province_index', 'province_abbr', 'province_brief', 'city', 'county',
 		);
 
 		/**
@@ -44,7 +44,7 @@
 		 */
 		protected $names_edit_required = array(
 			'user_id', 'id',
-			'nation', 'province', 'city', 'county',
+			'nation', 'province', 'province_index', 'province_abbr', 'province_brief', 'city', 'county',
 		);
 
 		public function __construct()
@@ -178,10 +178,13 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-            $this->form_validation->set_rules('nation', '国别', 'trim');
-            $this->form_validation->set_rules('province', '省级行政区', 'trim|required');
-            $this->form_validation->set_rules('city', '市级行政区', 'trim|required');
-            $this->form_validation->set_rules('county', '区县级行政区', 'trim|required');
+            $this->form_validation->set_rules('nation', '国别', 'trim|max_length[10]');
+            $this->form_validation->set_rules('province', '省级行政区', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('province_index', '省级行政区索引', 'trim|required|max_length[2]');
+            $this->form_validation->set_rules('province_abbr', '省级行政区简称', 'trim|required|max_length[1]');
+            $this->form_validation->set_rules('province_brief', '省级行政区通称', 'trim|required|max_length[2]');
+            $this->form_validation->set_rules('city', '市级行政区', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('county', '区县级行政区', 'trim|required|max_length[10]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -197,7 +200,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'province', 'city', 'county',
+					'province', 'province_index', 'province_abbr', 'province_brief', 'city', 'county',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -245,9 +248,12 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
             $this->form_validation->set_rules('nation', '国别', 'trim');
-            $this->form_validation->set_rules('province', '省级行政区', 'trim|required');
-            $this->form_validation->set_rules('city', '市级行政区', 'trim|required');
-            $this->form_validation->set_rules('county', '区县级行政区', 'trim|required');
+            $this->form_validation->set_rules('province', '省级行政区', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('province_index', '省级行政区索引', 'trim|required|max_length[2]');
+            $this->form_validation->set_rules('province_abbr', '省级行政区简称', 'trim|required|max_length[1]');
+            $this->form_validation->set_rules('province_brief', '省级行政区通称', 'trim|required|max_length[2]');
+            $this->form_validation->set_rules('city', '市级行政区', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('county', '区县级行政区', 'trim|required|max_length[10]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -263,7 +269,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'province', 'city', 'county',
+					'province', 'province_index', 'province_abbr', 'province_brief', 'city', 'county',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);

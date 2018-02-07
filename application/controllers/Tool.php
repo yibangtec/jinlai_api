@@ -16,7 +16,11 @@
 
 			// 统计业务逻辑运行时间起点
 			$this->benchmark->mark('start');
-		}
+
+            // 如果已经打开测试模式，则输出调试信息
+            if ($this->input->post('test_mode') === 'on')
+                $this->output->enable_profiler(TRUE);
+		} // end __construct
 
 		/**
 		 * 析构时将待输出的内容以json格式返回
@@ -41,7 +45,7 @@
 			header("Content-type:application/json;charset=utf-8");
 			$output_json = json_encode($this->result);
 			echo $output_json;
-		}
+        } // end __destruct
 
 		// 签名生成工具
 		public function sign_generate()
@@ -175,10 +179,31 @@
 
 			else:
 				$this->result['status'] = 400;
-				$this->result['content'] = '该表不存在或不含有任何字段';
+				$this->result['content'] = '该表不存在或改表不含任何字段';
 
 			endif;
 		} // end table_columns
+
+        /**
+         * 抓取特定页面内容
+         */
+        public function curl()
+        {
+            $url = $this->input->post('url');
+            $charset = $this->input->post('charset');
+            $start_html = empty($this->input->post('start_html'))? '<body': $this->input->post('start_html');
+            $end_html = empty($this->input->post('end_html'))? '</body': $this->input->post('end_html');
+
+            $output = file_get_contents($url);
+
+            // 若传入了原页面字符编码，转码为utf-8
+            if ( ! empty($charset))
+                $output = iconv(strtolower($charset), 'utf-8', $output);
+            $output = substr($output, strpos($output,$start_html), -(strlen($output) - strpos($output, $end_html)));
+
+            $this->result['status'] = 200;
+            $this->result['content'] = trim( $output );
+        } // end curl
 
 	} // end class Tool
 
