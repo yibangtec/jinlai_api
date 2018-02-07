@@ -463,6 +463,7 @@
 				if ( !empty($user_info) ):
 					$this->result['status'] = 200;
 					$this->result['content']['is_exist'] = TRUE;
+                    $this->result['content']['password_set'] = !empty($user_info['password']); // 是否已设置密码
 					$this->result['content']['status'] = $user_info['status'];
 
 				else:
