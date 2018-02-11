@@ -736,12 +736,12 @@
                 ); // 仅返回ID
                 $this->reset_model();
 
-                if ( !empty($sub_categories) ):
+                // 若存在子分类，则将子分类合并入查询条件
+				if ( !empty($sub_categories) ):
                     $sub_categories[] = $condition['category_id'];
                     unset($condition['category_id']);
 
                     $this->db->or_where_in('biz.category_id', $sub_categories);
-
                 endif;
             endif;
 
@@ -756,13 +756,12 @@
                 ); // 仅返回ID
                 $this->reset_model();
 
-                // 若存在子分类，则将子分类加入查询语句
+                // 若存在子分类，则将子分类合并入查询条件
                 if ( !empty($sub_categories) ):
                     $sub_categories[] = $condition['category_biz_id'];
                     unset($condition['category_biz_id']);
+					
                     $this->db->or_where_in('category_biz_id', $sub_categories);
-
-                    unset($condition['category_biz_id']); // 从查询条件数组中移除系统级商品分类信息
                 endif;
             endif;
 
