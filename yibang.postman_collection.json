@@ -378,9 +378,10 @@
 					"mode": "formdata",
 					"formdata": [
 						{
-							"key": "skip_sign",
-							"value": "please",
-							"type": "text"
+							"key": "test_mode",
+							"value": "on",
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "mobile",
@@ -390,7 +391,8 @@
 						{
 							"key": "email",
 							"value": "kamaslau@outlook.com",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						}
 					]
 				},
@@ -1894,6 +1896,12 @@
 					"mode": "formdata",
 					"formdata": [
 						{
+							"key": "test_mode",
+							"value": "on",
+							"description": "",
+							"type": "text"
+						},
+						{
 							"key": "app_type",
 							"value": "client",
 							"type": "text"
@@ -1901,11 +1909,26 @@
 						{
 							"key": "limit",
 							"value": "10",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "offset",
 							"value": "0",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "category_id",
+							"value": "4",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "name",
+							"value": "多乐",
+							"description": "",
 							"type": "text"
 						}
 					]
@@ -5883,13 +5906,26 @@
 					"mode": "formdata",
 					"formdata": [
 						{
+							"key": "test_mode",
+							"value": "on",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
 							"key": "app_type",
 							"value": "client",
 							"type": "text"
 						},
 						{
 							"key": "biz_id",
-							"value": "1",
+							"value": "2",
+							"type": "text"
+						},
+						{
+							"key": "parent_id",
+							"value": "4",
+							"description": "",
 							"type": "text"
 						}
 					]
@@ -6512,7 +6548,8 @@
 						{
 							"key": "test_mode",
 							"value": "on",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "app_type",
@@ -6533,7 +6570,7 @@
 						},
 						{
 							"key": "category_id",
-							"value": "14",
+							"value": "4",
 							"type": "text",
 							"disabled": true
 						},
@@ -6551,14 +6588,14 @@
 						},
 						{
 							"key": "category_biz_id",
-							"value": "2",
-							"type": "text",
-							"disabled": true
+							"value": "4",
+							"type": "text"
 						},
 						{
 							"key": "name",
 							"value": "BP机",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "tag_price",
@@ -6710,7 +6747,8 @@
 							"key": "orderby_sold_overall",
 							"value": "DESC",
 							"description": "按总销量排序",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "orderby_sold_monthly",
@@ -7191,64 +7229,95 @@
 					"mode": "formdata",
 					"formdata": [
 						{
+							"key": "test_mode",
+							"value": "on",
+							"type": "text",
+							"description": ""
+						},
+						{
 							"key": "app_type",
 							"value": "client",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "limit",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "offset",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "user_id",
-							"value": "1",
-							"type": "text"
+							"value": "40",
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "biz_id",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "category_id",
+							"value": "4",
+							"type": "text",
+							"description": "",
+							"disabled": true
+						},
+						{
+							"key": "name",
+							"value": "多乐",
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "mobile",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "level",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "time_create",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "time_delete",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "time_edit",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "creator_id",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "operator_id",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						}
 					]
 				},
@@ -11906,7 +11975,7 @@
 						},
 						{
 							"key": "province",
-							"value": "河北省",
+							"value": "",
 							"type": "text",
 							"description": ""
 						},
@@ -11930,13 +11999,13 @@
 						},
 						{
 							"key": "city",
-							"value": "石家庄市",
+							"value": "",
 							"type": "text",
 							"description": ""
 						},
 						{
 							"key": "county",
-							"value": "",
+							"value": "东城区",
 							"type": "text",
 							"description": ""
 						},
@@ -11948,7 +12017,7 @@
 						},
 						{
 							"key": "time_delete",
-							"value": "",
+							"value": "NULL",
 							"type": "text",
 							"description": ""
 						},
@@ -12259,6 +12328,94 @@
 					"path": [
 						"region",
 						"edit_bulk"
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "RGN7 地区批量创建",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "test_mode",
+							"value": "on",
+							"type": "text",
+							"description": "",
+							"disabled": true
+						},
+						{
+							"key": "app_type",
+							"value": "admin",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "user_id",
+							"value": "1",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "nation",
+							"value": "中国",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "province",
+							"value": "吉林省",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "province_index",
+							"value": "jl",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "province_abbr",
+							"value": "吉",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "province_brief",
+							"value": "吉林",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "city",
+							"value": "延边朝鲜族自治州",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "counties",
+							"value": "延吉市,图们市,敦化市,珲春市,龙井市,和龙市,汪清县,安图县",
+							"type": "text",
+							"description": ""
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.517ybang.com/region/create_bulk",
+					"protocol": "https",
+					"host": [
+						"api",
+						"517ybang",
+						"com"
+					],
+					"path": [
+						"region",
+						"create_bulk"
 					]
 				},
 				"description": null

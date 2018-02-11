@@ -14,14 +14,14 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'category_ids', 'longitude', 'latitude', 'nation', 'province', 'city', 'county', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+			'category_id', 'name', 'longitude', 'latitude', 'nation', 'province', 'city', 'county', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'biz_id', 'category_ids', 'name', 'brief_name', 'url_name', 'url_logo', 'slogan', 'description', 'notification',
+			'biz_id', 'category_id', 'name', 'brief_name', 'url_name', 'url_logo', 'slogan', 'description', 'notification',
 			'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
 			'fullname_owner', 'fullname_auth',
 			'code_license', 'code_ssn_owner',  'code_ssn_auth',
@@ -37,7 +37,7 @@
 		 */
 		protected $names_create_required = array(
 			'user_id',
-            'category_ids', 'name', 'brief_name', 'tel_public', 'tel_protected_biz',
+            'category_id', 'name', 'brief_name', 'tel_public', 'tel_protected_biz',
 			'fullname_owner', 'code_license', 'code_ssn_owner',
 		);
 
@@ -46,14 +46,14 @@
          */
         protected $names_quick_create_required = array(
             'user_id',
-            'category_ids', 'brief_name', 'tel_public',
+            'category_id', 'brief_name', 'tel_public',
         );
 
 		/**
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-            'category_ids', 'name', 'brief_name', 'url_name', 'url_logo', 'slogan', 'description', 'notification',
+            'category_id', 'name', 'brief_name', 'url_name', 'url_logo', 'slogan', 'description', 'notification',
 			'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
 			'fullname_owner', 'fullname_auth',
 			'code_license', 'code_ssn_owner', 'code_ssn_auth',
@@ -89,6 +89,9 @@
 		{
             // 生成筛选条件
             $condition = $this->condition_generate();
+            // 类特有筛选项
+            $condition = $this->advanced_sorter($condition);
+
 			// 客户端仅获取状态为‘正常’的商家
 			if ($this->app_type === 'client')
 				$condition['status'] = '正常';
@@ -125,6 +128,8 @@
 
             // 生成筛选条件
             $condition = $this->condition_generate();
+            // 类特有筛选项
+            $condition = $this->advanced_sorter($condition);
 
 			// 客户端仅获取状态为‘正常’的商家
 			//if ($this->app_type === 'client') $condition['status'] = '正常';
@@ -248,7 +253,7 @@
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-            $this->form_validation->set_rules('category_ids[]', '主营商品类目', 'trim|required|max_length[255]');
+            $this->form_validation->set_rules('category_id', '主营商品类目', 'trim|required|is_natural_no_zero');
             $this->form_validation->set_rules('url_logo', '店铺LOGO', 'trim|max_length[255]');
 			$this->form_validation->set_rules('name', '商家全称', 'trim|required|min_length[5]|max_length[35]|is_unique[biz.name]');
 			$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[20]|is_unique[biz.brief_name]');
@@ -288,7 +293,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-                    'category_ids', 'url_logo', 'name', 'brief_name', 'tel_public', 'tel_protected_biz',
+                    'category_id', 'url_logo', 'name', 'brief_name', 'tel_public', 'tel_protected_biz',
 					'description', 'bank_name', 'bank_account',
 					'fullname_owner', 'fullname_auth',
 					'code_license', 'code_ssn_owner', 'code_ssn_auth',
@@ -362,7 +367,7 @@
             // 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
             $this->load->library('form_validation');
             $this->form_validation->set_error_delimiters('', '');
-            $this->form_validation->set_rules('category_ids', '主营商品类目', 'trim|required|max_length[255]');
+            $this->form_validation->set_rules('category_id', '主营商品类目', 'trim|required|is_natural_no_zero');
             $this->form_validation->set_rules('url_logo', '店铺LOGO', 'trim|max_length[255]');
             $this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[20]|is_unique[biz.brief_name]');
             $this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]|is_unique[biz.tel_public]');
@@ -383,7 +388,7 @@
                 );
                 // 自动生成无需特别处理的数据
                 $data_need_no_prepare = array(
-                    'category_ids', 'url_logo', 'brief_name',
+                    'category_id', 'url_logo', 'brief_name',
                 );
                 foreach ($data_need_no_prepare as $name)
                     $data_to_create[$name] = $this->input->post($name);
@@ -450,7 +455,7 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			if ($this->app_type === 'admin'):
-                $this->form_validation->set_rules('category_ids', '主营商品类目', 'trim|required|max_length[255]');
+                $this->form_validation->set_rules('category_id', '主营商品类目', 'trim|required|is_natural_no_zero');
 				$this->form_validation->set_rules('name', '商家全称', 'trim|required|min_length[5]|max_length[35]');
 				$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[20]');
 				$this->form_validation->set_rules('url_name', '店铺域名', 'trim|max_length[20]|alpha_dash');
@@ -492,7 +497,7 @@
 
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-                    'category_ids', 'name', 'brief_name', 'url_logo', 'slogan', 'description', 'notification',
+                    'category_id', 'name', 'brief_name', 'url_logo', 'slogan', 'description', 'notification',
 					'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
 					'fullname_owner', 'fullname_auth',
 					'code_license', 'code_ssn_owner',  'code_ssn_auth',
@@ -505,7 +510,7 @@
 
 				// 根据客户端类型等条件筛选可操作的字段名
 				if ($this->app_type !== 'admin'):
-                    unset($data_to_edit['category_ids']);
+                    unset($data_to_edit['category_id']);
 					unset($data_to_edit['name']);
 					unset($data_to_edit['brief_name']);
 					unset($data_to_edit['url_name']);
@@ -583,7 +588,7 @@
 			$data_to_validate["{$name}"] = $value;
 			$this->form_validation->set_data($data_to_validate);
 			if ($this->app_type === 'admin'):
-                $this->form_validation->set_rules('category_ids', '主营商品类目', 'trim|required|max_length[255]');
+                $this->form_validation->set_rules('category_id', '主营商品类目', 'trim|required|is_natural_no_zero');
 				$this->form_validation->set_rules('name', '商家名称', 'trim|min_length[5]|max_length[35]');
 				$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|max_length[20]');
 				$this->form_validation->set_rules('url_name', '店铺域名', 'trim|max_length[20]|alpha_dash');
@@ -735,6 +740,50 @@
 
 			endif;
 		} // end edit_bulk
+
+        /*
+         * 以下为工具方法
+         */
+
+        /**
+         * 类特有筛选器
+         *
+         * @param array $condition 当前筛选条件数组
+         * @return array 生成的筛选条件数组
+         */
+        protected function advanced_sorter($condition = array())
+        {
+            // 若传入了平台级商品分类，则同时筛选主营类目属于该分类及该分类子分类的商家
+            if ( !empty($condition['category_id']) ):
+                // 获取所有子类ID
+                $this->switch_model('item_category', 'category_id');
+                $sub_categories = $this->basic_model->select(
+                    array('parent_id' => $condition['category_id']),
+                    NULL,
+                    TRUE
+                ); // 仅返回ID
+                $this->reset_model();
+
+                if ( !empty($sub_categories) ):
+                    $sub_categories[] = $condition['category_id'];
+                    unset($condition['category_id']);
+
+                    $this->db->or_where_in('biz.category_id', $sub_categories);
+
+                endif;
+            endif;
+
+            // 若传入了商家名，模糊查询
+            if ( !empty($this->input->post('name')) ):
+                $this->db->group_start();
+                $this->db->like('biz.name', $this->input->post('name'));
+                $this->db->or_like('biz.brief_name', $this->input->post('name'));
+                $this->db->group_end();
+                unset($condition['name']);
+            endif;
+
+            return $condition;
+        } // end advanced_sorter
 
         // 查找员工
         private function stuff_exist($user_id)

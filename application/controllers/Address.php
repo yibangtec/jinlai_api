@@ -429,6 +429,10 @@
 
 			endif;
 		} // end edit_bulk
+
+        /*
+         * 以下为工具方法
+         */
 		
 		// 设置当前地址为默认地址
 		protected function default_this($address_id, $user_id)

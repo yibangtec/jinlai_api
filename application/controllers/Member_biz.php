@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'user_id', 'biz_id', 'mobile', 'level', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'user_id', 'biz_id', 'category_id', 'name', 'mobile', 'level', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -65,6 +65,8 @@
 		{
             // 生成筛选条件
             $condition = $this->condition_generate();
+            // 类特有筛选项
+            $condition = $this->advanced_sorter($condition);
 
 			// 获取列表；默认可获取已删除项
 			$count = $this->basic_model->count($condition);
@@ -98,6 +100,8 @@
 
             // 生成筛选条件
             $condition = $this->condition_generate();
+            // 类特有筛选项
+            $condition = $this->advanced_sorter($condition);
 
 			// 排序条件
 			$order_by = NULL;
@@ -467,7 +471,50 @@
 
 			endif;
 		} // end edit_bulk
-		
+
+        /*
+         * 以下为工具方法
+         */
+
+        /**
+         * 类特有筛选器
+         *
+         * @param array $condition 当前筛选条件数组
+         * @return array 生成的筛选条件数组
+         */
+        protected function advanced_sorter($condition = array())
+        {
+            // 若传入了平台级商品分类，则同时筛选主营类目属于该分类及该分类子分类的商家
+            if ( !empty($condition['category_id']) ):
+                // 获取所有子类ID
+                $this->switch_model('item_category', 'category_id');
+                $sub_categories = $this->basic_model->select(
+                    array('parent_id' => $condition['category_id']),
+                    NULL,
+                    TRUE
+                ); // 仅返回ID
+                $this->reset_model();
+
+                if ( !empty($sub_categories) ):
+                    $sub_categories[] = $condition['category_id'];
+                    unset($condition['category_id']);
+
+                    $this->db->or_where_in('biz.category_id', $sub_categories);
+
+                endif;
+            endif;
+
+            // 若传入了商家名，模糊查询
+            if ( !empty($this->input->post('name')) ):
+                $this->db->group_start();
+                $this->db->like('biz.name', $this->input->post('name'));
+                $this->db->or_like('biz.brief_name', $this->input->post('name'));
+                $this->db->group_end();
+                unset($condition['name']);
+            endif;
+
+            return $condition;
+        } // end advanced_sorter
 
 	} // end class Member_biz
 

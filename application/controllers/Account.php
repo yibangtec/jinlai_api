@@ -463,6 +463,7 @@
 				if ( !empty($user_info) ):
 					$this->result['status'] = 200;
 					$this->result['content']['is_exist'] = TRUE;
+                    $this->result['content']['password_set'] = empty($user_info['password'])? FALSE: TRUE; // 检查是否已设置密码
 					$this->result['content']['status'] = $user_info['status'];
 
 				else:
@@ -614,9 +615,10 @@
 		/**
 		 * 创建用户
 		 *
-		 * @params $data_to_create 待创建的用户信息
+		 * @params array $data_to_create 待创建的用户信息
+         * @params string $name 待创建用户的注册方式，默认为手机号
 		 */
-		private function user_create($data_to_create)
+		private function user_create($data_to_create, $name = 'mobile')
 		{
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');

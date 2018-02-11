@@ -625,7 +625,7 @@
             else:
 				$order_sku = array(
 					'sku_id' => $sku_id,
-					'sku_name' => $sku['name_first']. $sku['name_second']. $sku['name_third'],
+					'sku_name' => trim($sku['name_first']. ' '.$sku['name_second']. ' '.$sku['name_third']),
 					'sku_image' => $sku['url_image'],
 					'tag_price' => $sku['tag_price'],
 					'price' => $sku['price'],

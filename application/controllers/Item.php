@@ -726,6 +726,26 @@
          */
         protected function advanced_sorter($condition = array())
         {
+            // 若传入了平台级商品分类，则同时筛选属于该分类及该分类子分类的商品
+            if ( !empty($condition['category_id']) ):
+                // 获取所有子类ID
+                $this->switch_model('item_category', 'category_id');
+                $sub_categories = $this->basic_model->select(
+                    array('parent_id' => $condition['category_id']),
+                    NULL,
+                    TRUE
+                ); // 仅返回ID
+                $this->reset_model();
+
+                if ( !empty($sub_categories) ):
+                    $sub_categories[] = $condition['category_id'];
+                    unset($condition['category_id']);
+
+                    $this->db->or_where_in('biz.category_id', $sub_categories);
+
+                endif;
+            endif;
+
             // 若传入了商家级商品分类，则同时筛选属于该分类及该分类子分类的商品
             if ( !empty($condition['category_biz_id']) ):
                 // 获取所有子类ID
@@ -738,6 +758,9 @@
                 $this->reset_model();
 
                 if ( !empty($sub_categories) ):
+                    $sub_categories[] = $condition['category_biz_id'];
+                    unset($condition['category_biz_id']);
+
                     $this->db->or_where_in('category_biz_id', $sub_categories);
                 endif;
             endif;
