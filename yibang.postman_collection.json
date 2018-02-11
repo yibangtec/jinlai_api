@@ -197,7 +197,7 @@
 						"curl"
 					]
 				},
-				"description": ""
+				"description": null
 			},
 			"response": []
 		},
@@ -2120,7 +2120,6 @@
 						{
 							"key": "url_logo",
 							"value": "",
-							"description": "",
 							"type": "text"
 						},
 						{
@@ -2136,13 +2135,11 @@
 						{
 							"key": "category_ids",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "test_mode",
 							"value": "on",
-							"description": "",
 							"type": "text",
 							"disabled": true
 						}
@@ -5346,7 +5343,6 @@
 						{
 							"key": "biz_id",
 							"value": "2",
-							"description": "",
 							"type": "text"
 						}
 					]
@@ -5604,7 +5600,6 @@
 						{
 							"key": "test_mode",
 							"value": "on",
-							"description": "",
 							"type": "text"
 						},
 						{
@@ -6843,62 +6838,52 @@
 						{
 							"key": "app_type",
 							"value": "biz",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "test_mode",
 							"value": "on",
 							"type": "text",
-							"description": "",
 							"disabled": true
 						},
 						{
 							"key": "user_id",
 							"value": "1",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "biz_id",
 							"value": "2",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "category_id",
 							"value": "1",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "category_biz_id",
 							"value": "3",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "url_image_main",
 							"value": "url_image_main/201712/1218/214548.png",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "name",
 							"value": "满1000免运费",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "price",
 							"value": "1",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "stocks",
 							"value": "0",
-							"description": "",
 							"type": "text"
 						}
 					]
@@ -7360,13 +7345,11 @@
 						{
 							"key": "user_id",
 							"value": "1",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "biz_id",
 							"value": "2",
-							"description": "",
 							"type": "text"
 						}
 					]
@@ -7871,7 +7854,12 @@
 			"name": "MTR3 素材创建",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
 				"body": {
 					"mode": "formdata",
 					"formdata": [
@@ -7902,7 +7890,7 @@
 						"index"
 					]
 				},
-				"description": ""
+				"description": null
 			},
 			"response": []
 		},
@@ -8680,8 +8668,7 @@
 						{
 							"key": "cart_string",
 							"value": "21|92|0|1,21|90|0|1,21|91|0|3",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "item_id",
@@ -11737,81 +11724,68 @@
 						{
 							"key": "app_type",
 							"value": "client",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "test_mode",
 							"value": "on",
 							"type": "text",
-							"description": "",
 							"disabled": true
 						},
 						{
 							"key": "limit",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "offset",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "refund_id",
 							"value": "12",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "biz_id",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "user_id",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "content",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "time_create",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "time_delete",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "time_edit",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "creator_id",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "operator_id",
 							"value": "",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						}
 					]
 				},
@@ -12167,7 +12141,7 @@
 					]
 				},
 				"url": {
-					"raw": "https://api.517ybang.com/region/create",
+					"raw": "https://api.517ybang.com/page/create",
 					"protocol": "https",
 					"host": [
 						"api",
@@ -12175,7 +12149,7 @@
 						"com"
 					],
 					"path": [
-						"region",
+						"page",
 						"create"
 					]
 				},
@@ -12288,32 +12262,27 @@
 						{
 							"key": "app_type",
 							"value": "admin",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "user_id",
 							"value": "1",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "ids",
 							"value": "1,2",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "operation",
 							"value": "restore",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						},
 						{
 							"key": "password",
 							"value": "123456",
-							"type": "text",
-							"description": ""
+							"type": "text"
 						}
 					]
 				},
@@ -13475,7 +13444,6 @@
 						{
 							"key": "id",
 							"value": "2",
-							"description": "",
 							"type": "text"
 						},
 						{
@@ -13613,13 +13581,11 @@
 						{
 							"key": "limit",
 							"value": "3",
-							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "offset",
 							"value": "0",
-							"description": "",
 							"type": "text"
 						}
 					]
