@@ -197,7 +197,7 @@
 						"curl"
 					]
 				},
-				"description": null
+				"description": ""
 			},
 			"response": []
 		},
@@ -2120,6 +2120,7 @@
 						{
 							"key": "url_logo",
 							"value": "",
+							"description": "",
 							"type": "text"
 						},
 						{
@@ -2135,11 +2136,13 @@
 						{
 							"key": "category_ids",
 							"value": "1",
+							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "test_mode",
 							"value": "on",
+							"description": "",
 							"type": "text",
 							"disabled": true
 						}
@@ -5343,6 +5346,7 @@
 						{
 							"key": "biz_id",
 							"value": "2",
+							"description": "",
 							"type": "text"
 						}
 					]
@@ -5600,6 +5604,7 @@
 						{
 							"key": "test_mode",
 							"value": "on",
+							"description": "",
 							"type": "text"
 						},
 						{
@@ -6175,8 +6180,7 @@
 							"key": "level",
 							"value": "1",
 							"type": "text",
-							"description": "",
-							"disabled": true
+							"description": ""
 						},
 						{
 							"key": "time_delete",
@@ -6188,7 +6192,8 @@
 							"key": "ids",
 							"value": "189,175,173,36,3,2",
 							"type": "text",
-							"description": ""
+							"description": "",
+							"disabled": true
 						}
 					]
 				},
@@ -6838,52 +6843,62 @@
 						{
 							"key": "app_type",
 							"value": "biz",
+							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "test_mode",
 							"value": "on",
 							"type": "text",
+							"description": "",
 							"disabled": true
 						},
 						{
 							"key": "user_id",
 							"value": "1",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "biz_id",
 							"value": "2",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "category_id",
 							"value": "1",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "category_biz_id",
 							"value": "3",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "url_image_main",
 							"value": "url_image_main/201712/1218/214548.png",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "name",
 							"value": "满1000免运费",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "price",
 							"value": "1",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "stocks",
 							"value": "0",
+							"description": "",
 							"type": "text"
 						}
 					]
@@ -7345,11 +7360,13 @@
 						{
 							"key": "user_id",
 							"value": "1",
+							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "biz_id",
 							"value": "2",
+							"description": "",
 							"type": "text"
 						}
 					]
@@ -7854,12 +7871,7 @@
 			"name": "MTR3 素材创建",
 			"request": {
 				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/x-www-form-urlencoded"
-					}
-				],
+				"header": [],
 				"body": {
 					"mode": "formdata",
 					"formdata": [
@@ -7890,7 +7902,7 @@
 						"index"
 					]
 				},
-				"description": null
+				"description": ""
 			},
 			"response": []
 		},
@@ -8668,7 +8680,8 @@
 						{
 							"key": "cart_string",
 							"value": "21|92|0|1,21|90|0|1,21|91|0|3",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "item_id",
@@ -11724,68 +11737,81 @@
 						{
 							"key": "app_type",
 							"value": "client",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "test_mode",
 							"value": "on",
 							"type": "text",
+							"description": "",
 							"disabled": true
 						},
 						{
 							"key": "limit",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "offset",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "refund_id",
 							"value": "12",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "biz_id",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "user_id",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "content",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "time_create",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "time_delete",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "time_edit",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "creator_id",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "operator_id",
 							"value": "",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						}
 					]
 				},
@@ -12141,7 +12167,7 @@
 					]
 				},
 				"url": {
-					"raw": "https://api.517ybang.com/page/create",
+					"raw": "https://api.517ybang.com/region/create",
 					"protocol": "https",
 					"host": [
 						"api",
@@ -12149,7 +12175,7 @@
 						"com"
 					],
 					"path": [
-						"page",
+						"region",
 						"create"
 					]
 				},
@@ -12262,27 +12288,32 @@
 						{
 							"key": "app_type",
 							"value": "admin",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "user_id",
 							"value": "1",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "ids",
 							"value": "1,2",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "operation",
 							"value": "restore",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						},
 						{
 							"key": "password",
 							"value": "123456",
-							"type": "text"
+							"type": "text",
+							"description": ""
 						}
 					]
 				},
@@ -13444,6 +13475,7 @@
 						{
 							"key": "id",
 							"value": "2",
+							"description": "",
 							"type": "text"
 						},
 						{
@@ -13581,11 +13613,13 @@
 						{
 							"key": "limit",
 							"value": "3",
+							"description": "",
 							"type": "text"
 						},
 						{
 							"key": "offset",
 							"value": "0",
+							"description": "",
 							"type": "text"
 						}
 					]
