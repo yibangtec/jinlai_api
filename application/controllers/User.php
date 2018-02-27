@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'password', 'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob', 'avatar', 'level', 'mobile', 'email', 'wechat_union_id', 'address_id', 'bank_name', 'bank_account', 'promoter_id', 'last_login_timestamp', 'last_login_ip',
+			'password', 'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob', 'avatar', 'level', 'mobile', 'email', 'wechat_union_id', 'address_id', 'bank_name', 'bank_account', 'identity_id', 'promoter_id', 'last_login_timestamp', 'last_login_ip',
 			'time_create', 'time_delete', 'time_edit', 'operator_id',
 		);
 
@@ -22,7 +22,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'user_id', 'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob', 'avatar', 'level', 'mobile', 'email', 'wechat_union_id', 'address_id', 'bank_name', 'bank_account', 'promoter_id', 'last_login_timestamp', 'last_login_ip',
+			'user_id', 'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob', 'avatar', 'level', 'mobile', 'email', 'wechat_union_id', 'address_id', 'bank_name', 'bank_account', 'identity_id', 'promoter_id', 'last_login_timestamp', 'last_login_ip',
 			'time_create', 'time_delete', 'time_edit', 'operator_id',
 		);
 
@@ -263,8 +263,6 @@
 			$this->form_validation->set_rules('address_id', '默认地址', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|min_length[3]');
 			$this->form_validation->set_rules('bank_account', '开户行账号', 'trim');
-			$this->form_validation->set_rules('code_ssn', '身份证号', 'trim|exact_length[18]');
-			$this->form_validation->set_rules('url_image_id', '身份证照片', 'trim');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -374,6 +372,10 @@
 
 			endif;
 		} // end edit_bulk
+
+        /*
+         * 以下为工具方法
+         */
 
 	} // end class User
 

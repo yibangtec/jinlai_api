@@ -14,29 +14,28 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'identity_id', 'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+			'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'identity_id', 'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+			'identity_id', 'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
 		/**
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id',
-			'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
+            'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
 		/**
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
+            'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
 		);
 
 		/**
@@ -44,7 +43,7 @@
 		 */
 		protected $names_edit_required = array(
 			'user_id', 'id',
-			'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
+            'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
 		);
 
 		public function __construct()
@@ -181,17 +180,17 @@
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
 			$this->form_validation->set_rules('biz_id', '所属商家ID', 'trim|required');
 			$this->form_validation->set_rules('name', '主体名称', 'trim|required');
-			$this->form_validation->set_rules('fullname_owner', '法人姓名', 'trim|required');
-			$this->form_validation->set_rules('fullname_auth', '经办人姓名', 'trim|required');
-			$this->form_validation->set_rules('code_license', '工商注册号', 'trim|required');
-			$this->form_validation->set_rules('code_ssn_owner', '法人身份证号', 'trim|required');
-			$this->form_validation->set_rules('code_ssn_auth', '经办人身份证号', 'trim|required');
-			$this->form_validation->set_rules('url_image_license', '营业执照', 'trim|required');
-			$this->form_validation->set_rules('url_image_owner_id', '法人身份证', 'trim|required');
-			$this->form_validation->set_rules('url_image_auth_id', '经办人身份证', 'trim|required');
-			$this->form_validation->set_rules('url_image_auth_doc', '经办人授权书', 'trim|required');
-			$this->form_validation->set_rules('url_verify_photo', '经办人持身份证照片', 'trim|required');
-			$this->form_validation->set_rules('nation', '国家', 'trim|');
+            $this->form_validation->set_rules('fullname_owner', '法人姓名', 'trim|required|max_length[15]');
+            $this->form_validation->set_rules('fullname_auth', '经办人姓名', 'trim|required|max_length[15]');
+            $this->form_validation->set_rules('code_license', '工商注册号', 'trim|required|min_length[15]|max_length[18]|is_unique['.$this->table_name.'.code_license]');
+            $this->form_validation->set_rules('code_ssn_owner', '法人身份证号', 'trim|required|exact_length[18]|is_unique['.$this->table_name.'.code_ssn_owner]');
+            $this->form_validation->set_rules('code_ssn_auth', '经办人身份证号', 'trim|required|exact_length[18]|is_unique['.$this->table_name.'.code_ssn_auth]');
+			$this->form_validation->set_rules('url_image_license', '营业执照', 'trim|required|max_length[255]');
+			$this->form_validation->set_rules('url_image_owner_ssn', '法人身份证', 'trim|required|max_length[255]');
+			$this->form_validation->set_rules('url_image_auth_ssn', '经办人身份证', 'trim|required|max_length[255]');
+			$this->form_validation->set_rules('url_image_auth_doc', '经办人授权书', 'trim|required|max_length[255]');
+			$this->form_validation->set_rules('url_verify_photo', '经办人持身份证照片', 'trim|required|max_length[255]');
+            $this->form_validation->set_rules('nation', '国家', 'trim');
 			$this->form_validation->set_rules('province', '省', 'trim|required');
 			$this->form_validation->set_rules('city', '市', 'trim|required');
 			$this->form_validation->set_rules('county', '区', 'trim|required');
@@ -212,7 +211,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-				    'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
+				    'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -259,24 +258,24 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('name', '主体名称', 'trim|required');
-			$this->form_validation->set_rules('fullname_owner', '法人姓名', 'trim|required');
-			$this->form_validation->set_rules('fullname_auth', '经办人姓名', 'trim|required');
-			$this->form_validation->set_rules('code_license', '工商注册号', 'trim|required');
-			$this->form_validation->set_rules('code_ssn_owner', '法人身份证号', 'trim|required');
-			$this->form_validation->set_rules('code_ssn_auth', '经办人身份证号', 'trim|required');
-			$this->form_validation->set_rules('url_image_license', '营业执照', 'trim|required');
-			$this->form_validation->set_rules('url_image_owner_id', '法人身份证', 'trim|required');
-			$this->form_validation->set_rules('url_image_auth_id', '经办人身份证', 'trim|required');
-			$this->form_validation->set_rules('url_image_auth_doc', '经办人授权书', 'trim|required');
-			$this->form_validation->set_rules('url_verify_photo', '经办人持身份证照片', 'trim|required');
-			$this->form_validation->set_rules('nation', '国家', 'trim|');
-			$this->form_validation->set_rules('province', '省', 'trim|required');
-			$this->form_validation->set_rules('city', '市', 'trim|required');
-			$this->form_validation->set_rules('county', '区', 'trim|required');
-			$this->form_validation->set_rules('street', '具体地址', 'trim|required');
-			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|required');
-			$this->form_validation->set_rules('bank_account', '开户行账号', 'trim|required');
+            $this->form_validation->set_rules('name', '主体名称', 'trim|required');
+            $this->form_validation->set_rules('fullname_owner', '法人姓名', 'trim|required|max_length[15]');
+            $this->form_validation->set_rules('fullname_auth', '经办人姓名', 'trim|required|max_length[15]');
+            $this->form_validation->set_rules('code_license', '工商注册号', 'trim|required|min_length[15]|max_length[18]|is_unique['.$this->table_name.'.code_license]');
+            $this->form_validation->set_rules('code_ssn_owner', '法人身份证号', 'trim|required|exact_length[18]|is_unique['.$this->table_name.'.code_ssn_owner]');
+            $this->form_validation->set_rules('code_ssn_auth', '经办人身份证号', 'trim|required|exact_length[18]|is_unique['.$this->table_name.'.code_ssn_auth]');
+            $this->form_validation->set_rules('url_image_license', '营业执照', 'trim|required|max_length[255]');
+            $this->form_validation->set_rules('url_image_owner_ssn', '法人身份证', 'trim|required|max_length[255]');
+            $this->form_validation->set_rules('url_image_auth_ssn', '经办人身份证', 'trim|required|max_length[255]');
+            $this->form_validation->set_rules('url_image_auth_doc', '经办人授权书', 'trim|required|max_length[255]');
+            $this->form_validation->set_rules('url_verify_photo', '经办人持身份证照片', 'trim|required|max_length[255]');
+            $this->form_validation->set_rules('nation', '国家', 'trim');
+            $this->form_validation->set_rules('province', '省', 'trim|required');
+            $this->form_validation->set_rules('city', '市', 'trim|required');
+            $this->form_validation->set_rules('county', '区', 'trim|required');
+            $this->form_validation->set_rules('street', '具体地址', 'trim|required');
+            $this->form_validation->set_rules('bank_name', '开户行名称', 'trim|required');
+            $this->form_validation->set_rules('bank_account', '开户行账号', 'trim|required');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -291,7 +290,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-				    'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
+                    'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -310,104 +309,6 @@
 				endif;
 			endif;
 		} // end edit
-		
-		/**
-		 * 5 编辑单行数据特定字段
-		 *
-		 * 修改单行数据的单一字段值
-		 */
-		public function edit_certain()
-		{
-            // 操作可能需要检查客户端及设备信息
-            $type_allowed = array('biz',); // 客户端类型
-            $this->client_check($type_allowed);
-
-			// 管理类客户端操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
-
-			// 检查必要参数是否已传入
-			$required_params = $this->names_edit_certain_required;
-			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
-				if ( $param !== 'value' && !isset( ${$param} ) ): // value 可以为空；必要字段会在字段验证中另行检查
-					$this->result['status'] = 400;
-					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-					exit();
-				endif;
-			endforeach;
-
-			// 检查目标字段是否可编辑
-			if ( ! in_array($name, $this->names_edit_allowed) ):
-				$this->result['status'] = 431;
-				$this->result['content']['error']['message'] = '该字段不可被修改';
-				exit();
-			endif;
-
-			// 根据客户端类型检查是否可编辑
-			/*
-			$names_limited = array(
-				'biz' => array('name1', 'name2', 'name3', 'name4'),
-				'admin' => array('name1', 'name2', 'name3', 'name4'),
-			);
-			if ( in_array($name, $names_limited[$this->app_type]) ):
-				$this->result['status'] = 432;
-				$this->result['content']['error']['message'] = '该字段不可被当前类型的客户端修改';
-				exit();
-			endif;
-			*/
-
-			// 初始化并配置表单验证库
-			$this->load->library('form_validation');
-			$this->form_validation->set_error_delimiters('', '');
-			// 动态设置待验证字段名及字段值
-			$data_to_validate["{$name}"] = $value;
-			$this->form_validation->set_data($data_to_validate);
-			$this->form_validation->set_rules('name', '主体名称', 'trim|required');
-			$this->form_validation->set_rules('fullname_owner', '法人姓名', 'trim|required');
-			$this->form_validation->set_rules('fullname_auth', '经办人姓名', 'trim|required');
-			$this->form_validation->set_rules('code_license', '工商注册号', 'trim|required');
-			$this->form_validation->set_rules('code_ssn_owner', '法人身份证号', 'trim|required');
-			$this->form_validation->set_rules('code_ssn_auth', '经办人身份证号', 'trim|required');
-			$this->form_validation->set_rules('url_image_license', '营业执照', 'trim|required');
-			$this->form_validation->set_rules('url_image_owner_id', '法人身份证', 'trim|required');
-			$this->form_validation->set_rules('url_image_auth_id', '经办人身份证', 'trim|required');
-			$this->form_validation->set_rules('url_image_auth_doc', '经办人授权书', 'trim|required');
-			$this->form_validation->set_rules('url_verify_photo', '经办人持身份证照片', 'trim|required');
-			$this->form_validation->set_rules('nation', '国家', 'trim|');
-			$this->form_validation->set_rules('province', '省', 'trim|required');
-			$this->form_validation->set_rules('city', '市', 'trim|required');
-			$this->form_validation->set_rules('county', '区', 'trim|required');
-			$this->form_validation->set_rules('street', '具体地址', 'trim|required');
-			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|required');
-			$this->form_validation->set_rules('bank_account', '开户行账号', 'trim|required');
-
-			// 若表单提交不成功
-			if ($this->form_validation->run() === FALSE):
-				$this->result['status'] = 401;
-				$this->result['content']['error']['message'] = validation_errors();
-
-			else:
-				// 需要编辑的数据
-				$data_to_edit['operator_id'] = $user_id;
-				$data_to_edit[$name] = $value;
-
-				// 获取ID
-				$result = $this->basic_model->edit($id, $data_to_edit);
-
-				if ($result !== FALSE):
-					$this->result['status'] = 200;
-					$this->result['content']['id'] = $id;
-					$this->result['content']['message'] = '编辑成功';
-
-				else:
-					$this->result['status'] = 434;
-					$this->result['content']['error']['message'] = '编辑失败';
-
-				endif;
-			endif;
-		} // end edit_certain
 
 		/**
 		 * 6 编辑多行数据特定字段
@@ -417,7 +318,7 @@
 		public function edit_bulk()
 		{
             // 操作可能需要检查客户端及设备信息
-            $type_allowed = array('biz',); // 客户端类型
+            $type_allowed = array('admin',); // 客户端类型
             $this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -490,7 +391,10 @@
 
 			endif;
 		} // end edit_bulk
-		
+
+        /*
+         * 以下为工具方法
+         */
 
 	} // end class Identity_biz
 

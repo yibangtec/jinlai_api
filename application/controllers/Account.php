@@ -21,7 +21,7 @@
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
-		}
+		} // end __construct
 
 		/**
 		 * ACT1 短信登录/注册
@@ -495,7 +495,7 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 待验证的表单项
-			$this->form_validation->set_rules('wechat_union_id', '微信UnionID', 'trim|max_length[29]');
+			$this->form_validation->set_rules('wechat_union_id', '微信UnionID', 'trim|required|max_length[29]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -505,9 +505,7 @@
 
 			else:
 				// 获取用户/检查用户是否存在
-				if ( !empty($wechat_union_id) ):
-					$user_info = $this->check_wechat($wechat_union_id);
-				endif;
+                $user_info = $this->check_wechat($wechat_union_id);
 
 				// 若用户存在，返回用户信息
 				if ( empty($user_info) ):
@@ -640,7 +638,7 @@
                 // 获取推广者ID（若有）
                 $data_to_create['promoter_id'] = $this->input->post('promoter_id');
 
-                // 根据当前时间戳生成默认昵称（允许重复）
+                // 根据当前UNIX时间戳生成默认昵称（允许重复）
                 $data_to_create['nickname'] = 'user'. substr(time(), 2, 8);
 
 				// 创建并返回行ID

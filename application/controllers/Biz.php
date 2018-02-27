@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'category_id', 'name', 'longitude', 'latitude', 'nation', 'province', 'city', 'county', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+			'category_id', 'name', 'brief_name', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
 		/**
@@ -23,11 +23,7 @@
 		protected $names_to_return = array(
 			'biz_id', 'category_id', 'name', 'brief_name', 'url_name', 'url_logo', 'slogan', 'description', 'notification',
 			'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
-			'fullname_owner', 'fullname_auth',
-			'code_license', 'code_ssn_owner',  'code_ssn_auth',
-			'bank_name', 'bank_account',
-			'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
-			'longitude', 'latitude', 'nation', 'province', 'city', 'county', 'street',
+            'url_image_product', 'url_image_produce', 'url_image_retail',
             'freight_template_id', 'ornament_id',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
@@ -38,7 +34,6 @@
 		protected $names_create_required = array(
 			'user_id',
             'category_id', 'name', 'brief_name', 'tel_public', 'tel_protected_biz',
-			'fullname_owner', 'code_license', 'code_ssn_owner',
 		);
 
         /**
@@ -55,10 +50,7 @@
 		protected $names_edit_allowed = array(
             'category_id', 'name', 'brief_name', 'url_name', 'url_logo', 'slogan', 'description', 'notification',
 			'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
-			'fullname_owner', 'fullname_auth',
-			'code_license', 'code_ssn_owner', 'code_ssn_auth',
-			'bank_name', 'bank_account', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
-			'longitude', 'latitude', 'nation', 'province', 'city', 'county', 'street',
+			'url_image_product', 'url_image_produce', 'url_image_retail',
             'freight_template_id', 'ornament_id',
 		);
 
@@ -66,7 +58,7 @@
 		 * 编辑单行时必要的字段名
 		 */
 		protected $names_edit_required = array(
-			'user_id', 'id', 'tel_public', 'fullname_owner', 'code_license', 'code_ssn_owner',
+			'user_id', 'id', 'tel_public',
 		);
 
 		public function __construct()
@@ -254,29 +246,13 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
             $this->form_validation->set_rules('category_id', '主营商品类目', 'trim|required|is_natural_no_zero');
-            $this->form_validation->set_rules('url_logo', '店铺LOGO', 'trim|max_length[255]');
-			$this->form_validation->set_rules('name', '商家全称', 'trim|required|min_length[5]|max_length[35]|is_unique[biz.name]');
-			$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[20]|is_unique[biz.brief_name]');
+            $this->form_validation->set_rules('url_logo', '商家LOGO', 'trim|max_length[255]');
+			$this->form_validation->set_rules('name', '商家全称', 'trim|required|min_length[5]|max_length[35]|is_unique['.$this->table_name.'.name]');
+			$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[20]|is_unique['.$this->table_name.'.brief_name]');
 			$this->form_validation->set_rules('description', '简介', 'trim|max_length[255]');
-			$this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]|is_unique[biz.tel_public]');
-			$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|required|is_natural|exact_length[11]|is_unique[biz.tel_protected_biz]');
-
-			$this->form_validation->set_rules('fullname_owner', '法人姓名', 'trim|required|max_length[15]');
-			$this->form_validation->set_rules('fullname_auth', '经办人姓名', 'trim|max_length[15]');
-
-			$this->form_validation->set_rules('code_license', '工商注册号', 'trim|required|min_length[15]|max_length[18]|is_unique[biz.code_license]');
-			$this->form_validation->set_rules('code_ssn_owner', '法人身份证号', 'trim|required|exact_length[18]|is_unique[biz.code_ssn_owner]');
-			$this->form_validation->set_rules('code_ssn_auth', '经办人身份证号', 'trim|exact_length[18]|is_unique[biz.code_ssn_auth]');
-
-			$this->form_validation->set_rules('url_image_license', '营业执照', 'trim|max_length[255]');
-			$this->form_validation->set_rules('url_image_owner_id', '法人身份证', 'trim|max_length[255]');
-			$this->form_validation->set_rules('url_image_auth_id', '经办人身份证', 'trim|max_length[255]');
-			$this->form_validation->set_rules('url_image_auth_doc', '经办人授权书', 'trim|max_length[255]');
-
-			$this->form_validation->set_rules('tel_protected_fiscal', '财务联系手机号', 'trim|exact_length[11]|is_natural');
-			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|min_length[3]|max_length[20]');
-			$this->form_validation->set_rules('bank_account', '开户行账号', 'trim|max_length[30]|is_unique[biz.bank_account]');
-
+			$this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]|is_unique['.$this->table_name.'.tel_public]');
+			$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|required|exact_length[11]|is_natural|is_unique['.$this->table_name.'.tel_protected_biz]');
+			$this->form_validation->set_rules('tel_protected_fiscal', '财务联系手机号', 'trim|required|exact_length[11]|is_natural|is_unique['.$this->table_name.'.tel_protected_fiscal]');
 			$this->form_validation->set_rules('url_image_product', '产品', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_image_produce', '工厂/产地', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_image_retail', '门店/柜台', 'trim|max_length[255]');
@@ -293,11 +269,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-                    'category_id', 'url_logo', 'name', 'brief_name', 'tel_public', 'tel_protected_biz',
-					'description', 'bank_name', 'bank_account',
-					'fullname_owner', 'fullname_auth',
-					'code_license', 'code_ssn_owner', 'code_ssn_auth',
-					'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc',
+                    'category_id', 'url_logo', 'name', 'brief_name', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_fiscal',
 					'url_image_produce', 'url_image_retail', 'url_image_product',
 				);
 				foreach ($data_need_no_prepare as $name)
@@ -312,22 +284,8 @@
 					$this->result['content']['id'] = $biz_id;
 					$this->result['content']['message'] = '创建商家成功，我们将尽快受理您的入驻申请';
 
-					$mobile = $tel_protected_biz;
-
-					// 创建员工
-					$stuff_id = $this->stuff_create($user_id, $biz_id, $mobile);
-					if ($stuff_id !== FALSE):
-						$this->result['content']['message'] .= '，您已成为该商家的管理员';
-					endif;
-
-					// 发送商家通知短信
-					$content = '恭喜您成功创建商家，我们已为您生成入驻申请并安排事务最少的同事为您受理，敬请稍候。';
-					@$this->sms_send($mobile, $content); // 容忍发送失败
-
-					// 发送招商经理通知短信
-					$mobile = '15192098644';
-					$content = '商家“'.$this->input->post('brief_name').'(商家编号'.$biz_id.')”已提交入驻申请，请尽快跟进，对方商务联系手机号为'.$tel_protected_biz.'。';
-					@$this->sms_send($mobile, $content); // 容忍发送失败
+                    // 创建当前用户为该商家的管理员
+                    $this->admin_stuff_create($user_id, $biz_id, $tel_protected_biz);
 
 				else:
 					$this->result['status'] = 424;
@@ -368,9 +326,9 @@
             $this->load->library('form_validation');
             $this->form_validation->set_error_delimiters('', '');
             $this->form_validation->set_rules('category_id', '主营商品类目', 'trim|required|is_natural_no_zero');
-            $this->form_validation->set_rules('url_logo', '店铺LOGO', 'trim|max_length[255]');
-            $this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[20]|is_unique[biz.brief_name]');
-            $this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]|is_unique[biz.tel_public]');
+            $this->form_validation->set_rules('url_logo', '商家LOGO', 'trim|max_length[255]');
+            $this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[20]|is_unique['.$this->table_name.'.brief_name]');
+            $this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]|is_unique['.$this->table_name.'.tel_public]');
 
             // 若表单提交不成功
             if ($this->form_validation->run() === FALSE):
@@ -402,22 +360,8 @@
                     $this->result['content']['id'] = $biz_id;
                     $this->result['content']['message'] = '创建商家成功，我们将尽快受理您的入驻申请';
 
-                    $mobile = $tel_public;
-
-                    // 创建员工
-                    $stuff_id = $this->stuff_create($user_id, $biz_id, $mobile);
-                    if ($stuff_id !== FALSE):
-                        $this->result['content']['message'] .= '，您已成为该商家的管理员';
-                    endif;
-
-                    // 发送商家通知短信
-                    $content = '恭喜您成功创建商家，我们已为您生成入驻申请并安排事务最少的同事为您受理，敬请稍候。';
-                    @$this->sms_send($mobile, $content); // 容忍发送失败
-
-                    // 发送招商经理通知短信
-                    $mobile = '15192098644';
-                    $content = '商家“'.$this->input->post('brief_name').'(商家编号'.$biz_id.')”已提交入驻申请，请尽快跟进，对方商务联系手机号为'.$mobile.'。';
-                    @$this->sms_send($mobile, $content); // 容忍发送失败
+                    // 创建当前用户为该商家的管理员
+                    $this->admin_stuff_create($user_id, $biz_id, $tel_public);
 
                 else:
                     $this->result['status'] = 424;
@@ -795,6 +739,24 @@
 
             return $result;
         } // end stuff_exist
+
+        // 创建管理员
+        private function admin_stuff_create($user_id, $biz_id, $mobile)
+        {
+            // 创建员工
+            $stuff_id = $this->stuff_create($user_id, $biz_id, $mobile);
+            if ($stuff_id !== FALSE)
+                $this->result['content']['message'] .= '，您已成为该商家的管理员';
+
+            // 发送商家通知短信
+            $sms_content = '恭喜您成功创建商家，我们已为您生成入驻申请并安排事务最少的同事为您受理，敬请稍候。';
+            @$this->sms_send($mobile, $sms_content); // 容忍发送失败
+
+            // 发送招商经理通知短信
+            $mobile = '15192098644';
+            $sms_content = '商家“'.$this->input->post('brief_name').'(商家编号'.$biz_id.')”已提交入驻申请，请尽快跟进，对方商务联系手机号为'.$mobile.'。';
+            @$this->sms_send($mobile, $sms_content); // 容忍发送失败
+        } // end admin_stuff_create
 
         // 创建员工
         private function stuff_create($user_id, $biz_id, $mobile)

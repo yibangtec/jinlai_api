@@ -222,13 +222,15 @@
 							"formdata": [
 								{
 									"key": "app_type",
-									"value": "client",
-									"type": "text"
+									"value": "biz_id",
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "wechat_union_id",
-									"value": "o6_bmasdasdsad6_2sgVt7hMZOPfL",
-									"type": "text"
+									"value": "o0geuv1gYOza99ncltzFyN6f1SGQ",
+									"type": "text",
+									"description": ""
 								}
 							]
 						},
