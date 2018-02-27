@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Item_category_biz/IBK 店内分类类
+	 * Item_category_biz/IBK 商品分类（商家级）类
 	 *
 	 * 商家级商品分类
 	 *

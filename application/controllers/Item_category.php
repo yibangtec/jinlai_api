@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Item_category/ITK 系统分类类
+	 * Item_category/ITK 商品分类（系统级）类
 	 *
 	 * 系统级商品分类
 	 *

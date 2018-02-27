@@ -66,7 +66,7 @@
 		} // end create
 
 		/**
-		 * 2 验证图片验证码有效性
+		 * 2 验证验证码有效性
 		 *
 		 * @params $captcha 验证码
 		 * @params $sms_id 短信ID

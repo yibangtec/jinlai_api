@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Page 页面类
+	 * Page/PGE 页面类
      *
      * 平台级页面，商家级页面通过Page_biz类操作
 	 *

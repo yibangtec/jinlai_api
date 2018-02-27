@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 /**
- * Comment_item 商品评论类
+ * Comment_item/CMI 商品评论类
  *
  * @version 1.0.0
  * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>

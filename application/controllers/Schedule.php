@@ -82,7 +82,8 @@
 			// 发送短信
             $this->sms_mobile = '17664073966';
             $this->sms_content = '现在时间 '. date('Y-m-d H:i:s');
-            if (date('H') === '18')
+            $hour_to_remind = array('00', '12', '18',);
+            if ( in_array(date('H'), $hour_to_remind) )
                 @$this->sms_send();
 
 		} // end hour
