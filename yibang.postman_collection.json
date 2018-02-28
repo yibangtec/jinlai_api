@@ -13566,7 +13566,7 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "client",
+									"key": "app_type",
 									"value": "client",
 									"type": "text"
 								}
@@ -13583,6 +13583,85 @@
 							"path": [
 								"user",
 								"count"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "USR1 用户列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "client",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/user/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"user",
+								"index"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "USR2 用户详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/user/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"user",
+								"detail"
 							]
 						},
 						"description": null
@@ -13655,85 +13734,6 @@
 							"path": [
 								"user",
 								"edit"
-							]
-						},
-						"description": null
-					},
-					"response": []
-				},
-				{
-					"name": "USR2 用户详情",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "1",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/user/detail",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"user",
-								"detail"
-							]
-						},
-						"description": null
-					},
-					"response": []
-				},
-				{
-					"name": "USR1 用户列表",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "client",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "limit",
-									"value": "3",
-									"type": "text"
-								},
-								{
-									"key": "offset",
-									"value": "0",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/user/index",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"user",
-								"index"
 							]
 						},
 						"description": null

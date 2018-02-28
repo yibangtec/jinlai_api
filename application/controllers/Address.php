@@ -433,7 +433,7 @@
         /*
          * 以下为工具方法
          */
-		
+
 		// 设置当前地址为默认地址
 		protected function default_this($address_id, $user_id)
 		{
@@ -444,6 +444,7 @@
 				'operator_id' => $user_id,
 			);
 			$result = $this->basic_model->edit($user_id, $data_to_edit);
+
 			return $result;
 		} // end default_this
 

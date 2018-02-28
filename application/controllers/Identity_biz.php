@@ -195,8 +195,8 @@
 			$this->form_validation->set_rules('city', '市', 'trim|required');
 			$this->form_validation->set_rules('county', '区', 'trim|required');
 			$this->form_validation->set_rules('street', '具体地址', 'trim|required');
-			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|required');
-			$this->form_validation->set_rules('bank_account', '开户行账号', 'trim|required');
+			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|required|max_length[20]');
+			$this->form_validation->set_rules('bank_account', '开户行账号', 'trim|required|max_length[30]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -274,8 +274,8 @@
             $this->form_validation->set_rules('city', '市', 'trim|required');
             $this->form_validation->set_rules('county', '区', 'trim|required');
             $this->form_validation->set_rules('street', '具体地址', 'trim|required');
-            $this->form_validation->set_rules('bank_name', '开户行名称', 'trim|required');
-            $this->form_validation->set_rules('bank_account', '开户行账号', 'trim|required');
+            $this->form_validation->set_rules('bank_name', '开户行名称', 'trim|required|max_length[20]');
+            $this->form_validation->set_rules('bank_account', '开户行账号', 'trim|required|max_length[30]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):

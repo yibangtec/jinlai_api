@@ -14,15 +14,14 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'password', 'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob', 'avatar', 'level', 'mobile', 'email', 'wechat_union_id', 'address_id', 'bank_name', 'bank_account', 'identity_id', 'promoter_id', 'last_login_timestamp', 'last_login_ip',
-			'time_create', 'time_delete', 'time_edit', 'operator_id',
+			'password', 'nickname', 'lastname', 'firstname', 'gender', 'dob', 'avatar', 'level', 'address_id', 'promoter_id', 'last_login_timestamp', 'last_login_ip', 'time_create', 'time_delete', 'time_edit', 'operator_id',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'user_id', 'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob', 'avatar', 'level', 'mobile', 'email', 'wechat_union_id', 'address_id', 'bank_name', 'bank_account', 'identity_id', 'promoter_id', 'last_login_timestamp', 'last_login_ip',
+			'user_id', 'identity_id', 'mobile', 'email', 'wechat_union_id', 'nickname', 'lastname', 'firstname', 'gender', 'dob', 'avatar', 'level', 'address_id', 'bank_name', 'bank_account', 'promoter_id', 'last_login_timestamp', 'last_login_ip',
 			'time_create', 'time_delete', 'time_edit', 'operator_id',
 		);
 
@@ -37,15 +36,15 @@
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'nickname', 'lastname', 'firstname', 'code_ssn', 'url_image_id', 'gender', 'dob', 'avatar', 'email', 'address_id', 'bank_name', 'bank_account',
+			'nickname', 'lastname', 'firstname', 'gender', 'dob', 'avatar', 'bank_name', 'bank_account',
 		);
 
 		/**
 		 * 完整编辑单行时必要的字段名
 		 */
 		protected $names_edit_required = array(
-			'user_id', 'id',
-		);
+			'user_id', 'id', 'nickname',
+        );
 
 		public function __construct()
 		{
@@ -176,12 +175,14 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('nickname', '昵称', 'trim|max_length[12]');
+			$this->form_validation->set_rules('nickname', '昵称', 'trim|required|max_length[12]');
 			$this->form_validation->set_rules('lastname', '姓氏', 'trim|max_length[9]');
 			$this->form_validation->set_rules('firstname', '名', 'trim|max_length[6]');
 			$this->form_validation->set_rules('gender', '性别', 'trim|in_list[男,女]');
-			$this->form_validation->set_rules('dob', '出生日期', 'trim');
-			$this->form_validation->set_rules('avatar', '头像', 'trim');
+			$this->form_validation->set_rules('dob', '出生日期', 'trim|max_length[10]');
+			$this->form_validation->set_rules('avatar', '头像', 'trim|max_length[255]');
+            $this->form_validation->set_rules('bank_name', '开户行名称', 'trim|max_length[20]');
+            $this->form_validation->set_rules('bank_account', '开户行账号', 'trim|max_length[30]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -196,7 +197,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'nickname', 'lastname', 'firstname', 'gender', 'avatar',
+					'nickname', 'lastname', 'firstname', 'gender', 'avatar', 'bank_name', 'bank_account',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -251,18 +252,16 @@
 			// 动态设置待验证字段名及字段值
 			$data_to_validate["{$name}"] = $value;
 			$this->form_validation->set_data($data_to_validate);
-			$this->form_validation->set_rules('nickname', '昵称', 'trim|max_length[12]');
-			$this->form_validation->set_rules('lastname', '姓氏', 'trim|max_length[9]');
-			$this->form_validation->set_rules('firstname', '名', 'trim|max_length[6]');
-			$this->form_validation->set_rules('gender', '性别', 'trim|in_list[男,女]');
-			$this->form_validation->set_rules('dob', '出生日期', 'trim');
-			$this->form_validation->set_rules('avatar', '头像', 'trim');
-
-			$this->form_validation->set_rules('email', '电子邮件地址', 'trim|valid_email');
-			$this->form_validation->set_rules('wechat_union_id', '微信UnionID', 'trim');
-			$this->form_validation->set_rules('address_id', '默认地址', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|min_length[3]');
-			$this->form_validation->set_rules('bank_account', '开户行账号', 'trim');
+            $this->form_validation->set_rules('nickname', '昵称', 'trim|max_length[12]');
+            $this->form_validation->set_rules('lastname', '姓氏', 'trim|max_length[9]');
+            $this->form_validation->set_rules('firstname', '名', 'trim|max_length[6]');
+            $this->form_validation->set_rules('gender', '性别', 'trim|in_list[男,女]');
+            $this->form_validation->set_rules('dob', '出生日期', 'trim|max_length[10]');
+            $this->form_validation->set_rules('avatar', '头像', 'trim|max_length[255]');
+            $this->form_validation->set_rules('address_id', '默认地址', 'trim|is_natural_no_zero');
+//            $this->form_validation->set_rules('bank_id', '默认银行账号', 'trim|is_natural_no_zero'); // 若后期有需要，可考虑支持单用户多银行账号
+            $this->form_validation->set_rules('bank_name', '开户行名称', 'trim|max_length[20]');
+            $this->form_validation->set_rules('bank_account', '开户行账号', 'trim|max_length[30]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):

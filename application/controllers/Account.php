@@ -67,6 +67,7 @@
 							exit();
 
 						else:
+                            $user_info['stuff_id'] = $stuff['stuff_id'];
 							$user_info['biz_id'] = $stuff['biz_id'];
 							$user_info['role'] = $stuff['role'];
 							$user_info['level'] = $stuff['level'];
@@ -326,6 +327,7 @@
 									exit();
 
 								else:
+                                    $user_info['stuff_id'] = $stuff['stuff_id'];
 									$user_info['biz_id'] = $stuff['biz_id'];
 									$user_info['role'] = $stuff['role'];
 									$user_info['level'] = $stuff['level'];
@@ -536,6 +538,7 @@
 								exit();
 							
 							else:
+                                $user_info['stuff_id'] = $stuff['stuff_id'];
 								$user_info['biz_id'] = $stuff['biz_id'];
 								$user_info['role'] = $stuff['role'];
 								$user_info['level'] = $stuff['level'];
@@ -624,8 +627,8 @@
 			// 动态设置待验证字段名及字段值
 			$data_to_validate["{$name}"] = $data_to_create[$name];
 			$this->form_validation->set_data($data_to_validate);
-			$this->form_validation->set_rules('mobile', '手机号', 'trim|required|exact_length[11]|is_natural_no_zero|is_unique[user.mobile]');
-			//$this->form_validation->set_rules('email', 'Email', 'trim|required|max_length[40]|valid_email|is_unique[user.email]');
+			$this->form_validation->set_rules('mobile', '手机号', 'trim|required|exact_length[11]|is_natural_no_zero|is_unique['.$this->table_name.'.mobile]');
+			//$this->form_validation->set_rules('email', 'Email', 'trim|required|max_length[40]|valid_email|is_unique['.$this->table_name.'.email]');
             $this->form_validation->set_rules('promoter_id', '推广者', 'trim|is_natural_no_zero');
 
 			// 若表单提交不成功
@@ -638,8 +641,9 @@
                 // 获取推广者ID（若有）
                 $data_to_create['promoter_id'] = $this->input->post('promoter_id');
 
-                // 根据当前UNIX时间戳生成默认昵称（允许重复）
-                $data_to_create['nickname'] = 'user'. substr(time(), 2, 8);
+                // 根据当前UNIX时间戳生成默认昵称（允许重复），及注册时间
+                $data_to_create['time_create'] = time();
+                $data_to_create['nickname'] = 'user'. substr($data_to_create['time_create'], 2, 8);
 
 				// 创建并返回行ID
 				return $this->basic_model->create($data_to_create, TRUE);

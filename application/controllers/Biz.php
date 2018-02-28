@@ -734,7 +734,11 @@
         {
             // 切换数据库
             $this->switch_model('stuff', 'stuff_id');
-            $result = $this->basic_model->find('user_id', $user_id);
+            $condition = array(
+                'user_id' => $user_id,
+                'time_delete' => 'IS NOT NULL'
+            );
+            $result = $this->basic_model->match($condition);
             $this->reset_model();
 
             return $result;
@@ -745,8 +749,10 @@
         {
             // 创建员工
             $stuff_id = $this->stuff_create($user_id, $biz_id, $mobile);
-            if ($stuff_id !== FALSE)
+            if ($stuff_id !== FALSE):
+                $this->result['content']['stuff_id'] = $stuff_id;
                 $this->result['content']['message'] .= '，您已成为该商家的管理员';
+            endif;
 
             // 发送商家通知短信
             $sms_content = '恭喜您成功创建商家，我们已为您生成入驻申请并安排事务最少的同事为您受理，敬请稍候。';
@@ -774,9 +780,6 @@
                 'creator_id' => $user_id,
             );
             $result = $this->basic_model->create($data_to_create, TRUE);
-
-            // 还原数据库
-            $this->reset_model();
 
             return $result;
         } // end stuff_create
