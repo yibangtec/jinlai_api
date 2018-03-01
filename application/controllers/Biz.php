@@ -21,7 +21,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'biz_id', 'category_id', 'name', 'brief_name', 'url_name', 'url_logo', 'slogan', 'description', 'notification',
+			'biz_id', 'identity_id', 'category_id', 'name', 'brief_name', 'url_name', 'url_logo', 'slogan', 'description', 'notification',
 			'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
             'url_image_product', 'url_image_produce', 'url_image_retail',
             'freight_template_id', 'ornament_id',
@@ -197,15 +197,17 @@
                     $this->result['content']['ornament'] = $this->basic_model->select_by_id($item['ornament_id']);
                 endif;
 
-                // 获取商家及平台优惠券模板信息
+                // 获取当前商家可用的优惠券模板信息
                 $this->switch_model('coupon_template', 'template_id');
                 if ($this->app_type === 'client') $this->db->where('time_delete IS NULL');
+                $this->db->where('biz_id', $item['biz_id']);
+                // 仅获取未超出可用期限的优惠券
                 $this->db->group_start()
-                    ->where('biz_id IS NULL') // 平台优惠券
-                    ->or_where('biz_id', $item['biz_id']) // 商家优惠券
+                    ->where('time_end IS NULL')
+                    ->or_where('time_end > NOW()')
                     ->group_end();
                 $this->db->order_by('amount', 'DESC'); // 按金额降序排序
-                $this->db->limit(3, 0); // 仅获取3个优惠券模板
+                $this->db->limit(3, 0); // 最多获取3个
                 $this->result['content']['coupon_templates'] = $this->basic_model->select(NULL, NULL);
 
 			else:
@@ -246,9 +248,9 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
             $this->form_validation->set_rules('category_id', '主营商品类目', 'trim|required|is_natural_no_zero');
-            $this->form_validation->set_rules('url_logo', '商家LOGO', 'trim|max_length[255]');
 			$this->form_validation->set_rules('name', '商家全称', 'trim|required|min_length[5]|max_length[35]|is_unique['.$this->table_name.'.name]');
 			$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[20]|is_unique['.$this->table_name.'.brief_name]');
+            $this->form_validation->set_rules('url_logo', '店铺LOGO', 'trim|max_length[255]');
 			$this->form_validation->set_rules('description', '简介', 'trim|max_length[255]');
 			$this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]|is_unique['.$this->table_name.'.tel_public]');
 			$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|required|exact_length[11]|is_natural|is_unique['.$this->table_name.'.tel_protected_biz]');
@@ -269,9 +271,8 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-                    'category_id', 'url_logo', 'name', 'brief_name', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_fiscal',
-					'url_image_produce', 'url_image_retail', 'url_image_product',
-				);
+                    'category_id', 'name', 'brief_name', 'url_logo', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'url_image_product', 'url_image_produce', 'url_image_retail',
+                );
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
 				// 从待创建数据中去除biz表中没有的user_id值，该值用于稍后创建员工关系
@@ -326,8 +327,8 @@
             $this->load->library('form_validation');
             $this->form_validation->set_error_delimiters('', '');
             $this->form_validation->set_rules('category_id', '主营商品类目', 'trim|required|is_natural_no_zero');
-            $this->form_validation->set_rules('url_logo', '商家LOGO', 'trim|max_length[255]');
             $this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[20]|is_unique['.$this->table_name.'.brief_name]');
+            $this->form_validation->set_rules('url_logo', '店铺LOGO', 'trim|max_length[255]');
             $this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]|is_unique['.$this->table_name.'.tel_public]');
 
             // 若表单提交不成功
@@ -407,7 +408,7 @@
 			endif;
 			// 载入验证规则
 			$rule_path = APPPATH. 'libraries/form_rules/Biz.php';
-			require($rule_path);
+			require_once($rule_path);
             $this->form_validation->set_rules('freight_template_id', '运费模板ID', 'trim');
             $this->form_validation->set_rules('ornament_id', '店铺装修ID', 'trim');
 
@@ -421,32 +422,13 @@
 				$data_to_edit = array(
 					'operator_id' => $user_id,
 					'url_name' => strtolower( $this->input->post('url_name') ),
-					//'nation' => empty($this->input->post('nation'))? '中国': $this->input->post('nation'),
-					'nation' => '中国', // 暂时只支持中国
 				);
-
-				// 若已传入经纬度，直接进行设置；若未设置经纬度，则通过地址（若有）借助高德地图相关API转换获取
-				if ( !empty($this->input->post('longitude')) && !empty($this->input->post('latitude')) ):
-					$data_to_edit['latitude'] = $this->input->post('latitude');
-					$data_to_edit['longitude'] = $this->input->post('longitude');
-				elseif ( !empty($this->input->post('province')) && !empty($this->input->post('city')) && !empty($this->input->post('street')) ):
-					// 拼合待转换地址（省、市、区/县（可为空）、具体地址）
-					$address = $this->input->post('province'). $this->input->post('city'). $this->input->post('county'). $this->input->post('street');
-					$location = $this->amap_geocode($address, $this->input->post('city'));
-					if ( $location !== FALSE ):
-						$data_to_edit['latitude'] = $location['latitude'];
-						$data_to_edit['longitude'] = $location['longitude'];
-					endif;
-				endif;
 
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
                     'category_id', 'name', 'brief_name', 'url_logo', 'slogan', 'description', 'notification',
 					'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
-					'fullname_owner', 'fullname_auth',
-					'code_license', 'code_ssn_owner',  'code_ssn_auth',
-					'bank_name', 'bank_account', 'url_image_license', 'url_image_owner_id', 'url_image_auth_id', 'url_image_auth_doc', 'url_image_product', 'url_image_produce', 'url_image_retail',
-					'province', 'city', 'county', 'street',
+                    'url_image_product', 'url_image_produce', 'url_image_retail',
                     'freight_template_id', 'ornament_id',
 				);
 				foreach ($data_need_no_prepare as $name)
@@ -536,43 +518,20 @@
 				$this->form_validation->set_rules('name', '商家名称', 'trim|min_length[5]|max_length[35]');
 				$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|max_length[20]');
 				$this->form_validation->set_rules('url_name', '店铺域名', 'trim|max_length[20]|alpha_dash');
-				$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|exact_length[11]|is_natural');
+				$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|exact_length[11]|is_natural|is_unique['.$this->table_name.'.tel_protected_biz]');
 			endif;
             $this->form_validation->set_rules('url_logo', '店铺LOGO', 'trim|max_length[255]');
 			$this->form_validation->set_rules('slogan', '宣传语', 'trim|max_length[30]');
 			$this->form_validation->set_rules('description', '简介', 'trim|max_length[255]');
 			$this->form_validation->set_rules('notification', '店铺公告', 'trim|max_length[255]');
 
-			$this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|min_length[10]|max_length[13]');
-			$this->form_validation->set_rules('tel_protected_fiscal', '财务联系手机号', 'trim|exact_length[11]|is_natural');
-			$this->form_validation->set_rules('tel_protected_order', '订单通知手机号', 'trim|exact_length[11]|is_natural');
-
-			$this->form_validation->set_rules('fullname_owner', '法人姓名', 'trim|max_length[15]');
-			$this->form_validation->set_rules('fullname_auth', '经办人姓名', 'trim|max_length[15]');
-
-			$this->form_validation->set_rules('code_license', '工商注册号', 'trim|min_length[15]|max_length[18]|is_unique[biz.code_license]');
-			$this->form_validation->set_rules('code_ssn_owner', '法人身份证号', 'trim|exact_length[18]|is_unique[biz.code_ssn_owner]');
-			$this->form_validation->set_rules('code_ssn_auth', '经办人身份证号', 'trim|exact_length[18]|is_unique[biz.code_ssn_auth]');
-
-			$this->form_validation->set_rules('url_image_license', '营业执照正/副本', 'trim|max_length[255]');
-			$this->form_validation->set_rules('url_image_owner_id', '法人身份证照片', 'trim|max_length[255]');
-			$this->form_validation->set_rules('url_image_auth_id', '经办人身份证', 'trim|max_length[255]');
-			$this->form_validation->set_rules('url_image_auth_doc', '经办人授权书', 'trim|max_length[255]');
+			$this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|min_length[10]|max_length[13]|is_unique['.$this->table_name.'.tel_public]');
+			$this->form_validation->set_rules('tel_protected_fiscal', '财务联系手机号', 'trim|exact_length[11]|is_natural|is_unique['.$this->table_name.'.tel_protected_fiscal]');
+			$this->form_validation->set_rules('tel_protected_order', '订单通知手机号', 'trim|exact_length[11]|is_natural|is_unique['.$this->table_name.'.tel_protected_order]');
 
 			$this->form_validation->set_rules('url_image_product', '产品', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_image_produce', '工厂/产地', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_image_retail', '门店/柜台', 'trim|max_length[255]');
-
-			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|min_length[3]|max_length[20]');
-			$this->form_validation->set_rules('bank_account', '开户行账号', 'trim|max_length[30]');
-
-			$this->form_validation->set_rules('nation', '国家', 'trim|max_length[10]');
-			$this->form_validation->set_rules('province', '省', 'trim|max_length[10]');
-			$this->form_validation->set_rules('city', '市', 'trim|max_length[10]');
-			$this->form_validation->set_rules('county', '区/县', 'trim|max_length[10]');
-			$this->form_validation->set_rules('street', '具体地址；小区名、路名、门牌号等', 'trim|max_length[50]');
-			$this->form_validation->set_rules('longitude', '经度', 'trim|min_length[7]|max_length[10]|decimal');
-			$this->form_validation->set_rules('latitude', '纬度', 'trim|min_length[7]|max_length[10]|decimal');
 
             $this->form_validation->set_rules('freight_template_id', '运费模板ID', 'trim');
             $this->form_validation->set_rules('ornament_id', '店铺装修ID', 'trim');
