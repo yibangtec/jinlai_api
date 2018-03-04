@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Vote_ballot 投票选票类
+	 * Vote_ballot/VTB 投票选票类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
@@ -214,6 +214,8 @@
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
 
+				// TODO 检查该用户当天对同一商家对票数、当天总票数是否达到上限
+
 				$result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):
 					$this->result['status'] = 200;
@@ -236,10 +238,8 @@
 		public function edit_bulk()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
-			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
-			$min_version = '0.0.1'; // 最低版本要求
-			$this->client_check($type_allowed, $platform_allowed, $min_version);
+			$type_allowed = array('admin', 'biz',); // 客户端类型
+			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求

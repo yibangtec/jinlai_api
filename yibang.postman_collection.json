@@ -74,12 +74,12 @@
 							"formdata": [
 								{
 									"key": "app_type",
-									"value": "client",
+									"value": "biz",
 									"type": "text"
 								},
 								{
 									"key": "mobile",
-									"value": "13668865673",
+									"value": "13668865675",
 									"type": "text"
 								},
 								{
@@ -90,7 +90,8 @@
 								{
 									"key": "wechat_union_id",
 									"value": "o6_bmasdasdsad6_2sgVt7hMZOPfL",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},
@@ -1768,7 +1769,7 @@
 								},
 								{
 									"key": "id",
-									"value": "13",
+									"value": "2",
 									"type": "text"
 								}
 							]
@@ -13739,6 +13740,1055 @@
 						"description": null
 					},
 					"response": []
+				}
+			]
+		},
+		{
+			"name": "VOT 投票活动",
+			"description": "",
+			"item": [
+				{
+					"name": "VOT0 投票活动计数",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "NULL",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote/count",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote",
+								"count"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "VOT1 投票活动列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "5",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "NULL",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote",
+								"index"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "VOT2 投票活动详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote",
+								"detail"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "VOT3 投票活动创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "name",
+									"value": "进来商城匠心商家评选",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "max_user_total",
+									"value": "",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "max_user_daily",
+									"value": "10",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "max_user_daily_each",
+									"value": "1",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote",
+								"create"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "VOT4 投票活动修改",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "name",
+									"value": "进来商城匠心商家评选",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "max_user_total",
+									"value": "",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "max_user_daily",
+									"value": "10",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "max_user_daily_each",
+									"value": "1",
+									"type": "text",
+									"description": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote/edit",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote",
+								"edit"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "VOT6 投票活动操作",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "operation",
+									"value": "delete",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote/edit_bulk",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote",
+								"edit_bulk"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "01a60ab3-fe09-4431-a030-4ee70d8791ed",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e2ecfe17-5398-4dc6-abb4-6ac3a73917bf",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "VTO 投票候选项",
+			"description": "",
+			"item": [
+				{
+					"name": "VTO0 投票候选项计数",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "NULL",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote_option/count",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote_option",
+								"count"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "VTO1 投票候选项列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "5",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "NULL",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote_option/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote_option",
+								"index"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "VTO2 投票候选项详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote_option/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote_option",
+								"detail"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "VTO3 投票候选项创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "vote_id",
+									"value": "1",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "SONY",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "url_image",
+									"value": "",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote_option/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote_option",
+								"create"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "VTO4 投票候选项修改",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "id",
+									"value": "11",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "name",
+									"value": "SONY/索尼",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "url_image",
+									"value": "",
+									"type": "text",
+									"description": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote_option/edit",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote_option",
+								"edit"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "VTO6 投票候选项操作",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "operation",
+									"value": "delete",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote_option/edit_bulk",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote_option",
+								"edit_bulk"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "01a60ab3-fe09-4431-a030-4ee70d8791ed",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e2ecfe17-5398-4dc6-abb4-6ac3a73917bf",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "VTB 投票选票",
+			"description": "",
+			"item": [
+				{
+					"name": "VTB0 投票选票计数",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "NULL",
+									"type": "text"
+								},
+								{
+									"key": "option_id",
+									"value": "1",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote_ballot/count",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote_ballot",
+								"count"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "VTB1 投票选票列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "5",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "NULL",
+									"type": "text"
+								},
+								{
+									"key": "option_id",
+									"value": "1",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote_ballot/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote_ballot",
+								"index"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "VTB2 投票选票详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote_ballot/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote_ballot",
+								"detail"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "VTB3 投票选票创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "vote_id",
+									"value": "1",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "option_id",
+									"value": "1",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote_ballot/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote_ballot",
+								"create"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "VTB6 投票选票操作",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "operation",
+									"value": "delete",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote_ballot/edit_bulk",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote_ballot",
+								"edit_bulk"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "01a60ab3-fe09-4431-a030-4ee70d8791ed",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e2ecfe17-5398-4dc6-abb4-6ac3a73917bf",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
 				}
 			]
 		},

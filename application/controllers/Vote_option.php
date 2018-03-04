@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Vote_option 投票候选项类
+	 * Vote_option/VTO 投票候选项类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
@@ -138,7 +138,7 @@
 			endforeach;
 
 			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
+			$this->db->select( implode(',', $this->names_to_return).', (SELECT COUNT(*) FROM vote_ballot WHERE vote_option.option_id = vote_ballot.option_id) AS ballot_count');
 
 			// 获取列表；默认可获取已删除项
 			$items = $this->basic_model->select($condition, $order_by);
@@ -167,7 +167,7 @@
 			endif;
 
 			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
+            $this->db->select( implode(',', $this->names_to_return).', (SELECT COUNT(*) FROM vote_ballot WHERE vote_option.option_id = vote_ballot.option_id) AS ballot_count');
 			
 			// 获取特定项；默认可获取已删除项
 			$item = $this->basic_model->select_by_id($id);
@@ -254,7 +254,7 @@
 		{
 			// 操作可能需要检查客户端及设备信息
 			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
-			$this->client_check($type_allowed,);
+			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -319,10 +319,8 @@
 		public function edit_bulk()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
-			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
-			$min_version = '0.0.1'; // 最低版本要求
-			$this->client_check($type_allowed, $platform_allowed, $min_version);
+			$type_allowed = array('admin', 'biz',); // 客户端类型
+			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求

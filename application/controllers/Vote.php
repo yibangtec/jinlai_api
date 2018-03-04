@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Vote 投票类
+	 * Vote/VOT 投票类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
@@ -50,7 +50,7 @@
 		 */
 		protected $names_create_required = array(
 			'user_id',
-			'name', 'description', 'url_image', 'url_video', 'url_audio', 'url_name', 'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'time_start', 'time_end',
+			'name',
 		);
 
 		/**
@@ -189,7 +189,7 @@
 		{
 			// 操作可能需要检查客户端及设备信息
 			$type_allowed = array('admin',); // 客户端类型
-			$this->client_check($type_allowed,);
+			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -217,10 +217,10 @@
 			$this->form_validation->set_rules('url_video', '形象视频URL', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_audio', '背景音乐URL', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_name', 'URL名称', 'trim|min_length[5]|max_length[30]|alpha_dash');
-			$this->form_validation->set_rules('signup_allowed', '可报名', 'trim|required|in_list[否,是]');
+			$this->form_validation->set_rules('signup_allowed', '可报名', 'trim|in_list[否,是]');
 			$this->form_validation->set_rules('max_user_total', '每选民最高总选票数', 'trim|is_natural_no_zero|greater_than_equal_to[0]|less_than_equal_to[999]');
-			$this->form_validation->set_rules('max_user_daily', '每选民最高日选票数', 'trim|greater_than[1]|less_than_equal_to[99]');
-			$this->form_validation->set_rules('max_user_daily_each', '每选民同选项最高日选票数', 'trim|greater_than[1]|less_than_equal_to[99]');
+			$this->form_validation->set_rules('max_user_daily', '每选民最高日选票数', 'trim|is_natural_no_zero|greater_than[0]|less_than_equal_to[99]');
+			$this->form_validation->set_rules('max_user_daily_each', '每选民同选项最高日选票数', 'trim|is_natural_no_zero|greater_than[0]|less_than_equal_to[99]');
 			
 			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]|integer|callback_time_start');
 			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]|integer|callback_time_end');
@@ -236,13 +236,18 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
-					
+                    'time_create' => time(),
+
+                    'signup_allowed' => empty($this->input->post('signup_allowed'))? '否': $this->input->post('signup_allowed'),
+                    'max_user_total' => empty($this->input->post('max_user_total'))? 0: $this->input->post('max_user_total'),
+                    'max_user_daily' => empty($this->input->post('max_user_daily'))? 1: $this->input->post('max_user_daily'),
+                    'max_user_daily_each' => empty($this->input->post('max_user_daily_each'))? 1: $this->input->post('max_user_daily_each'),
 					'time_start' => empty($this->input->post('time_start'))? time(): $this->input->post('time_start'),
 					'time_end' => empty($this->input->post('time_end'))? time() + 2592000: $this->input->post('time_end'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'description', 'url_image', 'url_video', 'url_audio', 'url_name', 'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each',
+					'name', 'description', 'url_image', 'url_video', 'url_audio', 'url_name',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -268,7 +273,7 @@
 		{
 			// 操作可能需要检查客户端及设备信息
 			$type_allowed = array('admin',); // 客户端类型
-			$this->client_check($type_allowed,);
+			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -295,10 +300,10 @@
 			$this->form_validation->set_rules('url_video', '形象视频URL', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_audio', '背景音乐URL', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_name', 'URL名称', 'trim|min_length[5]|max_length[30]|alpha_dash');
-			$this->form_validation->set_rules('signup_allowed', '可报名', 'trim|required|in_list[否,是]');
-			$this->form_validation->set_rules('max_user_total', '每选民最高总选票数', 'trim|is_natural_no_zero|greater_than_equal_to[0]|less_than_equal_to[999]');
-			$this->form_validation->set_rules('max_user_daily', '每选民最高日选票数', 'trim|greater_than[1]|less_than_equal_to[99]');
-			$this->form_validation->set_rules('max_user_daily_each', '每选民同选项最高日选票数', 'trim|greater_than[1]|less_than_equal_to[99]');
+			$this->form_validation->set_rules('signup_allowed', '可报名', 'trim|in_list[否,是]');
+            $this->form_validation->set_rules('max_user_total', '每选民最高总选票数', 'trim|is_natural_no_zero|greater_than_equal_to[0]|less_than_equal_to[999]');
+            $this->form_validation->set_rules('max_user_daily', '每选民最高日选票数', 'trim|is_natural_no_zero|greater_than[0]|less_than_equal_to[99]');
+            $this->form_validation->set_rules('max_user_daily_each', '每选民同选项最高日选票数', 'trim|is_natural_no_zero|greater_than[0]|less_than_equal_to[99]');
 			
 			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]|integer|callback_time_start');
 			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]|integer|callback_time_end');
@@ -314,13 +319,17 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
-					
-					'time_start' => empty($this->input->post('time_start'))? time(): $this->input->post('time_start'),
+
+                    'signup_allowed' => empty($this->input->post('signup_allowed'))? '否': $this->input->post('signup_allowed'),
+                    'max_user_total' => empty($this->input->post('max_user_total'))? 0: $this->input->post('max_user_total'),
+                    'max_user_daily' => empty($this->input->post('max_user_daily'))? 1: $this->input->post('max_user_daily'),
+                    'max_user_daily_each' => empty($this->input->post('max_user_daily_each'))? 1: $this->input->post('max_user_daily_each'),
+                    'time_start' => empty($this->input->post('time_start'))? time(): $this->input->post('time_start'),
 					'time_end' => empty($this->input->post('time_end'))? time() + 2592000: $this->input->post('time_end'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'description', 'url_image', 'url_video', 'url_audio', 'url_name', 'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each',
+					'name', 'description', 'url_image', 'url_video', 'url_audio', 'url_name',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -349,7 +358,7 @@
 		{
 			// 操作可能需要检查客户端及设备信息
 			$type_allowed = array('admin',); // 客户端类型
-			$this->client_check($type_allowed,);
+			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
