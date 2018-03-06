@@ -212,7 +212,7 @@
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]');
-			$this->form_validation->set_rules('description', '描述', 'trim|max_length[100]');
+			$this->form_validation->set_rules('description', '描述', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_image', '形象图URL', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_video', '形象视频URL', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_audio', '背景音乐URL', 'trim|max_length[255]');
@@ -295,7 +295,7 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]');
-			$this->form_validation->set_rules('description', '描述', 'trim|max_length[100]');
+			$this->form_validation->set_rules('description', '描述', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_image', '形象图URL', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_video', '形象视频URL', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_audio', '背景音乐URL', 'trim|max_length[255]');

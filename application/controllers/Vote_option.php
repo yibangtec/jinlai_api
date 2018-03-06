@@ -222,6 +222,9 @@
 				$this->result['content']['error']['message'] = validation_errors();
 
 			else:
+                // TODO 如果通过客户端操作，则每个用户只能为每个活动创建一个候选项
+                // TODO 如果通过客户端操作，则检查所属投票活动是否允许报名
+
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,

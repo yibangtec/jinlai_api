@@ -49,8 +49,7 @@
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id',
-			'vote_id', 'option_id', 'user_id',
+			'user_id', 'vote_id', 'option_id',
 		);
 
 		/**
@@ -180,7 +179,7 @@
 			$required_params = $this->names_create_required;
 			foreach ($required_params as $param):
 				${$param} = $this->input->post($param);
-				if ( !isset( ${$param} ) ):
+				if ( empty( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();
@@ -193,7 +192,6 @@
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
 			$this->form_validation->set_rules('vote_id', '所属投票ID', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('option_id', '候选项ID', 'trim|required|is_natural_no_zero');
-			$this->form_validation->set_rules('user_id', '用户ID', 'trim|required|is_natural_no_zero');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):

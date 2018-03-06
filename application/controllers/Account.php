@@ -506,18 +506,32 @@
 				exit();
 
 			else:
+                // 准备最后登录信息
+                $login_info['last_login_ip'] = empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'); // 优先检查请求是否来自APP
+                $login_info['last_login_timestamp'] = time();
+
 				// 获取用户/检查用户是否存在
                 $user_info = $this->check_wechat($wechat_union_id);
 
-				// 若用户存在，返回用户信息
+				// 若用户不存在，创建用户；若存在，返回用户信息
 				if ( empty($user_info) ):
-					$this->result['status'] = 414;
-					$this->result['content']['error']['message'] = '用户未注册';
+                    // 创建用户
+                    $data_to_create = array(
+                        'wechat_union_id' => $this->input->post('wechat_union_id'),
+                    );
+                    $data_to_create = array_merge($data_to_create, $login_info);
+
+                    $result = $this->user_create($data_to_create, 'wechat_union_id');
+                    if ( !empty($result) ):
+                        $this->result['status'] = 200;
+                        $this->result['content'] = '用户创建成功，请使用该微信union_id登录';
+                    else:
+                        $this->result['status'] = 414;
+                        $this->result['content']['error']['message'] = '该微信union_id未注册为用户，请直接用手机号登录';
+                    endif;
 
 				else:
 					// 更新最后登录信息
-					$login_info['last_login_ip'] = empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'); // 优先检查请求是否来自APP
-					$login_info['last_login_timestamp'] = time();
 					@$this->basic_model->edit($user_info['user_id'], $login_info);
 
 					// 非客户端登录时，检查该用户是否为员工
@@ -627,8 +641,9 @@
 			// 动态设置待验证字段名及字段值
 			$data_to_validate["{$name}"] = $data_to_create[$name];
 			$this->form_validation->set_data($data_to_validate);
-			$this->form_validation->set_rules('mobile', '手机号', 'trim|required|exact_length[11]|is_natural_no_zero|is_unique['.$this->table_name.'.mobile]');
-			//$this->form_validation->set_rules('email', 'Email', 'trim|required|max_length[40]|valid_email|is_unique['.$this->table_name.'.email]');
+			$this->form_validation->set_rules('mobile', '手机号', 'trim|exact_length[11]|is_natural_no_zero|is_unique['.$this->table_name.'.mobile]');
+            $this->form_validation->set_rules('wechat_union_id', '微信UnionID', 'trim|max_length[29]|is_unique['.$this->table_name.'.wechat_union_id]');
+			//$this->form_validation->set_rules('email', 'Email', 'trim|max_length[40]|valid_email|is_unique['.$this->table_name.'.email]');
             $this->form_validation->set_rules('promoter_id', '推广者', 'trim|is_natural_no_zero');
 
 			// 若表单提交不成功
