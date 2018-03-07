@@ -2,19 +2,19 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Vote/VOT 投票类
+	 * Vote_tag/VTT 投票候选项标签类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
 	 * @copyright ICBG <www.bingshankeji.com>
 	 */
-	class Vote extends MY_Controller
+	class Vote_tag extends MY_Controller
 	{
 		/**
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'name', 'description', 'url_image', 'url_audio', 'url_video', 'url_video_thumb', 'url_name', 'url_default_option_image', 'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'time_start', 'time_end', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'vote_id', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 		
 		/**
@@ -35,14 +35,14 @@
 		 * 可作为排序条件的字段名
 		 */
 		protected $names_to_order = array(
-			'name', 'url_name', 'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'time_start', 'time_end', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'vote_id', 'name', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'vote_id', 'name', 'description', 'url_image', 'url_video', 'url_video_thumb', 'url_audio', 'url_name', 'url_default_option_image', 'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'time_start', 'time_end', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'tag_id', 'vote_id', 'name', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -50,14 +50,14 @@
 		 */
 		protected $names_create_required = array(
 			'user_id',
-			'name',
+			'vote_id', 'name',
 		);
 
 		/**
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'name', 'description', 'url_image', 'url_video', 'url_video_thumb', 'url_audio', 'url_name', 'url_default_option_image', 'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'time_start', 'time_end',
+			'name',
 		);
 
 		/**
@@ -81,8 +81,8 @@
 			parent::__construct();
 
 			// 设置主要数据库信息
-			$this->table_name = 'vote'; // 这里……
-			$this->id_name = 'vote_id'; // 这里……
+			$this->table_name = 'vote_tag'; // 这里……
+			$this->id_name = 'tag_id'; // 这里……
 
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
@@ -188,7 +188,7 @@
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin',); // 客户端类型
+			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -211,23 +211,8 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]');
-			$this->form_validation->set_rules('description', '描述', 'trim|max_length[255]');
-            $this->form_validation->set_rules('url_name', 'URL名称', 'trim|min_length[5]|max_length[30]|alpha_dash');
-            $this->form_validation->set_rules('url_image', '形象图URL', 'trim|max_length[255]');
-            $this->form_validation->set_rules('url_audio', '背景音乐URL', 'trim|max_length[255]');
-            $this->form_validation->set_rules('url_video', '形象视频URL', 'trim|max_length[255]');
-            $this->form_validation->set_rules('url_video_thumb', '形象视频缩略图URL', 'trim|max_length[255]');
-            $this->form_validation->set_rules('url_default_option_image', '默认选项占位图', 'trim|max_length[255]');
-			$this->form_validation->set_rules('signup_allowed', '可报名', 'trim|in_list[否,是]');
-			$this->form_validation->set_rules('max_user_total', '每选民最高总选票数', 'trim|is_natural_no_zero|greater_than_equal_to[0]|less_than_equal_to[999]');
-			$this->form_validation->set_rules('max_user_daily', '每选民最高日选票数', 'trim|is_natural_no_zero|greater_than[0]|less_than_equal_to[99]');
-			$this->form_validation->set_rules('max_user_daily_each', '每选民同选项最高日选票数', 'trim|is_natural_no_zero|greater_than[0]|less_than_equal_to[99]');
-			
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]|integer|callback_time_start');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]|integer|callback_time_end');
-            $this->form_validation->set_message('time_start', '开始时间需详细到分');
-            $this->form_validation->set_message('time_end', '结束时间需详细到分，且晚于开始时间（若有）');
+			$this->form_validation->set_rules('vote_id', '所属投票ID', 'trim|required');
+			$this->form_validation->set_rules('name', '名称', 'trim|required');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -238,18 +223,10 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
-                    'time_create' => time(),
-
-                    'signup_allowed' => empty($this->input->post('signup_allowed'))? '否': $this->input->post('signup_allowed'),
-                    'max_user_total' => empty($this->input->post('max_user_total'))? 0: $this->input->post('max_user_total'),
-                    'max_user_daily' => empty($this->input->post('max_user_daily'))? 1: $this->input->post('max_user_daily'),
-                    'max_user_daily_each' => empty($this->input->post('max_user_daily_each'))? 1: $this->input->post('max_user_daily_each'),
-					'time_start' => empty($this->input->post('time_start'))? time(): $this->input->post('time_start'),
-					'time_end' => empty($this->input->post('time_end'))? time() + 2592000: $this->input->post('time_end'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'description', 'url_image', 'url_video', 'url_video_thumb', 'url_audio', 'url_name', 'url_default_option_image',
+					'vote_id', 'name',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -274,7 +251,7 @@
 		public function edit()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin',); // 客户端类型
+			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -296,23 +273,7 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]');
-			$this->form_validation->set_rules('description', '描述', 'trim|max_length[255]');
-            $this->form_validation->set_rules('url_name', 'URL名称', 'trim|min_length[5]|max_length[30]|alpha_dash');
-            $this->form_validation->set_rules('url_image', '形象图URL', 'trim|max_length[255]');
-            $this->form_validation->set_rules('url_audio', '背景音乐URL', 'trim|max_length[255]');
-            $this->form_validation->set_rules('url_video', '形象视频URL', 'trim|max_length[255]');
-            $this->form_validation->set_rules('url_video_thumb', '形象视频缩略图URL', 'trim|max_length[255]');
-            $this->form_validation->set_rules('url_default_option_image', '默认选项占位图', 'trim|max_length[255]');
-			$this->form_validation->set_rules('signup_allowed', '可报名', 'trim|in_list[否,是]');
-            $this->form_validation->set_rules('max_user_total', '每选民最高总选票数', 'trim|is_natural_no_zero|greater_than_equal_to[0]|less_than_equal_to[999]');
-            $this->form_validation->set_rules('max_user_daily', '每选民最高日选票数', 'trim|is_natural_no_zero|greater_than[0]|less_than_equal_to[99]');
-            $this->form_validation->set_rules('max_user_daily_each', '每选民同选项最高日选票数', 'trim|is_natural_no_zero|greater_than[0]|less_than_equal_to[99]');
-			
-			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]|integer|callback_time_start');
-			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]|integer|callback_time_end');
-            $this->form_validation->set_message('time_start', '开始时间需详细到分');
-            $this->form_validation->set_message('time_end', '结束时间需详细到分，且晚于开始时间（若有）');
+			$this->form_validation->set_rules('name', '名称', 'trim|required');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -323,17 +284,11 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
-
-                    'signup_allowed' => empty($this->input->post('signup_allowed'))? '否': $this->input->post('signup_allowed'),
-                    'max_user_total' => empty($this->input->post('max_user_total'))? 0: $this->input->post('max_user_total'),
-                    'max_user_daily' => empty($this->input->post('max_user_daily'))? 1: $this->input->post('max_user_daily'),
-                    'max_user_daily_each' => empty($this->input->post('max_user_daily_each'))? 1: $this->input->post('max_user_daily_each'),
-                    'time_start' => empty($this->input->post('time_start'))? time(): $this->input->post('time_start'),
-					'time_end' => empty($this->input->post('time_end'))? time() + 2592000: $this->input->post('time_end'),
+					//'name' => $this->input->post('name'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'description', 'url_image', 'url_video', 'url_video_thumb', 'url_audio', 'url_name', 'url_default_option_image',
+					'name',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -361,8 +316,10 @@
 		public function edit_bulk()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin',); // 客户端类型
-			$this->client_check($type_allowed);
+			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
+			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
+			$min_version = '0.0.1'; // 最低版本要求
+			$this->client_check($type_allowed, $platform_allowed, $min_version);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -434,12 +391,13 @@
 
 			endif;
 		} // end edit_bulk
+		
 			
 		/**
 		 * 以下为工具类方法
 		 */
 
-	} // end class Vote
+	} // end class Vote_tag
 
-/* End of file Vote.php */
-/* Location: ./application/controllers/Vote.php */
+/* End of file Vote_tag.php */
+/* Location: ./application/controllers/Vote_tag.php */
