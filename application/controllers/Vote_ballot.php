@@ -199,32 +199,61 @@
 				$this->result['content']['error']['message'] = validation_errors();
 
 			else:
-				// 需要创建的数据；逐一赋值需特别处理的字段
-				$data_to_create = array(
-					'creator_id' => $user_id,
-					'date_create' => date('Y-m-d'),
-					'time_create' => time(),
-				);
-				// 自动生成无需特别处理的数据
-				$data_need_no_prepare = array(
-					'vote_id', 'option_id', 'user_id',
-				);
-				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+                $vote_id = $this->input->post('vote_id');
 
-				// TODO 检查该用户当天对同一商家对票数、当天总票数是否达到上限
+                // 根据投票ID检查活动是否仍在进行中，并获取投票活动详情
+                $vote = $this->get_vote_pending($vote_id);
+                if ($vote === FALSE):
+                    $this->result['status'] = 414;
+                    $this->result['content']['error']['message'] = '投票活动目前不在进行中';
 
-				$result = $this->basic_model->create($data_to_create, TRUE);
-				if ($result !== FALSE):
-					$this->result['status'] = 200;
-					$this->result['content']['id'] = $result;
-					$this->result['content']['message'] = '创建成功';
+                else:
+                    // 获取该用户总投票数，若不为FALSE则获取对当前选项投票数
+                    $date_create = date('Y-m-d');
+                    $user_today_ballots = $this->user_today_ballots($user_id, $vote_id, $date_create);
+                    $user_option_ballots = ($user_today_ballots === FALSE)? FALSE: $this->user_option_ballots($user_id, $this->input->post('option_id'), $date_create);
 
-				else:
-					$this->result['status'] = 424;
-					$this->result['content']['error']['message'] = '创建失败';
+                    // 检查该用户当天对同一商家对票数、当天总票数是否达到上限；若无异常情况，则创建选票
+                    if (
+                        $user_today_ballots === FALSE
+                        || $user_option_ballots === FALSE
+                        || ($user_today_ballots < $vote['max_user_daily']) && ($user_option_ballots < $vote['max_user_daily_each'])
+                    ):
+                        // 需要创建的数据；逐一赋值需特别处理的字段
+                        $data_to_create = array(
+                            'creator_id' => $user_id,
+                            'date_create' => date('Y-m-d'),
+                            'time_create' => time(),
+                        );
+                        // 自动生成无需特别处理的数据
+                        $data_need_no_prepare = array(
+                            'vote_id', 'option_id', 'user_id',
+                        );
+                        foreach ($data_need_no_prepare as $name)
+                            $data_to_create[$name] = $this->input->post($name);
 
-				endif;
+                        $result = $this->basic_model->create($data_to_create, TRUE);
+                        if ($result !== FALSE):
+                            $this->result['status'] = 200;
+                            $this->result['content']['id'] = $result;
+                            $this->result['content']['message'] = '创建成功';
+
+                        else:
+                            $this->result['status'] = 424;
+                            $this->result['content']['error']['message'] = '创建失败';
+
+                        endif;
+
+                    else:
+                        $this->result['status'] = 424;
+                        if ($user_today_ballots >= $vote['max_user_daily']):
+                            $this->result['content']['error']['message'] = '当前活动每天只可投'.$vote['max_user_daily'].'票，已投'.$user_today_ballots.'票';
+                        elseif ($user_option_ballots >= $vote['max_user_daily_each']):
+                            $this->result['content']['error']['message'] = '当前选项每天只可投'.$vote['max_user_daily_each'].'票，已投'.$user_option_ballots.'票';
+                        endif;
+
+                    endif;
+                endif;
 			endif;
 		} // end create
 
@@ -313,6 +342,55 @@
 		/**
 		 * 以下为工具类方法
 		 */
+		// 仅获取进行中的有效投票活动信息
+		protected function get_vote_pending($vote_id)
+        {
+            $this->switch_model('vote', 'vote_id');
+            $current_timestamp = time();
+            $current_timestamp = '1521053200'; // TODO 测试
+
+            $condition = array(
+                'vote_id' => $vote_id,
+                'time_start <=' => $current_timestamp,
+                'time_end >' => $current_timestamp,
+                'time_delete' => NULL,
+            );
+            $result = $this->basic_model->match($condition);
+
+            return (empty($result))? FALSE: $result;
+        } // end get_vote_pending
+
+        // 获取当天特定用户日选票数
+        protected function user_today_ballots($user_id, $vote_id, $date_create)
+        {
+            $this->switch_model('vote_ballot', 'ballot_id');
+
+            $condition = array(
+                'vote_id' => $vote_id,
+                'user_id' => $user_id,
+                'date_create' => $date_create,
+                'time_delete' => NULL,
+            );
+            $result = $this->basic_model->count($condition);
+
+            return (empty($result))? FALSE: $result;
+        } // end user_today_ballots
+
+        // 获取当天特定用户特定选项日选票数
+        protected function user_option_ballots($user_id, $option_id, $date_create)
+        {
+            $this->switch_model('vote_ballot', 'ballot_id');
+
+            $condition = array(
+                'option_id' => $option_id,
+                'user_id' => $user_id,
+                'date_create' => $date_create,
+                'time_delete' => NULL,
+            );
+            $result = $this->basic_model->count($condition);
+
+            return (empty($result))? FALSE: $result;
+        } // end user_option_ballots
 
 	} // end class Vote_ballot
 
