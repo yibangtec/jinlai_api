@@ -188,7 +188,7 @@
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin',); // 客户端类型
+			$type_allowed = array('admin'); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -211,16 +211,17 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]');
-			$this->form_validation->set_rules('description', '描述', 'trim|max_length[255]');
+            $this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]');
             $this->form_validation->set_rules('url_name', 'URL名称', 'trim|min_length[5]|max_length[30]|alpha_dash');
-            $this->form_validation->set_rules('url_image', '形象图URL', 'trim|max_length[255]');
-            $this->form_validation->set_rules('url_audio', '背景音乐URL', 'trim|max_length[255]');
-            $this->form_validation->set_rules('url_video', '形象视频URL', 'trim|max_length[255]');
-            $this->form_validation->set_rules('url_video_thumb', '形象视频缩略图URL', 'trim|max_length[255]');
-            $this->form_validation->set_rules('url_default_option_image', '默认选项占位图', 'trim|max_length[255]');
+            $this->form_validation->set_rules('description', '描述', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_audio', '背景音乐', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_video', '形象视频', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_video_thumb', '形象视频缩略图', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_default_option_image', '选项默认占位图', 'trim|max_length[255]');
+
 			$this->form_validation->set_rules('signup_allowed', '可报名', 'trim|in_list[否,是]');
-			$this->form_validation->set_rules('max_user_total', '每选民最高总选票数', 'trim|is_natural_no_zero|greater_than_equal_to[0]|less_than_equal_to[999]');
+			$this->form_validation->set_rules('max_user_total', '每选民最高总选票数', 'trim|is_natural|greater_than_equal_to[0]|less_than_equal_to[999]');
 			$this->form_validation->set_rules('max_user_daily', '每选民最高日选票数', 'trim|is_natural_no_zero|greater_than[0]|less_than_equal_to[99]');
 			$this->form_validation->set_rules('max_user_daily_each', '每选民同选项最高日选票数', 'trim|is_natural_no_zero|greater_than[0]|less_than_equal_to[99]');
 			
@@ -240,6 +241,7 @@
 					'creator_id' => $user_id,
                     'time_create' => time(),
 
+                    'url_name' => strtolower( $this->input->post('url_name') ),
                     'signup_allowed' => empty($this->input->post('signup_allowed'))? '否': $this->input->post('signup_allowed'),
                     'max_user_total' => empty($this->input->post('max_user_total'))? 0: $this->input->post('max_user_total'),
                     'max_user_daily' => empty($this->input->post('max_user_daily'))? 1: $this->input->post('max_user_daily'),
@@ -249,7 +251,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'description', 'url_image', 'url_video', 'url_video_thumb', 'url_audio', 'url_name', 'url_default_option_image',
+                    'name', 'description', 'url_image', 'url_audio', 'url_video', 'url_video_thumb', 'url_default_option_image', 'signup_allowed',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -296,16 +298,17 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]');
-			$this->form_validation->set_rules('description', '描述', 'trim|max_length[255]');
+            $this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]');
             $this->form_validation->set_rules('url_name', 'URL名称', 'trim|min_length[5]|max_length[30]|alpha_dash');
-            $this->form_validation->set_rules('url_image', '形象图URL', 'trim|max_length[255]');
-            $this->form_validation->set_rules('url_audio', '背景音乐URL', 'trim|max_length[255]');
-            $this->form_validation->set_rules('url_video', '形象视频URL', 'trim|max_length[255]');
-            $this->form_validation->set_rules('url_video_thumb', '形象视频缩略图URL', 'trim|max_length[255]');
-            $this->form_validation->set_rules('url_default_option_image', '默认选项占位图', 'trim|max_length[255]');
+            $this->form_validation->set_rules('description', '描述', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_audio', '背景音乐', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_video', '形象视频', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_video_thumb', '形象视频缩略图', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_default_option_image', '选项默认占位图', 'trim|max_length[255]');
+
 			$this->form_validation->set_rules('signup_allowed', '可报名', 'trim|in_list[否,是]');
-            $this->form_validation->set_rules('max_user_total', '每选民最高总选票数', 'trim|is_natural_no_zero|greater_than_equal_to[0]|less_than_equal_to[999]');
+            $this->form_validation->set_rules('max_user_total', '每选民最高总选票数', 'trim|is_natural|greater_than_equal_to[0]|less_than_equal_to[999]');
             $this->form_validation->set_rules('max_user_daily', '每选民最高日选票数', 'trim|is_natural_no_zero|greater_than[0]|less_than_equal_to[99]');
             $this->form_validation->set_rules('max_user_daily_each', '每选民同选项最高日选票数', 'trim|is_natural_no_zero|greater_than[0]|less_than_equal_to[99]');
 			
@@ -324,6 +327,7 @@
 				$data_to_edit = array(
 					'operator_id' => $user_id,
 
+                    'url_name' => strtolower( $this->input->post('url_name') ),
                     'signup_allowed' => empty($this->input->post('signup_allowed'))? '否': $this->input->post('signup_allowed'),
                     'max_user_total' => empty($this->input->post('max_user_total'))? 0: $this->input->post('max_user_total'),
                     'max_user_daily' => empty($this->input->post('max_user_daily'))? 1: $this->input->post('max_user_daily'),
@@ -333,7 +337,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'description', 'url_image', 'url_video', 'url_video_thumb', 'url_audio', 'url_name', 'url_default_option_image',
+                    'name', 'description', 'url_image', 'url_audio', 'url_video', 'url_video_thumb', 'url_default_option_image', 'signup_allowed',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);

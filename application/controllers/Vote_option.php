@@ -68,6 +68,13 @@
 			'name',
 		);
 
+        /**
+         * 编辑单行特定字段时必要的字段名
+         */
+        protected $names_edit_certain_required = array(
+            'user_id', 'id', 'name', 'value',
+        );
+
 		/**
 		 * 编辑多行特定字段时必要的字段名
 		 */
@@ -216,7 +223,7 @@
             $this->form_validation->set_rules('index_id', '索引序号', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]');
 			$this->form_validation->set_rules('description', '描述', 'trim|max_length[100]');
-			$this->form_validation->set_rules('url_image', '形象图URL', 'trim|max_length[255]');
+			$this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -224,8 +231,12 @@
 				$this->result['content']['error']['message'] = validation_errors();
 
 			else:
-                // TODO 如果通过客户端操作，则每个用户只能为每个活动创建一个候选项
-                // TODO 如果通过客户端操作，则检查所属投票活动是否允许报名
+                if ($this->app_type === 'client'):
+                    // TODO 检查所属投票活动是否允许报名
+
+                    // TODO 每个用户只能为每个活动创建一个候选项
+
+                endif;
 
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
@@ -284,7 +295,7 @@
             $this->form_validation->set_rules('index_id', '索引序号', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]');
 			$this->form_validation->set_rules('description', '描述', 'trim|max_length[100]');
-			$this->form_validation->set_rules('url_image', '形象图URL', 'trim|max_length[255]');
+			$this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -318,7 +329,82 @@
 			endif;
 		} // end edit
 
-		/**
+        /**
+         * 5 编辑单行数据特定字段
+         *
+         * 修改单行数据的单一字段值
+         */
+        public function edit_certain()
+        {
+            // 操作可能需要检查客户端及设备信息
+            $type_allowed = array('admin'); // 客户端类型
+            $this->client_check($type_allowed);
+
+            // 管理类客户端操作可能需要检查操作权限
+            //$role_allowed = array('管理员', '经理'); // 角色要求
+            //$min_level = 10; // 级别要求
+            //$this->permission_check($role_allowed, $min_level);
+
+            // 检查必要参数是否已传入
+            $required_params = $this->names_edit_certain_required;
+            foreach ($required_params as $param):
+                ${$param} = $this->input->post($param);
+
+                // value 可以为空；必要字段会在字段验证中另行检查
+                if ( $param !== 'value' && !isset( ${$param} ) ):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+                    exit();
+                endif;
+            endforeach;
+
+            // 检查目标字段是否可编辑
+            if ( ! in_array($name, $this->names_edit_allowed) ):
+                $this->result['status'] = 431;
+                $this->result['content']['error']['message'] = '该字段不可被修改';
+                exit();
+            endif;
+
+            // 初始化并配置表单验证库
+            $this->load->library('form_validation');
+            $this->form_validation->set_error_delimiters('', '');
+            // 动态设置待验证字段名及字段值
+            $data_to_validate["{$name}"] = $value;
+            $this->form_validation->set_data($data_to_validate);
+            $this->form_validation->set_rules('tag_id', '所属标签ID', 'trim|is_natural_no_zero');
+            $this->form_validation->set_rules('index_id', '索引序号', 'trim|is_natural_no_zero');
+            $this->form_validation->set_rules('name', '名称', 'trim|max_length[30]');
+            $this->form_validation->set_rules('description', '描述', 'trim|max_length[100]');
+            $this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
+
+            // 若表单提交不成功
+            if ($this->form_validation->run() === FALSE):
+                $this->result['status'] = 401;
+                $this->result['content']['error']['message'] = validation_errors();
+
+            else:
+                // 需要编辑的数据
+                $data_to_edit['operator_id'] = $user_id;
+                $data_to_edit[$name] = $value;
+
+                // 获取ID
+                $result = $this->basic_model->edit($id, $data_to_edit);
+
+                if ($result !== FALSE):
+                    $this->result['status'] = 200;
+                    $this->result['content']['id'] = $id;
+                    $this->result['content']['message'] = '编辑成功';
+
+                else:
+                    $this->result['status'] = 434;
+                    $this->result['content']['error']['message'] = '编辑失败';
+
+                endif;
+            endif;
+        } // end edit_certain
+
+
+        /**
 		 * 6 编辑多行数据特定字段
 		 *
 		 * 修改多行数据的单一字段值
