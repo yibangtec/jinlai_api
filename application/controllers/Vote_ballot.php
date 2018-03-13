@@ -172,7 +172,7 @@
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('client'); // 客户端类型
+			$type_allowed = array('admin', 'client'); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 检查必要参数是否已传入
@@ -199,8 +199,6 @@
 				$this->result['content']['error']['message'] = validation_errors();
 
 			else:
-                $vote_id = $this->input->post('vote_id');
-
                 // 根据投票ID检查活动是否仍在进行中，并获取投票活动详情
                 $vote = $this->get_vote_pending($vote_id);
                 if ($vote === FALSE):
@@ -208,51 +206,74 @@
                     $this->result['content']['error']['message'] = '投票活动目前不在进行中';
 
                 else:
-                    // 获取该用户总投票数，若不为FALSE则获取对当前选项投票数
-                    $date_create = date('Y-m-d');
-                    $user_today_ballots = $this->user_today_ballots($user_id, $vote_id, $date_create);
-                    $user_option_ballots = ($user_today_ballots === FALSE)? FALSE: $this->user_option_ballots($user_id, $this->input->post('option_id'), $date_create);
+                    // 切换到选票数据库
+                    $this->switch_model('vote_ballot', 'ballot_id');
 
-                    // 检查该用户当天对同一商家对票数、当天总票数是否达到上限；若无异常情况，则创建选票
-                    if (
-                        $user_today_ballots === FALSE
-                        || $user_option_ballots === FALSE
-                        || ($user_today_ballots < $vote['max_user_daily']) && ($user_option_ballots < $vote['max_user_daily_each'])
-                    ):
-                        // 需要创建的数据；逐一赋值需特别处理的字段
-                        $data_to_create = array(
-                            'creator_id' => $user_id,
-                            'date_create' => date('Y-m-d'),
-                            'time_create' => time(),
-                        );
-                        // 自动生成无需特别处理的数据
-                        $data_need_no_prepare = array(
-                            'vote_id', 'option_id', 'user_id',
-                        );
-                        foreach ($data_need_no_prepare as $name)
-                            $data_to_create[$name] = $this->input->post($name);
+                    // 判断是否限制总投票数，是否已超出票数
+                    $user_total_ballots = ($vote['max_user_total'] === '0')? FALSE: NULL;
 
-                        $result = $this->basic_model->create($data_to_create, TRUE);
-                        if ($result !== FALSE):
-                            $this->result['status'] = 200;
-                            $this->result['content']['id'] = $result;
-                            $this->result['content']['message'] = '创建成功';
+                    // 获取该用户总投票数，若不为FALSE则获取当日投票数、当前选项当日投票数等
+                    if ($user_total_ballots === NULL)
+                        $user_total_ballots = $this->user_total_ballots($user_id, $vote_id);
+
+                    // 判断总投票数是否超出了活动设置
+                    if ($user_total_ballots !== FALSE && $user_total_ballots >= $vote['max_user_total']):
+                        $this->result['status'] = 414;
+                        $this->result['content']['error']['message'] = '该活动每人只可投'.$vote['max_user_total'].'票，已投'.$user_total_ballots.'票';
+
+                    else:
+                        // 将当前日期作为创建日期
+                        $date_create = date('Y-m-d');
+
+                        // 获取该用户当日投票数，若不为FALSE则获取当日对当前选项投票数
+                        $user_daily_ballots = $this->user_daily_ballots($user_id, $vote_id, $date_create);
+                        if ($user_daily_ballots !== FALSE)
+                            $user_option_ballots = $this->user_option_ballots($user_id, $option_id, $date_create);
+
+                        // 检查该用户当天对同一商家票数、当天总票数是否达到上限；若无异常情况，则创建选票
+                        if (
+                            $user_daily_ballots === FALSE
+                            || ($user_daily_ballots < $vote['max_user_daily'] && $user_option_ballots < $vote['max_user_daily_each'])
+                        ):
+                            // 需要创建的数据；逐一赋值需特别处理的字段
+                            $data_to_create = array(
+                                'creator_id' => $user_id,
+                                'time_create' => time(),
+
+                                'vote_id' => $vote_id,
+                                'option_id' => $option_id,
+                                'user_id' => $user_id,
+                                'date_create' => $date_create,
+                            );
+
+                            $this->reset_model(); // 需要操作的数据库参数与之前不同，需重置数据库参数
+                            $result = $this->basic_model->create($data_to_create, TRUE);
+                            if ($result !== FALSE):
+                                $this->result['status'] = 200;
+                                $this->result['content']['id'] = $result;
+                                $this->result['content']['message'] = '创建成功';
+
+                            else:
+                                $this->result['status'] = 424;
+                                $this->result['content']['error']['message'] = '创建失败';
+
+                            endif;
 
                         else:
                             $this->result['status'] = 424;
-                            $this->result['content']['error']['message'] = '创建失败';
 
-                        endif;
+                            if ($user_option_ballots >= $vote['max_user_daily_each']):
+                                $this->result['content']['error']['message'] = '每天只可投同一选项'.$vote['max_user_daily_each'].'票，已投'.$user_option_ballots.'票';
 
-                    else:
-                        $this->result['status'] = 424;
-                        if ($user_today_ballots >= $vote['max_user_daily']):
-                            $this->result['content']['error']['message'] = '当前活动每天只可投'.$vote['max_user_daily'].'票，已投'.$user_today_ballots.'票';
-                        elseif ($user_option_ballots >= $vote['max_user_daily_each']):
-                            $this->result['content']['error']['message'] = '当前选项每天只可投'.$vote['max_user_daily_each'].'票，已投'.$user_option_ballots.'票';
+                            elseif ($user_daily_ballots >= $vote['max_user_daily']):
+                                $this->result['content']['error']['message'] = '该活动每天只可投'.$vote['max_user_daily'].'票，已投'.$user_daily_ballots.'票';
+
+                            endif;
+
                         endif;
 
                     endif;
+
                 endif;
 			endif;
 		} // end create
@@ -347,7 +368,6 @@
         {
             $this->switch_model('vote', 'vote_id');
             $current_timestamp = time();
-            $current_timestamp = '1521053200'; // TODO 测试
 
             $condition = array(
                 'vote_id' => $vote_id,
@@ -361,10 +381,21 @@
         } // end get_vote_pending
 
         // 获取当天特定用户日选票数
-        protected function user_today_ballots($user_id, $vote_id, $date_create)
+        protected function user_total_ballots($user_id, $vote_id)
         {
-            $this->switch_model('vote_ballot', 'ballot_id');
+            $condition = array(
+                'vote_id' => $vote_id,
+                'user_id' => $user_id,
+                'time_delete' => NULL,
+            );
+            $result = $this->basic_model->count($condition);
 
+            return (empty($result))? FALSE: $result;
+        } // end user_total_ballots
+
+        // 获取当天特定用户日选票数
+        protected function user_daily_ballots($user_id, $vote_id, $date_create)
+        {
             $condition = array(
                 'vote_id' => $vote_id,
                 'user_id' => $user_id,
@@ -374,13 +405,11 @@
             $result = $this->basic_model->count($condition);
 
             return (empty($result))? FALSE: $result;
-        } // end user_today_ballots
+        } // end user_daily_ballots
 
         // 获取当天特定用户特定选项日选票数
         protected function user_option_ballots($user_id, $option_id, $date_create)
         {
-            $this->switch_model('vote_ballot', 'ballot_id');
-
             $condition = array(
                 'option_id' => $option_id,
                 'user_id' => $user_id,

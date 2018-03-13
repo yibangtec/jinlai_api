@@ -232,9 +232,18 @@
 
 			else:
                 if ($this->app_type === 'client'):
-                    // TODO 检查所属投票活动是否允许报名
+                    // 检查所属投票活动是否存在、未结束，且允许报名
+                    $vote = $this->get_vote($vote_id);
+			        if (empty($vote)):
 
-                    // TODO 每个用户只能为每个活动创建一个候选项
+                    elseif($vote['signup_allowed'] === '否'):
+
+                    elseif(time() > $vote['time_end']):
+
+                    endif;
+
+                    // 每个用户只能为每个活动创建一个候选项
+                    $user_total_options = user_total_options($user_id, $vote_id);
 
                 endif;
 
@@ -403,7 +412,6 @@
             endif;
         } // end edit_certain
 
-
         /**
 		 * 6 编辑多行数据特定字段
 		 *
@@ -489,6 +497,28 @@
 		/**
 		 * 以下为工具类方法
 		 */
+        // 获取特定投票活动信息
+        protected function get_vote($vote_id)
+        {
+            $this->switch_model('vote', 'vote_id');
+            $result = $this->basic_model->select_by_id($vote_id);
+
+            return (empty($result))? FALSE: $result;
+        } // end get_vote
+
+        // 获取特定用户已创建候选项数
+        protected function user_total_options($user_id, $vote_id)
+        {
+            $this->switch_model('vote_option', 'option_id');
+            $condition = array(
+                'vote_id' => $vote_id,
+                'user_id' => $user_id,
+                'time_delete' => NULL,
+            );
+            $result = $this->basic_model->count($condition);
+
+            return (empty($result))? FALSE: $result;
+        } // end user_total_options
 
 	} // end class Vote_option
 

@@ -342,12 +342,32 @@
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
 
+                endif;
+
 				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);
 				if ($result !== FALSE):
 					$this->result['status'] = 200;
 					$this->result['content']['id'] = $id;
 					$this->result['content']['message'] = '编辑成功';
+
+                    // 对候选项进行排序，新增的选项将自动附加在最后
+                    if ( ! empty($this->input->post('option_orders')) ):
+                        $option_orders_array = $this->explode_csv($this->input->post('option_orders'));
+
+                        //  根据数组下标调整各选项ID对应的索引数值
+                        $options_count = count($option_orders_array);
+
+                        // 统计业务逻辑运行时间起点
+                        $this->switch_model('vote_option', 'option_id');
+                        for ($i=0;$i<count($option_orders_array);$i++):
+                            // 更新各选项索引序号
+                            $data_to_edit = array(
+                                'operator_id' => $user_id,
+                                'index_id' => $options_count - $i,
+                            );
+                            @$result =$this->basic_model->edit($option_orders_array[$i], $data_to_edit);
+                        endfor;
 
 				else:
 					$this->result['status'] = 434;
