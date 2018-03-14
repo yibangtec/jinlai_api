@@ -44,7 +44,7 @@
 			// 获取用户/检查用户是否存在
 			$user_info = $this->check_mobile($mobile);
 
-			// 若用户存在，返回用户信息；若用户未注册，创建用户。
+			// 若用户存在，返回用户信息；若用户未注册，创建用户并返回用户信息。
 			if ( !empty($user_info) ):
 				// 更新最后登录信息
 				@$this->basic_model->edit($user_info['user_id'], $login_info);
@@ -513,7 +513,7 @@
 				// 获取用户/检查用户是否存在
                 $user_info = $this->check_wechat($wechat_union_id);
 
-				// 若用户不存在，创建用户；若存在，返回用户信息
+				// 若用户不存在，创建用户并返回用户信息；若存在，返回用户信息
 				if ( empty($user_info) ):
                     // 创建用户
                     $data_to_create = array(
@@ -524,7 +524,8 @@
                     $result = $this->user_create($data_to_create, 'wechat_union_id');
                     if ( !empty($result) ):
                         $this->result['status'] = 200;
-                        $this->result['content'] = '用户创建成功，请使用该微信union_id登录';
+                        $this->result['content'] = $this->check_wechat($wechat_union_id);
+
                     else:
                         $this->result['status'] = 414;
                         $this->result['content']['error']['message'] = '该微信union_id未注册为用户，请直接用手机号登录';

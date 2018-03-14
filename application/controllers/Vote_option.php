@@ -137,6 +137,12 @@
 			// 生成筛选条件
 			$condition = $this->condition_generate();
 
+            // 用户仅可查看未删除的有效项
+            if ($this->app_type === 'client'):
+                $condition['time_delete'] = 'NULL';
+                $condition['status'] = '正常';
+            endif;
+
 			// 排序条件
 			$order_by = NULL;
 			foreach ($this->names_to_order as $sorter):
@@ -232,43 +238,58 @@
 
 			else:
                 if ($this->app_type === 'client'):
-                    // 检查所属投票活动是否存在、未结束，且允许报名
+                    // 检查所属投票活动是否存在、未结束、允许报名，且当前用户未报名
                     $vote = $this->get_vote($vote_id);
 			        if (empty($vote)):
-
+                        $this->result['status'] = 414;
+                        $this->result['content']['error']['message'] = '活动不存在';
                     elseif($vote['signup_allowed'] === '否'):
-
+                        $this->result['status'] = 424;
+                        $this->result['content']['error']['message'] = '活动不开放报名';
                     elseif(time() > $vote['time_end']):
+                        $this->result['status'] = 414;
+                        $this->result['content']['error']['message'] = '活动已结束';
+
+                    else:
+                        // 每个用户只能为每个活动创建一个候选项
+                        $user_total_options = $this->user_total_options($user_id, $vote_id);
+                        if ($user_total_options !== FALSE):
+                            $this->result['status'] = 424;
+                            $this->result['content']['error']['message'] = '你只能为每个活动报名1个候选项';
+                        endif;
 
                     endif;
-
-                    // 每个用户只能为每个活动创建一个候选项
-                    $user_total_options = user_total_options($user_id, $vote_id);
-
                 endif;
 
-				// 需要创建的数据；逐一赋值需特别处理的字段
-				$data_to_create = array(
-					'creator_id' => $user_id,
-				);
-				// 自动生成无需特别处理的数据
-				$data_need_no_prepare = array(
-					'vote_id', 'tag_id', 'index_id', 'name', 'description', 'url_image',
-				);
-				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+				// 若前述无异常，则继续进行后续业务
+                if ($this->result['status'] === NULL):
+                    // 需要创建的数据；逐一赋值需特别处理的字段
+                    $data_to_create = array(
+                        'creator_id' => $user_id,
+                    );
+                    // 自动生成无需特别处理的数据
+                    $data_need_no_prepare = array(
+                        'vote_id', 'tag_id', 'index_id', 'name', 'description', 'url_image',
+                    );
+                    foreach ($data_need_no_prepare as $name)
+                        $data_to_create[$name] = $this->input->post($name);
 
-				$result = $this->basic_model->create($data_to_create, TRUE);
-				if ($result !== FALSE):
-					$this->result['status'] = 200;
-					$this->result['content']['id'] = $result;
-					$this->result['content']['message'] = '创建成功';
+                    // 客户端创建的数据，默认为待审核状态
+                    if ($this->app_type === 'client') $data_to_create['status'] = '待审核';
 
-				else:
-					$this->result['status'] = 424;
-					$this->result['content']['error']['message'] = '创建失败';
+                    $result = $this->basic_model->create($data_to_create, TRUE);
+                    if ($result !== FALSE):
+                        $this->result['status'] = 200;
+                        $this->result['content']['id'] = $result;
+                        $this->result['content']['message'] = '创建成功';
 
-				endif;
+                    else:
+                        $this->result['status'] = 424;
+                        $this->result['content']['error']['message'] = '创建失败';
+
+                    endif;
+                endif;
+
 			endif;
 		} // end create
 
@@ -339,80 +360,6 @@
 		} // end edit
 
         /**
-         * 5 编辑单行数据特定字段
-         *
-         * 修改单行数据的单一字段值
-         */
-        public function edit_certain()
-        {
-            // 操作可能需要检查客户端及设备信息
-            $type_allowed = array('admin'); // 客户端类型
-            $this->client_check($type_allowed);
-
-            // 管理类客户端操作可能需要检查操作权限
-            //$role_allowed = array('管理员', '经理'); // 角色要求
-            //$min_level = 10; // 级别要求
-            //$this->permission_check($role_allowed, $min_level);
-
-            // 检查必要参数是否已传入
-            $required_params = $this->names_edit_certain_required;
-            foreach ($required_params as $param):
-                ${$param} = $this->input->post($param);
-
-                // value 可以为空；必要字段会在字段验证中另行检查
-                if ( $param !== 'value' && !isset( ${$param} ) ):
-                    $this->result['status'] = 400;
-                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-                    exit();
-                endif;
-            endforeach;
-
-            // 检查目标字段是否可编辑
-            if ( ! in_array($name, $this->names_edit_allowed) ):
-                $this->result['status'] = 431;
-                $this->result['content']['error']['message'] = '该字段不可被修改';
-                exit();
-            endif;
-
-            // 初始化并配置表单验证库
-            $this->load->library('form_validation');
-            $this->form_validation->set_error_delimiters('', '');
-            // 动态设置待验证字段名及字段值
-            $data_to_validate["{$name}"] = $value;
-            $this->form_validation->set_data($data_to_validate);
-            $this->form_validation->set_rules('tag_id', '所属标签ID', 'trim|is_natural_no_zero');
-            $this->form_validation->set_rules('index_id', '索引序号', 'trim|is_natural_no_zero');
-            $this->form_validation->set_rules('name', '名称', 'trim|max_length[30]');
-            $this->form_validation->set_rules('description', '描述', 'trim|max_length[100]');
-            $this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
-
-            // 若表单提交不成功
-            if ($this->form_validation->run() === FALSE):
-                $this->result['status'] = 401;
-                $this->result['content']['error']['message'] = validation_errors();
-
-            else:
-                // 需要编辑的数据
-                $data_to_edit['operator_id'] = $user_id;
-                $data_to_edit[$name] = $value;
-
-                // 获取ID
-                $result = $this->basic_model->edit($id, $data_to_edit);
-
-                if ($result !== FALSE):
-                    $this->result['status'] = 200;
-                    $this->result['content']['id'] = $id;
-                    $this->result['content']['message'] = '编辑成功';
-
-                else:
-                    $this->result['status'] = 434;
-                    $this->result['content']['error']['message'] = '编辑失败';
-
-                endif;
-            endif;
-        } // end edit_certain
-
-        /**
 		 * 6 编辑多行数据特定字段
 		 *
 		 * 修改多行数据的单一字段值
@@ -470,6 +417,13 @@
 					case 'restore':
 						$data_to_edit['time_delete'] = NULL;
 						break;
+                    case 'approve': // 批准的同时恢复未删除状态
+                        $data_to_edit['time_delete'] = NULL;
+                        $data_to_edit['status'] = '正常';
+                        break;
+                    case 'reject':
+                        $data_to_edit['status'] = '已拒绝';
+                        break;
 				endswitch;
 
 				// 依次操作数据并输出操作结果
@@ -497,23 +451,25 @@
 		/**
 		 * 以下为工具类方法
 		 */
-        // 获取特定投票活动信息
+
+        // 获取特定投票活动信息，不含已删除项
         protected function get_vote($vote_id)
         {
             $this->switch_model('vote', 'vote_id');
+
+            $this->db->where('time_delete IS NULL');
             $result = $this->basic_model->select_by_id($vote_id);
 
             return (empty($result))? FALSE: $result;
         } // end get_vote
 
-        // 获取特定用户已创建候选项数
+        // 获取特定用户已创建候选项数，含已删除项
         protected function user_total_options($user_id, $vote_id)
         {
             $this->switch_model('vote_option', 'option_id');
             $condition = array(
                 'vote_id' => $vote_id,
-                'user_id' => $user_id,
-                'time_delete' => NULL,
+                'creator_id' => $user_id,
             );
             $result = $this->basic_model->count($condition);
 

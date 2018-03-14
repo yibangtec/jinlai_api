@@ -198,7 +198,35 @@
 				$this->result['status'] = 401;
 				$this->result['content']['error']['message'] = validation_errors();
 
-			else:
+			elseif ($this->app_type === 'admin'):
+                // 将当前日期作为创建日期
+                $date_create = date('Y-m-d');
+
+                // 需要创建的数据；逐一赋值需特别处理的字段
+                $data_to_create = array(
+                    'creator_id' => $user_id,
+                    'time_create' => time(),
+
+                    'vote_id' => $vote_id,
+                    'option_id' => $option_id,
+                    'user_id' => $user_id,
+                    'date_create' => $date_create,
+                );
+
+                $this->reset_model(); // 需要操作的数据库参数与之前不同，需重置数据库参数
+                $result = $this->basic_model->create($data_to_create, TRUE);
+                if ($result !== FALSE):
+                    $this->result['status'] = 200;
+                    $this->result['content']['id'] = $result;
+                    $this->result['content']['message'] = '创建成功';
+
+                else:
+                    $this->result['status'] = 424;
+                    $this->result['content']['error']['message'] = '创建失败';
+
+                endif;
+
+            else:
                 // 根据投票ID检查活动是否仍在进行中，并获取投票活动详情
                 $vote = $this->get_vote_pending($vote_id);
                 if ($vote === FALSE):
@@ -275,7 +303,8 @@
                     endif;
 
                 endif;
-			endif;
+
+			endif; // 若表单提交成功
 		} // end create
 
 		/**
@@ -336,6 +365,13 @@
 					case 'restore':
 						$data_to_edit['time_delete'] = NULL;
 						break;
+                    case 'unfreeze': // 批准的同时恢复未删除状态
+                        $data_to_edit['time_delete'] = NULL;
+                        $data_to_edit['status'] = '正常';
+                        break;
+                    case 'freeze':
+                        $data_to_edit['status'] = '已冻结';
+                        break;
 				endswitch;
 
 				// 依次操作数据并输出操作结果
