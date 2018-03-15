@@ -211,8 +211,8 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-            $this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]');
-            $this->form_validation->set_rules('url_name', 'URL名称', 'trim|min_length[5]|max_length[30]|alpha_dash');
+            $this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]|is_unique['.$this->table_name.'.name]');
+            $this->form_validation->set_rules('url_name', 'URL名称', 'trim|min_length[5]|max_length[30]|alpha_dash|is_unique['.$this->table_name.'.url_name]');
             $this->form_validation->set_rules('description', '描述', 'trim|max_length[255]');
             $this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
             $this->form_validation->set_rules('url_audio', '背景音乐', 'trim|max_length[255]');

@@ -153,8 +153,15 @@
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return).', (SELECT COUNT(*) FROM vote_ballot WHERE vote_option.option_id = vote_ballot.option_id) AS ballot_count');
 
-			// 获取列表；默认可获取已删除项
-			$items = $this->basic_model->select($condition, $order_by);
+            // 获取列表；默认可获取已删除项
+            $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
+            if ( empty($ids) ):
+                $items = $this->basic_model->select($condition, $order_by);
+            else:
+                // 限制可返回的字段
+                $this->db->select( implode(',', $this->names_to_return) );
+                $items = $this->basic_model->select_by_ids($ids);
+            endif;
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;

@@ -307,6 +307,107 @@
 			endif; // 若表单提交成功
 		} // end create
 
+        /**
+         * 7 批量为多行数据创建多项数据
+         */
+        public function create_multiple()
+        {
+            // 操作可能需要检查客户端及设备信息
+            $type_allowed = array('admin', 'biz',); // 客户端类型
+            $this->client_check($type_allowed);
+
+            // 管理类客户端操作可能需要检查操作权限
+            //$role_allowed = array('管理员', '经理'); // 角色要求
+            //$min_level = 10; // 级别要求
+            //$this->permission_check($role_allowed, $min_level);
+
+            // 检查必要参数是否已传入
+            $required_params = array(
+                'user_id', 'ids', 'password', 'vote_id', 'amount_min', 'amount_max',
+            );
+            foreach ($required_params as $param):
+                ${$param} = $this->input->post($param);
+                if ( !isset( ${$param} ) ):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+                    exit();
+                endif;
+            endforeach;
+
+            // 初始化并配置表单验证库
+            $this->load->library('form_validation');
+            $this->form_validation->set_error_delimiters('', '');
+            $this->form_validation->set_rules('ids', '待操作数据', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
+            $this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
+            $this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
+
+            $this->form_validation->set_rules('vote_id', '所属投票ID', 'trim|required|is_natural_no_zero');
+
+            $this->form_validation->set_rules('amount_min', '投票数量下限', 'trim|required|is_natural_no_zero|greater_than[9]|less_than[1001]|callback_amount_min');
+            $this->form_validation->set_rules('amount_max', '投票数量上限', 'trim|required|is_natural_no_zero|greater_than[9]|less_than[1001]|callback_amount_max');
+            $this->form_validation->set_message('amount_min', '投票数量下限不可大于上限');
+            $this->form_validation->set_message('amount_max', '投票数量下限不可小于上限');
+
+            // 验证表单值格式
+            if ($this->form_validation->run() === FALSE):
+                $this->result['status'] = 401;
+                $this->result['content']['error']['message'] = validation_errors();
+                exit();
+
+            elseif ($this->operator_check() !== TRUE):
+                $this->result['status'] = 453;
+                $this->result['content']['error']['message'] = '与该ID及类型对应的操作者不存在，或操作密码错误';
+                exit();
+
+            else:
+                // 需要创建的数据；逐一赋值需特别处理的字段
+                $data_to_create = array(
+                    'creator_id' => $user_id,
+
+                    'vote_id' => $vote_id,
+                    'user_id' => $user_id,
+                    'date_create' => date('Y-m-d'),
+                );
+
+                // 随机数生成范围
+                $random_range = $amount_max - $amount_min;
+
+                // 依次操作数据并输出操作结果
+                // 将待操作行ID们的CSV格式字符串，转换为待操作行的ID数组
+                $ids = explode(',', $ids);
+
+                // 默认批量处理全部成功，若有任一处理失败则将处理失败行进行记录
+                $this->result['status'] = 200;
+                foreach ($ids as $id):
+                    $data_to_create['option_id'] = $id;
+                    $data_to_create['time_create'] = time();
+
+                    // 需要生成选票的数量
+                    $needed_count = $amount_min + round((rand(0,100) * $random_range)/100);
+
+                    // 生成相应数量的选票
+                    for ($i=0; $i<$needed_count; $i++):
+                        $result = $this->basic_model->create($data_to_create, TRUE);
+                        if ($result === FALSE):
+                            $this->result['status'] = 434;
+                            $this->result['content']['row_failed'][] = $id;
+                        endif;
+                    endfor;
+
+                    $this->result['content']['operated'][] = array(
+                        'option_id' => $id,
+                        'count' => $needed_count,
+                    );
+
+                endforeach;
+
+                // 添加全部操作成功后的提示
+                if ($this->result['status'] = 200)
+                    $this->result['content']['message'] = '全部操作成功';
+
+            endif;
+        } // end create_multiple
+
 		/**
 		 * 6 编辑多行数据特定字段
 		 *
@@ -456,6 +557,40 @@
 
             return (empty($result))? FALSE: $result;
         } // end user_option_ballots
+
+        // 检查 amount_min
+        public function amount_min($value)
+        {
+            if ( empty($value) ):
+                return true;
+
+            else:
+                // 不可大于 amount_min
+                if ($this->input->post('amount_max') < $value):
+                    return false;
+                else:
+                    return true;
+                endif;
+
+            endif;
+        } // end amount_min
+
+        // 检查 amount_max
+        public function amount_max($value)
+        {
+            if ( empty($value) ):
+                return true;
+
+            else:
+                // 不可小于 amount_min
+                if ($this->input->post('amount_min') > $value):
+                    return false;
+                else:
+                    return true;
+                endif;
+
+            endif;
+        } // end amount_max
 
 	} // end class Vote_ballot
 

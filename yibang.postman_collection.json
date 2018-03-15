@@ -854,7 +854,7 @@
 								},
 								{
 									"key": "app_type",
-									"value": "client",
+									"value": "admin",
 									"type": "text"
 								},
 								{
@@ -869,7 +869,7 @@
 								},
 								{
 									"key": "option_id",
-									"value": "1",
+									"value": "20",
 									"type": "text"
 								}
 							]
@@ -885,6 +885,78 @@
 							"path": [
 								"vote_ballot",
 								"create"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "VTB7 投票选票批量创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "vote_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "293,54,205",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "amount_min",
+									"value": "10",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "amount_max",
+									"value": "20",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote_ballot/create_multiple",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote_ballot",
+								"create_multiple"
 							]
 						},
 						"description": null
@@ -3772,11 +3844,24 @@
 								{
 									"key": "user_id",
 									"value": "1",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "time_delete",
 									"value": "NULL",
+									"type": "text"
+								},
+								{
+									"key": "orderby_index_id",
+									"value": "ASC",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "110,76,48",
+									"description": "",
 									"type": "text"
 								}
 							]
@@ -3857,7 +3942,7 @@
 								},
 								{
 									"key": "app_type",
-									"value": "admin",
+									"value": "client",
 									"type": "text"
 								},
 								{
@@ -4238,7 +4323,7 @@
 								},
 								{
 									"key": "name",
-									"value": "欧美品牌",
+									"value": "食品食材",
 									"description": "",
 									"type": "text"
 								}
@@ -6648,7 +6733,7 @@
 								},
 								{
 									"key": "wechat_union_id",
-									"value": "o0geuv1gYOza99ncltzFyN6f1SGQ",
+									"value": "o0geuv4qf9z2DbtnsRSSzzzzz5",
 									"type": "text"
 								}
 							]
