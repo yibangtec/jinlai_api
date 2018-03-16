@@ -35,14 +35,14 @@
 		 * 可作为排序条件的字段名
 		 */
 		protected $names_to_order = array(
-			'vote_id', 'tag_id', 'index_id', 'name', 'description', 'url_image', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+			'vote_id', 'tag_id', 'index_id', 'name', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'option_id', 'vote_id', 'tag_id', 'index_id', 'name', 'description', 'url_image', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+			'option_id', 'vote_id', 'tag_id', 'index_id', 'name', 'description', 'url_image', 'mobile', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
 		/**
@@ -238,6 +238,10 @@
 			$this->form_validation->set_rules('description', '描述', 'trim|max_length[100]');
 			$this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
 
+			// 若为客户端报名，则需手机号
+			if ($this->app_type === 'client')
+			    $this->form_validation->set_rules('mobile', '审核联系手机号', 'trim|required|exact_length[11]|is_natural_no_zero');
+
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
 				$this->result['status'] = 401;
@@ -276,7 +280,7 @@
                     );
                     // 自动生成无需特别处理的数据
                     $data_need_no_prepare = array(
-                        'vote_id', 'tag_id', 'index_id', 'name', 'description', 'url_image',
+                        'vote_id', 'tag_id', 'index_id', 'name', 'description', 'url_image', 'mobile',
                     );
                     foreach ($data_need_no_prepare as $name)
                         $data_to_create[$name] = $this->input->post($name);
