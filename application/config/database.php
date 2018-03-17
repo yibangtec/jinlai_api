@@ -84,7 +84,7 @@ $db['aliyun_jinlai'] = array(
 	'pconnect' => FALSE,
 	'db_debug' => (ENVIRONMENT !== 'production'),
 	'cache_on' => FALSE,
-	'cachedir' => '',
+	'cachedir' => APPPATH.'cache_database',
 	'char_set' => 'utf8',
 	'dbcollat' => 'utf8_general_ci',
 	'swap_pre' => '',

@@ -93,6 +93,9 @@
          */
         public function minute()
         {
+            // 更新候选项总选票数
+            $this->renew_ballot_overall();
+
             // 每5分钟更新所有实物类商品日销量
             if (date('i')%5 === 0)
                 $this->renew_sold_daily();
@@ -147,6 +150,29 @@
             $this->load->library('luosimao');
             @$result = $this->luosimao->send($this->sms_mobile, $this->sms_content);
         } // end sms_send
+
+        /**
+         * 更新总票数
+         *
+         * vote_option.ballot_overall字段值
+         */
+        public function renew_ballot_overall()
+        {
+            // 获取所有有效选票
+            $condition = array(
+                'time_delete' => 'NULL',
+                'status' => '正常',
+            );
+            $items = $this->get_items('vote_option', 'option_id', $condition, TRUE);
+
+            // 更新所有候选项总票数
+            if ( !empty($items) ):
+                foreach ($items as $item):
+                    $query = $this->db->query('CALL update_vote_option_ballot_overall('.$item['option_id'].')');
+                    $this->db->reconnect(); // 调用存储过程后必须重新连接数据库，下同
+                endforeach;
+            endif;
+        } // end renew_ballot_overall
 
         /**
          * 更新实物类商品总销量

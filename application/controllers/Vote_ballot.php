@@ -281,6 +281,9 @@
                                 $this->result['content']['id'] = $result;
                                 $this->result['content']['message'] = '创建成功';
 
+                                // 更新当前选项总票数
+                                @$this->db->query('CALL update_vote_option_ballot_overall('.$option_id.')');
+
                             else:
                                 $this->result['status'] = 424;
                                 $this->result['content']['error']['message'] = '创建失败';
@@ -400,6 +403,10 @@
                     );
 
                 endforeach;
+
+                // 清除数据库缓存
+                $this->db->cache_delete('vote_option', 'index');
+                $this->db->cache_delete('vote_option', 'detail');
 
                 // 添加全部操作成功后的提示
                 if ($this->result['status'] = 200)

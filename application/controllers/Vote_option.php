@@ -42,7 +42,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'option_id', 'vote_id', 'tag_id', 'index_id', 'name', 'description', 'url_image', 'mobile', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+			'option_id', 'vote_id', 'tag_id', 'index_id', 'name', 'description', 'url_image', 'mobile', 'ballot_overall', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
 		/**
@@ -150,9 +150,6 @@
 					$order_by[$sorter] = $this->input->post('orderby_'.$sorter);
 			endforeach;
 
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return).', (SELECT COUNT(*) FROM vote_ballot WHERE vote_option.option_id = vote_ballot.option_id) AS ballot_count');
-
             // 获取列表；默认可获取已删除项
             $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
             if ( empty($ids) ):
@@ -162,6 +159,7 @@
                 $this->db->select( implode(',', $this->names_to_return) );
                 $items = $this->basic_model->select_by_ids($ids);
             endif;
+
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
