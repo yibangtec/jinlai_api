@@ -147,9 +147,10 @@
 			endif;
 
 			// 默认可返回已删除项
-            if ($allow_deleted === FALSE || (isset($condition['time_delete']) && $condition['time_delete'] === 'NULL'))
+            if ($allow_deleted === FALSE && !isset($condition['time_delete']))
                 $this->db->where("time_delete IS NULL");
 
+            // 获取数据
             $query = $this->db->get($this->table_name);
 
             // 可选择仅返回符合条件项的ID列表
@@ -218,8 +219,8 @@
             endif;
 
             // 默认可返回已删除项
-            if ($allow_deleted === FALSE)
-                $this->db->where("`time_delete` IS NULL");
+            if ($allow_deleted === FALSE && !isset($condition['time_delete']))
+                $this->db->where("time_delete IS NULL");
 
 			// 拆分字符串为数组
 			$ids = explode(',', trim($ids, ',')); // 清除多余的前后半角逗号

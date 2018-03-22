@@ -93,8 +93,9 @@
          */
         public function minute()
         {
-            // 更新候选项总选票数
-            $this->renew_ballot_overall();
+            // 每3分钟更新候选项总选票数
+            if (date('i')%3 === 0)
+                $this->renew_ballot_overall();
 
             // 每5分钟更新所有实物类商品日销量
             if (date('i')%5 === 0)

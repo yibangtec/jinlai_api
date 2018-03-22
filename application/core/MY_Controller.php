@@ -116,9 +116,12 @@
 			if ( ENVIRONMENT !== 'development' && $this->input->post('skip_sign') !== 'please' )
 				$this->sign_check();
 
-			// 如果已经打开测试模式，则输出调试信息
-			if ($this->input->post('test_mode') === 'on')
-				$this->output->enable_profiler(TRUE);
+			// 检查是否已打开测试模式，
+			if ($this->input->post('test_mode') === 'on'):
+                $this->output->enable_profiler(TRUE); // 输出调试信息
+
+                $this->result['user_agent'] = $_SERVER['HTTP_USER_AGENT']; // 获取当前设备信息
+			endif;
 	    } // end __construct
 
 		public function __destruct()
@@ -682,10 +685,11 @@
          * @param string $table_name 信息所属表名
          * @param string $table_id 信息所属表ID
          * @param array $condition 筛选条件
+         * @param array $order_by 排序条件
          * @param boolean $ids_only 是否仅需返回CSV格式的主键ID
          * @return mixed
          */
-        protected function get_items($table_name = 'item', $table_id = 'item_id', $condition = array(), $ids_only = FALSE)
+        protected function get_items($table_name = 'item', $table_id = 'item_id', $condition = array(), $order_by = array(), $ids_only = FALSE)
         {
             // 初始化数据表
             $this->switch_model($table_name, $table_id);
@@ -693,7 +697,7 @@
             // 判断是否仅需返回主键ID
             if ($ids_only === TRUE) $this->db->select($table_id); // 仅获取ID即可
 
-            return $this->basic_model->select($condition);
+            return $this->basic_model->select($condition, $order_by);
         } // end get_items
 
 	} // end class MY_Controller

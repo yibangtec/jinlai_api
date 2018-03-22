@@ -168,12 +168,32 @@
 
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );
+
+			// 若为客户端，则仅获取有效活动
+			if ($this->app_type === 'client') $this->db->where('time_delete IS NULL');
 			
 			// 获取特定项；默认可获取已删除项
 			$item = $this->basic_model->select_by_id($id);
 			if ( !empty($item) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
+
+				// 获取候选项标签信息
+                $conditions = array('time_delete' => 'NULL');
+                $this->result['content']['tags'] = $this->get_items('vote_tag', 'tag_id', $conditions);
+
+                // 获取投票候选项信息
+                // 确定排序方式
+                $orderby_ballot_overall = $this->input->post('orderby_ballot_overall');
+                if ( empty($orderby_ballot_overall) ):
+                    $order_by['index_id'] = 'DESC';
+                else:
+                    $order_by['ballot_overall'] = $this->input->post('orderby_ballot_overall');
+                endif;
+
+                if ($this->app_type === 'client') $conditions['status'] = '正常'; // 客户端仅获取正常状态信息
+
+                $this->result['content']['options'] = $this->get_items('vote_option', 'option_id', $conditions, $order_by);
 
 			else:
 				$this->result['status'] = 414;
