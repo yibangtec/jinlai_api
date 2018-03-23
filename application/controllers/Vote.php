@@ -192,7 +192,6 @@
                 endif;
 
                 if ($this->app_type === 'client') $conditions['status'] = '正常'; // 客户端仅获取正常状态信息
-
                 $this->result['content']['options'] = $this->get_items('vote_option', 'option_id', $conditions, $order_by);
 
 			else:

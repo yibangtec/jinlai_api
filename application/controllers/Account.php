@@ -49,32 +49,63 @@
 				// 更新最后登录信息
 				@$this->basic_model->edit($user_info['user_id'], $login_info);
 
-				// 非客户端登录时，检查该用户是否为员工
-				if ($this->app_type !== 'client'):
-					$stuff = $this->check_stuff( $user_info['user_id'] );
+                // 非客户端登录时，检查该用户是否为员工
+                /*
+                if ($this->app_type !== 'client'):
+                    $stuff = $this->check_stuff( $user_info['user_id'] );
 
-					if ( !empty($stuff) ):
-						// 不允许商家员工登录管理端
-						if ($this->app_type === 'admin' && !empty($stuff['biz_id']) ):
-							$this->result['status'] = 415;
-							$this->result['content']['error']['message'] = '该用户并非管理端员工';
-							exit();
+                    if ( !empty($stuff) ):
+                        // 不允许商家员工登录管理端
+                        if ($this->app_type === 'admin' && !empty($stuff['biz_id']) ):
+                            $this->result['status'] = 415;
+                            $this->result['content']['error']['message'] = '该用户并非管理端员工';
+                            exit();
 
-						// 不允许管理员工登录非管理端
-						elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
-							$this->result['status'] = 415;
-							$this->result['content']['error']['message'] = '该用户是管理端员工';
-							exit();
+                        // 不允许管理员工登录非管理端
+                        elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
+                            $this->result['status'] = 415;
+                            $this->result['content']['error']['message'] = '该用户并非商户端员工';
+                            exit();
 
-						else:
+                        else:
                             $user_info['stuff_id'] = $stuff['stuff_id'];
-							$user_info['biz_id'] = $stuff['biz_id'];
-							$user_info['role'] = $stuff['role'];
-							$user_info['level'] = $stuff['level'];
+                            $user_info['biz_id'] = $stuff['biz_id'];
+                            $user_info['role'] = $stuff['role'];
+                            $user_info['level'] = $stuff['level'];
 
-						endif;
-					endif;
-				endif;
+                        endif;
+                    endif;
+                endif;
+                */
+                if ($this->app_type !== 'client'):
+                    $stuff = $this->check_stuff( $user_info['user_id'] );
+
+                    // 默认用户非员工
+                    $this->result['status'] = 415;
+                    if ( empty($stuff) ):
+                        $this->result['content']['error']['message'] = '该用户并非员工';
+                        exit();
+
+                    else:
+                        // 不允许商家员工登录管理端
+                        if ($this->app_type === 'admin' && !empty($stuff['biz_id']) ):
+                            $this->result['content']['error']['message'] = '该用户并非管理端员工';
+                            exit();
+
+                        // 不允许管理员工登录非管理端
+                        elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
+                            $this->result['content']['error']['message'] = '该用户并非商户端员工';
+                            exit();
+
+                        else:
+                            $user_info['stuff_id'] = $stuff['stuff_id'];
+                            $user_info['biz_id'] = $stuff['biz_id'];
+                            $user_info['role'] = $stuff['role'];
+                            $user_info['level'] = $stuff['level'];
+
+                        endif;
+                    endif;
+                endif;
 
 				// 不返回真实密码信息
 				if ( !empty($user_info['password']) ) $user_info['password'] = 'set';
@@ -309,32 +340,63 @@
 						$login_info['last_login_timestamp'] = time();
 						@$this->basic_model->edit($user_info['user_id'], $login_info);
 
-						// 非客户端登录时，检查该用户是否为员工
-						if ($this->app_type !== 'client'):
-							$stuff = $this->check_stuff( $user_info['user_id'] );
+                        // 非客户端登录时，检查该用户是否为员工
+                        /*
+                        if ($this->app_type !== 'client'):
+                            $stuff = $this->check_stuff( $user_info['user_id'] );
 
-							if ( !empty($stuff) ):
-								// 不允许商家员工登录管理端
-								if ($this->app_type === 'admin' && !empty($stuff['biz_id']) ):
-									$this->result['status'] = 415;
-									$this->result['content']['error']['message'] = '该用户并非管理端员工';
-									exit();
+                            if ( !empty($stuff) ):
+                                // 不允许商家员工登录管理端
+                                if ($this->app_type === 'admin' && !empty($stuff['biz_id']) ):
+                                    $this->result['status'] = 415;
+                                    $this->result['content']['error']['message'] = '该用户并非管理端员工';
+                                    exit();
 
-								// 不允许管理员工登录非管理端
-								elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
-									$this->result['status'] = 415;
-									$this->result['content']['error']['message'] = '该用户并非商户端员工';
-									exit();
+                                // 不允许管理员工登录非管理端
+                                elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
+                                    $this->result['status'] = 415;
+                                    $this->result['content']['error']['message'] = '该用户并非商户端员工';
+                                    exit();
 
-								else:
+                                else:
                                     $user_info['stuff_id'] = $stuff['stuff_id'];
-									$user_info['biz_id'] = $stuff['biz_id'];
-									$user_info['role'] = $stuff['role'];
-									$user_info['level'] = $stuff['level'];
+                                    $user_info['biz_id'] = $stuff['biz_id'];
+                                    $user_info['role'] = $stuff['role'];
+                                    $user_info['level'] = $stuff['level'];
 
-								endif;
-							endif;
-						endif;
+                                endif;
+                            endif;
+                        endif;
+                        */
+                        if ($this->app_type !== 'client'):
+                            $stuff = $this->check_stuff( $user_info['user_id'] );
+
+                            // 默认用户非员工
+                            $this->result['status'] = 415;
+                            if ( empty($stuff) ):
+                                $this->result['content']['error']['message'] = '该用户并非员工';
+                                exit();
+
+                            else:
+                                // 不允许商家员工登录管理端
+                                if ($this->app_type === 'admin' && !empty($stuff['biz_id']) ):
+                                    $this->result['content']['error']['message'] = '该用户并非管理端员工';
+                                    exit();
+
+                                // 不允许管理员工登录非管理端
+                                elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
+                                    $this->result['content']['error']['message'] = '该用户并非商户端员工';
+                                    exit();
+
+                                else:
+                                    $user_info['stuff_id'] = $stuff['stuff_id'];
+                                    $user_info['biz_id'] = $stuff['biz_id'];
+                                    $user_info['role'] = $stuff['role'];
+                                    $user_info['level'] = $stuff['level'];
+
+                                endif;
+                            endif;
+                        endif;
 
 						// 不返回真实密码信息
 						if ( !empty($user_info['password']) ) $user_info['password'] = 'set';
@@ -536,31 +598,62 @@
 					@$this->basic_model->edit($user_info['user_id'], $login_info);
 
 					// 非客户端登录时，检查该用户是否为员工
-					if ($this->app_type !== 'client'):
-						$stuff = $this->check_stuff( $user_info['user_id'] );
+                    /*
+                    if ($this->app_type !== 'client'):
+                        $stuff = $this->check_stuff( $user_info['user_id'] );
 
-						if ( !empty($stuff) ):
-							// 不允许商家员工登录管理端
-							if ($this->app_type === 'admin' && !empty($stuff['biz_id']) ):
-								$this->result['status'] = 415;
-								$this->result['content']['error']['message'] = '该用户并非管理端员工';
-								exit();
+                        if ( !empty($stuff) ):
+                            // 不允许商家员工登录管理端
+                            if ($this->app_type === 'admin' && !empty($stuff['biz_id']) ):
+                                $this->result['status'] = 415;
+                                $this->result['content']['error']['message'] = '该用户并非管理端员工';
+                                exit();
 
-							// 不允许管理员工登录非管理端
-							elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
-								$this->result['status'] = 415;
-								$this->result['content']['error']['message'] = '该用户并非商户端员工';
-								exit();
-							
-							else:
+                            // 不允许管理员工登录非管理端
+                            elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
+                                $this->result['status'] = 415;
+                                $this->result['content']['error']['message'] = '该用户并非商户端员工';
+                                exit();
+
+                            else:
                                 $user_info['stuff_id'] = $stuff['stuff_id'];
-								$user_info['biz_id'] = $stuff['biz_id'];
-								$user_info['role'] = $stuff['role'];
-								$user_info['level'] = $stuff['level'];
+                                $user_info['biz_id'] = $stuff['biz_id'];
+                                $user_info['role'] = $stuff['role'];
+                                $user_info['level'] = $stuff['level'];
 
-							endif;
-						endif;
-					endif;
+                            endif;
+                        endif;
+                    endif;
+                    */
+                    if ($this->app_type !== 'client'):
+                        $stuff = $this->check_stuff( $user_info['user_id'] );
+
+                        // 默认用户非员工
+                        $this->result['status'] = 415;
+                        if ( empty($stuff) ):
+                            $this->result['content']['error']['message'] = '该用户并非员工';
+                            exit();
+
+                        else:
+                            // 不允许商家员工登录管理端
+                            if ($this->app_type === 'admin' && !empty($stuff['biz_id']) ):
+                                $this->result['content']['error']['message'] = '该用户并非管理端员工';
+                                exit();
+
+                            // 不允许管理员工登录非管理端
+                            elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
+                                $this->result['content']['error']['message'] = '该用户并非商户端员工';
+                                exit();
+
+                            else:
+                                $user_info['stuff_id'] = $stuff['stuff_id'];
+                                $user_info['biz_id'] = $stuff['biz_id'];
+                                $user_info['role'] = $stuff['role'];
+                                $user_info['level'] = $stuff['level'];
+
+                            endif;
+                        endif;
+                    endif;
 
 					// 不返回真实密码信息
 					if ( !empty($user_info['password']) ) $user_info['password'] = 'set';
