@@ -82,6 +82,7 @@
 			// 发送短信
             $this->sms_mobile = '17664073966';
             $this->sms_content = '现在时间 '. date('Y-m-d H:i:s');
+            // 仅特定时间点发送短信提醒
             $hour_to_remind = array('00', '12', '18',);
             if ( in_array(date('H'), $hour_to_remind) )
                 @$this->sms_send();
@@ -93,19 +94,13 @@
          */
         public function minute()
         {
-            // 每3分钟更新候选项总选票数
+            // 每3分钟更新进行中投票活动的各候选项总选票数
             if (date('i')%3 === 0)
                 $this->renew_ballot_overall();
 
             // 每5分钟更新所有实物类商品日销量
             if (date('i')%5 === 0)
                 $this->renew_sold_daily();
-
-            $this->sms_mobile = '17664073966';
-            $this->sms_content = '计划任务 '. $this->router->method. ' 已于 '. date('Y-m-d H:i:s'). ' 执行';
-
-            // 发送短信
-            //@$this->sms_send();
         } // end minute
 
         /**
@@ -169,7 +164,7 @@
             // 更新所有候选项总票数
             if ( !empty($items) ):
                 foreach ($items as $item):
-                    $query = $this->db->query('CALL update_vote_option_ballot_overall('.$item['option_id'].')');
+                    $this->db->query('CALL update_vote_option_ballot_overall('.$item['option_id'].')');
                     $this->db->reconnect(); // 调用存储过程后必须重新连接数据库，下同
                 endforeach;
             endif;

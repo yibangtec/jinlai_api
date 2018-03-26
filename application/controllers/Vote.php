@@ -189,6 +189,7 @@
                     $order_by['index_id'] = 'DESC';
                 else:
                     $order_by['ballot_overall'] = $this->input->post('orderby_ballot_overall');
+                    $this->basic_model->limit = 100;
                 endif;
 
                 if ($this->app_type === 'client') $conditions['status'] = '正常'; // 客户端仅获取正常状态信息

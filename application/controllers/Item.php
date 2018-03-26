@@ -348,8 +348,8 @@
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
             $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_start');
             $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_end[time_to_publish]');
-            $this->form_validation->set_message('time_start', '预定上架时间需详细到分');
-            $this->form_validation->set_message('time_end', '预定下架时间需详细到分，且晚于预订上架时间（若有）');
+            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分');
+            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于预订上架时间（若有）');
 			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
 
@@ -454,8 +454,8 @@
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
             $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_start');
             $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_end[time_to_publish]');
-            $this->form_validation->set_message('time_start', '预定上架时间需详细到分');
-            $this->form_validation->set_message('time_end', '预定下架时间需详细到分，且晚于预订上架时间（若有）');
+            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分');
+            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于预订上架时间（若有）');
 			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
 			//$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
 
@@ -579,8 +579,8 @@
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
             $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_start');
             $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_end[time_to_publish]');
-            $this->form_validation->set_message('time_start', '预定上架时间需详细到分');
-            $this->form_validation->set_message('time_end', '预定下架时间需详细到分，且晚于预订上架时间（若有）');
+            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分');
+            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于预订上架时间（若有）');
 			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
 
