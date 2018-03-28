@@ -105,16 +105,27 @@
 			$order_by['time_create'] = 'DESC';
 
 			// 获取列表；默认可获取已删除项
-            $this->load->model('order_model');
-			$items = $this->order_model->select($condition, $order_by);
+            $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
+            if ( empty($ids) ):
+                $this->load->model('order_model');
+                $items = $this->order_model->select($condition, $order_by);
+            else:
+                // 限制可返回的字段
+                $this->db->select( implode(',', $this->names_to_return) );
+                $items = $this->basic_model->select_by_ids($ids);
+            endif;
+
+			// 获取列表；默认可获取已删除项
 			if ( !empty($items) ):
-				$this->switch_model('order_items', 'record_id');
-				for ($i=0;$i<count($items);$i++):
-					// 获取订单商品
+                if ( empty($ids) ):
+                    // 获取订单商品记录
+                    $this->switch_model('order_items', 'record_id');
                     $this->basic_model->limit = $this->basic_model->offset = 0;
-					$condition = array('order_id' => $items[$i]['order_id']);
-					$items[$i]['order_items'] = $this->basic_model->select($condition, NULL);
-				endfor;
+                    for ($i=0;$i<count($items);$i++):
+                        $condition = array('order_id' => $items[$i]['order_id']);
+                        $items[$i]['order_items'] = $this->basic_model->select($condition, NULL);
+                    endfor;
+                endif;
 
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;

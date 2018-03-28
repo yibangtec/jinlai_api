@@ -85,16 +85,28 @@
 			// 排序条件
 			$order_by = NULL;
 
+            // 获取列表；默认可获取已删除项
+            $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
+            if ( empty($ids) ):
+                $this->load->model('refund_model');
+			    $items = $this->refund_model->select($condition, $order_by);
+            else:
+                // 限制可返回的字段
+                $this->db->select( implode(',', $this->names_to_return) );
+                $items = $this->basic_model->select_by_ids($ids);
+            endif;
+
 			// 获取列表；默认可获取已删除项
-            $this->load->model('refund_model');
-			$items = $this->refund_model->select($condition, $order_by);
 			if ( !empty($items) ):
-                // 获取涉及退款的订单商品
-				$this->switch_model('order_items', 'record_id');
-				for ($i=0;$i<count($items);$i++):
-                    $this->db->select('record_id, order_id, item_id, name, item_image, slogan, sku_id, sku_name, sku_image, price, count, single_total, refund_status');
-                    $items[$i]['order_item'] = $this->basic_model->select_by_id($items[$i]['record_id']);
-				endfor;
+                if ( empty($ids) ):
+                    // 获取涉及退款的订单商品
+                    $this->switch_model('order_items', 'record_id');
+                    $this->basic_model->limit = $this->basic_model->offset = 0;
+                    for ($i=0;$i<count($items);$i++):
+                        $this->db->select('record_id, order_id, item_id, name, item_image, slogan, sku_id, sku_name, sku_image, price, count, single_total, refund_status');
+                        $items[$i]['order_item'] = $this->basic_model->select_by_id($items[$i]['record_id']);
+                    endfor;
+                endif;
 
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;

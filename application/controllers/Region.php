@@ -112,11 +112,17 @@
 			// 排序条件
 			$order_by['nation'] = 'DESC';
 
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
+            // 限制可返回的字段
+            $this->db->select( implode(',', $this->names_to_return) );
 
 			// 获取列表；默认可获取已删除项
-			$items = $this->basic_model->select($condition, $order_by);
+            $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
+            if ( empty($ids) ):
+                $items = $this->basic_model->select($condition, $order_by);
+            else:
+                $items = $this->basic_model->select_by_ids($ids);
+            endif;
+
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
@@ -188,11 +194,11 @@
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
             $this->form_validation->set_rules('nation', '国别', 'trim|max_length[10]');
             $this->form_validation->set_rules('province', '省级行政区', 'trim|required|max_length[10]');
-            $this->form_validation->set_rules('province_index', '省级行政区索引', 'trim|required|max_length[3]');
             $this->form_validation->set_rules('province_abbr', '省级行政区简称', 'trim|required|max_length[1]');
-            $this->form_validation->set_rules('province_brief', '省级行政区通称', 'trim|required|max_length[3]');
-            $this->form_validation->set_rules('city', '市级行政区', 'trim|required|max_length[10]');
-            $this->form_validation->set_rules('county', '区县级行政区', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('province_brief', '省级行政区通称', 'trim|max_length[3]');
+            $this->form_validation->set_rules('province_index', '省级行政区索引', 'trim|required|max_length[3]');
+            $this->form_validation->set_rules('city', '地市级行政区', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('county', '区县级行政区', 'trim|required|max_length[10]');// TODO: 仅允许汉字和半角逗号
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -205,10 +211,12 @@
 					'creator_id' => $user_id,
                     //'nation' => empty($this->input->post('nation'))? '中国': $this->input->post('nation'),
                     'nation' => '中国', // 暂时只支持中国
+                    'province_brief' => empty($this->input->post('province_brief'))? $this->input->post('province_abbr'): $this->input->post('province_brief'), // 若未传入通称，则视为与简称一致
+                    'province_index' => strtoupper($this->input->post('province_index')),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'province', 'province_index', 'province_abbr', 'province_brief', 'city', 'county',
+					'province', 'province_abbr', 'city', 'county',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -254,11 +262,11 @@
             $this->form_validation->set_error_delimiters('', '');
             $this->form_validation->set_rules('nation', '国别', 'trim|max_length[10]');
             $this->form_validation->set_rules('province', '省级行政区', 'trim|required|max_length[10]');
-            $this->form_validation->set_rules('province_index', '省级行政区索引', 'trim|required|max_length[3]');
             $this->form_validation->set_rules('province_abbr', '省级行政区简称', 'trim|required|max_length[1]');
-            $this->form_validation->set_rules('province_brief', '省级行政区通称', 'trim|required|max_length[3]');
-            $this->form_validation->set_rules('city', '市级行政区', 'trim|required|max_length[10]');
-            $this->form_validation->set_rules('counties', '区县级行政区们', 'trim|required');// TODO: 仅允许汉字和半角逗号
+            $this->form_validation->set_rules('province_brief', '省级行政区通称', 'trim|max_length[3]');
+            $this->form_validation->set_rules('province_index', '省级行政区索引', 'trim|required|max_length[3]');
+            $this->form_validation->set_rules('city', '地市级行政区', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('county', '区县级行政区', 'trim|required|max_length[10]');// TODO: 仅允许汉字和半角逗号
 
             // 若表单提交不成功
             if ($this->form_validation->run() === FALSE):
@@ -271,10 +279,12 @@
                     'creator_id' => $user_id,
                     //'nation' => empty($this->input->post('nation'))? '中国': $this->input->post('nation'),
                     'nation' => '中国', // 暂时只支持中国
+                    'province_brief' => empty($this->input->post('province_brief'))? $this->input->post('province_abbr'): $this->input->post('province_brief'), // 若未传入通称，则视为与简称一致
+                    'province_index' => strtoupper($this->input->post('province_index')),
                 );
                 // 自动生成无需特别处理的数据
                 $data_need_no_prepare = array(
-                    'province', 'province_index', 'province_abbr', 'province_brief', 'city',
+                    'province', 'province_abbr', 'city', 'county',
                 );
                 foreach ($data_need_no_prepare as $name)
                     $data_to_create[$name] = $this->input->post($name);
@@ -331,13 +341,13 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-            $this->form_validation->set_rules('nation', '国别', 'trim');
+            $this->form_validation->set_rules('nation', '国别', 'trim|max_length[10]');
             $this->form_validation->set_rules('province', '省级行政区', 'trim|required|max_length[10]');
-            $this->form_validation->set_rules('province_index', '省级行政区索引', 'trim|required|max_length[3]');
             $this->form_validation->set_rules('province_abbr', '省级行政区简称', 'trim|required|max_length[1]');
-            $this->form_validation->set_rules('province_brief', '省级行政区通称', 'trim|required|max_length[3]');
-            $this->form_validation->set_rules('city', '市级行政区', 'trim|required|max_length[10]');
-            $this->form_validation->set_rules('county', '区县级行政区', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('province_brief', '省级行政区通称', 'trim|max_length[3]');
+            $this->form_validation->set_rules('province_index', '省级行政区索引', 'trim|required|max_length[3]');
+            $this->form_validation->set_rules('city', '地市级行政区', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('county', '区县级行政区', 'trim|required|max_length[10]'); // TODO: 仅允许汉字和半角逗号
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -350,10 +360,12 @@
 					'operator_id' => $user_id,
                     //'nation' => empty($this->input->post('nation'))? '中国': $this->input->post('nation'),
                     'nation' => '中国', // 暂时只支持中国
+                    'province_brief' => empty($this->input->post('province_brief'))? $this->input->post('province_abbr'): $this->input->post('province_brief'), // 若未传入通称，则视为与简称一致
+                    'province_index' => strtoupper($this->input->post('province_index')),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'province', 'province_index', 'province_abbr', 'province_brief', 'city', 'county',
+					'province', 'province_abbr', 'city', 'county',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);

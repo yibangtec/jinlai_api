@@ -105,7 +105,7 @@
 			// 限制可返回的字段
 			$this->db->select( implode(',', $this->names_to_return) );
 
-            // 获取列表；默认不获取已删除项
+            // 获取列表；默认可获取已删除项
             $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
             if ( empty($ids) ):
                 $items = $this->basic_model->select($condition, $order_by);

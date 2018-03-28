@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'name', 'description', 'url_image', 'url_audio', 'url_video', 'url_video_thumb', 'url_name', 'url_default_option_image', 'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'time_start', 'time_end', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'name', 'description', 'url_image', 'url_audio', 'url_video', 'url_video_thumb', 'url_name', 'url_default_option_image', 'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'exturl_before', 'exturl_ongoing', 'exturl_after', 'time_start', 'time_end', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 		
 		/**
@@ -42,7 +42,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'vote_id', 'name', 'description', 'url_image', 'url_video', 'url_video_thumb', 'url_audio', 'url_name', 'url_default_option_image', 'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'time_start', 'time_end', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'vote_id', 'name', 'description', 'url_image', 'url_video', 'url_video_thumb', 'url_audio', 'url_name', 'url_default_option_image', 'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'exturl_before', 'exturl_ongoing', 'exturl_after', 'time_start', 'time_end', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -137,11 +137,17 @@
 					$order_by[$sorter] = $this->input->post('orderby_'.$sorter);
 			endforeach;
 
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
+            // 限制可返回的字段
+            $this->db->select( implode(',', $this->names_to_return) );
 
-			// 获取列表；默认可获取已删除项
-			$items = $this->basic_model->select($condition, $order_by);
+            // 获取列表；默认可获取已删除项
+            $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
+            if ( empty($ids) ):
+                $items = $this->basic_model->select($condition, $order_by);
+            else:
+                $items = $this->basic_model->select_by_ids($ids);
+            endif;
+
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
