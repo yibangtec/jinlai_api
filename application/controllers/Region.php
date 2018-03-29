@@ -266,7 +266,7 @@
             $this->form_validation->set_rules('province_brief', '省级行政区通称', 'trim|max_length[3]');
             $this->form_validation->set_rules('province_index', '省级行政区索引', 'trim|required|max_length[3]');
             $this->form_validation->set_rules('city', '地市级行政区', 'trim|required|max_length[10]');
-            $this->form_validation->set_rules('county', '区县级行政区', 'trim|required|max_length[10]');// TODO: 仅允许汉字和半角逗号
+            $this->form_validation->set_rules('counties', '区县级行政区们', 'trim|required');// TODO: 仅允许汉字和半角逗号
 
             // 若表单提交不成功
             if ($this->form_validation->run() === FALSE):

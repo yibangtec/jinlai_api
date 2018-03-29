@@ -23,6 +23,89 @@
 			$this->basic_model->id_name = $this->id_name;
 		} // end __construct
 
+        /**
+         * ACT4 密码登录
+         *
+         * @params string $password 登录密码
+         * @params string $mobile 手机号
+         */
+        public function login()
+        {
+            // 检查必要参数是否已传入
+            $password = $this->input->post('password');
+            if ( empty($password) ):
+                $this->result['status'] = 400;
+                $this->result['content']['error']['message'] = '必要的请求参数未传入';
+                exit();
+            endif;
+
+            // 手机号、Email须至少传入一项
+            $mobile = $this->input->post('mobile');
+            $email = $this->input->post('email');
+            if ( empty($mobile.$email) ):
+                $this->result['status'] = 400;
+                $this->result['content']['error']['message'] = '手机号、Email须至少传入一项';
+                exit();
+            endif;
+
+            // 初始化并配置表单验证库
+            $this->load->library('form_validation');
+            $this->form_validation->set_error_delimiters('', '');
+            // 待验证的表单项
+            $this->form_validation->set_rules('mobile', '手机号', 'trim|exact_length[11]|is_natural_no_zero');
+            $this->form_validation->set_rules('email', 'Email', 'trim|max_length[40]|valid_email');
+            $this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
+
+            // 若表单提交不成功
+            if ($this->form_validation->run() === FALSE):
+                $this->result['status'] = 401;
+                $this->result['content']['error']['message'] = validation_errors();
+                exit();
+
+            else:
+                // 获取用户/检查用户是否存在
+                if ( !empty($mobile) ):
+                    $user_info = $this->check_mobile($mobile);
+                else:
+                    $user_info = $this->check_email($email);
+                endif;
+
+                // 若用户存在，检查密码正确性
+                if ( !empty($user_info) ):
+                    if ($user_info['password'] === sha1($password)):
+                        // 检查是否传入了微信UnionID
+                        $login_info['wechat_union_id'] = $this->input->post('wechat_union_id'); // 微信UnionID
+                        // 准备最后登录信息
+                        $login_info['last_login_ip'] = empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'); // 优先检查请求是否来自APP
+                        $login_info['last_login_timestamp'] = time();
+
+                        // 更新最后登录信息
+                        @$this->basic_model->edit($user_info['user_id'], $login_info);
+
+                        // 非客户端登录时，检查该用户是否为员工
+                        if ($this->app_type !== 'client') $user_info = $this->check_stuff( $user_info );
+
+                        // 不返回真实密码信息
+                        if ( !empty($user_info['password']) ) $user_info['password'] = 'set';
+
+                        $this->result['status'] = 200;
+                        $this->result['content'] = array_merge($user_info, $login_info);
+
+                    else:
+                        $this->result['status'] = 401;
+                        $this->result['content']['error']['message'] = '密码错误';
+
+                    endif;
+
+                else:
+                    $this->result['status'] = 414;
+                    $this->result['content']['error']['message'] = '用户未注册';
+
+                endif;
+
+            endif;
+        } // end login
+
 		/**
 		 * ACT1 短信登录/注册
 		 */
@@ -44,99 +127,117 @@
 			// 获取用户/检查用户是否存在
 			$user_info = $this->check_mobile($mobile);
 
-			// 若用户存在，返回用户信息；若用户未注册，创建用户并返回用户信息。
-			if ( !empty($user_info) ):
-				// 更新最后登录信息
-				@$this->basic_model->edit($user_info['user_id'], $login_info);
+            // 若用户不存在，创建用户并返回用户信息；若存在，返回用户信息
+			if ( empty($user_info) ):
+                // 创建用户
+                $data_to_create['mobile'] = $mobile;
+                $data_to_create = array_merge($data_to_create, $login_info);
+                $result = $this->user_create($data_to_create);
+                if ( !empty($result) ):
+                    // 获取用户信息
+                    $item = $this->basic_model->select_by_id($result);
+                    // 不返回真实密码信息
+                    if ( !empty($item['password']) ) $item['password'] = 'set';
 
-                // 非客户端登录时，检查该用户是否为员工
-                /*
-                if ($this->app_type !== 'client'):
-                    $stuff = $this->check_stuff( $user_info['user_id'] );
+                    $this->result['status'] = 200;
+                    $this->result['content'] = $item;
 
-                    if ( !empty($stuff) ):
-                        // 不允许商家员工登录管理端
-                        if ($this->app_type === 'admin' && !empty($stuff['biz_id']) ):
-                            $this->result['status'] = 415;
-                            $this->result['content']['error']['message'] = '该用户并非管理端员工';
-                            exit();
+                else:
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '用户创建失败';
 
-                        // 不允许管理员工登录非管理端
-                        elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
-                            $this->result['status'] = 415;
-                            $this->result['content']['error']['message'] = '该用户并非商户端员工';
-                            exit();
-
-                        else:
-                            $user_info['stuff_id'] = $stuff['stuff_id'];
-                            $user_info['biz_id'] = $stuff['biz_id'];
-                            $user_info['role'] = $stuff['role'];
-                            $user_info['level'] = $stuff['level'];
-
-                        endif;
-                    endif;
                 endif;
-                */
-                if ($this->app_type !== 'client'):
-                    $stuff = $this->check_stuff( $user_info['user_id'] );
-
-                    // 默认用户非员工
-                    $this->result['status'] = 415;
-                    if ( empty($stuff) ):
-                        $this->result['content']['error']['message'] = '该用户并非员工';
-                        exit();
-
-                    else:
-                        // 不允许商家员工登录管理端
-                        if ($this->app_type === 'admin' && !empty($stuff['biz_id']) ):
-                            $this->result['content']['error']['message'] = '该用户并非管理端员工';
-                            exit();
-
-                        // 不允许管理员工登录非管理端
-                        elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
-                            $this->result['content']['error']['message'] = '该用户并非商户端员工';
-                            exit();
-
-                        else:
-                            $user_info['stuff_id'] = $stuff['stuff_id'];
-                            $user_info['biz_id'] = $stuff['biz_id'];
-                            $user_info['role'] = $stuff['role'];
-                            $user_info['level'] = $stuff['level'];
-
-                        endif;
-                    endif;
-                endif;
-
-				// 不返回真实密码信息
-				if ( !empty($user_info['password']) ) $user_info['password'] = 'set';
-
-				$this->result['status'] = 200;
-				$this->result['content'] = array_merge($user_info, $login_info);
 
 			else:
-				// 创建用户
-				$data_to_create['mobile'] = $mobile;
-				$data_to_create = array_merge($data_to_create, $login_info);
-				$result = $this->user_create($data_to_create);
-				if ( !empty($result) ):
-					// 获取用户信息
-					$item = $this->basic_model->select_by_id($result);
-					// 不返回真实密码信息
-					if ( !empty($item['password']) ) $item['password'] = 'set';
+                // 更新最后登录信息
+                @$this->basic_model->edit($user_info['user_id'], $login_info);
 
-					$this->result['status'] = 200;
-					$this->result['content'] = $item;
+                // 非客户端登录时，检查该用户是否为员工
+                if ($this->app_type !== 'client') $user_info = $this->check_stuff( $user_info );
 
-				else:
-					$this->result['status'] = 400;
-					$this->result['content']['error']['message'] = '用户创建失败';
+                // 不返回真实密码信息
+                if ( !empty($user_info['password']) ) $user_info['password'] = 'set';
 
-				endif;
+                $this->result['status'] = 200;
+                $this->result['content'] = array_merge($user_info, $login_info);
 
 			endif;
 		} // end login_sms
 
-		/**
+        /**
+         * ACT7 微信登录
+         *
+         * 使用微信UnionID免密码登录
+         *
+         * @params string $mobile 手机号
+         */
+        public function login_wechat()
+        {
+            // 必须传入微信UnionID
+            $wechat_union_id = $this->input->post('wechat_union_id');
+            if ( empty($wechat_union_id) ):
+                $this->result['status'] = 400;
+                $this->result['content']['error']['message'] = '须传入微信UnionID';
+                exit();
+            endif;
+
+            // 初始化并配置表单验证库
+            $this->load->library('form_validation');
+            $this->form_validation->set_error_delimiters('', '');
+            // 待验证的表单项
+            $this->form_validation->set_rules('wechat_union_id', '微信UnionID', 'trim|required|max_length[29]');
+
+            // 若表单提交不成功
+            if ($this->form_validation->run() === FALSE):
+                $this->result['status'] = 401;
+                $this->result['content']['error']['message'] = validation_errors();
+                exit();
+
+            else:
+                // 准备最后登录信息
+                $login_info['last_login_ip'] = empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'); // 优先检查请求是否来自APP
+                $login_info['last_login_timestamp'] = time();
+
+                // 获取用户/检查用户是否存在
+                $user_info = $this->check_wechat($wechat_union_id);
+
+                // 若用户不存在，创建用户并返回用户信息；若存在，返回用户信息
+                if ( empty($user_info) ):
+                    // 创建用户
+                    $data_to_create = array(
+                        'wechat_union_id' => $this->input->post('wechat_union_id'),
+                    );
+                    $data_to_create = array_merge($data_to_create, $login_info);
+
+                    $result = $this->user_create($data_to_create, 'wechat_union_id');
+                    if ( !empty($result) ):
+                        $this->result['status'] = 200;
+                        $this->result['content'] = $this->check_wechat($wechat_union_id);
+
+                    else:
+                        $this->result['status'] = 414;
+                        $this->result['content']['error']['message'] = '该微信union_id未注册为用户，请直接用手机号登录';
+                    endif;
+
+                else:
+                    // 更新最后登录信息
+                    @$this->basic_model->edit($user_info['user_id'], $login_info);
+
+                    // 非客户端登录时，检查该用户是否为员工
+                    if ($this->app_type !== 'client') $user_info = $this->check_stuff( $user_info );
+
+                    // 不返回真实密码信息
+                    if ( !empty($user_info['password']) ) $user_info['password'] = 'set';
+
+                    $this->result['status'] = 200;
+                    $this->result['content'] = array_merge($user_info, $login_info);
+
+                endif;
+
+            endif;
+        } // end login_wechat
+
+        /**
 		 * ACT2 密码设置
 		 */
 		public function password_set()
@@ -284,142 +385,6 @@
 		} // end password_change
 
 		/**
-		 * ACT4 密码登录
-		 *
-		 * @params string $password 登录密码
-		 * @params string $mobile 手机号
-		 */
-		public function login()
-		{
-			// 检查必要参数是否已传入
-			$password = $this->input->post('password');
-			if ( empty($password) ):
-				$this->result['status'] = 400;
-				$this->result['content']['error']['message'] = '必要的请求参数未传入';
-				exit();
-			endif;
-
-			// 手机号、Email须至少传入一项
-			$mobile = $this->input->post('mobile');
-			$email = $this->input->post('email');
-			if ( empty($mobile.$email) ):
-				$this->result['status'] = 400;
-				$this->result['content']['error']['message'] = '手机号、Email须至少传入一项';
-				exit();
-			endif;
-
-			// 初始化并配置表单验证库
-			$this->load->library('form_validation');
-			$this->form_validation->set_error_delimiters('', '');
-			// 待验证的表单项
-			$this->form_validation->set_rules('mobile', '手机号', 'trim|exact_length[11]|is_natural_no_zero');
-			$this->form_validation->set_rules('email', 'Email', 'trim|max_length[40]|valid_email');
-			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
-
-			// 若表单提交不成功
-			if ($this->form_validation->run() === FALSE):
-				$this->result['status'] = 401;
-				$this->result['content']['error']['message'] = validation_errors();
-				exit();
-
-			else:
-				// 获取用户/检查用户是否存在
-				if ( !empty($mobile) ):
-					$user_info = $this->check_mobile($mobile);
-				else:
-					$user_info = $this->check_email($email);
-				endif;
-
-				// 若用户存在，检查密码正确性。
-				if ( !empty($user_info) ):
-					if ($user_info['password'] === sha1($password)):
-						// 检查是否传入了微信UnionID
-						$login_info['wechat_union_id'] = $this->input->post('wechat_union_id'); // 微信UnionID
-						// 更新最后登录信息
-						$login_info['last_login_ip'] = empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'); // 优先检查请求是否来自APP
-						$login_info['last_login_timestamp'] = time();
-						@$this->basic_model->edit($user_info['user_id'], $login_info);
-
-                        // 非客户端登录时，检查该用户是否为员工
-                        /*
-                        if ($this->app_type !== 'client'):
-                            $stuff = $this->check_stuff( $user_info['user_id'] );
-
-                            if ( !empty($stuff) ):
-                                // 不允许商家员工登录管理端
-                                if ($this->app_type === 'admin' && !empty($stuff['biz_id']) ):
-                                    $this->result['status'] = 415;
-                                    $this->result['content']['error']['message'] = '该用户并非管理端员工';
-                                    exit();
-
-                                // 不允许管理员工登录非管理端
-                                elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
-                                    $this->result['status'] = 415;
-                                    $this->result['content']['error']['message'] = '该用户并非商户端员工';
-                                    exit();
-
-                                else:
-                                    $user_info['stuff_id'] = $stuff['stuff_id'];
-                                    $user_info['biz_id'] = $stuff['biz_id'];
-                                    $user_info['role'] = $stuff['role'];
-                                    $user_info['level'] = $stuff['level'];
-
-                                endif;
-                            endif;
-                        endif;
-                        */
-                        if ($this->app_type !== 'client'):
-                            $stuff = $this->check_stuff( $user_info['user_id'] );
-
-                            // 默认用户非员工
-                            $this->result['status'] = 415;
-                            if ( empty($stuff) ):
-                                $this->result['content']['error']['message'] = '该用户并非员工';
-                                exit();
-
-                            else:
-                                // 不允许商家员工登录管理端
-                                if ($this->app_type === 'admin' && !empty($stuff['biz_id']) ):
-                                    $this->result['content']['error']['message'] = '该用户并非管理端员工';
-                                    exit();
-
-                                // 不允许管理员工登录非管理端
-                                elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
-                                    $this->result['content']['error']['message'] = '该用户并非商户端员工';
-                                    exit();
-
-                                else:
-                                    $user_info['stuff_id'] = $stuff['stuff_id'];
-                                    $user_info['biz_id'] = $stuff['biz_id'];
-                                    $user_info['role'] = $stuff['role'];
-                                    $user_info['level'] = $stuff['level'];
-
-                                endif;
-                            endif;
-                        endif;
-
-						// 不返回真实密码信息
-						if ( !empty($user_info['password']) ) $user_info['password'] = 'set';
-
-						$this->result['status'] = 200;
-						$this->result['content'] = array_merge($user_info, $login_info);
-
-					else:
-						$this->result['status'] = 401;
-						$this->result['content']['error']['message'] = '密码错误';
-
-					endif;
-
-				else:
-					$this->result['status'] = 414;
-					$this->result['content']['error']['message'] = '用户未注册';
-
-				endif;
-
-			endif;
-		} // end login
-
-		/**
 		 * ACT5 密码重置
 		 */
 		public function password_reset()
@@ -537,134 +502,10 @@
 				endif;
 			endif;
 		} // end user_exist
-		
-		/**
-		 * ACT7 微信登录
-		 *
-		 * 使用微信UnionID免密码登录
-		 *
-		 * @params string $mobile 手机号
-		 */
-		public function login_wechat()
-		{
-			// 必须传入微信UnionID
-			$wechat_union_id = $this->input->post('wechat_union_id');
-			if ( empty($wechat_union_id) ):
-				$this->result['status'] = 400;
-				$this->result['content']['error']['message'] = '须传入微信UnionID';
-				exit();
-			endif;
 
-			// 初始化并配置表单验证库
-			$this->load->library('form_validation');
-			$this->form_validation->set_error_delimiters('', '');
-			// 待验证的表单项
-			$this->form_validation->set_rules('wechat_union_id', '微信UnionID', 'trim|required|max_length[29]');
-
-			// 若表单提交不成功
-			if ($this->form_validation->run() === FALSE):
-				$this->result['status'] = 401;
-				$this->result['content']['error']['message'] = validation_errors();
-				exit();
-
-			else:
-                // 准备最后登录信息
-                $login_info['last_login_ip'] = empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'); // 优先检查请求是否来自APP
-                $login_info['last_login_timestamp'] = time();
-
-				// 获取用户/检查用户是否存在
-                $user_info = $this->check_wechat($wechat_union_id);
-
-				// 若用户不存在，创建用户并返回用户信息；若存在，返回用户信息
-				if ( empty($user_info) ):
-                    // 创建用户
-                    $data_to_create = array(
-                        'wechat_union_id' => $this->input->post('wechat_union_id'),
-                    );
-                    $data_to_create = array_merge($data_to_create, $login_info);
-
-                    $result = $this->user_create($data_to_create, 'wechat_union_id');
-                    if ( !empty($result) ):
-                        $this->result['status'] = 200;
-                        $this->result['content'] = $this->check_wechat($wechat_union_id);
-
-                    else:
-                        $this->result['status'] = 414;
-                        $this->result['content']['error']['message'] = '该微信union_id未注册为用户，请直接用手机号登录';
-                    endif;
-
-				else:
-					// 更新最后登录信息
-					@$this->basic_model->edit($user_info['user_id'], $login_info);
-
-					// 非客户端登录时，检查该用户是否为员工
-                    /*
-                    if ($this->app_type !== 'client'):
-                        $stuff = $this->check_stuff( $user_info['user_id'] );
-
-                        if ( !empty($stuff) ):
-                            // 不允许商家员工登录管理端
-                            if ($this->app_type === 'admin' && !empty($stuff['biz_id']) ):
-                                $this->result['status'] = 415;
-                                $this->result['content']['error']['message'] = '该用户并非管理端员工';
-                                exit();
-
-                            // 不允许管理员工登录非管理端
-                            elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
-                                $this->result['status'] = 415;
-                                $this->result['content']['error']['message'] = '该用户并非商户端员工';
-                                exit();
-
-                            else:
-                                $user_info['stuff_id'] = $stuff['stuff_id'];
-                                $user_info['biz_id'] = $stuff['biz_id'];
-                                $user_info['role'] = $stuff['role'];
-                                $user_info['level'] = $stuff['level'];
-
-                            endif;
-                        endif;
-                    endif;
-                    */
-                    if ($this->app_type !== 'client'):
-                        $stuff = $this->check_stuff( $user_info['user_id'] );
-
-                        // 默认用户非员工
-                        $this->result['status'] = 415;
-                        if ( empty($stuff) ):
-                            $this->result['content']['error']['message'] = '该用户并非员工';
-                            exit();
-
-                        else:
-                            // 不允许商家员工登录管理端
-                            if ($this->app_type === 'admin' && !empty($stuff['biz_id']) ):
-                                $this->result['content']['error']['message'] = '该用户并非管理端员工';
-                                exit();
-
-                            // 不允许管理员工登录非管理端
-                            elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
-                                $this->result['content']['error']['message'] = '该用户并非商户端员工';
-                                exit();
-
-                            else:
-                                $user_info['stuff_id'] = $stuff['stuff_id'];
-                                $user_info['biz_id'] = $stuff['biz_id'];
-                                $user_info['role'] = $stuff['role'];
-                                $user_info['level'] = $stuff['level'];
-
-                            endif;
-                        endif;
-                    endif;
-
-					// 不返回真实密码信息
-					if ( !empty($user_info['password']) ) $user_info['password'] = 'set';
-
-					$this->result['status'] = 200;
-					$this->result['content'] = array_merge($user_info, $login_info);
-
-				endif;
-
-			endif;
-		} // end login_wechat
+        /*
+         * 以下为工具方法
+         */
 
 		/**
 		 * 短信验证
@@ -735,9 +576,9 @@
 			// 动态设置待验证字段名及字段值
 			$data_to_validate["{$name}"] = $data_to_create[$name];
 			$this->form_validation->set_data($data_to_validate);
-			$this->form_validation->set_rules('mobile', '手机号', 'trim|exact_length[11]|is_natural_no_zero|is_unique['.$this->table_name.'.mobile]');
-            $this->form_validation->set_rules('wechat_union_id', '微信UnionID', 'trim|max_length[29]|is_unique['.$this->table_name.'.wechat_union_id]');
-			//$this->form_validation->set_rules('email', 'Email', 'trim|max_length[40]|valid_email|is_unique['.$this->table_name.'.email]');
+			$this->form_validation->set_rules('mobile', '手机号', 'trim|exact_length[11]|is_natural_no_zero|is_unique[user.mobile]');
+            $this->form_validation->set_rules('wechat_union_id', '微信UnionID', 'trim|max_length[29]|is_unique[user.wechat_union_id]');
+			$this->form_validation->set_rules('email', 'Email', 'trim|max_length[40]|valid_email|is_unique[user.email]');
             $this->form_validation->set_rules('promoter_id', '推广者', 'trim|is_natural_no_zero');
 
 			// 若表单提交不成功
@@ -747,12 +588,10 @@
 				exit();
 
 			else:
-                // 获取推广者ID（若有）
-                $data_to_create['promoter_id'] = $this->input->post('promoter_id');
-
-                // 根据当前UNIX时间戳生成默认昵称（允许重复），及注册时间
+                // 根据当前UNIX时间戳生成默认昵称（允许重复）、注册时间，及推广者ID（若有）
                 $data_to_create['time_create'] = time();
                 $data_to_create['nickname'] = 'user'. substr($data_to_create['time_create'], 2, 8);
+                $data_to_create['promoter_id'] = $this->input->post('promoter_id');
 
 				// 创建并返回行ID
 				return $this->basic_model->create($data_to_create, TRUE);
@@ -811,24 +650,45 @@
 				return $result;
 			else:
 				return ( empty($result) )? FALSE: TRUE;
-			endif;
+            endif;
 		} // end check_wechat
 
 		// 检查是否已经有与相应user_id相关的员工记录
-		private function check_stuff($user_id, $return_boolean = FALSE)
+		private function check_stuff($user_info)
 		{
-			$data_to_search['user_id'] = $user_id;
+			$data_to_search['user_id'] = $user_info['user_id'];
 			$data_to_search['time_delete'] = NULL; // 仅获取有效的员工关系
 			
 			$this->switch_model('stuff', 'stuff_id');
-			$result = $this->basic_model->match($data_to_search);
-			$this->reset_model();
+            $stuff = $this->basic_model->match($data_to_search);
 
-			if ($return_boolean === FALSE):
-				return $result;
-			else:
-				return ( empty($result) )? FALSE: TRUE;
-			endif;
+            // 默认用户非员工
+            $this->result['status'] = 415;
+            if ( empty($stuff) ):
+                $this->result['content']['error']['message'] = '该用户并非员工';
+                exit();
+
+            else:
+                // 不允许商家员工登录管理端
+                if ($this->app_type === 'admin' && !empty($stuff['biz_id']) ):
+                    $this->result['content']['error']['message'] = '该用户并非管理端员工';
+                    exit();
+
+                // 不允许管理员工登录非管理端
+                elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
+                    $this->result['content']['error']['message'] = '该用户并非商户端员工';
+                    exit();
+
+                else:
+                    $user_info['stuff_id'] = $stuff['stuff_id'];
+                    $user_info['biz_id'] = $stuff['biz_id'];
+                    $user_info['role'] = $stuff['role'];
+                    $user_info['level'] = $stuff['level'];
+
+                    return $user_info;
+
+                endif;
+            endif;
 		} // end check_stuff
 
 	} // end class Account
