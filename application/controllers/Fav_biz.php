@@ -108,6 +108,9 @@
 
 				// 为收藏商家获取最新上架数量及4项最新上架商品，按上架时间倒序排列
                 $this->switch_model('item', 'item_id');
+                // 只返回4个最近上架商品
+                $this->basic_model->limit = 4;
+                $this->basic_model->offset = 0;
 
 				for ($i=0; $i<count($this->result['content']); $i++):
 					$condition = array(
@@ -117,12 +120,15 @@
                     $this->result['content'][$i]['recent_items_count'] = $this->basic_model->count($condition);
 
                     // 限制需要返回的字段
-                    $this->db->select('item_id, url_image_main, price');
+                    $this->db->select('item_id, name, url_image_main, price');
                     $this->db->order_by('time_publish', 'DESC');
-                    $this->basic_model->limit = 4; // 只返回4个最近上架商品
+
 					$this->result['content'][$i]['recent_items'] = $this->basic_model->select($condition);
-					$this->basic_model->limit = NULL;
+
 				endfor;
+
+				// 重置部分数据库参数
+				$this->basic_model->limit = $this->basic_model->offset = NULL;
 
 			else:
 				$this->result['status'] = 414;

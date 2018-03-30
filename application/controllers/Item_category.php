@@ -109,10 +109,13 @@
                 $order_by['parent_id'] = 'ASC';
             endif;
 
-			// 限制可返回的字段
-            if ($this->app_type === 'admin')
+            // 限制可返回的字段
+            if ($this->app_type === 'client'):
+                $condition['time_delete'] = 'NULL';
+            else:
                 $this->names_to_return = array_merge($this->names_to_return, $this->names_return_for_admin);
-			$this->db->select( implode(',', $this->names_to_return) );
+            endif;
+            $this->db->select( implode(',', $this->names_to_return) );
 
 			// 获取列表；默认不获取已删除项
             $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们

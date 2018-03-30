@@ -21,7 +21,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'member_id', 'user_id', 'biz_id', 'mobile', 'level', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'member_id', 'user_id', 'biz_id', 'mobile', 'level',
 		);
 
 		/**
@@ -108,7 +108,6 @@
 
 			// 获取列表；默认可获取已删除项
             $this->load->model('member_biz_model');
-            // 获取列表；默认可获取已删除项
             $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
             if ( empty($ids) ):
                 $items = $this->member_biz_model->select($condition, $order_by);

@@ -1,6 +1,4 @@
-<?php
-defined('BASEPATH') OR exit('No direct script access allowed');
-?>
+<?php defined('BASEPATH') OR exit('No direct script access allowed') ?>
 
 <div style="border:1px solid #dd4814;padding-left:20px;margin:10px 0;">
 

@@ -42,7 +42,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'option_id', 'vote_id', 'tag_id', 'index_id', 'name', 'description', 'url_image', 'mobile', 'ballot_overall', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+			'option_id', 'vote_id', 'tag_id', 'index_id', 'name', 'description', 'url_image', 'mobile', 'ballot_overall', 'status',
 		);
 
 		/**
@@ -151,6 +151,11 @@
 			endforeach;
 
             // 限制可返回的字段
+            if ($this->app_type === 'client'):
+                $condition['time_delete'] = 'NULL';
+            else:
+                $this->names_to_return = array_merge($this->names_to_return, $this->names_return_for_admin);
+            endif;
             $this->db->select( implode(',', $this->names_to_return) );
 
             // 获取列表；默认可获取已删除项

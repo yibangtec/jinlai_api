@@ -14,14 +14,15 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'biz_id', 'name', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_order', 'day_rest', 'time_open', 'time_close', 'url_image_main', 'figure_image_urls', 'nation', 'province', 'city', 'county', 'street', 'region_id', 'region', 'poi_id', 'poi', 'longitude', 'latitude', 'range_deliver', 'status', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'biz_id', 'name', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_order', 'day_rest', 'time_open', 'time_close', 'url_image_main', 'figure_image_urls', 'nation', 'province', 'city', 'county', 'street', 'region_id', 'region', 'poi_id', 'poi', 'longitude', 'latitude', 'range_deliver', 'status',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'branch_id', 'biz_id', 'name', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_order', 'day_rest', 'time_open', 'time_close', 'url_image_main', 'figure_image_urls', 'nation', 'province', 'city', 'county', 'street', 'region_id', 'region', 'poi_id', 'poi', 'longitude', 'latitude', 'range_deliver', 'status', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'branch_id', 'biz_id', 'name', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_order', 'day_rest', 'time_open', 'time_close', 'url_image_main', 'figure_image_urls', 'nation', 'province', 'city', 'county', 'street', 'region_id', 'region', 'poi_id', 'poi', 'longitude', 'latitude', 'range_deliver', 'status',
 		);
 
 		/**
@@ -101,10 +102,14 @@
 			
 			// 排序条件
 			$order_by = NULL;
-			//$order_by['name'] = 'value';
 
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
+            // 限制可返回的字段
+            if ($this->app_type === 'client'):
+                $condition['time_delete'] = 'NULL';
+            else:
+                $this->names_to_return = array_merge($this->names_to_return, $this->names_return_for_admin);
+            endif;
+            $this->db->select( implode(',', $this->names_to_return) );
 
             // 获取列表；默认可获取已删除项
             $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们

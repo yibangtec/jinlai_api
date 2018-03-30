@@ -21,7 +21,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'category_id', 'parent_id', 'name', 'url_name', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'category_id', 'parent_id', 'name', 'url_name',
 		);
 
 		/**
@@ -102,8 +102,13 @@
 			// 排序条件
 			$order_by = NULL;
 
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
+            // 限制可返回的字段
+            if ($this->app_type === 'client'):
+                $condition['time_delete'] = 'NULL';
+            else:
+                $this->names_to_return = array_merge($this->names_to_return, $this->names_return_for_admin);
+            endif;
+            $this->db->select( implode(',', $this->names_to_return) );
 
             // 获取列表；默认可获取已删除项
             $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们

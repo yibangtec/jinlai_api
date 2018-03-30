@@ -25,7 +25,6 @@
 		 */
 		protected $names_to_return = array(
 			'promotion_id', 'biz_id', 'type', 'name', 'time_start', 'time_end', 'description', 'url_image', 'url_image_wide', 'fold_allowed', 'discount', 'present_trigger_amount', 'present_trigger_count', 'present', 'reduction_trigger_amount', 'reduction_trigger_count', 'reduction_amount', 'reduction_amount_time', 'reduction_discount', 'coupon_id', 'coupon_combo_id', 'deposit', 'balance', 'time_book_start', 'time_book_end', 'time_complete_start', 'time_complete_end', 'groupbuy_order_amount', 'groupbuy_quantity_max',
-			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -121,9 +120,13 @@
 			
 			// 排序条件
 			$order_by = NULL;
-			//$order_by['name'] = 'value';
 
             // 限制可返回的字段
+            if ($this->app_type === 'client'):
+                $condition['time_delete'] = 'NULL';
+            else:
+                $this->names_to_return = array_merge($this->names_to_return, $this->names_return_for_admin);
+            endif;
             $this->db->select( implode(',', $this->names_to_return) );
 
             // 获取列表；默认可获取已删除项

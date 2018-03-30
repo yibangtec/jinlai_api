@@ -23,7 +23,6 @@
 		 */
 		protected $names_to_return = array(
 			'sku_id', 'biz_id', 'item_id', 'url_image', 'name_first', 'name_second', 'name_third', 'tag_price', 'price', 'stocks', 'weight_net', 'weight_gross', 'weight_volume',
-			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -113,6 +112,11 @@
             endif;
 
             // 限制可返回的字段
+            if ($this->app_type === 'client'):
+                $condition['time_delete'] = 'NULL';
+            else:
+                $this->names_to_return = array_merge($this->names_to_return, $this->names_return_for_admin);
+            endif;
             $this->db->select( implode(',', $this->names_to_return) );
 
             // 获取列表；默认可获取已删除项

@@ -23,7 +23,6 @@
 		 */
 		protected $names_to_return = array(
 			'stuff_id', 'user_id', 'biz_id', 'fullname', 'mobile', 'password', 'role', 'level', 'status',
-			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -103,9 +102,13 @@
 
 			// 排序条件
 			$order_by = NULL;
-			//$order_by['name'] = 'value';
 
             // 限制可返回的字段
+            if ($this->app_type === 'client'):
+                $condition['time_delete'] = 'NULL';
+            else:
+                $this->names_to_return = array_merge($this->names_to_return, $this->names_return_for_admin);
+            endif;
             $this->db->select( implode(',', $this->names_to_return) );
 
             // 获取列表；默认可获取已删除项

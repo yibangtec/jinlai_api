@@ -21,7 +21,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'record_id', 'refund_id', 'biz_id', 'user_id', 'content', 'time_create', 'time_delete', 'time_edit', 'operator_id',
+			'record_id', 'refund_id', 'biz_id', 'user_id', 'content',
 		);
 
 		/**
@@ -66,9 +66,13 @@
 
 			// 排序条件
 			$order_by = NULL;
-			//$order_by['name'] = 'value';
 
             // 限制可返回的字段
+            if ($this->app_type === 'client'):
+                $condition['time_delete'] = 'NULL';
+            else:
+                $this->names_to_return = array_merge($this->names_to_return, $this->names_return_for_admin);
+            endif;
             $this->db->select( implode(',', $this->names_to_return) );
 
             // 获取列表；默认可获取已删除项

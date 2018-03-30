@@ -6241,13 +6241,13 @@
 								{
 									"key": "biz_id",
 									"value": "2",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "category_biz_id",
 									"value": "4",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "name",
