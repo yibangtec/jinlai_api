@@ -169,10 +169,11 @@
 				if ( !empty($result) ):
                     $this->result['status'] = 200;
 
-					// 若已关注过且被删除，则恢复
+					// 若已关注过且被删除，则找回并更新关注（创建）时间为当前时间
 					if ($result['time_delete'] !== NULL):
+                        $data_to_edit['time_create'] = time();
 						$data_to_edit['time_delete'] = NULL;
-						@$result = $this->basic_model->edit($result['record_id'], $data_to_edit);
+						$this->basic_model->edit($result['record_id'], $data_to_edit);
 
 						$this->result['content']['id'] = $result['record_id'];
 						$this->result['content']['message'] = '收藏成功';
