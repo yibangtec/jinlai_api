@@ -260,43 +260,7 @@
 			"description": null,
 			"item": [
 				{
-					"name": "ADR2 地址详情",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "28",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/address/detail",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"address",
-								"detail"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ADR6 地址批量操作",
+					"name": "ADR0 地址计数",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -310,28 +274,18 @@
 								},
 								{
 									"key": "user_id",
-									"value": "1",
+									"value": "7",
 									"type": "text"
 								},
 								{
-									"key": "ids",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "operation",
-									"value": "delete",
-									"type": "text"
-								},
-								{
-									"key": "password",
-									"value": "123456",
+									"key": "time_delete",
+									"value": "NULL",
 									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/address/edit_bulk",
+							"raw": "https://api.517ybang.com/address/count",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -340,7 +294,7 @@
 							],
 							"path": [
 								"address",
-								"edit_bulk"
+								"count"
 							]
 						}
 					},
@@ -406,7 +360,7 @@
 					"response": []
 				},
 				{
-					"name": "ADR4 地址修改",
+					"name": "ADR2 地址详情",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -420,63 +374,13 @@
 								},
 								{
 									"key": "id",
-									"value": "27",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "7",
-									"type": "text"
-								},
-								{
-									"key": "province",
-									"value": "山东省",
-									"type": "text"
-								},
-								{
-									"key": "city",
-									"value": "青岛市",
-									"type": "text"
-								},
-								{
-									"key": "county",
-									"value": "市北区",
-									"type": "text"
-								},
-								{
-									"key": "street",
-									"value": "镇江路1号",
-									"type": "text"
-								},
-								{
-									"key": "fullname",
-									"value": "刘亚杰",
-									"type": "text"
-								},
-								{
-									"key": "mobile",
-									"value": "15192098644",
-									"type": "text"
-								},
-								{
-									"key": "zipcode",
-									"value": "266000",
-									"type": "text"
-								},
-								{
-									"key": "brief",
-									"value": "家",
-									"type": "text"
-								},
-								{
-									"key": "default_this",
-									"value": "1",
+									"value": "28",
 									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/address/edit",
+							"raw": "https://api.517ybang.com/address/detail",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -485,48 +389,7 @@
 							],
 							"path": [
 								"address",
-								"edit"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ADR0 地址计数",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "7",
-									"type": "text"
-								},
-								{
-									"key": "time_delete",
-									"value": "NULL",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/address/count",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"address",
-								"count"
+								"detail"
 							]
 						}
 					},
@@ -620,6 +483,143 @@
 							"path": [
 								"address",
 								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ADR4 地址修改",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "27",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "7",
+									"type": "text"
+								},
+								{
+									"key": "province",
+									"value": "山东省",
+									"type": "text"
+								},
+								{
+									"key": "city",
+									"value": "青岛市",
+									"type": "text"
+								},
+								{
+									"key": "county",
+									"value": "市北区",
+									"type": "text"
+								},
+								{
+									"key": "street",
+									"value": "镇江路1号",
+									"type": "text"
+								},
+								{
+									"key": "fullname",
+									"value": "刘亚杰",
+									"type": "text"
+								},
+								{
+									"key": "mobile",
+									"value": "15192098644",
+									"type": "text"
+								},
+								{
+									"key": "zipcode",
+									"value": "266000",
+									"type": "text"
+								},
+								{
+									"key": "brief",
+									"value": "家",
+									"type": "text"
+								},
+								{
+									"key": "default_this",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/address/edit",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"address",
+								"edit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ADR6 地址批量操作",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "operation",
+									"value": "delete",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/address/edit_bulk",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"address",
+								"edit_bulk"
 							]
 						}
 					},
@@ -11815,7 +11815,7 @@
 								},
 								{
 									"key": "app_type",
-									"value": "admin",
+									"value": "client",
 									"type": "text"
 								},
 								{
@@ -11863,7 +11863,8 @@
 								{
 									"key": "time_delete",
 									"value": "NULL",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "time_edit",
@@ -11884,7 +11885,8 @@
 									"key": "ids",
 									"value": "2",
 									"description": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},

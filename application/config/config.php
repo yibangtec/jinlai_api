@@ -1,65 +1,75 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-// 允许响应指定URL的跨域请求
-$origin = isset($_SERVER['HTTP_ORIGIN'])? $_SERVER['HTTP_ORIGIN']: NULL;
-$allow_origin = array(
-    'https://biz.517ybang.com',
-    'https://www.517ybang.com',
-	'https://admin.517ybang.com',
-);
-if ( in_array($origin, $allow_origin) ):
-    header('Access-Control-Allow-Origin:'.$origin);
-    header('Access-Control-Allow-Methods:POST,GET');
-	header('Access-Control-Allow-Credentials:TRUE'); // 允许将Cookie包含在请求中
+// 根域名及URL
+define('ROOT_DOMAIN', '.517ybang.com');
+define('ROOT_URL', ROOT_DOMAIN.'/');
+
+// 对AJAX请求做安全性方面的特殊处理
+if ( ! empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'):
+    header('X-Content-Type-Options:nosniff'); // 防止IE8+自行推测数据格式
+    header('X-Frame-Options:deny'); // 禁止在FRAME中读取数据
+    header("Content-Security-Policy:default-src 'none'"); // 检测和防御XSS（通过设置资源路径）
+    header('X-XSS-Protection:1;mode=block'); // 部分旧浏览器中检测和防御XSS
+    header('Strict-Transport-Security:max-age=3600;includeSubDomains'); // 只允许通过HTTPS进行访问（一小时内）
+
+    // 允许响应指定URL的跨域请求
+    $origin = isset($_SERVER['HTTP_ORIGIN'])? $_SERVER['HTTP_ORIGIN']: NULL;
+    $allow_origin = array(
+        'https://www'.ROOT_DOMAIN,
+        'https://biz'.ROOT_DOMAIN,
+        'https://admin'.ROOT_DOMAIN,
+    );
+    if ( in_array($origin, $allow_origin) ):
+        header('Access-Control-Allow-Origin:'.$origin);
+        header('Access-Control-Allow-Methods:POST,GET');
+        header('Access-Control-Allow-Credentials:TRUE'); // 允许将Cookie包含在请求中
+    endif;
 endif;
 
 // 需要自定义的常量
-define('SITE_NAME', '进来商城'); // 站点名称
+define('SITE_NAME', '进来商城API'); // 站点名称
 define('API_TOKEN', '7C4l7JLaM3Fq5biQurtmk9nFS'); // API公钥
 
 define('BASE_URL', 'https://'. $_SERVER['SERVER_NAME']); // 可对外使用的站点URL；在本地测试时须替换为类似“localhost/BasicCodeigniter”形式
-//define('IMAGES_URL', 'https://images.xx.com/'); // （可选）非样式图片存储的根目录所在URL，可用于配合又拍云等第三方存储
 define('COOKIE_DOMAIN', NULL); // cookie存储路径；方便起见可让所有子域共享，若需分离可自行配置
 define('SESSION_COOKIE_NAME', NULL); // 用于cookie存储的session名（设置此值后，前后台session互不影响）
 define('SESSION_TABLE', NULL); // 用于session存储的数据库表名
 define('SESSION_PERIOD', 2592000); // session有效期秒数，此处设为30天，即60秒*60分*24小时*30天
 define('ENCRYPTION_KEY', ''); // 秘钥用于加密相关功能，可为空
 
-/* 第三方功能相关常量 */
+/**
+ * 第三方功能相关配置
+ */
 // 高德地图服务端API key
 define('AMAP_KEY_SERVER', 'b94afbbcc615ce340fc91156089eea18');
 
 // 微信公众平台参数
+// 平台版公众号
 define('WECHAT_APP_ID', '');
 define('WECHAT_APP_SECRET', '');
 define('WECHAT_TOKEN', '');
 define('AES_KEY', '');
 
 // 微信支付
-// 平台版APP
-define('WEPAY_MCH_ID', '1489776982'); // APP的商户号
-define('WEPAY_APP_ID', 'wx9b19c66cc2b8bfb1'); // APP的AppId
-define('WEPAY_APP_SECRET', ''); // APP的AppSecret，不适用于APP支付
-define('WEPAY_KEY', 'OHLAt2qyVdNVHqWWoWoc5Q4UbpFycpH6');
-
-// 单商户版APP
-/*
-define('WEPAY_MCH_ID', '1301515501'); // APP的商户号
-define('WEPAY_APP_ID', 'wx6f4a0a1910270a5c'); // APP的AppId
-define('WEPAY_APP_SECRET', ''); // APP的AppSecret，不适用于APP支付
-define('WEPAY_KEY', 'qingdaoyibangjituan587812wechatp');
-*/
-
 define('WEPAY_NOTIFY_URL', BASE_URL.'/wepay/notify'); // 异步回调URL
 define('WEPAY_SSLCERT_PATH', BASE_URL.'/payment/wepay/cert/apiclient_cert.pem');
 define('WEPAY_SSLKEY_PATH', BASE_URL.'/payment/wepay/cert/apiclient_key.pem');
+// APP
+define('WEPAY_MCH_ID', '1489776982'); // APP的商户号
+define('WEPAY_APP_ID', 'wx9b19c66cc2b8bfb1'); // APP的AppId
+define('WEPAY_KEY', 'OHLAt2qyVdNVHqWWoWoc5Q4UbpFycpH6');
+// TODO 公众号
+//define('WEPAY_MCH_ID', ''); // APP的商户号
+//define('WEPAY_APP_ID', ''); // APP的AppId
+//define('WEPAY_APP_SECRET', ''); // APP的AppSecret，不适用于APP支付
+//define('WEPAY_KEY', '');
 
 // 支付宝
 define('ALIPAY_APP_ID', '2017092508927608');
-define('ALIPAY_KEY_PUBLIC', 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuA5NLDQD6swadmKSX00RbVKfxISY2fP6gl39/Pc8jxBRBMr/B9Ciy4Gm8YJ/Y8d58Km18escwTeCaEcoYPrCOk5nLJrpPSAiIdmlaD74VQRCJZoYop98XL64nOtFY4GNzCp4Hgmyp3Jd7XlZ/M9eIzHWRWsj2FWuIDdegEZ+7XPw8qU6txfIdOhD+/lufrZdoX8ElCDxXa8n9wUPk8wjX0H556lorriu0Wmy5OWzXqxN0G0ywlkbETGWZzAhbaT57l1jjultGn/4WaGsJkfXpHYlvdxLwJ8n4Mk/F58wp0ZHFOr9TuklGfVVVqBz8HvRq12mNkxCZJsvGKVP17rvuwIDAQAB');
+define('ALIPAY_KEY_PUBLIC', 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuA5NLDQD6swadmKSX00RbVKfxISY2fP6gl39/Pc8jxBRBMr/B9Ciy4Gm8YJ/Y8d58Km18escwTeCaEcoYPrCOk5nLJrpPSAiIdmlaD74VQRCJZoYop98XL64nOtFY4GNzCp4Hgmyp3Jd7XlZ/M9eIzHWRWsj2FWuIDdegEZ+7XPw8qU6txfIdOhD+/lufrZdoX8ElCDxXa8n9wUPk8wjX0H556lorriu0Wmy5OWzXqxN0G0ywlkbETGWZzAhbaT57l1jjultGn/4WaGsJkfXpHYlvdxLwJ8n4Mk/F58wp0ZHFOr9TuklGfVVVqBz8HvRq12mNkxCZJsvGKVP17rvuwIDAQAB'); // 公钥
 define('ALIPAY_KEY_PRIVATE',
-'MIIEpAIBAAKCAQEAuF8c7UM66fUOJvvq6VbZo22744X9VxSdldzXXQbzpddp/vQOtCgShybqk/ig3Eh4ZaoHzeKk/UPcUjH/5tjOlui2o5quvdJFJbjstg1s7CwcVXW/EB04baMHU8aDXMUbh2/MmtZYmGuqIMmI5YF+5KfCcB5MjGN+piPZnBvs30mC0O24ZKTfCBcLLDv5+VJPIXz4BD1lG8CZ/8+3YxDEV03PF/GgfkM6TBwkNsR64G7MVHXf+mZnEA54rc/wVVeBzBiiCVfxjNBuvAiMrY3eAFLYLgORRnNEzzm+I1LmOcCTOjzpH5NrgGtDfruxtDeYMs9BjXkD3Ic96GiizAwcZwIDAQABAoIBAHvwtGlrAHe2HMVoJAqoL7YFVoEk2aFoYmcUBlKrEa8ymDajqh7BsXLZXmgKg1iR/x2Yp5Zn/bGjpMA8jGKK7JXV6rEgksdYStOI9NeNPuOk44cvmDkk64IITiyrDjOW7WKmbUzJOtV7yuovkK931e2wOK1WMO9PExxsjSS8QQf4JpbNtFDdfNrUF5OuFAVzAm+IdO7JPSFGj6SJFmFP7tKGO8eFP95tmczV36WoU2RT3GbD/oFSA1/kkIeHlXzuhdK7CVla0swJRLRUSkF0Q1V9ZkNVzMkwcA9zo04QdGUIQMfJRBpIss5LdaDUDbmlnJJwldNJVg3JhjhYVOoaGMECgYEA3+B4pXsLWoaaug9+k933OT+56lFElcnnsF+Zcd3oIdlOblCmsXEy6LI6UZtnFuilq1/uOSYX5gS9IYRCwD8pceFQKmBzRjbKiUaiCyFVseW0XXlIAmzY8kBBGbICmR6X2uTFf8DVrfxS61Du80bJydbiJvnnZ3iEOlCeYq1vvmsCgYEA0tOElQkzKwSSSndPCsmLqhC+JYEmNEX4y/7+SP4gOE2fWOOM5sFOSJ12pU8I02o9P0uklP6DYNFxUhJOxiolTobhCPNLJb2117Zt0AeaRuqYLo6jAzYIoJAojb9XobnKLf2Mik7obn7CXlYvxJ+dXzXHB6411tQ7bNO4IwFIoPUCgYEA0jWTEs5V+soovkuOLolceQS9LKbiH0NVqOYazi/uptnEKxDPdA02IAg5eibQxVHtPNz2cfKyvef1LmNhyeGEqMlG3INzuZn40qzfulOygzeMA7i9RImvqsdqWRYsGln/fCkSyMHn4VXrBckYlJUDI+IAt1gvT5h5j8fi8ASpx8ECgYA5ayQr1wKZj7gsEcx0OqoQGlk/K6p1CC2XmY414QhzbSid8/N3EWS5wDEFGr5jngaqS3a6oYq0frZnTNcpf2cDuRZm8qQf1khFRMkppDhvYgsqeuyIvlmhKUHyQQ+j207mMazqKk2BcoKLYNvHqFUbDjFztQ2ywcChhhQbbIkUVQKBgQC1ws1/9z1ys4kXRIX/tUrYRkXMbGVs6nrHJNyOkyRjkR7ATv7RO9GvubeDmoinHlQAuV2MHDgEKQ5Vx8M7yTAeTzgYtlUCqEWVvA6lKnXkzofPFhzEx8KmoklkSctebJw4ydse13p7Kxx3gG2u9rEF0KD3eQr4b5QVxZap2cx3pg==');
+'MIIEpAIBAAKCAQEAuF8c7UM66fUOJvvq6VbZo22744X9VxSdldzXXQbzpddp/vQOtCgShybqk/ig3Eh4ZaoHzeKk/UPcUjH/5tjOlui2o5quvdJFJbjstg1s7CwcVXW/EB04baMHU8aDXMUbh2/MmtZYmGuqIMmI5YF+5KfCcB5MjGN+piPZnBvs30mC0O24ZKTfCBcLLDv5+VJPIXz4BD1lG8CZ/8+3YxDEV03PF/GgfkM6TBwkNsR64G7MVHXf+mZnEA54rc/wVVeBzBiiCVfxjNBuvAiMrY3eAFLYLgORRnNEzzm+I1LmOcCTOjzpH5NrgGtDfruxtDeYMs9BjXkD3Ic96GiizAwcZwIDAQABAoIBAHvwtGlrAHe2HMVoJAqoL7YFVoEk2aFoYmcUBlKrEa8ymDajqh7BsXLZXmgKg1iR/x2Yp5Zn/bGjpMA8jGKK7JXV6rEgksdYStOI9NeNPuOk44cvmDkk64IITiyrDjOW7WKmbUzJOtV7yuovkK931e2wOK1WMO9PExxsjSS8QQf4JpbNtFDdfNrUF5OuFAVzAm+IdO7JPSFGj6SJFmFP7tKGO8eFP95tmczV36WoU2RT3GbD/oFSA1/kkIeHlXzuhdK7CVla0swJRLRUSkF0Q1V9ZkNVzMkwcA9zo04QdGUIQMfJRBpIss5LdaDUDbmlnJJwldNJVg3JhjhYVOoaGMECgYEA3+B4pXsLWoaaug9+k933OT+56lFElcnnsF+Zcd3oIdlOblCmsXEy6LI6UZtnFuilq1/uOSYX5gS9IYRCwD8pceFQKmBzRjbKiUaiCyFVseW0XXlIAmzY8kBBGbICmR6X2uTFf8DVrfxS61Du80bJydbiJvnnZ3iEOlCeYq1vvmsCgYEA0tOElQkzKwSSSndPCsmLqhC+JYEmNEX4y/7+SP4gOE2fWOOM5sFOSJ12pU8I02o9P0uklP6DYNFxUhJOxiolTobhCPNLJb2117Zt0AeaRuqYLo6jAzYIoJAojb9XobnKLf2Mik7obn7CXlYvxJ+dXzXHB6411tQ7bNO4IwFIoPUCgYEA0jWTEs5V+soovkuOLolceQS9LKbiH0NVqOYazi/uptnEKxDPdA02IAg5eibQxVHtPNz2cfKyvef1LmNhyeGEqMlG3INzuZn40qzfulOygzeMA7i9RImvqsdqWRYsGln/fCkSyMHn4VXrBckYlJUDI+IAt1gvT5h5j8fi8ASpx8ECgYA5ayQr1wKZj7gsEcx0OqoQGlk/K6p1CC2XmY414QhzbSid8/N3EWS5wDEFGr5jngaqS3a6oYq0frZnTNcpf2cDuRZm8qQf1khFRMkppDhvYgsqeuyIvlmhKUHyQQ+j207mMazqKk2BcoKLYNvHqFUbDjFztQ2ywcChhhQbbIkUVQKBgQC1ws1/9z1ys4kXRIX/tUrYRkXMbGVs6nrHJNyOkyRjkR7ATv7RO9GvubeDmoinHlQAuV2MHDgEKQ5Vx8M7yTAeTzgYtlUCqEWVvA6lKnXkzofPFhzEx8KmoklkSctebJw4ydse13p7Kxx3gG2u9rEF0KD3eQr4b5QVxZap2cx3pg=='); // 私钥
 
 /*
 |--------------------------------------------------------------------------

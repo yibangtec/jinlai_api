@@ -132,7 +132,7 @@
 		public function create()
 		{
             // 操作可能需要检查客户端及设备信息
-            $type_allowed = array('client',); // 客户端类型
+            $type_allowed = array('client'); // 客户端类型
             $this->client_check($type_allowed);
 
 			// 检查必要参数是否已传入
@@ -210,7 +210,7 @@
         public function create_bulk()
         {
             // 操作可能需要检查客户端及设备信息
-            $type_allowed = array('client',); // 客户端类型
+            $type_allowed = array('client'); // 客户端类型
             $this->client_check($type_allowed);
 
             // 检查必要参数是否已传入

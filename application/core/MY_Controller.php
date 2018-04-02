@@ -126,6 +126,9 @@
 
 		public function __destruct()
 		{
+            // 仅以JSON格式返回响应内容
+		    header("Content-type:application/json;charset=utf-8");
+
 		    // 若返回了错误信息，则标注为服务端错误信息
             if ( ! empty($this->result['content']['error']['message']))
                 $this->result['content']['error']['message'] .= ' ERROR_API';
@@ -144,9 +147,8 @@
 			// 计算并输出业务逻辑运行时间（秒）
 			$this->result['elapsed_time'] = $this->benchmark->elapsed_time('start', 'end');
 
-			header("Content-type:application/json;charset=utf-8");
-			$output_json = json_encode($this->result);
-			echo $output_json;
+			// 输出响应内容
+			echo json_encode($this->result);
 		} // end __destruct
 
 		/**
