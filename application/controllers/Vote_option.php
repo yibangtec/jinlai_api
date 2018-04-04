@@ -14,7 +14,8 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'vote_id', 'tag_id', 'index_id', 'name', 'description', 'url_image', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+			'vote_id', 'tag_id', 'index_id', 'name', 'description', 'url_image',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 		
 		/**
@@ -42,7 +43,8 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'option_id', 'vote_id', 'tag_id', 'index_id', 'name', 'description', 'url_image', 'mobile', 'ballot_overall', 'status',
+			'option_id', 'vote_id', 'tag_id', 'index_id', 'name', 'description', 'url_image', 'mobile', 'ballot_overall',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
 		/**
@@ -153,8 +155,7 @@
             // 限制可返回的字段
             if ($this->app_type === 'client'):
                 $condition['time_delete'] = 'NULL';
-            else:
-                $this->names_to_return = array_merge($this->names_to_return, $this->names_return_for_admin);
+                $this->names_to_return = array_diff($this->names_to_return, $this->names_return_for_admin);
             endif;
             $this->db->select( implode(',', $this->names_to_return) );
 

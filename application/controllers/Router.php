@@ -14,14 +14,16 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'name', 'light_preg', 'preg', 'controller', 'function', 'params', 'url_native_ios', 'url_native_android', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'name', 'light_preg', 'preg', 'controller', 'function', 'params', 'url_native_ios', 'url_native_android',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'router_id', 'name', 'light_preg', 'preg', 'controller', 'function', 'params', 'url_native_ios', 'url_native_android', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'router_id', 'name', 'light_preg', 'preg', 'controller', 'function', 'params', 'url_native_ios', 'url_native_android',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -101,7 +103,6 @@
 
 			// 排序条件
 			$order_by = NULL;
-			//$order_by['name'] = 'value';
 
             // 限制可返回的字段
             if ($this->app_type === 'client'):

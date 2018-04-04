@@ -14,21 +14,23 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+			'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'identity_id', 'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+			'identity_id', 'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
 		/**
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-            'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+            'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
 		);
 
 		/**
@@ -102,9 +104,12 @@
 
 			// 排序条件
 			$order_by = NULL;
-			//$order_by['name'] = 'value';
 
-			// 限制可返回的字段
+            // 限制可返回的字段
+            if ($this->app_type === 'client'):
+                $condition['time_delete'] = 'NULL';
+                $this->names_to_return = array_diff($this->names_to_return, $this->names_return_for_admin);
+            endif;
 			$this->db->select( implode(',', $this->names_to_return) );
 
             // 获取列表；默认可获取已删除项

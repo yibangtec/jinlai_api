@@ -123,9 +123,6 @@
             // 类特有筛选项
             $condition = $this->advanced_sorter($condition);
 
-			// 客户端仅获取状态为‘正常’的商家
-			//if ($this->app_type === 'client') $condition['status'] = '正常';
-
 			// 排序条件
 			$order_by = NULL;
 
@@ -169,10 +166,6 @@
 
             // 限制可返回的字段
             $this->db->select( implode(',', $this->names_to_return) );
-
-			// 客户端仅获取状态为‘正常’的商家
-			//if ($this->app_type === 'client')
-			//	$this->db->where('status', '正常');
 
 			// 获取特定项；默认可获取已删除项
 			if ( !empty($url_name) ):

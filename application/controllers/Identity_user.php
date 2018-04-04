@@ -14,14 +14,16 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'user_id', 'fullname', 'code_ssn', 'url_image_ssn', 'url_verify_photo', 'time_create', 'time_delete', 'time_edit', 'operator_id', 'status',
+			'user_id', 'fullname', 'code_ssn', 'url_image_ssn', 'url_verify_photo',
+            'time_create', 'time_delete', 'time_edit', 'operator_id', 'status',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'identity_id', 'user_id', 'fullname', 'code_ssn', 'url_image_ssn', 'url_verify_photo', 'time_create', 'time_delete', 'time_edit', 'operator_id', 'status',
+			'identity_id', 'user_id', 'fullname', 'code_ssn', 'url_image_ssn', 'url_verify_photo',
+            'time_create', 'time_delete', 'time_edit', 'operator_id', 'status',
 		);
 
 		/**
@@ -103,9 +105,12 @@
 
 			// 排序条件
 			$order_by = NULL;
-			//$order_by['name'] = 'value';
 
-			// 限制可返回的字段
+            // 限制可返回的字段
+            if ($this->app_type === 'client'):
+                $condition['time_delete'] = 'NULL';
+                $this->names_to_return = array_diff($this->names_to_return, $this->names_return_for_admin);
+            endif;
 			$this->db->select( implode(',', $this->names_to_return) );
 
             // 获取列表；默认可获取已删除项

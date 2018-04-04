@@ -21,7 +21,8 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-            'template_id', 'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'nation', 'province', 'city', 'county', 'longitude', 'latitude', 'time_latest_deliver', 'type_actual', 'max_amount', 'start_amount', 'unit_amount', 'fee_start', 'fee_unit', 'exempt_amount', 'exempt_subtotal', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+            'template_id', 'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'period_valid', 'expire_refund_rate', 'nation', 'province', 'city', 'county', 'longitude', 'latitude', 'time_latest_deliver', 'type_actual', 'max_amount', 'start_amount', 'unit_amount', 'fee_start', 'fee_unit', 'exempt_amount', 'exempt_subtotal',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -104,8 +105,12 @@
 			// 排序条件
 			$order_by = NULL;
 
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
+            // 限制可返回的字段
+            if ($this->app_type === 'client'):
+                $condition['time_delete'] = 'NULL';
+                $this->names_to_return = array_diff($this->names_to_return, $this->names_return_for_admin);
+            endif;
+            $this->db->select( implode(',', $this->names_to_return) );
 
             // 获取列表；默认可获取已删除项
             $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们

@@ -4,8 +4,6 @@
 	/**
 	 * Item_category_biz/IBK 商品分类（商家级）类
 	 *
-	 * 商家级商品分类
-	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
 	 * @copyright ICBG <www.bingshankeji.com>
@@ -16,7 +14,8 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'biz_id', 'parent_id', 'name', 'url_image', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'biz_id', 'parent_id', 'name', 'url_image',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -24,6 +23,7 @@
 		 */
 		protected $names_to_return = array(
 			'category_id', 'biz_id', 'parent_id', 'name', 'url_image',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -107,8 +107,7 @@
             // 限制可返回的字段
             if ($this->app_type === 'client'):
                 $condition['time_delete'] = 'NULL';
-            else:
-                $this->names_to_return = array_merge($this->names_to_return, $this->names_return_for_admin);
+                $this->names_to_return = array_diff($this->names_to_return, $this->names_return_for_admin);
             endif;
             $this->db->select( implode(',', $this->names_to_return) );
 

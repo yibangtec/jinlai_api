@@ -91,8 +91,6 @@
                 $this->load->model('refund_model');
 			    $items = $this->refund_model->select($condition, $order_by);
             else:
-                // 限制可返回的字段
-                $this->db->select( implode(',', $this->names_to_return) );
                 $items = $this->basic_model->select_by_ids($ids);
             endif;
 

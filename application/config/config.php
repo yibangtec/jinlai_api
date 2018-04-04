@@ -6,7 +6,7 @@ define('ROOT_DOMAIN', '.517ybang.com');
 define('ROOT_URL', ROOT_DOMAIN.'/');
 
 // 对AJAX请求做安全性方面的特殊处理
-if ( ! empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'):
+if ( isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json,') !== FALSE):
     header('X-Content-Type-Options:nosniff'); // 防止IE8+自行推测数据格式
     header('X-Frame-Options:deny'); // 禁止在FRAME中读取数据
     header("Content-Security-Policy:default-src 'none'"); // 检测和防御XSS（通过设置资源路径）

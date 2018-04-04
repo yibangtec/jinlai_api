@@ -5552,7 +5552,7 @@
 								},
 								{
 									"key": "app_type",
-									"value": "client",
+									"value": "biz",
 									"type": "text"
 								},
 								{
@@ -5563,7 +5563,8 @@
 								{
 									"key": "parent_id",
 									"value": "4",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},
@@ -6251,9 +6252,8 @@
 								},
 								{
 									"key": "name",
-									"value": "BP机",
-									"type": "text",
-									"disabled": true
+									"value": "手机",
+									"type": "text"
 								},
 								{
 									"key": "tag_price",
@@ -11325,7 +11325,7 @@
 								},
 								{
 									"key": "biz_id",
-									"value": "21",
+									"value": "",
 									"type": "text"
 								},
 								{
@@ -11421,6 +11421,12 @@
 								{
 									"key": "time_delete",
 									"value": "NULL",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "41",
+									"description": "",
 									"type": "text"
 								}
 							]

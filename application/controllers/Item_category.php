@@ -25,6 +25,7 @@
 		 */
 		protected $names_to_return = array(
 			'category_id', 'parent_id', 'nature', 'level', 'name', 'description', 'url_name', 'url_image',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -112,8 +113,7 @@
             // 限制可返回的字段
             if ($this->app_type === 'client'):
                 $condition['time_delete'] = 'NULL';
-            else:
-                $this->names_to_return = array_merge($this->names_to_return, $this->names_return_for_admin);
+                $this->names_to_return = array_diff($this->names_to_return, $this->names_return_for_admin);
             endif;
             $this->db->select( implode(',', $this->names_to_return) );
 

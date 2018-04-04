@@ -21,7 +21,8 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'meta_id', 'name', 'value', 'description', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'meta_id', 'name', 'value', 'description',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -130,6 +131,7 @@
 
 			// 限制可返回的字段
             if ($this->app_type === 'client'):
+                $condition['time_delete'] = 'NULL';
                 $this->db->select('meta_id, name, value');
             else:
                 $this->db->select( implode(',', $this->names_to_return) );

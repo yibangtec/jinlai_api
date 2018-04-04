@@ -35,7 +35,8 @@
 		 * 可作为排序条件的字段名
 		 */
 		protected $names_to_order = array(
-			'vote_id', 'name', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'vote_id', 'name',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -43,6 +44,7 @@
 		 */
 		protected $names_to_return = array(
 			'tag_id', 'vote_id', 'name',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -140,8 +142,7 @@
             // 限制可返回的字段
             if ($this->app_type === 'client'):
                 $condition['time_delete'] = 'NULL';
-            else:
-                $this->names_to_return = array_merge($this->names_to_return, $this->names_return_for_admin);
+                $this->names_to_return = array_diff($this->names_to_return, $this->names_return_for_admin);
             endif;
             $this->db->select( implode(',', $this->names_to_return) );
 

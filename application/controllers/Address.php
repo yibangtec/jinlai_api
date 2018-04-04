@@ -21,7 +21,8 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'address_id', 'user_id', 'brief', 'fullname', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'zipcode', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'address_id', 'user_id', 'brief', 'fullname', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'zipcode',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
