@@ -1995,7 +1995,7 @@
 								},
 								{
 									"key": "name",
-									"value": "多乐",
+									"value": "雅顿",
 									"type": "text"
 								}
 							]
@@ -2222,7 +2222,7 @@
 								},
 								{
 									"key": "id",
-									"value": "2",
+									"value": "9",
 									"type": "text"
 								}
 							]
@@ -4034,6 +4034,13 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"type": "text"
@@ -4047,7 +4054,15 @@
 								{
 									"key": "ids",
 									"value": "3,2,1",
-									"type": "text"
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "time_delete",
+									"value": "NULL",
+									"description": "",
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},

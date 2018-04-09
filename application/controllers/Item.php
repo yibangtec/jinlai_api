@@ -36,7 +36,7 @@
 		 * 可作为排序条件的字段名
 		 */
 		protected $names_to_order = array(
-            'tag_price', 'price', 'time_publish', 'time_to_suspend', 'sold_overall', 'sold_monthly', 'sold_daily',
+            'tag_price', 'price', 'time_publish', 'time_to_suspend', 'sold_overall', 'sold_monthly', 'sold_daily', 'time_create',
 		);
 
 		/**
@@ -151,15 +151,18 @@
 				$items = $this->basic_model->select_by_ids($ids);
 			endif;
 
-			if ( !empty($items) ):
-				// 获取各项相应规格
-				$this->switch_model('sku', 'sku_id');
-				for ($i=0;$i<count($items);$i++):
-                    $this->db->select('sku_id, biz_id, item_id, url_image, name_first, name_second, name_third, tag_price, price, stocks, weight_net, weight_gross, weight_volume');
+			if ( ! empty($items)):
+                // 若为客户端调用，则一并返回规格
+                if ($this->app_type === 'client'):
+                    // 获取各项相应规格
+                    $this->switch_model('sku', 'sku_id');
+                    for ($i=0;$i<count($items);$i++):
+                        $this->db->select('sku_id, biz_id, item_id, url_image, name_first, name_second, name_third, tag_price, price, stocks, weight_net, weight_gross, weight_volume');
 
-					$condition = array('item_id' => $items[$i]['item_id']);
-					$items[$i]['skus'] = $this->basic_model->select($condition, NULL);
-				endfor;
+                        $condition = array('item_id' => $items[$i]['item_id']);
+                        $items[$i]['skus'] = $this->basic_model->select($condition, NULL);
+                    endfor;
+				endif;
 
 				// 若非客户端调用，则输出相应统计信息
 				if ($this->app_type !== 'client'):
@@ -198,8 +201,7 @@
 
 			// 限制可返回的字段
 			$this->db->select(
-				implode(',', $this->names_to_return).
-				',(SELECT SUM(`count`) FROM `order_items` WHERE `item_id`= `item`.`item_id`) as unit_sold, (SELECT SUM(`count`) FROM `order_items` WHERE `time_create` > (unix_timestamp() - 60*60*24*31) AND `item_id`= `item`.`item_id`) as unit_sold_monthly,'
+				implode(',', $this->names_to_return)
 			);
 
 			// 获取特定项；默认可获取已删除项

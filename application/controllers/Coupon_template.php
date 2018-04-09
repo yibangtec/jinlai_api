@@ -78,7 +78,7 @@
 		 * 1 列表/基本搜索
 		 */
 		public function index()
-		{	
+		{
 			// 检查必要参数是否已传入
 			$required_params = array();
 			foreach ($required_params as $param):
@@ -95,6 +95,12 @@
 			
 			// 排序条件
 			$order_by = NULL;
+
+            // 限制可返回的字段
+            if ($this->app_type === 'client'):
+                $condition['time_delete'] = 'NULL';
+                $condition['time_end >'] = time(); // 仅获取有效期内的数据
+            endif;
 
 			// 获取列表；默认可获取已删除项
             $this->load->model('coupon_template_model');
