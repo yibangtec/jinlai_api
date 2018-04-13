@@ -14,7 +14,8 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'password', 'nickname', 'lastname', 'firstname', 'gender', 'dob', 'avatar', 'level', 'address_id', 'promoter_id', 'last_login_timestamp', 'last_login_ip', 'time_create', 'time_delete', 'time_edit', 'operator_id',
+			'password', 'nickname', 'lastname', 'firstname', 'gender', 'dob', 'avatar', 'level', 'address_id', 'promoter_id', 'last_login_timestamp', 'last_login_ip',
+            'time_create', 'time_delete', 'time_edit', 'operator_id',
 		);
 
 		/**
@@ -26,17 +27,10 @@
 		);
 
 		/**
-		 * 创建时必要的字段名
-		 */
-		protected $names_create_required = array(
-			'user_id', 'mobile',
-		);
-
-		/**
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'nickname', 'lastname', 'firstname', 'gender', 'dob', 'avatar', 'bank_name', 'bank_account',
+			'nickname', 'lastname', 'firstname', 'gender', 'dob', 'avatar', 'address_id', 'bank_name', 'bank_account',
 		);
 
 		/**
@@ -189,8 +183,8 @@
 			$this->form_validation->set_rules('gender', '性别', 'trim|in_list[男,女]');
 			$this->form_validation->set_rules('dob', '出生日期', 'trim|max_length[10]');
 			$this->form_validation->set_rules('avatar', '头像', 'trim|max_length[255]');
-            $this->form_validation->set_rules('bank_name', '开户行名称', 'trim|max_length[20]');
-            $this->form_validation->set_rules('bank_account', '开户行账号', 'trim|max_length[30]');
+//            $this->form_validation->set_rules('bank_name', '开户行名称', 'trim|max_length[20]');
+//            $this->form_validation->set_rules('bank_account', '开户行账号', 'trim|max_length[30]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -268,8 +262,8 @@
             $this->form_validation->set_rules('avatar', '头像', 'trim|max_length[255]');
             $this->form_validation->set_rules('address_id', '默认地址', 'trim|is_natural_no_zero');
 //            $this->form_validation->set_rules('bank_id', '默认银行账号', 'trim|is_natural_no_zero'); // 若后期有需要，可考虑支持单用户多银行账号
-            $this->form_validation->set_rules('bank_name', '开户行名称', 'trim|max_length[20]');
-            $this->form_validation->set_rules('bank_account', '开户行账号', 'trim|max_length[30]');
+//            $this->form_validation->set_rules('bank_name', '开户行名称', 'trim|max_length[20]');
+//            $this->form_validation->set_rules('bank_account', '开户行账号', 'trim|max_length[30]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):

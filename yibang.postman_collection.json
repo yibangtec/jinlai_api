@@ -724,6 +724,87 @@
 			"description": null,
 			"item": [
 				{
+					"name": "ATB0 商家文章计数",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "biz_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "title",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "excerpt",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "url_images",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_create",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_edit",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "creator_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "operator_id",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/article_biz/count",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"article_biz",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "ATB1 商家文章列表",
 					"request": {
 						"method": "POST",
@@ -810,7 +891,7 @@
 					"response": []
 				},
 				{
-					"name": "ATB4 商家文章编辑",
+					"name": "ATB2 商家文章详情",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -818,44 +899,20 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "app_type",
-									"value": "biz",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "id",
 									"value": "1",
 									"type": "text"
-								},
-								{
-									"key": "title",
-									"value": "测试修改商家文章",
-									"type": "text"
-								},
-								{
-									"key": "excerpt",
-									"value": "文章的摘要至少要有10个字",
-									"type": "text"
-								},
-								{
-									"key": "content",
-									"value": "这里是需要创建的文章正文内容",
-									"type": "text"
-								},
-								{
-									"key": "url_images",
-									"value": "",
-									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/article_biz/edit",
+							"raw": "https://api.517ybang.com/article_biz/detail",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -864,88 +921,7 @@
 							],
 							"path": [
 								"article_biz",
-								"edit"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ATB0 商家文章计数",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "biz_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "title",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "excerpt",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "content",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "url_images",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_create",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_delete",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_edit",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "creator_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "operator_id",
-									"value": "",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/article_biz/count",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"article_biz",
-								"count"
+								"detail"
 							]
 						}
 					},
@@ -1019,7 +995,7 @@
 					"response": []
 				},
 				{
-					"name": "ATB2 商家文章详情",
+					"name": "ATB4 商家文章编辑",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -1027,20 +1003,44 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
+									"key": "app_type",
+									"value": "biz",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
 								},
 								{
 									"key": "id",
 									"value": "1",
 									"type": "text"
+								},
+								{
+									"key": "title",
+									"value": "测试修改商家文章",
+									"type": "text"
+								},
+								{
+									"key": "excerpt",
+									"value": "文章的摘要至少要有10个字",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "这里是需要创建的文章正文内容",
+									"type": "text"
+								},
+								{
+									"key": "url_images",
+									"value": "",
+									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/article_biz/detail",
+							"raw": "https://api.517ybang.com/article_biz/edit",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -1049,7 +1049,7 @@
 							],
 							"path": [
 								"article_biz",
-								"detail"
+								"edit"
 							]
 						}
 					},
@@ -9857,6 +9857,202 @@
 			"description": null,
 			"item": [
 				{
+					"name": "PRB0 店内活动计数",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "biz",
+									"type": "text"
+								},
+								{
+									"key": "biz_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_start",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_end",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "url_image",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "url_image_wide",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "fold_allowed",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "discount",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "present_trigger_amount",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "present_trigger_count",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "present",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "reduction_trigger_amount",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "reduction_trigger_count",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "reduction_amount",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "reduction_amount_time",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "reduction_discount",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "coupon_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "coupon_combo_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "deposit",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "balance",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_book_start",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_book_end",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_complete_start",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_complete_end",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "groupbuy_order_amount",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "groupbuy_quantity_max",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_create",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_edit",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "creator_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "operator_id",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/promotion_biz/count",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"promotion_biz",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "PRB1 店内活动列表",
 					"request": {
 						"method": "POST",
@@ -10057,6 +10253,128 @@
 							"path": [
 								"promotion_biz",
 								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PRB2 店内活动详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "biz",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/promotion_biz/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"promotion_biz",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TODO PRB3 店内活动创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "平台上线超级大活动",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "11月上线大特惠",
+									"type": "text"
+								},
+								{
+									"key": "url_images",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "url_web",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "brand_ids",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "biz_ids",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "item_ids",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_start",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_end",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "note_stuff",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/promotion_biz/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"promotion_biz",
+								"create"
 							]
 						}
 					},
@@ -10283,9 +10601,15 @@
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "PRM 活动（系统级）",
+			"description": null,
+			"item": [
 				{
-					"name": "PRB0 店内活动计数",
+					"name": "PRM0 平台活动计数",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -10294,12 +10618,8 @@
 							"formdata": [
 								{
 									"key": "app_type",
-									"value": "biz",
-									"type": "text"
-								},
-								{
-									"key": "biz_id",
-									"value": "",
+									"value": "client",
+									"description": "",
 									"type": "text"
 								},
 								{
@@ -10308,7 +10628,32 @@
 									"type": "text"
 								},
 								{
-									"key": "type",
+									"key": "description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "url_images",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "url_web",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "brand_ids",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "biz_ids",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "item_ids",
 									"value": "",
 									"type": "text"
 								},
@@ -10323,117 +10668,7 @@
 									"type": "text"
 								},
 								{
-									"key": "description",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "url_image",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "url_image_wide",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "fold_allowed",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "discount",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "present_trigger_amount",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "present_trigger_count",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "present",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "reduction_trigger_amount",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "reduction_trigger_count",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "reduction_amount",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "reduction_amount_time",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "reduction_discount",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "coupon_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "coupon_combo_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "deposit",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "balance",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_book_start",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_book_end",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_complete_start",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_complete_end",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "groupbuy_order_amount",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "groupbuy_quantity_max",
+									"key": "note_stuff",
 									"value": "",
 									"type": "text"
 								},
@@ -10465,7 +10700,7 @@
 							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/promotion_biz/count",
+							"raw": "https://api.517ybang.com/promotion/count",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -10473,263 +10708,8 @@
 								"com"
 							],
 							"path": [
-								"promotion_biz",
+								"promotion",
 								"count"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "TODO PRB3 店内活动创建",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "admin",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "平台上线超级大活动",
-									"type": "text"
-								},
-								{
-									"key": "description",
-									"value": "11月上线大特惠",
-									"type": "text"
-								},
-								{
-									"key": "url_images",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "url_web",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "brand_ids",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "biz_ids",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "item_ids",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_start",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_end",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "note_stuff",
-									"value": "",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/promotion_biz/create",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"promotion_biz",
-								"create"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "PRB2 店内活动详情",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "biz",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "2",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/promotion_biz/detail",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"promotion_biz",
-								"detail"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "PRM 活动（系统级）",
-			"description": null,
-			"item": [
-				{
-					"name": "PRM2 平台活动详情",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "biz",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "2",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/promotion/detail",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"promotion",
-								"detail"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "PRM4 平台活动编辑",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "admin",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "4",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "平台上线大活动",
-									"type": "text"
-								},
-								{
-									"key": "description",
-									"value": "11月上线大特惠",
-									"type": "text"
-								},
-								{
-									"key": "url_images",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "url_web",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "brand_ids",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "biz_ids",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "item_ids",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_start",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_end",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "note_stuff",
-									"value": "",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/promotion/edit",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"promotion",
-								"edit"
 							]
 						}
 					},
@@ -10858,6 +10838,42 @@
 					"response": []
 				},
 				{
+					"name": "PRM2 平台活动详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "biz",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/promotion/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"promotion",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "PRM3 平台活动创建",
 					"request": {
 						"method": "POST",
@@ -10944,7 +10960,7 @@
 					"response": []
 				},
 				{
-					"name": "PRM0 平台活动计数",
+					"name": "PRM4 平台活动编辑",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -10952,13 +10968,28 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
 									"key": "name",
-									"value": "",
+									"value": "平台上线大活动",
 									"type": "text"
 								},
 								{
 									"key": "description",
-									"value": "",
+									"value": "11月上线大特惠",
 									"type": "text"
 								},
 								{
@@ -11000,36 +11031,11 @@
 									"key": "note_stuff",
 									"value": "",
 									"type": "text"
-								},
-								{
-									"key": "time_create",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_delete",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_edit",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "creator_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "operator_id",
-									"value": "",
-									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/promotion/count",
+							"raw": "https://api.517ybang.com/promotion/edit",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -11038,7 +11044,7 @@
 							],
 							"path": [
 								"promotion",
-								"count"
+								"edit"
 							]
 						}
 					},
@@ -12233,42 +12239,6 @@
 			"description": null,
 			"item": [
 				{
-					"name": "RTR2 路由规则详情",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "7",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/router/detail",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"router",
-								"detail"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "RTR0 路由规则计数",
 					"request": {
 						"method": "POST",
@@ -12471,7 +12441,7 @@
 					"response": []
 				},
 				{
-					"name": "RTR4 路由规则修改",
+					"name": "RTR2 路由规则详情",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -12480,63 +12450,18 @@
 							"formdata": [
 								{
 									"key": "app_type",
-									"value": "admin",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "",
+									"value": "client",
 									"type": "text"
 								},
 								{
 									"key": "id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "light_preg",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "preg",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "controller",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "function",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "params",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "url_native_ios",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "url_native_android",
-									"value": "",
+									"value": "7",
 									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/router/edit",
+							"raw": "https://api.517ybang.com/router/detail",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -12545,7 +12470,7 @@
 							],
 							"path": [
 								"router",
-								"edit"
+								"detail"
 							]
 						}
 					},
@@ -12657,6 +12582,87 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "RTR4 路由规则修改",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "light_preg",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "preg",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "controller",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "function",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "params",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "url_native_ios",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "url_native_android",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/router/edit",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"router",
+								"edit"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -12664,6 +12670,122 @@
 			"name": "SKU 商品规格",
 			"description": null,
 			"item": [
+				{
+					"name": "SKU0 规格计数",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "biz_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "item_id",
+									"value": "91",
+									"type": "text"
+								},
+								{
+									"key": "url_image",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "name_first",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "name_second",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "name_third",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "tag_price",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "stocks",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "weight_net",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "weight_gross",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "weight_volume",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_create",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_edit",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "creator_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "operator_id",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/sku/count",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"sku",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "SKU1 规格列表",
 					"request": {
@@ -12792,97 +12914,6 @@
 							"path": [
 								"sku",
 								"index"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "SKU4 规格修改",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "biz",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "56",
-									"type": "text"
-								},
-								{
-									"key": "url_image",
-									"value": "url_image/201711/1128/163028.jpeg",
-									"type": "text"
-								},
-								{
-									"key": "name_first",
-									"value": "500深紫红/犀牛灰/黑色",
-									"type": "text"
-								},
-								{
-									"key": "name_second",
-									"value": "49",
-									"type": "text"
-								},
-								{
-									"key": "name_third",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "tag_price",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "price",
-									"value": "1199",
-									"type": "text"
-								},
-								{
-									"key": "stocks",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "weight_net",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "weight_gross",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "weight_volume",
-									"value": "",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/sku/edit",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"sku",
-								"edit"
 							]
 						}
 					},
@@ -13021,6 +13052,97 @@
 					"response": []
 				},
 				{
+					"name": "SKU4 规格修改",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "biz",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "56",
+									"type": "text"
+								},
+								{
+									"key": "url_image",
+									"value": "url_image/201711/1128/163028.jpeg",
+									"type": "text"
+								},
+								{
+									"key": "name_first",
+									"value": "500深紫红/犀牛灰/黑色",
+									"type": "text"
+								},
+								{
+									"key": "name_second",
+									"value": "49",
+									"type": "text"
+								},
+								{
+									"key": "name_third",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "tag_price",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "1199",
+									"type": "text"
+								},
+								{
+									"key": "stocks",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "weight_net",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "weight_gross",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "weight_volume",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/sku/edit",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"sku",
+								"edit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "SKU6 规格批量操作",
 					"request": {
 						"method": "POST",
@@ -13066,122 +13188,6 @@
 							"path": [
 								"sku",
 								"edit_bulk"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "SKU0 规格计数",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "biz_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "item_id",
-									"value": "91",
-									"type": "text"
-								},
-								{
-									"key": "url_image",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "name_first",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "name_second",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "name_third",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "tag_price",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "price",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "stocks",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "weight_net",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "weight_gross",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "weight_volume",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_create",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_delete",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_edit",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "creator_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "operator_id",
-									"value": "",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/sku/count",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"sku",
-								"count"
 							]
 						}
 					},
@@ -13278,6 +13284,79 @@
 			"description": null,
 			"item": [
 				{
+					"name": "STF0 员工计数",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/stuff/count",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"stuff",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "STF1 员工列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "client",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/stuff/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"stuff",
+								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "STF2 员工详情",
 					"request": {
 						"method": "POST",
@@ -13285,6 +13364,12 @@
 						"body": {
 							"mode": "formdata",
 							"formdata": [
+								{
+									"key": "app_type",
+									"value": "client",
+									"description": "",
+									"type": "text"
+								},
 								{
 									"key": "id",
 									"value": "2",
@@ -13382,6 +13467,114 @@
 			"description": null,
 			"item": [
 				{
+					"name": "USR0 用户计数",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/user/count",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"user",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "USR1 用户列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/user/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"user",
+								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "USR2 用户详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/user/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"user",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "USR4 用户修改",
 					"request": {
 						"method": "POST",
@@ -13451,114 +13644,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "USR0 用户计数",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/user/count",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"user",
-								"count"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "USR2 用户详情",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "1",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/user/detail",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"user",
-								"detail"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "USR1 用户列表",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "client",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "limit",
-									"value": "3",
-									"type": "text"
-								},
-								{
-									"key": "offset",
-									"value": "0",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/user/index",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"user",
-								"index"
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
@@ -13566,57 +13651,6 @@
 			"name": "VOT 投票活动",
 			"description": null,
 			"item": [
-				{
-					"name": "VOT6 投票活动操作",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "admin",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "ids",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "operation",
-									"value": "delete",
-									"type": "text"
-								},
-								{
-									"key": "password",
-									"value": "123456",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/vote/edit_bulk",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"vote",
-								"edit_bulk"
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "VOT0 投票活动计数",
 					"request": {
@@ -13654,6 +13688,65 @@
 							"path": [
 								"vote",
 								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VOT1 投票活动列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "5",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "NULL",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote",
+								"index"
 							]
 						}
 					},
@@ -13703,6 +13796,69 @@
 							"path": [
 								"vote",
 								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VOT3 投票活动创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "进来商城匠心商家评选",
+									"type": "text"
+								},
+								{
+									"key": "max_user_total",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "max_user_daily",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "max_user_daily_each",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote",
+								"create"
 							]
 						}
 					},
@@ -13819,19 +13975,13 @@
 					"response": []
 				},
 				{
-					"name": "VOT3 投票活动创建",
+					"name": "VOT6 投票活动操作",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "formdata",
 							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
-								},
 								{
 									"key": "app_type",
 									"value": "admin",
@@ -13843,30 +13993,24 @@
 									"type": "text"
 								},
 								{
-									"key": "name",
-									"value": "进来商城匠心商家评选",
-									"type": "text"
-								},
-								{
-									"key": "max_user_total",
-									"value": "",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "max_user_daily",
-									"value": "10",
-									"type": "text"
-								},
-								{
-									"key": "max_user_daily_each",
+									"key": "ids",
 									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "operation",
+									"value": "delete",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
 									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/vote/create",
+							"raw": "https://api.517ybang.com/vote/edit_bulk",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -13875,66 +14019,7 @@
 							],
 							"path": [
 								"vote",
-								"create"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "VOT1 投票活动列表",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "limit",
-									"value": "5",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "offset",
-									"value": "0",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "time_delete",
-									"value": "NULL",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/vote/index",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"vote",
-								"index"
+								"edit_bulk"
 							]
 						}
 					},
@@ -13968,48 +14053,6 @@
 			"name": "VTB 投票选票",
 			"description": null,
 			"item": [
-				{
-					"name": "VTB2 投票选票详情",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "1",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/vote_ballot/detail",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"vote_ballot",
-								"detail"
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "VTB0 投票选票计数",
 					"request": {
@@ -14117,6 +14160,48 @@
 							"path": [
 								"vote_ballot",
 								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VTB2 投票选票详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote_ballot/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote_ballot",
+								"detail"
 							]
 						}
 					},
@@ -14331,80 +14416,6 @@
 			"description": null,
 			"item": [
 				{
-					"name": "VTO3 投票候选项创建",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "897",
-									"type": "text"
-								},
-								{
-									"key": "vote_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "tag_id",
-									"value": "1",
-									"description": "",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "测试",
-									"type": "text"
-								},
-								{
-									"key": "description",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "url_image",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "mobile",
-									"value": "17664073966",
-									"description": "",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/vote_option/create",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"vote_option",
-								"create"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "VTO0 投票候选项计数",
 					"request": {
 						"method": "POST",
@@ -14441,161 +14452,6 @@
 							"path": [
 								"vote_option",
 								"count"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "VTO4 投票候选项修改",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "app_type",
-									"value": "admin",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "11",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "SONY/索尼",
-									"type": "text"
-								},
-								{
-									"key": "description",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "url_image",
-									"value": "",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/vote_option/edit",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"vote_option",
-								"edit"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "VTO2 投票候选项详情",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "1",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/vote_option/detail",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"vote_option",
-								"detail"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "VTO6 投票候选项操作",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "admin",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "ids",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "operation",
-									"value": "delete",
-									"type": "text"
-								},
-								{
-									"key": "password",
-									"value": "123456",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/vote_option/edit_bulk",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"vote_option",
-								"edit_bulk"
 							]
 						}
 					},
@@ -14680,6 +14536,235 @@
 							"path": [
 								"vote_option",
 								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VTO2 投票候选项详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote_option/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote_option",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VTO3 投票候选项创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "897",
+									"type": "text"
+								},
+								{
+									"key": "vote_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "tag_id",
+									"value": "1",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "测试",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "url_image",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "mobile",
+									"value": "17664073966",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote_option/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote_option",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VTO4 投票候选项修改",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "11",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "SONY/索尼",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "url_image",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote_option/edit",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote_option",
+								"edit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "VTO6 投票候选项操作",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "operation",
+									"value": "delete",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/vote_option/edit_bulk",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"vote_option",
+								"edit_bulk"
 							]
 						}
 					},
