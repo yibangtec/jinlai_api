@@ -446,7 +446,7 @@
          * 用于表单格式验证
          *
          * @param $value
-         * @param string $min_time_name 不可晚于的UNIX时间戳值
+         * @param string $max_time_name 不可晚于的UNIX时间戳字段值
          * @return bool
          */
         public function time_start($value, $min_time_name = '')
@@ -462,11 +462,11 @@
             elseif ($value <= time()):
                 return false;
 
-            // 若已设置最小开始时间，不可晚于该时间（含）
+            // 若已设置结束时间，不可晚于该时间
             elseif (
-                !empty($min_time_name)
-                && !empty( $this->input->post($min_time_name) )
-                && $value <= $this->input->post($min_time_name)
+                !empty($max_time_name)
+                && !empty( $this->input->post($max_time_name) )
+                && $value > $this->input->post($max_time_name)
             ):
                 return false;
 
@@ -481,7 +481,7 @@
          *
          * 用于表单格式验证
          * @param $value
-         * @param string $min_time_name 不可晚于的UNIX时间戳值
+         * @param string $min_time_name 不可早于的UNIX时间戳字段值
          * @return bool
          */
         public function time_end($value, $min_time_name = 'time_start')
@@ -496,11 +496,11 @@
             elseif ($value <= time()):
                 return false;
 
-            // 若已设置最小开始时间，不可晚于该时间（含）
+            // 若已设置开始时间，不可早于该时间
             elseif (
                 !empty($min_time_name)
                 && !empty( $this->input->post($min_time_name) )
-                && $value <= $this->input->post($min_time_name)
+                && $value < $this->input->post($min_time_name)
             ):
                 return false;
 

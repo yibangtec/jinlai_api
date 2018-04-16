@@ -133,7 +133,7 @@
             if ($this->app_type === 'client') $condition['time_delete'] = 'NULL';
 
 			// 排序条件
-            $order_by = NULL;
+            $order_by['time_publish'] = 'DESC';
 			// （可选）遍历筛选条件
 			foreach ($this->names_to_order as $sorter):
 				if ( !empty($this->input->post('orderby_'.$sorter)) )
@@ -165,12 +165,14 @@
 				endif;
 
 				// 若非客户端调用，则输出相应统计信息
+                /*
 				if ($this->app_type !== 'client'):
 					$this->reset_model(); // 重置数据库
 					$this->db->select('ROUND( AVG(price), 2 ) as avg_price, MAX(price) as max_price, MIN(price) as min_price');
 					$query = $this->db->get($this->table_name);
 					$this->result['table_meta'] = $query->result_array();
 				endif;
+                */
 
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
@@ -322,14 +324,14 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('category_id', '系统分类', 'trim|required|is_natural_no_zero');
-			$this->form_validation->set_rules('brand_id', '品牌', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('biz_id', '所属商家ID', 'trim|required|is_natural_no_zero');
+            $this->form_validation->set_rules('biz_id', '所属商家ID', 'trim|required|is_natural_no_zero');
+            $this->form_validation->set_rules('brand_id', '品牌', 'trim|is_natural_no_zero');
+            $this->form_validation->set_rules('category_id', '系统分类', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('category_biz_id', '商家分类', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('code_biz', '商家自定义商品编码', 'trim|max_length[20]');
 			$this->form_validation->set_rules('url_image_main', '主图', 'trim|required|max_length[255]');
 			$this->form_validation->set_rules('figure_image_urls', '形象图', 'trim|max_length[255]');
-			$this->form_validation->set_rules('figure_video_urls', '形象视频', 'trim|max_length[255]');
+			//$this->form_validation->set_rules('figure_video_urls', '形象视频', 'trim|max_length[255]');
 			$this->form_validation->set_rules('name', '商品名称', 'trim|required|max_length[40]');
 			$this->form_validation->set_rules('slogan', '商品宣传语/卖点', 'trim|max_length[30]');
 			$this->form_validation->set_rules('description', '商品描述', 'trim|max_length[20000]');
@@ -345,10 +347,10 @@
 			$this->form_validation->set_rules('coupon_allowed', '是否可用优惠券', 'trim|in_list[0,1]');
 			$this->form_validation->set_rules('discount_credit', '积分抵扣率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
-            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_start');
+            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_start[time_to_suspend]');
             $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_end[time_to_publish]');
-            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分');
-            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于预订上架时间（若有）');
+            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且不可晚于预订下架时间');
+            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且不可早于预订上架时间');
 			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
 
@@ -363,7 +365,8 @@
 					'creator_id' => $user_id,
 
 					'figure_image_urls' => trim($this->input->post('figure_image_urls'), ','),
-					'figure_video_urls' => trim($this->input->post('figure_video_urls'), ','),
+					//'figure_video_urls' => trim($this->input->post('figure_video_urls'), ','),
+
 					'tag_price' => empty($this->input->post('tag_price'))? '0.00': $this->input->post('tag_price'),
 					'unit_name' => empty($this->input->post('unit_name'))? '份': $this->input->post('unit_name'),
                     'weight_net' => empty($this->input->post('weight_net'))? '0.00': $this->input->post('weight_net'),
@@ -376,7 +379,6 @@
 					'commission_rate' => empty($this->input->post('commission_rate'))? '0.00': $this->input->post('commission_rate'),
 					'time_to_publish' => empty($this->input->post('time_to_publish'))? NULL: $this->input->post('time_to_publish'),
 					'time_to_suspend' => empty($this->input->post('time_to_suspend'))? NULL: $this->input->post('time_to_suspend'),
-					'time_publish' => empty($this->input->post('time_to_publish'))? time(): NULL, // 若未预订上架时间，则直接上架
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
@@ -384,6 +386,10 @@
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
+
+				// 生成上架时间
+                $time_to_publish = $this->input->post('time_to_publish');
+                $data_to_create['time_publish'] = (empty($time_to_publish) || $time_to_publish < time())? time(): NULL;
 
                 // 若未传入slogan，自动生成slogan
                 if ( empty($this->input->post('slogan')) )
@@ -435,7 +441,7 @@
 			$this->form_validation->set_rules('code_biz', '商家自定义商品编码', 'trim|max_length[20]');
 			$this->form_validation->set_rules('url_image_main', '主图', 'trim|required|max_length[255]');
 			$this->form_validation->set_rules('figure_image_urls', '形象图', 'trim|max_length[255]');
-			$this->form_validation->set_rules('figure_video_urls', '形象视频', 'trim|max_length[255]');
+			//$this->form_validation->set_rules('figure_video_urls', '形象视频', 'trim|max_length[255]');
 			$this->form_validation->set_rules('name', '商品名称', 'trim|required|max_length[40]');
 			$this->form_validation->set_rules('slogan', '商品宣传语/卖点', 'trim|max_length[30]');
 			$this->form_validation->set_rules('description', '商品描述', 'trim|max_length[20000]');
@@ -451,10 +457,10 @@
 			$this->form_validation->set_rules('coupon_allowed', '是否可用优惠券', 'trim|in_list[0,1]');
 			$this->form_validation->set_rules('discount_credit', '积分抵扣率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
-            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_start');
+            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_start[time_to_suspend]');
             $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_end[time_to_publish]');
-            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分');
-            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于预订上架时间（若有）');
+            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且不可晚于预订下架时间');
+            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且不可早于预订上架时间');
 			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
 			//$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
 
@@ -469,7 +475,7 @@
 					'operator_id' => $user_id,
 
 					'figure_image_urls' => trim($this->input->post('figure_image_urls'), ','),
-					'figure_video_urls' => trim($this->input->post('figure_video_urls'), ','),
+					//'figure_video_urls' => trim($this->input->post('figure_video_urls'), ','),
 
 					'tag_price' => empty($this->input->post('tag_price'))? '0.00': $this->input->post('tag_price'),
 					'unit_name' => empty($this->input->post('unit_name'))? '份': $this->input->post('unit_name'),
@@ -483,7 +489,6 @@
 					'commission_rate' => empty($this->input->post('commission_rate'))? '0.00': $this->input->post('commission_rate'),
 					'time_to_publish' => empty($this->input->post('time_to_publish'))? NULL: $this->input->post('time_to_publish'),
 					'time_to_suspend' => empty($this->input->post('time_to_suspend'))? NULL: $this->input->post('time_to_suspend'),
-					'time_publish' => empty($this->input->post('time_to_publish'))? time(): NULL, // 若未预订上架时间，则直接上架
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
@@ -491,6 +496,10 @@
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
+
+                // 生成上架时间
+                $time_to_publish = $this->input->post('time_to_publish');
+                $data_to_create['time_publish'] = (empty($time_to_publish) || $time_to_publish < time())? time(): NULL;
 
                 // 若未传入slogan，自动生成slogan
                 if ( empty($this->input->post('slogan')) )
@@ -560,7 +569,7 @@
 			$this->form_validation->set_rules('code_biz', '商家自定义商品编码', 'trim|max_length[20]');
 			$this->form_validation->set_rules('url_image_main', '主图', 'trim|max_length[255]');
 			$this->form_validation->set_rules('figure_image_urls', '形象图', 'trim|max_length[255]');
-			$this->form_validation->set_rules('figure_video_urls', '形象视频', 'trim|max_length[255]');
+			//$this->form_validation->set_rules('figure_video_urls', '形象视频', 'trim|max_length[255]');
 			$this->form_validation->set_rules('name', '商品名称', 'trim|max_length[40]');
 			$this->form_validation->set_rules('slogan', '商品宣传语/卖点', 'trim|max_length[30]');
 			$this->form_validation->set_rules('description', '商品描述', 'trim|max_length[20000]');
@@ -576,12 +585,12 @@
 			$this->form_validation->set_rules('coupon_allowed', '是否可用优惠券', 'trim|in_list[0,1]');
 			$this->form_validation->set_rules('discount_credit', '积分抵扣率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
-            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_start');
+            $this->form_validation->set_rules('time_to_publish', '预定上架时间', 'trim|exact_length[10]|callback_time_start[time_to_suspend]');
             $this->form_validation->set_rules('time_to_suspend', '预定下架时间', 'trim|exact_length[10]|callback_time_end[time_to_publish]');
-            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分');
-            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且晚于预订上架时间（若有）');
+            $this->form_validation->set_message('time_to_publish', '预定上架时间需详细到分，且不可晚于预订下架时间');
+            $this->form_validation->set_message('time_to_suspend', '预定下架时间需详细到分，且不可早于预订上架时间');
 			$this->form_validation->set_rules('promotion_id', '店内活动', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
+			//$this->form_validation->set_rules('freight_template_id', '运费模板', 'trim|is_natural_no_zero');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):

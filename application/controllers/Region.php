@@ -304,7 +304,7 @@
                 $this->result['status'] = 200;
                 foreach ($counties as $county):
                     // 需要创建的数据；逐一赋值需特别处理的字段
-                    $data_to_create['county'] = $county;
+                    $data_to_create['county'] = trim($county);
 
                     $result = $this->basic_model->create($data_to_create, TRUE);
                     if ($result === FALSE):
