@@ -127,7 +127,7 @@
 			endforeach;
 
 			// 排序条件
-			$order_by = NULL;
+            $order_by['time_create'] = 'ASC';
 
 			// 限制可返回的字段
             if ($this->app_type === 'client'):

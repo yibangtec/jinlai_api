@@ -169,7 +169,7 @@
 						"\t\t\t\t\t\t"."<div class=form-group>
 							<label for=$name class=\"col-sm-2 control-label\">$comment</label>
 							<div class=col-sm-10>
-								<input class=form-control name=$name type=text value=\"<?php echo ".'$item'."['$name'] ?>\" placeholder=\"$comment\" required>
+								<input class=form-control name=$name type=text value=\"<?php echo empty(set_value('$name'))? ".'$item'."['$name']: set_value('$name') ?>\" placeholder=\"$comment\" required>
 							</div>
 						</div>". "\n";
 					$this->result['content']['detail'] .=
