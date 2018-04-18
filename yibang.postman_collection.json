@@ -268,6 +268,13 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"type": "text"
@@ -368,14 +375,23 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "id",
 									"value": "28",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								}
 							]
 						},
@@ -404,71 +420,91 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "user_id",
 									"value": "1",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "brief",
 									"value": "公司",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "fullname",
 									"value": "刘先生",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "mobile",
 									"value": "17664073966",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "province",
 									"value": "山东省",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "city",
 									"value": "青岛市",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "county",
 									"value": "崂山区",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "street",
 									"value": "东海东路1号45-2室",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "longitude",
 									"value": "120.427929",
 									"type": "text",
+									"description": "",
 									"disabled": true
 								},
 								{
 									"key": "latitude",
 									"value": "36.063916",
 									"type": "text",
+									"description": "",
 									"disabled": true
 								},
 								{
 									"key": "zipcode",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "default_this",
 									"value": "1",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								}
 							]
 						},
@@ -497,64 +533,83 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "id",
 									"value": "27",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "user_id",
 									"value": "7",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "province",
 									"value": "山东省",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "city",
 									"value": "青岛市",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "county",
 									"value": "市北区",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "street",
 									"value": "镇江路1号",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "fullname",
 									"value": "刘亚杰",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "mobile",
 									"value": "15192098644",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "zipcode",
 									"value": "266000",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "brief",
 									"value": "家",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "default_this",
 									"value": "1",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								}
 							]
 						},
@@ -583,29 +638,41 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "user_id",
 									"value": "1",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "ids",
 									"value": "1",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "operation",
 									"value": "delete",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "password",
 									"value": "123456",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								}
 							]
 						},
@@ -5540,6 +5607,420 @@
 							"path": [
 								"fav_item",
 								"create_bulk"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "HIV 商品浏览记录",
+			"description": null,
+			"item": [
+				{
+					"name": "HIV0 商品浏览记录计数",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "7",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "NULL",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/history_item_view/count",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"history_item_view",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "HIV1 商品浏览记录列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "item_id",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "times_viewed_today",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "last_viewed_date",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "last_viewed_time",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "last_viewed_platform",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_create",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_delete",
+									"value": "NULL",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_edit",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "creator_id",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "operator_id",
+									"value": "",
+									"type": "text",
+									"description": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/history_item_view/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"history_item_view",
+								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "HIV2 商品浏览记录详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "id",
+									"value": "2",
+									"type": "text",
+									"description": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/history_item_view/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"history_item_view",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "HIV3 商品浏览记录创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "item_id",
+									"value": "625",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "times_viewed_today",
+									"value": "1",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "last_viewed_date",
+									"value": "",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "last_viewed_time",
+									"value": "",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "last_viewed_platform",
+									"value": "web",
+									"type": "text",
+									"description": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/history_item_view/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"history_item_view",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "HIV4 商品浏览记录修改",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "times_viewed_today",
+									"value": "3",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "last_viewed_time",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "last_viewed_platform",
+									"value": "web",
+									"type": "text",
+									"description": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/history_item_view/edit",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"history_item_view",
+								"edit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "HIV6 商品浏览记录批量操作",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "ids",
+									"value": "2",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "operation",
+									"value": "delete",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text",
+									"description": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/history_item_view/edit_bulk",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"history_item_view",
+								"edit_bulk"
 							]
 						}
 					},

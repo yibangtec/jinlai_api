@@ -85,7 +85,7 @@
 		 * 1 列表/基本搜索
 		 */
 		public function index()
-		{	
+		{
 			// 检查必要参数是否已传入
 			$required_params = array();
 			foreach ($required_params as $param):
@@ -99,7 +99,7 @@
 
             // 生成筛选条件
             $condition = $this->condition_generate();
-			
+
 			// 排序条件
 			$order_by = NULL;
 
@@ -169,7 +169,7 @@
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin',); // 客户端类型
+			$type_allowed = array('admin'); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
