@@ -20,7 +20,7 @@
 		 * @param string $mobile 收信人手机号
 		 * @param string $content 短信内容
 		 * @return json 发送状态码及返回字符串
-		*/
+		 */
 		public function send($mobile, $content)
 		{
 			$url = 'http://sms-api.luosimao.com/v1/send.json';
@@ -47,7 +47,7 @@
 		/**
 		 * 发送批量短信
 		 *
-		 * @params string $mobile_list 目标手机号码列表，多个号码间使用1个半角逗号分隔
+		 * @params string $mobile_list 目标手机号码列表，CSV
 		 * @params string $content 待发送短信内容
 		 * @params string $time 待发送时间；2016-04-01 12:30:00
 		 * @return json 发送状态码及返回字符串
@@ -84,7 +84,7 @@
 		 *
 		 * @param void
 		 * @return json $balance 剩余可发送条数
-		*/
+		 */
 		public function balance()
 		{
 			$url = 'http://sms-api.luosimao.com/v1/status.json';
@@ -98,8 +98,8 @@
 			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 			curl_setopt($ch, CURLOPT_USERPWD, $this->api_key);
 
-			$res =  curl_exec($ch);
-			curl_close($ch); 
+			$res = curl_exec($ch);
+			curl_close($ch);
 			return $res;
 		} // end balance
 
@@ -125,11 +125,11 @@
 				'-60' => '定时时间需要为将来的时间',
 			);
 			
-			// 生成可读的提示
+			// 将错误码转为可读提示
 			$text_to_return = $text[$error->error];
 			
 			// 对敏感词相关提示，补充具体敏感词信息
-			if ($error->error === '-31') $text_to_return .= $error->hit;
+			if ($error->error === '-31') $text_to_return .= '：'. $error->hit;
 
 			return $text_to_return;
 		} // end error_text

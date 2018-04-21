@@ -148,7 +148,7 @@
 			$this->postXml($xml);
 			$this->result = $this->xmlToArray($this->response);
 			if ($this->input->post('test_mode') === 'on'):
-				//echo $this->parameters['out_trade_no'];
+                echo 'out_trade_no'. $this->parameters['out_trade_no'];
 				//var_dump($this->result);
 			endif;
 			$prepay_id = $this->result['prepay_id'];
@@ -194,7 +194,7 @@
 				$this->setReturnParameter('return_code', 'SUCCESS'); //设置返回码
 			endif;
 			$returnXml = $this->returnXml();
-			echo $returnXml;
+			echo $returnXml; // 输出返回签名验证结果
 
 			// 根据通知参数进行相应处理
 			if ($this->checkSign() === TRUE):
@@ -278,7 +278,7 @@
 
         /**
          * 更新实物订单相关商品/规格的库存值
-         * TODO 执行结果验证
+         *
          * @param $order_id 相关订单ID
          */
         protected function stocks_update($order_id)
@@ -290,9 +290,9 @@
 
             foreach ($order_items as $item):
                 if ( empty($item['sku_id']) ):
-                    $result = $this->db->query("CALL stocks_update('item', ".$item['item_id'].','. $item['count'].')');
+                    $this->db->query("CALL stocks_update('item', ". $item['item_id'].','. $item['count'].')');
                 else:
-                    $result = $this->db->query("CALL stocks_update('sku', ".$item['sku_id'].','. $item['count'].')');
+                    $this->db->query("CALL stocks_update('sku', ". $item['sku_id'].','. $item['count'].')');
                 endif;
                 $this->db->reconnect();
             endforeach;
@@ -484,20 +484,9 @@
 			endif;
 		} // end postXmlSSLCurl
 
-		/**
-		 * 	作用：打印数组
-		 */
-		public function printErr($wording = '', $err = '')
-		{
-			print_r('<pre>');
-			echo $wording.'<br>';
-			var_dump($err);
-			print_r('</pre>');
-		} // end printErr
-
         /**
          * 请求型接口的方法
-        */
+         */
 
 		/**
 		 * 	作用：设置请求参数
@@ -593,11 +582,6 @@
 		public function index()
 		{
 			echo $this->createNoncestr();
-			/*
-			header('Content-type:application/json;charset=utf-8');
-			$output_json = json_encode($output);
-			echo $output_json;
-			*/
 		} // end index
 
 	} // end class Wepay

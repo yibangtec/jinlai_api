@@ -225,6 +225,73 @@
         } // end get_order_detail
 
         /**
+         * 更新订单信息
+         *
+         * @param $data_to_edit 待更新的订单信息
+         * @param $type 订单类型
+         * @param $order_id 订单号
+         */
+        private function order_update($data_to_edit, $type, $order_id)
+        {
+            $current_time = time(); // 服务器接收到付款通知的时间
+            $data_to_edit['time_pay'] = $current_time;
+
+            // 根据订单类型更新相应字段值
+            switch ($type):
+                case 'coupon': // 券码类订单
+                    $data_to_edit['time_accept'] = $current_time; // 收款即接单（等待发货）
+                    $data_to_edit['time_deliver'] = $current_time; // 收款即发货（生成券码）
+                    $data_to_edit['status'] = '待使用';
+                    break;
+                case 'cater': // 服务类订单
+                    $data_to_edit['status'] = '待接单';
+                    break;
+                default: // 实物类订单
+                    $data_to_edit['time_accept'] = $current_time; // 收款即接单（等待发货）
+                    $data_to_edit['status'] = '待发货';
+                    $this->stocks_update($order_id);
+            endswitch;
+
+            // 更新订单信息
+            $this->switch_model($type, 'order_id');
+            $this->basic_model->edit($order_id, $data_to_edit);
+        } // end order_update
+
+        /**
+         * 更新实物订单相关商品/规格的库存值
+         * TODO 执行结果验证
+         * @param int/string $order_id 相关订单ID
+         */
+        protected function stocks_update($order_id)
+        {
+            // 获取订单相关商品数据
+            $query = $this->db->query("CALL get_order_items( $order_id )");
+            $order_items = $query->result_array();
+            $this->db->reconnect(); // 调用存储过程后必须重新连接数据库，下同
+
+            foreach ($order_items as $item):
+                if ( empty($item['sku_id']) ):
+                    $this->db->query("CALL stocks_update('item', ". $item['item_id'].','. $item['count'].')');
+                else:
+                    $this->db->query("CALL stocks_update('sku', ". $item['sku_id'].','. $item['count'].')');
+                endif;
+                $this->db->reconnect();
+            endforeach;
+        } // end stocks_update
+
+        /**
+         * 发送短信
+         */
+        protected function sms_send($mobile, $content)
+        {
+            // 为短信内容添加后缀签名
+            $content .= '【'. SITE_NAME. '】';
+
+            $this->load->library('luosimao');
+            @$result = $this->luosimao->send($mobile, $content);
+        } // end sms_send
+
+        /**
          * 生成待签名及支付字符串
          *
          * @param $params
@@ -347,73 +414,6 @@
             $url = 'alipay.txt'; // 位于项目根目录下
             write_file($url, $data, 'w+');
         } // end log_this
-
-        /**
-         * 更新订单信息
-         *
-         * @param $data_to_edit 待更新的订单信息
-         * @param $type 订单类型
-         * @param $order_id 订单号
-         */
-        private function order_update($data_to_edit, $type, $order_id)
-        {
-            $current_time = time(); // 服务器接收到付款通知的时间
-            $data_to_edit['time_pay'] = $current_time;
-
-            // 根据订单类型更新相应字段值
-            switch ($type):
-                case 'coupon': // 券码类订单
-                    $data_to_edit['time_accept'] = $current_time; // 收款即接单（等待发货）
-                    $data_to_edit['time_deliver'] = $current_time; // 收款即发货（生成券码）
-                    $data_to_edit['status'] = '待使用';
-                    break;
-                case 'cater': // 服务类订单
-                    $data_to_edit['status'] = '待接单';
-                    break;
-                default: // 实物类订单
-                    $data_to_edit['time_accept'] = $current_time; // 收款即接单（等待发货）
-                    $data_to_edit['status'] = '待发货';
-                    $this->stocks_update($order_id);
-            endswitch;
-
-            // 更新订单信息
-            $this->switch_model($type, 'order_id');
-            $this->basic_model->edit($order_id, $data_to_edit);
-        } // end order_update
-
-        /**
-         * 更新实物订单相关商品/规格的库存值
-         * TODO 执行结果验证
-         * @param int/string $order_id 相关订单ID
-         */
-        protected function stocks_update($order_id)
-        {
-            // 获取订单相关商品数据
-            $query = $this->db->query("CALL get_order_items( $order_id )");
-            $order_items = $query->result_array();
-            $this->db->reconnect(); // 调用存储过程后必须重新连接数据库，下同
-
-            foreach ($order_items as $item):
-                if ( empty($item['sku_id']) ):
-                    $result = $this->db->query("CALL stocks_update('item', ".$item['item_id'].','. $item['count'].')');
-                else:
-                    $result = $this->db->query("CALL stocks_update('sku', ".$item['sku_id'].','. $item['count'].')');
-                endif;
-                $this->db->reconnect();
-            endforeach;
-        } // end stocks_update
-
-        /**
-         * 发送短信
-         */
-        protected function sms_send($mobile, $content)
-        {
-            // 为短信内容添加后缀签名
-            $content .= '【'. SITE_NAME. '】';
-
-            $this->load->library('luosimao');
-            @$result = $this->luosimao->send($mobile, $content);
-        } // end sms_send
 
 	} // end class Alipay
 
