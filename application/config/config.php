@@ -2,7 +2,8 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 // 根域名及URL
-define('ROOT_DOMAIN', '.517ybang.com');
+define('ROOT_DOMAIN', '.517ybang.com'); // 开发环境
+//define('ROOT_DOMAIN', '.jinlaimall.com'); // 生产环境
 define('ROOT_URL', ROOT_DOMAIN.'/');
 
 // 对AJAX请求做安全性方面的特殊处理
@@ -22,14 +23,13 @@ if ( isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'applicat
     );
     if ( in_array($origin, $allow_origin) ):
         header('Access-Control-Allow-Origin:'.$origin);
-        header('Access-Control-Allow-Methods:POST,GET');
+        header('Access-Control-Allow-Methods:POST');
         header('Access-Control-Allow-Credentials:TRUE'); // 允许将Cookie包含在请求中
     endif;
 endif;
 
 // 需要自定义的常量
 define('SITE_NAME', '进来商城API'); // 站点名称
-define('API_TOKEN', '7C4l7JLaM3Fq5biQurtmk9nFS'); // API公钥
 
 define('BASE_URL', 'https://'. $_SERVER['SERVER_NAME']); // 可对外使用的站点URL；在本地测试时须替换为类似“localhost/BasicCodeigniter”形式
 define('COOKIE_DOMAIN', NULL); // cookie存储路径；方便起见可让所有子域共享，若需分离可自行配置

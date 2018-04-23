@@ -105,9 +105,7 @@
 			// 排序条件
             $order_by = NULL;
             if ($this->app_type === 'client'):
-                $order_by['nature'] = 'ASC';
-                $order_by['level'] = 'ASC';
-                $order_by['parent_id'] = 'ASC';
+                $order_by['nature'] = $order_by['parent_id'] = $order_by['level'] = 'ASC';
             endif;
 
             // 限制可返回的字段
@@ -199,13 +197,12 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('parent_id', '所属分类ID', 'trim|is_natural_no_zero');
+            $this->form_validation->set_rules('parent_id', '所属分类', 'trim|is_natural_no_zero');
             $this->form_validation->set_rules('nature', '商品性质', 'trim|in_list[商品,服务]');
-            $this->form_validation->set_rules('level', '分类级别', 'trim|in_list[1,2,3]');
-			$this->form_validation->set_rules('name', '分类名称', 'trim|required|max_length[20]');
-			$this->form_validation->set_rules('url_name', '自定义域名', 'trim|max_length[30]');
-			$this->form_validation->set_rules('url_image', '形象图', 'trim');
-			$this->form_validation->set_rules('description', '描述', 'trim|max_length[100]');
+            $this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]');
+            $this->form_validation->set_rules('description', '描述', 'trim|max_length[100]');
+            $this->form_validation->set_rules('url_name', '自定义域名', 'trim|alpha_dash|max_length[30]');
+            $this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -213,16 +210,24 @@
 				$this->result['content']['error']['message'] = validation_errors();
 
 			else:
+                // 若指定所属分类，获取并相关信息
+                $parent_id = $this->input->post('parent_id');
+                if ( ! empty($parent_id))
+                    $parent_category = $this->get_item('item_category', 'category_id', $parent_id, FALSE);
+
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
+
 					'url_name' => strtolower($this->input->post('url_name')),
-                    'nature' => empty($this->input->post('nature'))? '商品': $this->input->post('nature'),
-                    'level' => empty($this->input->post('level'))? 1: $this->input->post('level'),
+
+                    'parent_id' => empty($parent_id)? NULL: $parent_id,
+                    'nature' => empty($parent_category)? $this->input->post('nature'): $parent_category['nature'],
+                    'level' => empty($parent_category)? 1: ($parent_category['level'] + 1),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'parent_id', 'name', 'url_image', 'description',
+					'name', 'url_image', 'description',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -269,13 +274,12 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('parent_id', '所属分类ID', 'trim|is_natural_no_zero');
+            $this->form_validation->set_rules('parent_id', '所属分类', 'trim|is_natural_no_zero');
             $this->form_validation->set_rules('nature', '商品性质', 'trim|in_list[商品,服务]');
-            $this->form_validation->set_rules('level', '分类级别', 'trim|in_list[1,2,3]');
-			$this->form_validation->set_rules('name', '分类名称', 'trim|required|max_length[20]');
-			$this->form_validation->set_rules('url_name', '自定义域名', 'trim|max_length[30]');
-			$this->form_validation->set_rules('url_image', '形象图', 'trim');
-			$this->form_validation->set_rules('description', '描述', 'trim|max_length[100]');
+            $this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]');
+            $this->form_validation->set_rules('description', '描述', 'trim|max_length[100]');
+            $this->form_validation->set_rules('url_name', '自定义域名', 'trim|alpha_dash|max_length[30]');
+            $this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -283,16 +287,24 @@
 				$this->result['content']['error']['message'] = validation_errors();
 
 			else:
+                // 若指定所属分类，获取并相关信息
+                $parent_id = $this->input->post('parent_id');
+                if ( ! empty($parent_id))
+                    $parent_category = $this->get_item('item_category', 'category_id', $parent_id, FALSE);
+
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
-					'url_name' => strtolower($this->input->post('url_name')),
-                    'nature' => empty($this->input->post('nature'))? '商品': $this->input->post('nature'),
-                    'level' => empty($this->input->post('level'))? 1: $this->input->post('level'),
+
+                    'url_name' => strtolower($this->input->post('url_name')),
+
+                    'parent_id' => empty($parent_id)? NULL: $parent_id,
+                    'nature' => empty($parent_category)? $this->input->post('nature'): $parent_category['nature'],
+                    'level' => empty($parent_category)? 1: ($parent_category['level'] + 1),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'parent_id', 'name', 'url_image', 'description', 
+					'name', 'url_image', 'description',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);

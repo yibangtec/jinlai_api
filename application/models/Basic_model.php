@@ -347,6 +347,20 @@
 			endif;
 		} // end edit
 
+        // TODO 待应用到具体业务并测试
+        // 根据当前用户的id验证密码是否正确，用于操作验证等情景
+        // 此方法应用频繁，不适合进一步抽象进前述match方法
+        public function password_check($id_name = 'stuff')
+        {
+            $data = array(
+                "{$id_name}_id" => $this->session->{$id_name.'_id'},
+                'password' => sha1( $this->input->post('password') ),
+            );
+
+            $query = $this->db->get_where($id_name, $data);
+            return $query->row_array();
+        } // end password_check
+
 	} // end Class Basic_model
 
 /* End of file Basic_model.php */

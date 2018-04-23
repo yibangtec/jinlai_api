@@ -691,16 +691,28 @@
          * @param boolean $ids_only 是否仅需返回CSV格式的主键ID
          * @return mixed
          */
-        protected function get_items($table_name = 'item', $table_id = 'item_id', $condition = array(), $order_by = array(), $ids_only = FALSE)
+        protected function get_items($table_name = 'item', $table_id = 'item_id', $condition = array(), $order_by = array(), $return_ids = FALSE, $allow_deleted = TRUE)
         {
             // 初始化数据表
             $this->switch_model($table_name, $table_id);
 
-            // 判断是否仅需返回主键ID
-            if ($ids_only === TRUE) $this->db->select($table_id); // 仅获取ID即可
-
-            return $this->basic_model->select($condition, $order_by);
+            return $this->basic_model->select($condition, $order_by, $return_ids, $allow_deleted);
         } // end get_items
+
+        /**
+         * 根据ID获取特定项，默认可返回已删除项
+         *
+         * @param int $id 需获取的行的ID
+         * @param bool $allow_deleted 是否可返回被标注为删除状态的行；默认为TRUE
+         * @return array 结果行（一维数组）
+         */
+        public function get_item($table_name = 'item', $table_id = 'item_id', $id, $allow_deleted = TRUE)
+        {
+            // 初始化数据表
+            $this->switch_model($table_name, $table_id);
+
+            return $this->basic_model->select_by_id($id, $allow_deleted);
+        } // end select_by_id
 
 	} // end class MY_Controller
 
