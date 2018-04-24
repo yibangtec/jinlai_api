@@ -43,7 +43,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'item_id', 'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'sold_overall', 'sold_monthly', 'sold_daily', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id',
+			'item_id', 'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'barcode', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'sold_overall', 'sold_monthly', 'sold_daily', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id',
 			'time_create', 'time_delete', 'time_publish', 'time_suspend', 'time_edit', 'creator_id', 'operator_id', 'note_admin', 'status',
 		);
 
@@ -58,7 +58,7 @@
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'category_biz_id', 'code_biz', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id', 'status',
+			'category_biz_id', 'code_biz', 'barcode', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id', 'status',
 		);
 
 		/**
@@ -301,7 +301,7 @@
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('biz',); // 客户端类型
+			$type_allowed = array('biz'); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -328,7 +328,8 @@
             $this->form_validation->set_rules('brand_id', '品牌', 'trim|is_natural_no_zero');
             $this->form_validation->set_rules('category_id', '系统分类', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('category_biz_id', '商家分类', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('code_biz', '商家自定义商品编码', 'trim|max_length[20]');
+			$this->form_validation->set_rules('code_biz', '商家商品编码', 'trim|max_length[20]');
+            $this->form_validation->set_rules('barcode', '商品条形码', 'trim|is_natural_no_zero|exact_length[13]');
 			$this->form_validation->set_rules('url_image_main', '主图', 'trim|required|max_length[255]');
 			$this->form_validation->set_rules('figure_image_urls', '形象图', 'trim|max_length[255]');
 			//$this->form_validation->set_rules('figure_video_urls', '形象视频', 'trim|max_length[255]');
@@ -360,6 +361,9 @@
 				$this->result['content']['error']['message'] = validation_errors();
 
 			else:
+                // 获取预定上架时间
+                $time_to_publish = $this->input->post('time_to_publish');
+
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
@@ -377,18 +381,17 @@
                     'coupon_allowed' => empty($this->input->post('coupon_allowed'))? '1': $this->input->post('coupon_allowed'), // 默认允许使用优惠券
 					'discount_credit' => empty($this->input->post('discount_credit'))? '0.00': $this->input->post('discount_credit'),
 					'commission_rate' => empty($this->input->post('commission_rate'))? '0.00': $this->input->post('commission_rate'),
-					'time_to_publish' => empty($this->input->post('time_to_publish'))? NULL: $this->input->post('time_to_publish'),
+					'time_to_publish' => empty($time_to_publish)? NULL: $time_to_publish,
 					'time_to_suspend' => empty($this->input->post('time_to_suspend'))? NULL: $this->input->post('time_to_suspend'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'url_image_main', 'name', 'slogan', 'description', 'price', 'stocks', 'promotion_id', 'freight_template_id',
+					'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'barcode', 'url_image_main', 'name', 'slogan', 'description', 'price', 'stocks', 'promotion_id', 'freight_template_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
 
 				// 生成上架时间
-                $time_to_publish = $this->input->post('time_to_publish');
                 $data_to_create['time_publish'] = (empty($time_to_publish) || $time_to_publish < time())? time(): NULL;
 
                 // 若未传入slogan，自动生成slogan
@@ -438,7 +441,8 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('category_biz_id', '商家分类', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('code_biz', '商家自定义商品编码', 'trim|max_length[20]');
+            $this->form_validation->set_rules('code_biz', '商家商品编码', 'trim|max_length[20]');
+            $this->form_validation->set_rules('barcode', '商品条形码', 'trim|is_natural_no_zero|exact_length[13]');
 			$this->form_validation->set_rules('url_image_main', '主图', 'trim|required|max_length[255]');
 			$this->form_validation->set_rules('figure_image_urls', '形象图', 'trim|max_length[255]');
 			//$this->form_validation->set_rules('figure_video_urls', '形象视频', 'trim|max_length[255]');
@@ -470,6 +474,9 @@
 				$this->result['content']['error']['message'] = validation_errors();
 
 			else:
+                // 获取预定上架时间
+                $time_to_publish = $this->input->post('time_to_publish');
+
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
@@ -487,19 +494,18 @@
                     'coupon_allowed' => empty($this->input->post('coupon_allowed'))? '1': $this->input->post('coupon_allowed'), // 默认允许使用优惠券
                     'discount_credit' => empty($this->input->post('discount_credit'))? '0.00': $this->input->post('discount_credit'),
 					'commission_rate' => empty($this->input->post('commission_rate'))? '0.00': $this->input->post('commission_rate'),
-					'time_to_publish' => empty($this->input->post('time_to_publish'))? NULL: $this->input->post('time_to_publish'),
+					'time_to_publish' => empty($time_to_publish)? NULL: $time_to_publish,
 					'time_to_suspend' => empty($this->input->post('time_to_suspend'))? NULL: $this->input->post('time_to_suspend'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_biz_id', 'code_biz', 'url_image_main', 'name', 'slogan', 'description', 'price', 'stocks', 'promotion_id',
+					'category_biz_id', 'code_biz', 'barcode', 'url_image_main', 'name', 'slogan', 'description', 'price', 'stocks', 'promotion_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
 
                 // 生成上架时间
-                $time_to_publish = $this->input->post('time_to_publish');
-                $data_to_create['time_publish'] = (empty($time_to_publish) || $time_to_publish < time())? time(): NULL;
+                $data_to_edit['time_publish'] = (empty($time_to_publish) || $time_to_publish < time())? time(): NULL;
 
                 // 若未传入slogan，自动生成slogan
                 if ( empty($this->input->post('slogan')) )
@@ -574,7 +580,7 @@
 			$this->form_validation->set_rules('slogan', '商品宣传语/卖点', 'trim|max_length[30]');
 			$this->form_validation->set_rules('description', '商品描述', 'trim|max_length[20000]');
 			$this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[99999.99]');
-            $this->form_validation->set_rules('price', '商城价/现价（元）', 'trim|required|greater_than_equal_to[1]|less_than_equal_to[99999.99]');
+            $this->form_validation->set_rules('price', '商城价/现价（元）', 'trim|greater_than_equal_to[1]|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('stocks', '库存量（单位）', 'trim|greater_than_equal_to[0]|less_than_equal_to[65535]');
 			$this->form_validation->set_rules('unit_name', '销售单位', 'trim|max_length[10]');
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');

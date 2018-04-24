@@ -183,18 +183,18 @@
 			$this->form_validation->set_rules('description', '说明', 'trim|max_length[30]');
 			$this->form_validation->set_rules('amount', '面值（元）', 'trim|required|greater_than_equal_to[1]|less_than_equal_to[999]');
 			$this->form_validation->set_rules('min_subtotal', '起用金额（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
-			$this->form_validation->set_rules('max_amount', '总限量', 'trim|greater_than_equal_to[0]|less_than_equal_to[999999]');
-			$this->form_validation->set_rules('max_amount_user', '单个用户限量', 'trim|greater_than_equal_to[0]|less_than_equal_to[99]');
-			$this->form_validation->set_rules('category_biz_id', '限用商家商品分类', 'trim');
-			$this->form_validation->set_rules('item_id', '限用商品', 'trim');
-			$this->form_validation->set_rules('period', '有效期', 'trim|is_natural_no_zero');
+            $this->form_validation->set_rules('max_amount', '总限量', 'trim|is_natural_no_zero|greater_than_equal_to[0]|less_than_equal_to[999999]');
+            $this->form_validation->set_rules('max_amount_user', '单个用户限量', 'trim|is_natural_no_zero|greater_than_equal_to[0]|less_than_equal_to[99]');
+            $this->form_validation->set_rules('period', '有效时长', 'trim|is_natural_no_zero|greater_than[3600]|less_than[31622400]');
 			$this->form_validation->set_rules('time_start', '有效期开始时间', 'trim|exact_length[10]|integer|callback_time_start');
 			$this->form_validation->set_rules('time_end', '有效期结束时间', 'trim|exact_length[10]|integer|callback_time_end');
             $this->form_validation->set_message('time_start', '有效期开始时间需详细到分');
             $this->form_validation->set_message('time_end', '有效期结束时间需详细到分，且晚于开始时间（若有）');
+            $this->form_validation->set_rules('category_biz_id', '限用商家商品分类', 'trim|is_natural_no_zero');
+            $this->form_validation->set_rules('item_id', '限用商品', 'trim|is_natural_no_zero');
 			// 针对特定条件的验证规则
 			if ($this->app_type === 'admin'):
-				$this->form_validation->set_rules('category_id', '限用系统商品分类', 'trim');
+				$this->form_validation->set_rules('category_id', '限用系统商品分类', 'trim|is_natural_no_zero');
 			endif;
 
 			// 若表单提交不成功
@@ -207,6 +207,7 @@
                 $period = (empty($this->input->post('period')) && empty($this->input->post('time_end')) )? 2592000: $this->input->post('period'); // 有效期默认为30个自然日；但若指定了有效期结束时间，则忽略领取后有效期
 				$data_to_create = array(
 					'creator_id' => $user_id,
+
 					'period' => $period,
 					'time_start' => empty($this->input->post('time_start'))? 0: $this->input->post('time_start'),
 					'time_end' => empty($this->input->post('time_end'))? time() + $period: $this->input->post('time_end'),
@@ -268,18 +269,18 @@
 			$this->form_validation->set_rules('description', '说明', 'trim|max_length[30]');
 			$this->form_validation->set_rules('amount', '面值（元）', 'trim|required|greater_than_equal_to[1]|less_than_equal_to[999]');
 			$this->form_validation->set_rules('min_subtotal', '起用金额（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
-			$this->form_validation->set_rules('max_amount', '总限量', 'trim|greater_than_equal_to[0]|less_than_equal_to[999999]');
-			$this->form_validation->set_rules('max_amount_user', '单个用户限量', 'trim|greater_than_equal_to[0]|less_than_equal_to[99]');
-			$this->form_validation->set_rules('category_biz_id', '限用店内商品分类', 'trim');
-			$this->form_validation->set_rules('item_id', '限用商品', 'trim');
-			$this->form_validation->set_rules('period', '有效期', 'trim|is_natural_no_zero');
+            $this->form_validation->set_rules('max_amount', '总限量', 'trim|is_natural_no_zero|greater_than_equal_to[0]|less_than_equal_to[999999]');
+            $this->form_validation->set_rules('max_amount_user', '单个用户限量', 'trim|is_natural_no_zero|greater_than_equal_to[0]|less_than_equal_to[99]');
+            $this->form_validation->set_rules('period', '有效时长', 'trim|is_natural_no_zero|greater_than[3600]|less_than[31622400]');
 			$this->form_validation->set_rules('time_start', '有效期开始时间', 'trim|exact_length[10]|integer|callback_time_start');
 			$this->form_validation->set_rules('time_end', '有效期结束时间', 'trim|exact_length[10]|integer|callback_time_end');
             $this->form_validation->set_message('time_start', '有效期开始时间需详细到分');
             $this->form_validation->set_message('time_end', '有效期结束时间需详细到分，且晚于开始时间（若有）');
+            $this->form_validation->set_rules('category_biz_id', '限用店内商品分类', 'trim|is_natural_no_zero');
+            $this->form_validation->set_rules('item_id', '限用商品', 'trim|is_natural_no_zero');
 			// 针对特定条件的验证规则
 			if ($this->app_type === 'admin'):
-				$this->form_validation->set_rules('category_id', '限用系统商品分类', 'trim');
+				$this->form_validation->set_rules('category_id', '限用系统商品分类', 'trim|is_natural_no_zero');
 			endif;
 
 			// 若表单提交不成功
