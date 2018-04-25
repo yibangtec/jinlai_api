@@ -449,17 +449,13 @@
          * @param string $max_time_name 不可晚于的UNIX时间戳字段值
          * @return bool
          */
-        public function time_start($value, $min_time_name = '')
+        public function time_start($value, $min_time_name = 'time_end')
         {
             if ( empty($value) ):
                 return true;
 
             // 须为UNIX时间戳
             elseif (strlen($value) !== 10):
-                return false;
-
-            // 该时间须晚于当前时间
-            elseif ($value <= time()):
                 return false;
 
             // 若已设置结束时间，不可晚于该时间
@@ -490,10 +486,6 @@
                 return true;
 
             elseif (strlen($value) !== 10):
-                return false;
-
-            // 该时间须晚于当前时间
-            elseif ($value <= time()):
                 return false;
 
             // 若已设置开始时间，不可早于该时间

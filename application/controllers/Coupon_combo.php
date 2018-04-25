@@ -191,11 +191,11 @@
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
 			$this->form_validation->set_rules('description', '说明', 'trim|max_length[30]');
 			$this->form_validation->set_rules('template_ids', '所含优惠券', 'trim|required');
-			$this->form_validation->set_rules('max_amount', '总限量', 'trim|greater_than_equal_to[0]|less_than_equal_to[999999]');
+			$this->form_validation->set_rules('max_amount', '总限量', 'trim|is_natural|greater_than_equal_to[0]|less_than_equal_to[999999]');
 			$this->form_validation->set_rules('time_start', '领取开始时间', 'trim|exact_length[10]|integer|callback_time_start');
 			$this->form_validation->set_rules('time_end', '领取结束时间', 'trim|exact_length[10]|integer|callback_time_end');
-            $this->form_validation->set_message('time_start', '领取开始时间需详细到分');
-            $this->form_validation->set_message('time_end', '领取结束时间需详细到分，且晚于开始时间（若有）');
+            $this->form_validation->set_message('time_start', '领取开始时间需详细到分，且早于结束时间');
+            $this->form_validation->set_message('time_end', '领取结束时间需详细到分，且晚于开始时间');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -261,11 +261,11 @@
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
 			$this->form_validation->set_rules('description', '说明', 'trim|max_length[30]');
 			$this->form_validation->set_rules('template_ids', '所含优惠券', 'trim');
-			$this->form_validation->set_rules('max_amount', '总限量', 'trim|greater_than_equal_to[0]|less_than_equal_to[999999]');
+			$this->form_validation->set_rules('max_amount', '总限量', 'trim|is_natural|greater_than_equal_to[0]|less_than_equal_to[999999]');
 			$this->form_validation->set_rules('time_start', '领取开始时间', 'trim|exact_length[10]|integer|callback_time_start');
 			$this->form_validation->set_rules('time_end', '领取结束时间', 'trim|exact_length[10]|integer|callback_time_end');
-            $this->form_validation->set_message('time_start', '领取开始时间需详细到分');
-            $this->form_validation->set_message('time_end', '领取结束时间需详细到分，且晚于开始时间（若有）');
+            $this->form_validation->set_message('time_start', '领取开始时间需详细到分，且早于结束时间');
+            $this->form_validation->set_message('time_end', '领取结束时间需详细到分，且晚于开始时间');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
