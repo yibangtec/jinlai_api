@@ -3322,49 +3322,58 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": ""
+								},
+								{
 									"key": "app_type",
 									"value": "biz",
-									"type": "text"
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "biz_id",
+									"value": "2",
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "user_id",
 									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "biz_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "七夕虐狗节",
-									"type": "text"
-								},
-								{
-									"key": "description",
-									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "template_ids",
-									"value": "1,2|2,47|3",
-									"type": "text"
-								},
-								{
-									"key": "max_amount",
-									"value": "300",
-									"type": "text"
+									"value": "1",
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "time_start",
-									"value": "",
-									"type": "text"
+									"value": "1524734700",
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "time_end",
-									"value": "",
-									"type": "text"
+									"value": "1524741960",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "name",
+									"value": "五一大礼包",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "max_amount",
+									"value": "30",
+									"type": "text",
+									"description": ""
 								}
 							]
 						},
@@ -3556,7 +3565,7 @@
 							"formdata": [
 								{
 									"key": "app_type",
-									"value": "client",
+									"value": "biz",
 									"type": "text"
 								},
 								{
@@ -3571,7 +3580,7 @@
 								},
 								{
 									"key": "biz_id",
-									"value": "1",
+									"value": "2",
 									"type": "text"
 								},
 								{
@@ -3981,14 +3990,14 @@
 								},
 								{
 									"key": "combo_id",
-									"value": "2",
-									"type": "text",
-									"disabled": true
+									"value": "1",
+									"type": "text"
 								},
 								{
 									"key": "template_id",
 									"value": "9",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "count",
@@ -4302,80 +4311,56 @@
 								{
 									"key": "app_type",
 									"value": "biz",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "user_id",
 									"value": "1",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "biz_id",
 									"value": "2",
-									"type": "text"
-								},
-								{
-									"key": "category_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "category_biz_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "item_id",
-									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "name",
-									"value": "满2000减150",
-									"type": "text"
-								},
-								{
-									"key": "description",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "amount",
-									"value": "150",
-									"type": "text"
-								},
-								{
-									"key": "min_subtotal",
-									"value": "2000",
-									"type": "text"
+									"value": "满100减50",
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "max_amount",
-									"value": "5000",
-									"type": "text"
+									"value": "3",
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "max_amount_user",
 									"value": "1",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
-									"key": "period",
-									"value": "",
+									"key": "min_subtotal",
+									"value": "100",
 									"type": "text",
-									"disabled": true
+									"description": ""
+								},
+								{
+									"key": "amount",
+									"value": "50",
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "time_start",
-									"value": "1508428800",
+									"value": "1524643140",
 									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "time_end",
-									"value": "1509292800",
-									"type": "text",
-									"disabled": true
+									"description": ""
 								}
 							]
 						},

@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'biz_id', 'name', 'description', 'template_ids', 'max_amount', 'time_start', 'time_end',
+			'biz_id', 'name', 'description', 'template_ids', 'max_amount', 'period', 'time_start', 'time_end',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -22,7 +22,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'combo_id', 'biz_id', 'name', 'description', 'template_ids', 'max_amount', 'time_start', 'time_end',
+			'combo_id', 'biz_id', 'name', 'description', 'template_ids', 'max_amount', 'period', 'time_start', 'time_end',
             'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -37,7 +37,7 @@
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'name', 'description', 'template_ids', 'max_amount', 'time_start', 'time_end',
+			'name', 'description', 'template_ids', 'max_amount', 'period', 'time_start', 'time_end',
 		);
 
 		/**
@@ -46,6 +46,9 @@
 		protected $names_edit_required = array(
 			'user_id', 'id', 'name', 'template_ids',
 		);
+
+        // 优惠券包默认可领时长
+        protected $default_period = 2592000; // 30天
 
 		public function __construct()
 		{
@@ -192,6 +195,7 @@
 			$this->form_validation->set_rules('description', '说明', 'trim|max_length[30]');
 			$this->form_validation->set_rules('template_ids', '所含优惠券', 'trim|required');
 			$this->form_validation->set_rules('max_amount', '总限量', 'trim|is_natural|greater_than_equal_to[0]|less_than_equal_to[999999]');
+            $this->form_validation->set_rules('period', '有效时长', 'trim|is_natural_no_zero|greater_than_equal_to[3600]|less_than_equal_to[31622400]');
 			$this->form_validation->set_rules('time_start', '领取开始时间', 'trim|exact_length[10]|integer|callback_time_start');
 			$this->form_validation->set_rules('time_end', '领取结束时间', 'trim|exact_length[10]|integer|callback_time_end');
             $this->form_validation->set_message('time_start', '领取开始时间需详细到分，且早于结束时间');
@@ -204,10 +208,14 @@
 
 			else:
 				// 需要创建的数据；逐一赋值需特别处理的字段
+                $period = empty($this->input->post('period'))? $this->default_period: $this->input->post('period');
+
 				$data_to_create = array(
 					'creator_id' => $user_id,
-					'time_start' => empty($this->input->post('time_start'))? 0: $this->input->post('time_start'),
-					'time_end' => empty($this->input->post('time_end'))? NULL: $this->input->post('time_end'),
+
+                    'period' => $period,
+                    'time_start' => empty($this->input->post('time_start'))? 0: $this->input->post('time_start'),
+                    'time_end' => empty($this->input->post('time_end'))? time() + $period: $this->input->post('time_end'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
@@ -262,6 +270,7 @@
 			$this->form_validation->set_rules('description', '说明', 'trim|max_length[30]');
 			$this->form_validation->set_rules('template_ids', '所含优惠券', 'trim');
 			$this->form_validation->set_rules('max_amount', '总限量', 'trim|is_natural|greater_than_equal_to[0]|less_than_equal_to[999999]');
+            $this->form_validation->set_rules('period', '有效时长', 'trim|is_natural_no_zero|greater_than_equal_to[3600]|less_than_equal_to[31622400]');
 			$this->form_validation->set_rules('time_start', '领取开始时间', 'trim|exact_length[10]|integer|callback_time_start');
 			$this->form_validation->set_rules('time_end', '领取结束时间', 'trim|exact_length[10]|integer|callback_time_end');
             $this->form_validation->set_message('time_start', '领取开始时间需详细到分，且早于结束时间');
@@ -274,10 +283,14 @@
 
 			else:
 				// 需要编辑的数据；逐一赋值需特别处理的字段
+                $period = empty($this->input->post('period'))? $this->default_period: $this->input->post('period');
+
 				$data_to_edit = array(
 					'operator_id' => $user_id,
-					'time_start' => empty($this->input->post('time_start'))? 0: $this->input->post('time_start'),
-					'time_end' => empty($this->input->post('time_end'))? NULL: $this->input->post('time_end'),
+
+                    'period' => $period,
+                    'time_start' => empty($this->input->post('time_start'))? 0: $this->input->post('time_start'),
+                    'time_end' => empty($this->input->post('time_end'))? time() + $period: $this->input->post('time_end'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
@@ -382,6 +395,10 @@
 
 			endif;
 		} // end edit_bulk
+
+        /*
+         * 以下为工具方法
+         */
 
 	} // end class Coupon_combo
 

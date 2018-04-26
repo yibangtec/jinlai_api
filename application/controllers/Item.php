@@ -324,7 +324,7 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-            $this->form_validation->set_rules('biz_id', '所属商家ID', 'trim|required|is_natural_no_zero');
+            $this->form_validation->set_rules('biz_id', '所属商家', 'trim|required|is_natural_no_zero');
             $this->form_validation->set_rules('brand_id', '品牌', 'trim|is_natural_no_zero');
             $this->form_validation->set_rules('category_id', '系统分类', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('category_biz_id', '商家分类', 'trim|is_natural_no_zero');
