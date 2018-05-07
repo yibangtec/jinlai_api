@@ -6934,8 +6934,7 @@
 								{
 									"key": "test_mode",
 									"value": "on",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "app_type",
@@ -6944,7 +6943,7 @@
 								},
 								{
 									"key": "id",
-									"value": "190",
+									"value": "173",
 									"type": "text"
 								},
 								{
@@ -7655,256 +7654,6 @@
 			"description": null,
 			"item": [
 				{
-					"name": "MSG1 聊天消息列表",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "limit",
-									"value": "5",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "offset",
-									"value": "0",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "time_delete",
-									"value": "NULL",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/message/index",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"message",
-								"index"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "MSG6 聊天消息批量操作",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "ids",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "operation",
-									"value": "delete",
-									"type": "text"
-								},
-								{
-									"key": "password",
-									"value": "123456",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/message/edit_bulk",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"message",
-								"edit_bulk"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "MSG3 聊天消息创建",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "biz_id",
-									"value": "2",
-									"type": "text"
-								},
-								{
-									"key": "stuff_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "to_type",
-									"value": "biz",
-									"type": "text"
-								},
-								{
-									"key": "type",
-									"value": "text",
-									"type": "text"
-								},
-								{
-									"key": "content",
-									"value": "测试创建文本消息",
-									"type": "text"
-								},
-								{
-									"key": "url_image",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "item_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "order_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "url_page",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "title",
-									"value": "",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/message/create",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"message",
-								"create"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "MSG2 聊天消息详情",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "2",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/message/detail",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"message",
-								"detail"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "MSG0 聊天消息计数",
 					"request": {
 						"method": "POST",
@@ -8016,6 +7765,256 @@
 							"path": [
 								"message",
 								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MSG1 聊天消息列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "5",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "NULL",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/message/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"message",
+								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MSG2 聊天消息详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/message/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"message",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MSG3 聊天消息创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "biz_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "stuff_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "to_type",
+									"value": "biz",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "text",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "测试创建文本消息",
+									"type": "text"
+								},
+								{
+									"key": "url_image",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "item_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "order_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "url_page",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "title",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/message/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"message",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MSG6 聊天消息批量操作",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "operation",
+									"value": "delete",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/message/edit_bulk",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"message",
+								"edit_bulk"
 							]
 						}
 					},
@@ -8380,6 +8379,465 @@
 							"path": [
 								"material",
 								"index"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "NTC 系统通知",
+			"description": null,
+			"item": [
+				{
+					"name": "NTC0 系统通知计数",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "notice_id",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "article_id",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "app_type",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "user_id",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "biz_id",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "title",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "excerpt",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "url_image",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_create",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_delete",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_edit",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "creator_id",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "operator_id",
+									"value": "",
+									"type": "text",
+									"description": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/notice/count",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"notice",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NTC1 系统通知列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "offset",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "offset",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "url_name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "content_type",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "content_html",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "content_file",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_create",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_edit",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "creator_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "operator_id",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/notice/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"notice",
+								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NTC2 系统通知详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/notice/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"notice",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NTC3 系统通知创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "时尚娱乐",
+									"type": "text"
+								},
+								{
+									"key": "url_name",
+									"value": "fashion",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "content_type",
+									"value": "文件",
+									"type": "text"
+								},
+								{
+									"key": "content_html",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "content_file",
+									"value": "fashion",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/notice/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"notice",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NTC4 系统通知编辑",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "生鲜超市",
+									"type": "text"
+								},
+								{
+									"key": "url_name",
+									"value": "fresh_mart",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "content_type",
+									"value": "文件",
+									"type": "text"
+								},
+								{
+									"key": "content_html",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "content_file",
+									"value": "fresh_mart",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/notice/edit",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"notice",
+								"edit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NTC6 系统通知批量操作",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "operation",
+									"value": "delete",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/notice/edit_bulk",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"notice",
+								"edit_bulk"
 							]
 						}
 					},
@@ -9922,6 +10380,12 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text"
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"type": "text"
@@ -10000,6 +10464,134 @@
 					"response": []
 				},
 				{
+					"name": "PGE1 页面列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "limit",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "offset",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "limit",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "offset",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "name",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "url_name",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "content_type",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "content_html",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "content_file",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_create",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_delete",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_edit",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "creator_id",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "operator_id",
+									"value": "",
+									"type": "text",
+									"description": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/page/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"page",
+								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "PGE2 页面详情",
 					"request": {
 						"method": "POST",
@@ -10050,44 +10642,58 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": ""
+								},
+								{
 									"key": "app_type",
 									"value": "admin",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "user_id",
 									"value": "1",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "name",
 									"value": "时尚娱乐",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "url_name",
 									"value": "fashion",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "description",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "content_type",
 									"value": "文件",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "content_html",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "content_file",
 									"value": "fashion",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								}
 							]
 						},
@@ -10108,163 +10714,6 @@
 					"response": []
 				},
 				{
-					"name": "PGE6 页面批量操作",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "admin",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "ids",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "operation",
-									"value": "delete",
-									"type": "text"
-								},
-								{
-									"key": "password",
-									"value": "123456",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/page/edit_bulk",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"page",
-								"edit_bulk"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "PGE1 页面列表",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "limit",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "offset",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "limit",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "offset",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "url_name",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "description",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "content_type",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "content_html",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "content_file",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_create",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_delete",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_edit",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "creator_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "operator_id",
-									"value": "",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/page/index",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"page",
-								"index"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "PGE4 页面编辑",
 					"request": {
 						"method": "POST",
@@ -10273,49 +10722,64 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": ""
+								},
+								{
 									"key": "app_type",
 									"value": "admin",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "user_id",
 									"value": "1",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "id",
 									"value": "2",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "name",
 									"value": "生鲜超市",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "url_name",
 									"value": "fresh_mart",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "description",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "content_type",
 									"value": "文件",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "content_html",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "content_file",
 									"value": "fresh_mart",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								}
 							]
 						},
@@ -10330,6 +10794,68 @@
 							"path": [
 								"page",
 								"edit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PGE6 页面批量操作",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "ids",
+									"value": "1",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "operation",
+									"value": "delete",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text",
+									"description": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/page/edit_bulk",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"page",
+								"edit_bulk"
 							]
 						}
 					},

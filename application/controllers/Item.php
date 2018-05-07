@@ -212,9 +212,27 @@
             else:
                 $item = $this->basic_model->select_by_id($id);
             endif;
+
 			if ( !empty($item) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
+
+                // 获取该商品相关SKU列表
+                $this->switch_model('sku', 'sku_id');
+                $conditions = array(
+                    'item_id' => $item['item_id'],
+                    'time_delete' => 'NULL',
+                );
+                $this->db->select('sku_id, biz_id, item_id, url_image, name_first, name_second, name_third, tag_price, price, stocks, weight_net, weight_gross, weight_volume');
+                $this->result['content']['skus'] = $this->basic_model->select($conditions, NULL);
+                // 若存在规格，则以各规格的库存量求和作为商品库存量
+                if ( ! empty($this->result['content']['skus']) ):
+                    $sku_stocks_total = 0;
+                    foreach ($this->result['content']['skus'] as $sku):
+                        $sku_stocks_total += $sku['stocks'];
+                    endforeach;
+                    $this->result['content']['stocks'] = $sku_stocks_total;
+                endif;
 
                 // 若请求来自客户端，额外获取一些信息
 				if ($this->app_type === 'client'):
@@ -244,15 +262,6 @@
                         $this->result['content']['biz']['score_service'] = !empty($result['score_service'])? $result['score_service']: 4.5;
                         $this->result['content']['biz']['score_deliver'] = !empty($result['score_deliver'])? $result['score_deliver']: 4.5;
                         $this->result['content']['biz']['score_environment'] = !empty($result['score_environment'])? $result['score_environment']: 4.5;
-
-                    // 获取该商品相关SKU列表
-                    $this->switch_model('sku', 'sku_id');
-                    $conditions = array(
-                        'item_id' => $item['item_id'],
-                        'time_delete' => 'NULL',
-                    );
-                    $this->db->select('sku_id, biz_id, item_id, url_image, name_first, name_second, name_third, tag_price, price, stocks, weight_net, weight_gross, weight_volume');
-                    $this->result['content']['skus'] = $this->basic_model->select($conditions, NULL);
 
                     // 获取当前商家营销活动
                     $this->switch_model('promotion_biz', 'promotion_id');

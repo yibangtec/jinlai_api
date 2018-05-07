@@ -2,40 +2,40 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Message/MSG 聊天消息类
+	 * Notice/NTC 系统通知类
 	 *
 	 * @version 1.0.0
 	 * @author Kamas 'Iceberg' Lau <kamaslau@outlook.com>
 	 * @copyright ICBG <www.bingshankeji.com>
 	 */
-	class Message extends MY_Controller
+	class Notice extends MY_Controller
 	{
 		/**
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'user_id', 'biz_id', 'stuff_id', 'sender_type', 'receiver_type', 'type', 'ids', 'time_create', 'time_delete', 'time_revoke', 'creator_id',
+			'article_id', 'app_type', 'user_id', 'biz_id', 'title', 'excerpt', 'url_image', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 
 		);
 		
 		/**
 	     * @var array 可根据最大值筛选的字段名
 	     */
 	    protected $max_needed = array(
-	        'time_create', 'longitude', 'latitude',
+	        'time_create',
 	    );
 
 	    /**
 	     * @var array 可根据最小值筛选的字段名
 	     */
 	    protected $min_needed = array(
-	        'time_create', 'longitude', 'latitude',
+	        'time_create',
 	    );
 		
 		/**
 		 * 可作为排序条件的字段名
 		 */
 		protected $names_to_order = array(
-			'longitude', 'latitude', 'time_create',
+			'time_create',
 		);
 
 		/**
@@ -44,14 +44,14 @@
          * 应删除time_create等需在MY_Controller通过names_return_for_admin等类属性声明的字段名
 		 */
 		protected $names_to_return = array(
-			'message_id', 'user_id', 'biz_id', 'stuff_id', 'sender_type', 'receiver_type', 'type', 'ids', 'title', 'excerpt', 'url_image', 'content', 'longitude', 'latitude', 'time_create', 'time_delete', 'time_revoke', 'creator_id', 
+			'notice_id', 'article_id', 'app_type', 'user_id', 'biz_id', 'title', 'excerpt', 'url_image', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 
 		);
 
 		/**
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'creator_id', 'sender_type', 'receiver_type', 'type',
+			'user_id', 'excerpt',
 		);
 
 		/**
@@ -66,8 +66,8 @@
 			parent::__construct();
 
 			// 设置主要数据库信息
-			$this->table_name = 'message'; // 这里……
-			$this->id_name = 'message_id'; // 这里……
+			$this->table_name = 'notice'; // 这里……
+			$this->id_name = 'notice_id'; // 这里……
 
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
@@ -195,7 +195,7 @@
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
+			$type_allowed = array('admin'); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -217,20 +217,14 @@
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
-			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('user_id', '收信用户ID', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('biz_id', '收信商家ID', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('stuff_id', '收信员工ID', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('sender_type', '发信端类型', 'trim|required|in_list[admin,biz,client]');
-			$this->form_validation->set_rules('receiver_type', '收信端类型', 'trim|required|in_list[admin,biz,client]');
-			$this->form_validation->set_rules('type', '类型', 'trim|required');
-			$this->form_validation->set_rules('ids', '内容ID们', 'trim|max_length[255]');
-			$this->form_validation->set_rules('title', '标题', 'trim|max_length[30]');
-			$this->form_validation->set_rules('excerpt', '摘要', 'trim|max_length[100]');
-			$this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
-			$this->form_validation->set_rules('content', '内容', 'trim|max_length[5000]');
-			$this->form_validation->set_rules('longitude', '经度', 'trim|max_length[10]');
-			$this->form_validation->set_rules('latitude', '纬度', 'trim|max_length[10]');
+			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference、
+			$this->form_validation->set_rules('article_id', '相关文章ID', 'trim|');
+			$this->form_validation->set_rules('app_type', '目标客户端类型', 'trim|');
+			$this->form_validation->set_rules('user_id', '用户ID', 'trim|');
+			$this->form_validation->set_rules('biz_id', '商家ID', 'trim|');
+			$this->form_validation->set_rules('title', '标题', 'trim|');
+			$this->form_validation->set_rules('excerpt', '摘要', 'trim|required');
+			$this->form_validation->set_rules('url_image', '形象图', 'trim|');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -240,16 +234,13 @@
 			else:
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
-					'creator_id' => $creator_id,
+					'creator_id' => $user_id,
 
-                    'sender_type' => empty($this->input->post('sender_type'))? 'client': $this->input->post('sender_type'),
-                    'receiver_type' => empty($this->input->post('receiver_type'))? 'biz': $this->input->post('receiver_type'),
-
-                    'type' => empty($this->input->post('type'))? 'text': $this->input->post('type'),
+                    //'name' => empty($this->input->post('name'))? NULL: $this->input->post('name'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'user_id', 'biz_id', 'stuff_id', 'ids', 'title', 'excerpt', 'url_image', 'content', 'longitude', 'latitude',
+					'article_id', 'app_type', 'user_id', 'biz_id', 'title', 'excerpt', 'url_image',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -276,10 +267,8 @@
 		public function edit_bulk()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
-			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
-			$min_version = '0.0.1'; // 最低版本要求
-			$this->client_check($type_allowed, $platform_allowed, $min_version);
+			$type_allowed = array('admin'); // 客户端类型
+			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
@@ -301,7 +290,7 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
-			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore,revoke]');
+			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore]');
 			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
 
@@ -328,9 +317,6 @@
 					case 'restore':
 						$data_to_edit['time_delete'] = NULL;
 						break;
-                    case 'revoke':
-                        $data_to_edit['time_revoke'] = date('Y-m-d H:i:s');
-                        break;
 				endswitch;
 
 				// 依次操作数据并输出操作结果
@@ -354,12 +340,13 @@
 
 			endif;
 		} // end edit_bulk
+		
 			
 		/**
 		 * 以下为工具类方法
 		 */
 
-	} // end class Message
+	} // end class Notice
 
-/* End of file Message.php */
-/* Location: ./application/controllers/Message.php */
+/* End of file Notice.php */
+/* Location: ./application/controllers/Notice.php */
