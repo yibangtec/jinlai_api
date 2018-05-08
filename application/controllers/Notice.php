@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'article_id', 'app_type', 'user_id', 'biz_id', 'title', 'excerpt', 'url_image', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 
+			'article_id', 'receiver_type', 'user_id', 'biz_id', 'title', 'excerpt', 'url_image', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 		
 		/**
@@ -44,14 +44,14 @@
          * 应删除time_create等需在MY_Controller通过names_return_for_admin等类属性声明的字段名
 		 */
 		protected $names_to_return = array(
-			'notice_id', 'article_id', 'app_type', 'user_id', 'biz_id', 'title', 'excerpt', 'url_image', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 
+			'notice_id', 'article_id', 'receiver_type', 'user_id', 'biz_id', 'title', 'excerpt', 'url_image', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id', 'excerpt',
+			'creator_id',
 		);
 
 		/**
@@ -81,11 +81,6 @@
 		{
 			// 生成筛选条件
 			$condition = $this->condition_generate();
-            // 类特有筛选项
-            $condition = $this->advanced_sorter($condition);
-
-            // 商家仅可操作自己的数据
-            if ($this->app_type === 'biz') $condition['biz_id'] = $this->input->post('biz_id');
 
 			// 获取列表；默认可获取已删除项
 			$count = $this->basic_model->count($condition);
@@ -119,8 +114,6 @@
 
 			// 生成筛选条件
 			$condition = $this->condition_generate();
-            // 类特有筛选项
-            $condition = $this->advanced_sorter($condition);
 
 			// 排序条件
 			$order_by = NULL;
@@ -207,7 +200,7 @@
 			$required_params = $this->names_create_required;
 			foreach ($required_params as $param):
 				${$param} = $this->input->post($param);
-				if ( !isset( ${$param} ) ):
+				if ( empty( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();
@@ -218,13 +211,13 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference、
-			$this->form_validation->set_rules('article_id', '相关文章ID', 'trim|');
-			$this->form_validation->set_rules('app_type', '目标客户端类型', 'trim|');
-			$this->form_validation->set_rules('user_id', '用户ID', 'trim|');
-			$this->form_validation->set_rules('biz_id', '商家ID', 'trim|');
-			$this->form_validation->set_rules('title', '标题', 'trim|');
-			$this->form_validation->set_rules('excerpt', '摘要', 'trim|required');
-			$this->form_validation->set_rules('url_image', '形象图', 'trim|');
+			$this->form_validation->set_rules('article_id', '相关文章ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('receiver_type', '目标客户端类型', 'trim|in_list[admin,biz,client]');
+			$this->form_validation->set_rules('user_id', '用户ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('biz_id', '商家ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('title', '标题', 'trim|max_length[30]');
+			$this->form_validation->set_rules('excerpt', '摘要', 'trim|max_length[100]');
+			$this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -234,13 +227,14 @@
 			else:
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
-					'creator_id' => $user_id,
+					'creator_id' => $creator_id,
+                    'time_create' => time(),
 
-                    //'name' => empty($this->input->post('name'))? NULL: $this->input->post('name'),
+                    'receiver_type' => empty($this->input->post('receiver_type'))? 'client': $this->input->post('receiver_type'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'article_id', 'app_type', 'user_id', 'biz_id', 'title', 'excerpt', 'url_image',
+					'user_id', 'biz_id', 'article_id', 'title', 'excerpt', 'url_image',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
@@ -290,7 +284,7 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
-			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore]');
+			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore,revoke]');
 			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
 
@@ -317,6 +311,9 @@
 					case 'restore':
 						$data_to_edit['time_delete'] = NULL;
 						break;
+                    case 'revoke':
+                        $data_to_edit['time_revoke'] = date('Y-m-d H:i:s');
+                        break;
 				endswitch;
 
 				// 依次操作数据并输出操作结果

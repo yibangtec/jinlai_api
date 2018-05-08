@@ -9,3 +9,4 @@
 
 # 调试日志文件
 /alipay.txt
+.DS_Store
