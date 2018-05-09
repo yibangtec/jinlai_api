@@ -81,8 +81,6 @@
 		{
 			// 生成筛选条件
 			$condition = $this->condition_generate();
-            // 类特有筛选项
-            $condition = $this->advanced_sorter($condition);
 
             // 商家仅可操作自己的数据
             if ($this->app_type === 'biz') $condition['biz_id'] = $this->input->post('biz_id');
@@ -119,8 +117,6 @@
 
 			// 生成筛选条件
 			$condition = $this->condition_generate();
-            // 类特有筛选项
-            $condition = $this->advanced_sorter($condition);
 
 			// 排序条件
 			$order_by = NULL;
@@ -276,10 +272,8 @@
 		public function edit_bulk()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
-			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
-			$min_version = '0.0.1'; // 最低版本要求
-			$this->client_check($type_allowed, $platform_allowed, $min_version);
+			$type_allowed = array('admin', 'biz', 'client',);
+			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
