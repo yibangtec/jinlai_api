@@ -688,7 +688,10 @@
             // 初始化数据表
             $this->switch_model($table_name, $table_id);
 
-            return $this->basic_model->select($condition, $order_by, $return_ids, $allow_deleted);
+            $result = $this->basic_model->select($condition, $order_by, $return_ids, $allow_deleted);
+
+            $this->reset_model();
+            return $result;
         } // end get_items
 
         /**
@@ -703,7 +706,10 @@
             // 初始化数据表
             $this->switch_model($table_name, $table_id);
 
-            return $this->basic_model->select_by_id($id, $allow_deleted);
+            $result = $this->basic_model->select_by_id($id, $allow_deleted);
+
+            $this->reset_model();
+            return $result;
         } // end select_by_id
 
 	} // end class MY_Controller

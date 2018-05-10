@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'article_id', 'receiver_type', 'user_id', 'biz_id', 'title', 'excerpt', 'url_image', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'receiver_type', 'user_id', 'biz_id', 'article_id', 'title', 'excerpt', 'url_image', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 		
 		/**
@@ -44,7 +44,7 @@
          * 应删除time_create等需在MY_Controller通过names_return_for_admin等类属性声明的字段名
 		 */
 		protected $names_to_return = array(
-			'notice_id', 'article_id', 'receiver_type', 'user_id', 'biz_id', 'title', 'excerpt', 'url_image', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'notice_id', 'receiver_type', 'user_id', 'biz_id', 'article_id', 'title', 'excerpt', 'url_image', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -211,10 +211,10 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference、
-			$this->form_validation->set_rules('article_id', '相关文章ID', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('receiver_type', '目标客户端类型', 'trim|in_list[admin,biz,client]');
 			$this->form_validation->set_rules('user_id', '用户ID', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('biz_id', '商家ID', 'trim|is_natural_no_zero');
+            $this->form_validation->set_rules('article_id', '相关文章ID', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('title', '标题', 'trim|max_length[30]');
 			$this->form_validation->set_rules('excerpt', '摘要', 'trim|max_length[100]');
 			$this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
@@ -234,12 +234,30 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'user_id', 'biz_id', 'article_id', 'title', 'excerpt', 'url_image',
+					'user_id', 'biz_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
 
-				$result = $this->basic_model->create($data_to_create, TRUE);
+				// 若指定了相关文章，则获取文章相应数据
+                $article_id = empty($this->input->post('article_id'))? NULL: $this->input->post('article_id');
+                if ($article_id !== NULL):
+                    $item = $this->get_item('article', 'article_id', $article_id, FALSE);
+                    if ( empty($item) ):
+                        $this->result['status'] = 414;
+                        $this->result['content']['error']['message'] = '待发送项不存在或已删除';
+                        exit();
+                    else:
+                        // 赋值相应字段值，若已赋值，则覆盖
+                        $data_to_create['article_id'] = $article_id;
+
+                        $data_to_create['title'] = empty($this->input->post('title'))? $item['title']: $this->input->post('title');
+                        $data_to_create['excerpt'] = empty($this->input->post('excerpt'))? $item['excerpt']: $this->input->post('excerpt');
+                        $data_to_create['url_image'] = empty($this->input->post('url_image'))? $item['url_images']: $this->input->post('url_image');
+                    endif;
+                endif;
+
+				$result = $this->basic_model->create(array_filter($data_to_create), TRUE);
 				if ($result !== FALSE):
 					$this->result['status'] = 200;
 					$this->result['content']['id'] = $result;

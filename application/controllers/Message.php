@@ -250,19 +250,19 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
+            $this->form_validation->set_rules('type', '类型', 'trim|required');
 			$this->form_validation->set_rules('user_id', '收信用户ID', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('biz_id', '收信商家ID', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('stuff_id', '收信员工ID', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('sender_type', '发信端类型', 'trim|required|in_list[admin,biz,client]');
 			$this->form_validation->set_rules('receiver_type', '收信端类型', 'trim|required|in_list[admin,biz,client]');
-			$this->form_validation->set_rules('type', '类型', 'trim|required');
 			$this->form_validation->set_rules('ids', '内容ID们', 'trim|max_length[255]');
 			$this->form_validation->set_rules('title', '标题', 'trim|max_length[30]');
 			$this->form_validation->set_rules('excerpt', '摘要', 'trim|max_length[100]');
 			$this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
-			$this->form_validation->set_rules('content', '内容', 'trim|max_length[5000]');
 			$this->form_validation->set_rules('longitude', '经度', 'trim|max_length[10]');
 			$this->form_validation->set_rules('latitude', '纬度', 'trim|max_length[10]');
+            $this->form_validation->set_rules('content', '内容', 'trim|max_length[5000]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -290,7 +290,7 @@
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
 
-				$result = $this->basic_model->create($data_to_create, TRUE);
+                $result = $this->basic_model->create(array_filter($data_to_create), TRUE);
 				if ($result !== FALSE):
 					$this->result['status'] = 200;
 					$this->result['content']['id'] = $result;
