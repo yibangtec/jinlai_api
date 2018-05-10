@@ -329,8 +329,7 @@
 								{
 									"key": "limit",
 									"value": "5",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "offset",
@@ -1336,8 +1335,21 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "3",
+									"description": "",
 									"type": "text"
 								}
 							]
@@ -2387,6 +2399,92 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "BRC1 门店列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "biz",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "5",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "biz_id",
+									"value": "1",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "time_create",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_edit",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "creator_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "operator_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/branch/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"branch",
+								"index"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -3285,6 +3383,13 @@
 						"body": {
 							"mode": "formdata",
 							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
 								{
 									"key": "app_type",
 									"value": "client",
@@ -4272,6 +4377,13 @@
 						"body": {
 							"mode": "formdata",
 							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
 								{
 									"key": "app_type",
 									"value": "client",
@@ -6934,7 +7046,8 @@
 								{
 									"key": "test_mode",
 									"value": "on",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "app_type",
@@ -7823,10 +7936,9 @@
 								},
 								{
 									"key": "limit",
-									"value": "5",
+									"value": "10",
 									"type": "text",
-									"description": "",
-									"disabled": true
+									"description": ""
 								},
 								{
 									"key": "offset",
@@ -8034,7 +8146,8 @@
 									"key": "user_id",
 									"value": "",
 									"type": "text",
-									"description": ""
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "biz_id",
@@ -8046,11 +8159,12 @@
 									"key": "stuff_id",
 									"value": "",
 									"type": "text",
-									"description": ""
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "type",
-									"value": "text",
+									"value": "location",
 									"type": "text",
 									"description": ""
 								},
@@ -8058,47 +8172,51 @@
 									"key": "title",
 									"value": "",
 									"type": "text",
-									"description": ""
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "excerpt",
 									"value": "",
 									"type": "text",
-									"description": ""
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "url_image",
 									"value": "",
 									"type": "text",
-									"description": ""
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "content",
-									"value": "测试文本消息",
+									"value": "{\"nation\": \"中国\",\"province\": \"山东省\",\"city\": \"青岛市\",\"county\": \"崂山区\",\"street\": \"东海东路1号45-2栋意帮管家3楼产品技术部\"}",
 									"type": "text",
 									"description": ""
 								},
 								{
 									"key": "ids",
-									"value": "",
+									"value": "1",
 									"type": "text",
-									"description": ""
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "longitude",
-									"value": "",
+									"value": "120.37786",
 									"type": "text",
 									"description": ""
 								},
 								{
 									"key": "latitude",
-									"value": "",
+									"value": "36.06697",
 									"type": "text",
 									"description": ""
 								},
 								{
 									"key": "creator_id",
-									"value": "",
+									"value": "2",
 									"type": "text",
 									"description": ""
 								}
@@ -8998,7 +9116,7 @@
 								},
 								{
 									"key": "id",
-									"value": "1",
+									"value": "224",
 									"type": "text"
 								}
 							]

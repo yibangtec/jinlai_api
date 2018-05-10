@@ -119,7 +119,7 @@
 			$condition = $this->condition_generate();
 
 			// 排序条件
-			$order_by = NULL;
+			$order_by['time_create'] = 'DESC';
 			foreach ($this->names_to_order as $sorter):
 				if ( !empty($this->input->post('orderby_'.$sorter)) )
 					$order_by[$sorter] = $this->input->post('orderby_'.$sorter);
@@ -210,6 +210,42 @@
 				endif;
 			endforeach;
 
+			// 对部分类型消息，content为必要参数
+            $types_require_content = array(
+                'audio','image','location','text','video'
+            );
+            // 对部分类型消息，ids为必要参数
+            $types_require_ids = array(
+                'address','article','article_biz','branch','coupon_combo','coupon_template','item','order','promotion','promotion_biz'
+            );
+            if ( in_array($type, $types_require_content) ):
+                $content = $this->input->post('content');
+                if (empty($content)):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '需传入content值';
+                    exit();
+                endif;
+
+            elseif ( in_array($type, $types_require_ids) ):
+                $ids = $this->input->post('ids');
+                if (empty($ids)):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '需传入ids值';
+                    exit();
+                endif;
+            endif;
+
+			// 对位置类消息，经纬度为必要参数
+			if ($type === 'location'):
+                $longitude = $this->input->post('longitude');
+                $latitude = $this->input->post('latitude');
+                if ( empty($longitude) || empty($latitude)):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '位置类消息需传入经纬度';
+                    exit();
+                endif;
+            endif;
+
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
@@ -237,15 +273,19 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $creator_id,
+                    'time_create' => time(),
 
                     'sender_type' => empty($this->input->post('sender_type'))? 'client': $this->input->post('sender_type'),
                     'receiver_type' => empty($this->input->post('receiver_type'))? 'biz': $this->input->post('receiver_type'),
 
                     'type' => empty($this->input->post('type'))? 'text': $this->input->post('type'),
+
+                    'longitude' => empty($longitude)? NULL: $longitude,
+                    'latitude' => empty($latitude)? NULL: $latitude,
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'user_id', 'biz_id', 'stuff_id', 'ids', 'title', 'excerpt', 'url_image', 'content', 'longitude', 'latitude',
+					'user_id', 'biz_id', 'stuff_id', 'ids', 'title', 'excerpt', 'url_image', 'content',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
