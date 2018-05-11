@@ -114,9 +114,10 @@
 
 			// 生成筛选条件
 			$condition = $this->condition_generate();
+			$condition['receiver_type'] = $this->app_type;
 
 			// 排序条件
-			$order_by = NULL;
+            $order_by['time_create'] = 'DESC';
 			foreach ($this->names_to_order as $sorter):
 				if ( !empty($this->input->post('orderby_'.$sorter)) )
 					$order_by[$sorter] = $this->input->post('orderby_'.$sorter);
@@ -125,6 +126,10 @@
             // 限制可返回的字段
             if ($this->app_type === 'client'):
                 $condition['time_delete'] = 'NULL'; // 客户端仅可查看未删除项
+
+                // 获取全局通知或指定发给当前用户
+                unset($condition['user_id']);
+                $this->db->group_start()->where("user_id IS NULL")->or_where('user_id', $this->input->post('user_id'))->group_end();
             else:
                 $this->names_to_return = array_merge($this->names_to_return, $this->names_return_for_admin);
             endif;
@@ -207,6 +212,15 @@
 				endif;
 			endforeach;
 
+            // 检查必要的可选参数是否已传入
+			$article_id = empty($this->input->post('article_id'))? NULL: $this->input->post('article_id');
+            $title = empty($this->input->post('title'))? NULL: $this->input->post('title');
+            if (empty($article_id) && empty($title)):
+                $this->result['status'] = 400;
+                $this->result['content']['error']['message'] = '相关文章ID与标题不可同时留空';
+                exit();
+            endif;
+
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
@@ -225,12 +239,28 @@
 				$this->result['content']['error']['message'] = validation_errors();
 
 			else:
+                // 若指定了相关文章，则获取文章相应数据
+                if ($article_id !== NULL):
+                    $item = $this->get_item('article', 'article_id', $article_id, FALSE);
+                    if ( empty($item) ):
+                        $this->result['status'] = 414;
+                        $this->result['content']['error']['message'] = '待发送项不存在或已删除';
+                        exit();
+                    endif;
+                endif;
+
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $creator_id,
                     'time_create' => time(),
 
                     'receiver_type' => empty($this->input->post('receiver_type'))? 'client': $this->input->post('receiver_type'),
+                    'article_id' => $article_id,
+
+                    // 赋值特定字段值，若已赋值，则覆盖
+                    'title' => (empty($title) && !empty($item))? $item['title']: $title,
+                    'excerpt' => (empty($this->input->post('excerpt')) && !empty($item))? $item['excerpt']: $this->input->post('excerpt'),
+                    'url_image' => (empty($this->input->post('url_image')) && !empty($item))? $item['url_images']: $this->input->post('url_image'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
@@ -238,24 +268,6 @@
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
-
-				// 若指定了相关文章，则获取文章相应数据
-                $article_id = empty($this->input->post('article_id'))? NULL: $this->input->post('article_id');
-                if ($article_id !== NULL):
-                    $item = $this->get_item('article', 'article_id', $article_id, FALSE);
-                    if ( empty($item) ):
-                        $this->result['status'] = 414;
-                        $this->result['content']['error']['message'] = '待发送项不存在或已删除';
-                        exit();
-                    else:
-                        // 赋值相应字段值，若已赋值，则覆盖
-                        $data_to_create['article_id'] = $article_id;
-
-                        $data_to_create['title'] = empty($this->input->post('title'))? $item['title']: $this->input->post('title');
-                        $data_to_create['excerpt'] = empty($this->input->post('excerpt'))? $item['excerpt']: $this->input->post('excerpt');
-                        $data_to_create['url_image'] = empty($this->input->post('url_image'))? $item['url_images']: $this->input->post('url_image');
-                    endif;
-                endif;
 
 				$result = $this->basic_model->create(array_filter($data_to_create), TRUE);
 				if ($result !== FALSE):

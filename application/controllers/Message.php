@@ -44,7 +44,7 @@
          * 应删除time_create等需在MY_Controller通过names_return_for_admin等类属性声明的字段名
 		 */
 		protected $names_to_return = array(
-			'message_id', 'user_id', 'biz_id', 'stuff_id', 'sender_type', 'receiver_type', 'type', 'ids', 'title', 'excerpt', 'url_image', 'content', 'longitude', 'latitude', 'time_create', 'time_delete', 'time_revoke', 'creator_id', 
+			'message_id', 'user_id', 'biz_id', 'stuff_id', 'sender_type', 'receiver_type', 'type', 'ids', 'content', 'longitude', 'latitude', 'time_create', 'time_delete', 'time_revoke', 'creator_id',
 		);
 
 		/**
@@ -128,6 +128,10 @@
             // 限制可返回的字段
             if ($this->app_type === 'client'):
                 $condition['time_delete'] = 'NULL'; // 客户端仅可查看未删除项
+
+                // 获取发给当前用户，或当前用户创建的消息
+                $user_id = $this->input->post('user_id');
+                $this->db->group_start()->where('user_id', $user_id)->or_where('creator_id', $user_id)->group_end();
             else:
                 $this->names_to_return = array_merge($this->names_to_return, $this->names_return_for_admin);
             endif;
@@ -222,15 +226,15 @@
                 $content = $this->input->post('content');
                 if (empty($content)):
                     $this->result['status'] = 400;
-                    $this->result['content']['error']['message'] = '需传入content值';
+                    $this->result['content']['error']['message'] = '创建该类消息需content值';
                     exit();
                 endif;
 
             elseif ( in_array($type, $types_require_ids) ):
-                $ids = $this->input->post('ids');
+                $ids = trim($this->input->post('ids'), ',');
                 if (empty($ids)):
                     $this->result['status'] = 400;
-                    $this->result['content']['error']['message'] = '需传入ids值';
+                    $this->result['content']['error']['message'] = '创建该类消息需ids值';
                     exit();
                 endif;
             endif;
@@ -241,7 +245,7 @@
                 $latitude = $this->input->post('latitude');
                 if ( empty($longitude) || empty($latitude)):
                     $this->result['status'] = 400;
-                    $this->result['content']['error']['message'] = '位置类消息需传入经纬度';
+                    $this->result['content']['error']['message'] = '创建位置类消息需传入经纬度（小数点后保留5位数字）';
                     exit();
                 endif;
             endif;
@@ -257,9 +261,6 @@
 			$this->form_validation->set_rules('sender_type', '发信端类型', 'trim|required|in_list[admin,biz,client]');
 			$this->form_validation->set_rules('receiver_type', '收信端类型', 'trim|required|in_list[admin,biz,client]');
 			$this->form_validation->set_rules('ids', '内容ID们', 'trim|max_length[255]');
-			$this->form_validation->set_rules('title', '标题', 'trim|max_length[30]');
-			$this->form_validation->set_rules('excerpt', '摘要', 'trim|max_length[100]');
-			$this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
 			$this->form_validation->set_rules('longitude', '经度', 'trim|max_length[10]');
 			$this->form_validation->set_rules('latitude', '纬度', 'trim|max_length[10]');
             $this->form_validation->set_rules('content', '内容', 'trim|max_length[5000]');
@@ -278,17 +279,25 @@
                     'sender_type' => empty($this->input->post('sender_type'))? 'client': $this->input->post('sender_type'),
                     'receiver_type' => empty($this->input->post('receiver_type'))? 'biz': $this->input->post('receiver_type'),
 
-                    'type' => empty($this->input->post('type'))? 'text': $this->input->post('type'),
-
-                    'longitude' => empty($longitude)? NULL: $longitude,
-                    'latitude' => empty($latitude)? NULL: $latitude,
+                    'type' => $type,
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'user_id', 'biz_id', 'stuff_id', 'ids', 'title', 'excerpt', 'url_image', 'content',
+					'user_id', 'biz_id', 'stuff_id',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = $this->input->post($name);
+
+				// 根据消息类型不同，赋值特定字段值
+                if ($type === 'location'):
+                    $data_to_create['longitude'] = $longitude;
+                    $data_to_create['latitude'] = $latitude;
+                elseif ( in_array($type, $types_require_content) ):
+                    $data_to_create['content'] = $content;
+                else:
+                    $data_content = $this->generate_message_by_ids($type, $ids);
+                    $data_to_create = array_merge($data_to_create, $data_content);
+                endif;
 
                 $result = $this->basic_model->create(array_filter($data_to_create), TRUE);
 				if ($result !== FALSE):
@@ -392,6 +401,107 @@
 		/**
 		 * 以下为工具类方法
 		 */
+
+        /**
+         * 根据待发送项ID（们）生成消息特定字段
+         *
+         * @param $type string 待发送消息类型
+         * @param $ids int/string 待发送项ID（们）；CSV格式
+         * @return array
+         */
+		protected function generate_message_by_ids($type, $ids)
+        {
+            // TODO 将来可能有以CSV格式传入多个ID的情况
+
+            // 根据消息类型确定需获取的信息表主键名
+            switch ($type):
+                case 'article_biz':
+                    $id_name = 'article_id';
+                    break;
+
+                case 'promotion_biz':
+                    $id_name = 'promotion_id';
+                    break;
+
+                case 'coupon_template':
+                    $id_name = 'template_id';
+                    break;
+
+                case 'counpon_combo':
+                    $id_name = 'combo_id';
+                    break;
+                default:
+                    $id_name = $type.'_id';
+            endswitch;
+            $this->switch_model($type, $id_name);
+
+            // 限制需获取的字段名
+            switch ($type):
+                case 'address':
+                    $this->db->select('address_id,fullname,mobile,nation,province,city,county,street');
+                    break;
+
+                case 'article':
+                case 'article_biz':
+                    $this->db->select('article_id,title,excerpt,url_images');
+                    break;
+
+                case 'branch':
+                    $this->db->select('branch_id,name,tel_public,url_image_main,nation,province,city,county,street,﻿longitude,latitude');
+                    break;
+
+                case 'item':
+                    $this->db->select('item_id,url_image_main,name,tag_price,price,max_price,min_price');
+                    break;
+
+                case 'order':
+                    $this->db->select('order_id,total,total_payed,fullname,mobile,province,city,county,street,status');
+                    break;
+
+                case 'promotion':
+                case 'promotion_biz':
+                    $this->db->select('promotion_id,name,description,url_image_main');
+                    break;
+
+                case 'coupon_template':
+                    $this->db->select('template_id,biz_id,category_id,category_biz_id,item_id,name,description,amount,min_subtotal,period,time_start,time_end');
+                    break;
+
+                case 'counpon_combo':
+                    $this->db->select('combo_id,biz_id,name,template_ids,period,time_start,time_end');
+                    break;
+            endswitch;
+
+            // 获取待创建项数据
+            $item = $this->basic_model->select_by_id($ids, FALSE);
+            if ( empty($item) ):
+                $this->result['status'] = 414;
+                $this->result['content']['error']['message'] = '待发送项不存在或已删除';
+                exit();
+
+            else:
+                // 若为订单类消息，则一并获取订单商品
+                if ($type === 'order'):
+                    // 获取订单商品信息
+                    $this->switch_model('order_items', 'record_id');
+                    $this->db->select('name, item_image');
+                    $condition = array(
+                        'order_id' => $item['order_id'],
+                    );
+                    $item['order_items'] = $this->basic_model->select($condition, NULL);
+                endif;
+                $this->reset_model();
+
+                // 消息字段内容
+                $content = array(
+                    'ids' => $ids,
+                    'content' => json_encode($item),
+                );
+
+                return $content;
+
+            endif;
+        } // end generate_message_by_ids
 
 	} // end class Message
 
