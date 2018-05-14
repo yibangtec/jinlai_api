@@ -16717,6 +16717,76 @@
 				"description": "签名生成测试工具"
 			},
 			"response": []
+		},
+		{
+			"name": "单条推送",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "cid",
+						"value": "a24e50760b23f3f8dccf438e32ec18a9"
+					},
+					{
+						"key": "requestid",
+						"value": "testing_1"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"notice_id\": \"3\",\n        \"receiver_type\": \"client\",\n        \"user_id\": null,\n        \"biz_id\": null,\n        \"article_id\": \"1\",\n        \"title\": \"商家业务经办授权书模板\",\n        \"excerpt\": \"若负责日常业务对接的不是商家法人本人，则需要提供含法人签章及公章的商家业务经办授权书照片\",\n        \"url_image\": null,\n        \"time_create\": \"1425976479\",\n        \"time_delete\": null,\n        \"time_edit\": \"2018-05-11 15:21:33\",\n        \"creator_id\": \"1\",\n        \"operator_id\": null\n    }"
+				},
+				"url": {
+					"raw": "https://restapi.getui.com/v1/JJneyXef8L7Isjn2ygHPu1/push_single",
+					"protocol": "https",
+					"host": [
+						"restapi",
+						"getui",
+						"com"
+					],
+					"path": [
+						"v1",
+						"JJneyXef8L7Isjn2ygHPu1",
+						"push_single"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "获取授权",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"appkey\":\"OKbCT2GSPi5wzMbutkbYZ8\",\"timestamp\":1526313169000,\"sign\":\"c383987f0c1ee108ee1bcb90de2a39034a82b2bab1dd6e75b9ab3519d4f9ec00\"}"
+				},
+				"url": {
+					"raw": "https://restapi.getui.com/v1/JJneyXef8L7Isjn2ygHPu1/auth_sign",
+					"protocol": "https",
+					"host": [
+						"restapi",
+						"getui",
+						"com"
+					],
+					"path": [
+						"v1",
+						"JJneyXef8L7Isjn2ygHPu1",
+						"auth_sign"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

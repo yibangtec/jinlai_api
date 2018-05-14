@@ -275,6 +275,19 @@
 					$this->result['content']['id'] = $result;
 					$this->result['content']['message'] = '创建成功';
 
+
+                    // 待发送消息
+                    $message = array(
+                        'controller' => 'notice',
+                        'function' => 'index',
+                        'params' => array(
+                            'title' => $data_to_create['title'],
+                            'excerpt' => $data_to_create['excerpt'],
+                            'url_image' => $data_to_create['url_image'],
+                        )
+                    );
+                    $this->push_this($message);
+
 				else:
 					$this->result['status'] = 424;
 					$this->result['content']['error']['message'] = '创建失败';
@@ -368,7 +381,23 @@
 			endif;
 		} // end edit_bulk
 		
-			
+        // @deprecated
+        public function push_this($message)
+        {
+            // 推送系统通知
+            $this->load->library('getui');
+
+            // 获取并记录auth_token
+            $result = $this->getui->auth_sign();
+            $this->getui->auth_token = $result['auth_token'];
+
+            // 群推消息
+            //var_dump(json_encode($message));
+            $result = $this->getui->push_app($message);
+
+            //var_dump($result);
+        } // end push_this
+
 		/**
 		 * 以下为工具类方法
 		 */
