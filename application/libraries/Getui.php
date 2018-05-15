@@ -106,29 +106,47 @@
          *
          * 针对某个，根据筛选条件，将消息群发给符合条件客户群，或所有用户
          *
+         * @param $message_to_send
+         * @param string $type 推送类型，notification（通知，弹出通知栏）、transmission（透传，不弹出通知栏）
          * @return mixed
          */
-        public function push_app($message_to_send)
+        public function push_app($message_to_send, $type = 'notification')
         {
+            // 标识推送类型
+            $message_to_send['push_type'] = $type;
+
             // 消息内容
             $message = array(
                 'appkey' => $this->app_key,
                 'is_offline' => FALSE,
-                'msgtype' => 'notification',
+                'msgtype' => $type,
             );
 
             // 消息应用模板
             $notification = array(
-                'transmission_type' => FALSE,
+                'transmission_type' => TRUE,
                 'transmission_content' => json_encode($message_to_send),
                 //'duration_begin': '2017-03-22 11:40:00', // 展示开始时间
                 // 'duration_end': '2017-03-23 11:40:00', // 展示结束时间
                 'style' => array(
                     'type' => 0,
-                    'title' => $message_to_send['params']['title'],
+                    'title' => "[$type]".$message_to_send['params']['title'],
                     'text' => $message_to_send['params']['excerpt'],
+                    'logo' => 'logo_notification.png',
                     'is_ring' => TRUE, // 客户端收到消息后响铃
                     'is_vibrate' => TRUE, // 客户端收到消息后震动
+                )
+            );
+
+            // 推送给iOS设备的通知内容
+            $push_info = array(
+                'aps' => array(
+                    'alert' => array(
+                        'title' => "[$type]".$message_to_send['params']['title'],
+                        'subtitle' => '子标题，例如聊天对象商家名、用户名等',
+                        'body' => $message_to_send['params']['excerpt'],
+                    ),
+                    'autoBadge' => '+1',
                 )
             );
 
@@ -136,12 +154,37 @@
                 'requestid' => 'test_'.time(),
 
                 'message' => $message,
-                'notification' => $notification,
+                "$type" => $notification,
+                'push_info' => $push_info
             );
 
             $url = 'https://restapi.getui.com/v1/'.$this->app_id.'/push_app';
-            return $this->curl($url, json_encode($content));
+            $result = $this->curl($url, json_encode($content));
+            if ($this->CI->input->post('test_mode') === 'on') var_dump($result);
+
+            return $result;
         } // end push_app
+
+        /**
+         * 获取推送结果
+         *
+         * 调用此接口查询推送数据，可查询消息有效可下发总数，消息回执总数和用户点击数等结果。
+         *
+         * @param $list_task
+         * @return mixed
+         */
+        public function push_result($list_task)
+        {
+            $content = array(
+                'taskIdList' => $list_task
+            );
+
+            $url = 'https://restapi.getui.com/v1/'.$this->app_id.'/push_result';
+            $result = $this->curl($url, json_encode($content));
+            if ($this->CI->input->post('test_mode') === 'on') var_dump($result);
+
+            return $result;
+        } // end push_result
 
         /**
          * 以下为工具方法
@@ -154,7 +197,7 @@
          * @param $params
          * @return mixed
          */
-        public function curl($url, $params)
+        protected function curl($url, $params)
         {
             $curl = curl_init();
             curl_setopt($curl, CURLOPT_URL, $url);

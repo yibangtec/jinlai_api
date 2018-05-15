@@ -275,18 +275,17 @@
 					$this->result['content']['id'] = $result;
 					$this->result['content']['message'] = '创建成功';
 
+					$data_to_create[$this->id_name] = $result;
 
                     // 待发送消息
                     $message = array(
-                        'controller' => 'notice',
+                        'controller' => $this->table_name,
                         'function' => 'index',
-                        'params' => array(
-                            'title' => $data_to_create['title'],
-                            'excerpt' => $data_to_create['excerpt'],
-                            'url_image' => $data_to_create['url_image'],
-                        )
+                        'params' => $data_to_create
                     );
-                    $this->push_this($message);
+                    // 推送方式
+                    $push_type = empty($this->input->post('push_type'))? 'notification': $this->input->post('push_type');
+                    $this->push_this($message, $push_type);
 
 				else:
 					$this->result['status'] = 424;
@@ -380,10 +379,14 @@
 
 			endif;
 		} // end edit_bulk
-		
-        // @deprecated
-        public function push_this($message)
+
+		/**
+		 * 以下为工具类方法
+		 */
+		public function push_result()
         {
+            $list_task[] = $this->input->post('task_id');
+
             // 推送系统通知
             $this->load->library('getui');
 
@@ -392,15 +395,10 @@
             $this->getui->auth_token = $result['auth_token'];
 
             // 群推消息
-            //var_dump(json_encode($message));
-            $result = $this->getui->push_app($message);
+            $result = $this->getui->push_result($list_task);
 
-            //var_dump($result);
-        } // end push_this
-
-		/**
-		 * 以下为工具类方法
-		 */
+            var_dump($result);
+        } // end push_result
 
 	} // end class Notice
 

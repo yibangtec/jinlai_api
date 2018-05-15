@@ -543,6 +543,27 @@
 			endif;
 		} // amap_geocode
 
+        /**
+         * 推送消息
+         *
+         * @param $message
+         * @param $type
+         */
+        protected function push_this($message, $type)
+        {
+            // 推送系统通知
+            $this->load->library('getui');
+
+            // 获取并记录auth_token
+            $result = $this->getui->auth_sign();
+            $this->getui->auth_token = $result['auth_token'];
+
+            // 群推消息
+            $result = $this->getui->push_app($message, $type);
+
+            $this->result['content']['push_task_id'] = $result['taskid'];
+        } // end push_this
+
 		/**
          * 解析购物车
          *

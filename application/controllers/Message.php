@@ -305,6 +305,18 @@
 					$this->result['content']['id'] = $result;
 					$this->result['content']['message'] = '创建成功';
 
+                    $data_to_create[$this->id_name] = $result;
+
+                    // 待发送消息
+                    $message = array(
+                        'controller' => $this->table_name,
+                        'function' => 'index',
+                        'params' => $data_to_create
+                    );
+                    // 推送方式
+                    $push_type = empty($this->input->post('push_type'))? 'notification': $this->input->post('push_type');
+                    $this->push_this($message, $push_type);
+
 				else:
 					$this->result['status'] = 424;
 					$this->result['content']['error']['message'] = '创建失败';

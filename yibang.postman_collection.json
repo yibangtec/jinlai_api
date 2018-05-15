@@ -9012,7 +9012,7 @@
 								},
 								{
 									"key": "excerpt",
-									"value": "这类通知无点击事件",
+									"value": "这类通知有点击事件",
 									"type": "text",
 									"description": ""
 								},
@@ -9027,6 +9027,12 @@
 									"value": "1",
 									"type": "text",
 									"description": ""
+								},
+								{
+									"key": "push_type",
+									"value": "notification",
+									"description": "notification|transmission",
+									"type": "text"
 								}
 							]
 						},
@@ -16783,6 +16789,45 @@
 						"v1",
 						"JJneyXef8L7Isjn2ygHPu1",
 						"auth_sign"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "获取推送结果",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "test_mode",
+							"value": "on",
+							"description": "",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "task_id",
+							"value": "RASA_0515_ea26af60aed77f0aa346a32e47223441",
+							"type": "text",
+							"description": ""
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.517ybang.com/notice/push_result",
+					"protocol": "https",
+					"host": [
+						"api",
+						"517ybang",
+						"com"
+					],
+					"path": [
+						"notice",
+						"push_result"
 					]
 				}
 			},
