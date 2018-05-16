@@ -397,7 +397,7 @@
             // 群推消息
             $result = $this->getui->push_result($list_task);
 
-            var_dump($result);
+            //var_dump($result);
         } // end push_result
 
 	} // end class Notice

@@ -118,14 +118,14 @@
             // 消息内容
             $message = array(
                 'appkey' => $this->app_key,
-                'is_offline' => FALSE,
+                //'is_offline' => FALSE,
                 'msgtype' => $type,
             );
 
-            // 消息应用模板
+            // 通知消息模板
             $notification = array(
-                'transmission_type' => TRUE,
                 'transmission_content' => json_encode($message_to_send),
+                //'transmission_type' => FALSE,
                 //'duration_begin': '2017-03-22 11:40:00', // 展示开始时间
                 // 'duration_end': '2017-03-23 11:40:00', // 展示结束时间
                 'style' => array(
@@ -133,9 +133,18 @@
                     'title' => "[$type]".$message_to_send['params']['title'],
                     'text' => $message_to_send['params']['excerpt'],
                     'logo' => 'logo_notification.png',
-                    'is_ring' => TRUE, // 客户端收到消息后响铃
-                    'is_vibrate' => TRUE, // 客户端收到消息后震动
+                    //'is_ring' => TRUE, // 客户端收到消息后响铃
+                    //'is_vibrate' => TRUE, // 客户端收到消息后震动
+                    //'is_clearable' => TRUE, // 通知是否可清除
                 )
+            );
+
+            // 透传消息模板
+            $transmission = array(
+                'transmission_content' => json_encode($message_to_send),
+                //'transmission_type' => FALSE,
+                //'duration_begin': '2017-03-22 11:40:00', // 展示开始时间
+                // 'duration_end': '2017-03-23 11:40:00', // 展示结束时间
             );
 
             // 推送给iOS设备的通知内容
@@ -150,16 +159,20 @@
                 )
             );
 
+            // 整体待发送内容
             $content = array(
                 'requestid' => 'test_'.time(),
 
                 'message' => $message,
-                "$type" => $notification,
+                "$type" => ${$type},
                 'push_info' => $push_info
             );
+            $content_json = json_encode($content); // JSON格式
+            $this->CI->result['content']['push_content'] = $content_json;
+            if ($this->CI->input->post('test_mode') === 'on') var_dump($content_json);
 
             $url = 'https://restapi.getui.com/v1/'.$this->app_id.'/push_app';
-            $result = $this->curl($url, json_encode($content));
+            $result = $this->curl($url, $content_json);
             if ($this->CI->input->post('test_mode') === 'on') var_dump($result);
 
             return $result;
