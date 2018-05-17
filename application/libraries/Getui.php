@@ -118,8 +118,9 @@
             // 消息内容
             $message = array(
                 'appkey' => $this->app_key,
-                //'is_offline' => FALSE,
+                'is_offline' => TRUE,
                 'msgtype' => $type,
+                'offline_expire_time' => 1000 * 60 * 60 * 24, // 消息离线存储有效期默认为24小时
             );
 
             // 通知消息模板
@@ -144,11 +145,12 @@
                 'transmission_content' => json_encode($message_to_send),
                 //'transmission_type' => FALSE,
                 //'duration_begin': '2017-03-22 11:40:00', // 展示开始时间
-                // 'duration_end': '2017-03-23 11:40:00', // 展示结束时间
+                //'duration_end': '2017-03-23 11:40:00', // 展示结束时间
             );
 
             // 推送给iOS设备的通知内容
-            $push_info = array(
+            $push_info =
+            array(
                 'aps' => array(
                     'alert' => array(
                         'title' => "[$type]".$message_to_send['params']['title'],
@@ -164,7 +166,9 @@
                 'requestid' => 'test_'.time(),
 
                 'message' => $message,
-                "$type" => ${$type},
+                //"$type" => ${$type},
+                'transmission' => $transmission,
+                'notification' => $notification,
                 'push_info' => $push_info
             );
             $content_json = json_encode($content); // JSON格式
@@ -226,7 +230,6 @@
                 'Content-Length: '. strlen($params),
                 'authtoken: '. (empty($this->auth_token)? NULL: $this->auth_token),
             );
-            //var_dump($header);
             curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
 
             // 运行cURL，请求API

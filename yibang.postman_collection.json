@@ -8797,7 +8797,8 @@
 									"key": "test_mode",
 									"value": "on",
 									"type": "text",
-									"description": ""
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "app_type",
@@ -8892,6 +8893,13 @@
 								{
 									"key": "time_create_min",
 									"value": "1526025481",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "orderby_time_create",
+									"value": "ASC",
 									"description": "",
 									"type": "text",
 									"disabled": true
@@ -9030,7 +9038,7 @@
 								},
 								{
 									"key": "push_type",
-									"value": "notification",
+									"value": "transmission",
 									"description": "notification|transmission",
 									"type": "text"
 								}

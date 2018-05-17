@@ -561,7 +561,12 @@
             // 群推消息
             $result = $this->getui->push_app($message, $type);
 
-            $this->result['content']['push_task_id'] = $result['taskid'];
+            if ( empty($result) || $result['result'] !== 'ok'):
+                $this->result['content']['push_result'] = '推送失败，原因为：'.$result['status'].' '.$result['desc'];
+            else:
+                $this->result['content']['push_task_id'] = $result['taskid'];
+            endif;
+
         } // end push_this
 
 		/**
