@@ -306,6 +306,8 @@
 					$this->result['content']['message'] = '创建成功';
 
                     $data_to_create[$this->id_name] = $result;
+                    if (empty($data_to_create['title'])) $data_to_create['title'] = '聊天消息';
+                    if (empty($data_to_create['excerpt'])) $data_to_create['excerpt'] = '点击查看详情';
 
                     // 待发送消息
                     $message = array(
@@ -315,7 +317,7 @@
                     );
                     // 推送方式
                     $push_type = empty($this->input->post('push_type'))? 'notification': $this->input->post('push_type');
-                    $this->push_this($message, $push_type);
+                    //$this->push_send($message, $push_type);
 
 				else:
 					$this->result['status'] = 424;

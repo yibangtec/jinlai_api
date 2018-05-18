@@ -285,7 +285,7 @@
                     );
                     // 推送方式
                     $push_type = empty($this->input->post('push_type'))? 'notification': $this->input->post('push_type');
-                    $this->push_this($message, $push_type);
+                    $this->push_send($message, $push_type);
 
 				else:
 					$this->result['status'] = 424;

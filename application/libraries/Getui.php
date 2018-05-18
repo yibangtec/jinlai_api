@@ -27,9 +27,16 @@
         private $app_key = '0BxsRyoY479LL6pgvWw9f4';
         private $master_secret = 'qUiJZ4DrBr9kiWlrqgIQh2';
 
-		public $auth_token = NULL; // 鉴权token
+		public $auth_token = ''; // 鉴权token
 
-        public $cid = 'a24e50760b23f3f8dccf438e32ec18a9'; // 用户身份ID
+        public $cid = ''; // 用户身份ID；用于单推或列表推，测试应用为a24e50760b23f3f8dccf438e32ec18a9
+
+        // 消息内容模板
+        public $message = array(
+            'is_offline' => FALSE,
+            'msgtype' => 'transmission', // 默认为透传消息（iOS仅可接收该类型消息）
+            'offline_expire_time' => 1000 * 60 * 60 * 24, // 消息离线存储有效期默认为24小时
+        );
 
 		// （可选）原始CodeIgniter对象
 		private $CI;
@@ -39,13 +46,26 @@
 		{
 			// (可选)引用原始CodeIgniter对象
 			$this->CI =& get_instance();
+
+			// 生成个推当前版本API根URL
+            $this->api_url = 'https://restapi.getui.com/v1/'.$this->app_id;
 		} // end __construct
-		
-		// （可选）析构函数
-		public function __destruct()
-		{
-		
-		} // end __destruct
+
+        // 生成待发送消息的message部分
+        private function get_message($type = 'transmission')
+        {
+            $this->message['appkey'] = $this->app_key;
+
+            if ($type !== 'transmission') $this->message['msgtype'] = $type;
+
+            return $this->message;
+        } // end get_message
+
+        // 生成待发送消息的transmission部分
+        private function get_transmission()
+        {
+
+        } // end get_transmission
 
         /**
          * 鉴权
@@ -65,7 +85,7 @@
                 'sign' => hash('sha256', $this->app_key.$timestamp.$this->master_secret, FALSE),
             );
 
-            $url = 'https://restapi.getui.com/v1/'.$this->app_id.'/auth_sign';
+            $url = $this->api_url.'/auth_sign';
             return $this->curl($url, json_encode($content));
 		} // end auth_sign
 
@@ -79,11 +99,6 @@
          */
         public function push_single($cid)
         {
-            // 消息内容
-            $message = array(
-
-            );
-
             // 消息应用模板
             $notification = array(
 
@@ -93,11 +108,11 @@
                 'requestid' => 'test_'.time(),
 
                 'cid' => $cid,
-                'message' => $message,
+                'message' => $this->get_message($type),
                 'notification' => $notification,
             );
 
-            $url = 'https://restapi.getui.com/v1/'.$this->app_id.'/push_single';
+            $url = $this->api_url.'/push_single';
             return $this->curl($url, json_encode($content));
         } // end push_single
 
@@ -107,21 +122,13 @@
          * 针对某个，根据筛选条件，将消息群发给符合条件客户群，或所有用户
          *
          * @param $message_to_send
-         * @param string $type 推送类型，notification（通知，弹出通知栏）、transmission（透传，不弹出通知栏）
+         * @param string $type 推送类型，notification（通知，弹出通知栏，ios不支持）、transmission（透传，不弹出通知栏）
          * @return mixed
          */
-        public function push_app($message_to_send, $type = 'notification')
+        public function push_app($message_to_send, $type = 'transmission')
         {
             // 标识推送类型
             $message_to_send['push_type'] = $type;
-
-            // 消息内容
-            $message = array(
-                'appkey' => $this->app_key,
-                'is_offline' => TRUE,
-                'msgtype' => $type,
-                'offline_expire_time' => 1000 * 60 * 60 * 24, // 消息离线存储有效期默认为24小时
-            );
 
             // 通知消息模板
             $notification = array(
@@ -165,19 +172,16 @@
             $content = array(
                 'requestid' => 'test_'.time(),
 
-                'message' => $message,
+                'message' => $this->get_message($type),
                 //"$type" => ${$type},
                 'transmission' => $transmission,
                 'notification' => $notification,
                 'push_info' => $push_info
             );
             $content_json = json_encode($content); // JSON格式
-            $this->CI->result['content']['push_content'] = $content_json;
-            if ($this->CI->input->post('test_mode') === 'on') var_dump($content_json);
 
-            $url = 'https://restapi.getui.com/v1/'.$this->app_id.'/push_app';
+            $url = $this->api_url.'/push_app';
             $result = $this->curl($url, $content_json);
-            if ($this->CI->input->post('test_mode') === 'on') var_dump($result);
 
             return $result;
         } // end push_app
@@ -196,9 +200,8 @@
                 'taskIdList' => $list_task
             );
 
-            $url = 'https://restapi.getui.com/v1/'.$this->app_id.'/push_result';
+            $url = $this->api_url.'/push_result';
             $result = $this->curl($url, json_encode($content));
-            if ($this->CI->input->post('test_mode') === 'on') var_dump($result);
 
             return $result;
         } // end push_result
@@ -223,12 +226,15 @@
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($curl, CURLOPT_ENCODING, 'UTF-8');
 
+            // 待发送内容
+            //var_dump($params);
+            $this->CI->result['content']['push_content'] = $params;
+            //if ($this->CI->input->post('test_mode') === 'on') var_dump($params);
             curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
 
             $header = array(
                 'Content-Type: application/json',
-                'Content-Length: '. strlen($params),
-                'authtoken: '. (empty($this->auth_token)? NULL: $this->auth_token),
+                'authtoken: '. $this->auth_token
             );
             curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
 
@@ -243,6 +249,7 @@
 
             // 转换返回的json数据为数组格式并返回
             $result = json_decode($result, TRUE);
+            //if ($this->CI->input->post('test_mode') === 'on') var_dump($result);
 
             return $result;
         } // end curl

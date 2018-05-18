@@ -501,9 +501,12 @@
 
             endif;
         } // end time_end
-		
-		/**
+
+        /**
          * 发送短信
+         *
+         * @param $mobile
+         * @param $content
          */
 		protected function sms_send($mobile, $content)
 		{
@@ -541,7 +544,7 @@
 				return FALSE;
 
 			endif;
-		} // amap_geocode
+		} // end amap_geocode
 
         /**
          * 推送消息
@@ -549,7 +552,7 @@
          * @param $message
          * @param $type
          */
-        protected function push_this($message, $type)
+        protected function push_send($message, $type)
         {
             // 推送系统通知
             $this->load->library('getui');
@@ -567,7 +570,7 @@
                 $this->result['content']['push_task_id'] = $result['taskid'];
             endif;
 
-        } // end push_this
+        } // end push_send
 
 		/**
          * 解析购物车

@@ -8165,7 +8165,7 @@
 								},
 								{
 									"key": "type",
-									"value": "coupon_template",
+									"value": "text",
 									"type": "text",
 									"description": ""
 								},
@@ -8192,16 +8192,16 @@
 								},
 								{
 									"key": "content",
-									"value": "{\"nation\": \"中国\",\"province\": \"山东省\",\"city\": \"青岛市\",\"county\": \"崂山区\",\"street\": \"东海东路1号45-2栋意帮管家3楼产品技术部\"}",
+									"value": "测试文本消息",
 									"type": "text",
-									"description": "",
-									"disabled": true
+									"description": "{\"nation\": \"中国\",\"province\": \"山东省\",\"city\": \"青岛市\",\"county\": \"崂山区\",\"street\": \"东海东路1号45-2栋意帮管家3楼产品技术部\"}"
 								},
 								{
 									"key": "ids",
 									"value": "1",
 									"type": "text",
-									"description": ""
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "longitude",
