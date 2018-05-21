@@ -10,6 +10,190 @@
 			"description": null,
 			"item": [
 				{
+					"name": "ACT1 短信登录",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "biz",
+									"type": "text"
+								},
+								{
+									"key": "mobile",
+									"value": "17664073966",
+									"type": "text"
+								},
+								{
+									"key": "sms_id",
+									"value": "296",
+									"type": "text"
+								},
+								{
+									"key": "captcha",
+									"value": "786104",
+									"type": "text"
+								},
+								{
+									"key": "wechat_union_id",
+									"value": "o6_bmasdasdsad6_2sgVt7hMZOPfL",
+									"description": "微信UnionID",
+									"type": "text"
+								},
+								{
+									"key": "getui_id",
+									"value": "a24e50760b23f3f8dccf438e32ec18a9",
+									"description": "个推ID",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/account/login_sms",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"account",
+								"login_sms"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ACT4 密码登录",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "mobile",
+									"value": "17664073966",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "wechat_union_id",
+									"value": "o6_bmasdasdsad6_2sgVt7hMZOPfL",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "getui_id",
+									"value": "a24e50760b23f3f8dccf438e32ec18a9",
+									"type": "text",
+									"description": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/account/login",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"account",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ACT5 密码重置",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "biz",
+									"type": "text"
+								},
+								{
+									"key": "mobile",
+									"value": "13668865673",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "654321",
+									"type": "text"
+								},
+								{
+									"key": "password_confirm",
+									"value": "654321",
+									"type": "text"
+								},
+								{
+									"key": "sms_id",
+									"value": "1140",
+									"type": "text"
+								},
+								{
+									"key": "captcha",
+									"value": "935071",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/account/password_reset",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"account",
+								"password_reset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "ACT6 用户存在性",
 					"request": {
 						"method": "POST",
@@ -92,162 +276,6 @@
 							"path": [
 								"account_new",
 								"login_wechat"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ACT4 密码登录",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "mobile",
-									"value": "17664073966",
-									"type": "text"
-								},
-								{
-									"key": "password",
-									"value": "123456",
-									"type": "text"
-								},
-								{
-									"key": "wechat_union_id",
-									"value": "o6_bmasdasdsad6_2sgVt7hMZOPfL",
-									"type": "text",
-									"disabled": true
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/account/login",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"account",
-								"login"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ACT1 短信登录",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "biz",
-									"type": "text"
-								},
-								{
-									"key": "mobile",
-									"value": "17664073966",
-									"type": "text"
-								},
-								{
-									"key": "sms_id",
-									"value": "86",
-									"type": "text"
-								},
-								{
-									"key": "captcha",
-									"value": "347608",
-									"type": "text"
-								},
-								{
-									"key": "wechat_union_id",
-									"value": "o6_bmasdasdsad6_2sgVt7hMZOPfL",
-									"description": "微信UnionID",
-									"type": "text",
-									"disabled": true
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/account/login_sms",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"account",
-								"login_sms"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ACT5 密码重置",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "biz",
-									"type": "text"
-								},
-								{
-									"key": "mobile",
-									"value": "13668865673",
-									"type": "text"
-								},
-								{
-									"key": "password",
-									"value": "654321",
-									"type": "text"
-								},
-								{
-									"key": "password_confirm",
-									"value": "654321",
-									"type": "text"
-								},
-								{
-									"key": "sms_id",
-									"value": "1140",
-									"type": "text"
-								},
-								{
-									"key": "captcha",
-									"value": "935071",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/account/password_reset",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"account",
-								"password_reset"
 							]
 						}
 					},
@@ -14768,6 +14796,13 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"type": "text"
@@ -14798,6 +14833,13 @@
 						"body": {
 							"mode": "formdata",
 							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
 								{
 									"key": "app_type",
 									"value": "client",
@@ -14846,7 +14888,7 @@
 								},
 								{
 									"key": "id",
-									"value": "1",
+									"value": "2",
 									"type": "text"
 								}
 							]

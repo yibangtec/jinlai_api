@@ -485,7 +485,7 @@
 					case 'restore':
 						$data_to_edit['time_delete'] = NULL;
 						break;
-                    case 'unfreeze': // 批准的同时恢复未删除状态
+                    case 'unfreeze': // 解冻的同时恢复未删除状态
                         $data_to_edit['time_delete'] = NULL;
                         $data_to_edit['status'] = '正常';
                         break;

@@ -190,9 +190,9 @@
 			$this->form_validation->set_rules('description', '说明', 'trim');
 			$this->form_validation->set_rules('url_images', '形象图URL们', 'trim');
 			$this->form_validation->set_rules('url_web', '活动页面URL', 'trim');
-			$this->form_validation->set_rules('brand_ids', '参与活动的品牌ID们', 'trim');
-			$this->form_validation->set_rules('biz_ids', '参与活动的商家ID们', 'trim');
-			$this->form_validation->set_rules('item_ids', '参与活动的商品ID们', 'trim');
+			$this->form_validation->set_rules('brand_ids', '参与活动的品牌', 'trim');
+			$this->form_validation->set_rules('biz_ids', '参与活动的商家', 'trim');
+			$this->form_validation->set_rules('item_ids', '参与活动的商品', 'trim');
 			$this->form_validation->set_rules('time_start', '开始时间', 'trim');
 			$this->form_validation->set_rules('time_end', '结束时间', 'trim');
 			$this->form_validation->set_rules('note_stuff', '员工备注', 'trim');

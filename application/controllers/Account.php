@@ -73,11 +73,8 @@
                 // 若用户存在，检查密码正确性
                 if ( !empty($user_info) ):
                     if ($user_info['password'] === sha1($password)):
-                        // 检查是否传入了微信UnionID
-                        $login_info['wechat_union_id'] = $this->input->post('wechat_union_id'); // 微信UnionID
-                        // 准备最后登录信息
-                        $login_info['last_login_ip'] = empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'); // 优先检查请求是否来自APP
-                        $login_info['last_login_timestamp'] = time();
+                        // 准备其它登录信息
+                        $login_info = $this->generate_login_info();
 
                         // 更新最后登录信息
                         @$this->basic_model->edit($user_info['user_id'], $login_info);
@@ -113,19 +110,15 @@
 		{
 			// 验证短信正确性
 			$this->verify_sms();
-			
-			// 检查是否传入了微信UnionID
-			$login_info['wechat_union_id'] = $this->input->post('wechat_union_id'); // 微信UnionID
-
-			// 准备最后登录信息
-			$login_info['last_login_ip'] = empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'); // 优先检查请求是否来自APP
-			$login_info['last_login_timestamp'] = time();
 
 			// 获取手机号
             $mobile = $this->input->post('mobile');
 
 			// 获取用户/检查用户是否存在
 			$user_info = $this->check_mobile($mobile);
+
+            // 准备其它登录信息
+            $login_info = $this->generate_login_info();
 
             // 若用户不存在，创建用户并返回用户信息；若存在，返回用户信息
 			if ( empty($user_info) ):
@@ -168,8 +161,6 @@
          * ACT7 微信登录
          *
          * 使用微信UnionID免密码登录
-         *
-         * @params string $mobile 手机号
          */
         public function login_wechat()
         {
@@ -194,12 +185,11 @@
                 exit();
 
             else:
-                // 准备最后登录信息
-                $login_info['last_login_ip'] = empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'); // 优先检查请求是否来自APP
-                $login_info['last_login_timestamp'] = time();
-
                 // 获取用户/检查用户是否存在
                 $user_info = $this->check_wechat($wechat_union_id);
+
+                // 准备其它登录信息
+                $login_info = $this->generate_login_info($wechat_union_id);
 
                 // 若用户不存在，创建用户并返回用户信息；若存在，返回用户信息
                 if ( empty($user_info) ):
@@ -580,6 +570,7 @@
             $this->form_validation->set_rules('wechat_union_id', '微信UnionID', 'trim|max_length[29]|is_unique[user.wechat_union_id]');
 			$this->form_validation->set_rules('email', 'Email', 'trim|max_length[40]|valid_email|is_unique[user.email]');
             $this->form_validation->set_rules('promoter_id', '推广者', 'trim|is_natural_no_zero');
+            $this->form_validation->set_rules('getui_id', '个推ID', 'trim|is_natural_no_zero');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -589,8 +580,8 @@
 
 			else:
                 // 根据当前UNIX时间戳生成默认昵称（允许重复）、注册时间，及推广者ID（若有）
-                $data_to_create['time_create'] = time();
-                $data_to_create['nickname'] = 'user'. substr($data_to_create['time_create'], 2, 8);
+                $data_to_create['time_create'] = $data_to_create['last_login_timestamp'] = time();
+                $data_to_create['nickname'] = empty($this->input->post('nickname'))? 'user'. substr($data_to_create['time_create'], 2, 8): $this->input->post('nickname');
                 $data_to_create['promoter_id'] = $this->input->post('promoter_id');
 
 				// 创建并返回行ID
@@ -690,6 +681,27 @@
                 endif;
             endif;
 		} // end check_stuff
+
+        /**
+         * 生成登录信息
+         *
+         * @param string $wechat_union_id
+         * @return mixed
+         */
+        private function generate_login_info($wechat_union_id = NULL)
+        {
+            // 若未传入微信UnionID，尝试获取
+            if ($wechat_union_id === NULL) $login_info['wechat_union_id'] = $this->input->post('wechat_union_id');
+
+            // 个推ID
+            $login_info['getui_id'] = $this->input->post('getui_id');
+
+            // 登录记录信息
+            $login_info['last_login_ip'] = empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'); // 优先检查请求是否来自APP
+            $login_info['last_login_timestamp'] = time();
+
+            return array_filter($login_info);
+        } // end generate_login_info
 
 	} // end class Account
 

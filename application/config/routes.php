@@ -54,7 +54,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['home'] = 'home/index'; // 首页
 
 /* Account 账号 */
-$route['login'] = 'account/login'; // 登录
+$route['login'] =
+$route['login_password'] = 'account/login'; // 密码登录
 $route['register'] = 'account/register'; // 注册
 $route['logout'] = 'account/logout'; // 退出当前账号
 $route['email_reset'] = 'account/email_reset'; // 换绑Email（仅限登录后）
@@ -96,7 +97,7 @@ $route['item'] = 'item/index'; // 列表
 $route['order/detail'] = 'order/detail'; // 详情
 $route['order'] = 'order/index'; // 列表
 
-/* User 用户（无社交功能的前台一般可删除该组） */
+/* User 用户 */
 $route['user/detail'] = 'user/detail'; // 用户详情
 $route['user'] = 'user/index'; // 用户列表
 

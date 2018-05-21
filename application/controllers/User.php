@@ -14,15 +14,36 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'password', 'nickname', 'lastname', 'firstname', 'gender', 'dob', 'avatar', 'level', 'address_id', 'promoter_id', 'last_login_timestamp', 'last_login_ip',
+			'lastname', 'firstname', 'gender', 'dob', 'level', 'promoter_id', 'last_login_timestamp', 'last_login_ip',
             'time_create', 'time_delete', 'time_edit', 'operator_id',
 		);
+
+        /**
+         * @var array 可根据最大值筛选的字段名
+         */
+        protected $max_needed = array(
+            'time_create', 'last_login_timestamp', 'level',
+        );
+
+        /**
+         * @var array 可根据最小值筛选的字段名
+         */
+        protected $min_needed = array(
+            'time_create', 'last_login_timestamp', 'level',
+        );
+
+        /**
+         * 可作为排序条件的字段名
+         */
+        protected $names_to_order = array(
+            'time_create',  'last_login_timestamp', 'level',
+        );
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'user_id', 'identity_id', 'mobile', 'email', 'wechat_union_id', 'nickname', 'lastname', 'firstname', 'gender', 'dob', 'avatar', 'level', 'address_id', 'bank_name', 'bank_account', 'promoter_id', 'last_login_timestamp', 'last_login_ip',
+			'user_id', 'identity_id', 'mobile', 'email', 'wechat_union_id', 'getui_id', 'nickname', 'lastname', 'firstname', 'gender', 'dob', 'avatar', 'level', 'address_id', 'promoter_id', 'last_login_timestamp', 'last_login_ip',
 			'time_create', 'time_delete', 'time_edit', 'operator_id',
 		);
 
@@ -30,7 +51,7 @@
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'nickname', 'lastname', 'firstname', 'gender', 'dob', 'avatar', 'address_id', 'bank_name', 'bank_account',
+			'nickname', 'lastname', 'firstname', 'gender', 'dob', 'avatar', 'address_id', 'getui_id',
 		);
 
 		/**
@@ -183,8 +204,6 @@
 			$this->form_validation->set_rules('gender', '性别', 'trim|in_list[男,女]');
 			$this->form_validation->set_rules('dob', '出生日期', 'trim|exact_length[10]');
 			$this->form_validation->set_rules('avatar', '头像', 'trim|max_length[255]');
-//            $this->form_validation->set_rules('bank_name', '开户行名称', 'trim|max_length[20]');
-//            $this->form_validation->set_rules('bank_account', '开户行账号', 'trim|max_length[30]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -195,11 +214,12 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
-					'dob' => !empty($this->input->post('dob'))? $this->input->post('dob'): NULL,
+
+					'dob' => empty($this->input->post('dob'))? NULL: $this->input->post('dob'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'nickname', 'lastname', 'firstname', 'gender', 'avatar', 'bank_name', 'bank_account',
+					'nickname', 'lastname', 'firstname', 'gender', 'avatar',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -261,9 +281,7 @@
             $this->form_validation->set_rules('dob', '出生日期', 'trim|exact_length[10]');
             $this->form_validation->set_rules('avatar', '头像', 'trim|max_length[255]');
             $this->form_validation->set_rules('address_id', '默认地址', 'trim|is_natural_no_zero');
-//            $this->form_validation->set_rules('bank_id', '默认银行账号', 'trim|is_natural_no_zero'); // 若后期有需要，可考虑支持单用户多银行账号
-//            $this->form_validation->set_rules('bank_name', '开户行名称', 'trim|max_length[20]');
-//            $this->form_validation->set_rules('bank_account', '开户行账号', 'trim|max_length[30]');
+            $this->form_validation->set_rules('getui_id', '个推ID', 'trim|max_length[100]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -300,7 +318,7 @@
 		public function edit_bulk()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz',); // 客户端类型
+			$type_allowed = array('admin', 'biz'); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -323,7 +341,7 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
-			$this->form_validation->set_rules('operation', '待执行操作', 'trim|in_list[delete,restore]');
+			$this->form_validation->set_rules('operation', '待执行操作', 'trim|in_list[delete,restore,freeze,unfreeze]');
 			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('password', '密码', 'trim|min_length[6]|max_length[20]');
 
@@ -343,13 +361,20 @@
 				$data_to_edit['operator_id'] = $user_id;
 
 				// 根据待执行的操作赋值待编辑数据
-				switch ( $operation ):
+				switch ($operation):
 					case 'delete':
 						$data_to_edit['time_delete'] = date('Y-m-d H:i:s');
 						break;
 					case 'restore':
 						$data_to_edit['time_delete'] = NULL;
 						break;
+                    case 'unfreeze': // 解冻的同时恢复未删除状态
+                        $data_to_edit['time_delete'] = NULL;
+                        $data_to_edit['status'] = '正常';
+                        break;
+                    case 'freeze':
+                        $data_to_edit['status'] = '已冻结';
+                        break;
 				endswitch;
 
 				// 依次操作数据并输出操作结果
