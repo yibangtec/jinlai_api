@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'user_id', 'brief', 'fullname', 'mobile', 'nation', 'province', 'city', 'county', 'street', 'longitude', 'latitude', 'zipcode', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'user_id', 'brief', 'mobile', 'nation', 'province', 'city', 'county', 'longitude', 'latitude', 'zipcode', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -215,7 +215,8 @@
 					'brief', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'zipcode',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+                    $data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
+
 
                 // 若已传入经纬度，直接进行设置；若未设置经纬度，则通过地址（若有）借助高德地图相关API转换获取
                 if ( !empty($this->input->post('longitude')) && !empty($this->input->post('latitude')) ):
@@ -326,7 +327,7 @@
 					'brief', 'fullname', 'mobile', 'province', 'city', 'county', 'street', 'zipcode',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = $this->input->post($name);
+					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
                 // 若已传入经纬度，直接进行设置；若未设置经纬度，则通过地址（若有）借助高德地图相关API转换获取
                 if ( !empty($this->input->post('longitude')) && !empty($this->input->post('latitude')) ):
@@ -441,7 +442,7 @@
          * 以下为工具方法
          */
 
-		// 设置当前地址为默认地址
+		// 设置特定地址为默认地址
 		protected function default_this($address_id, $user_id)
 		{
 			$this->switch_model('user', 'user_id');

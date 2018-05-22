@@ -243,7 +243,7 @@
 					'biz_id', 'name', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_order', 'day_rest', 'url_image_main', 'figure_image_urls', 'province', 'city', 'county', 'street', 'region_id', 'poi_id', 'range_deliver',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
 				$result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):
@@ -346,7 +346,7 @@
 					'name', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_order', 'day_rest', 'url_image_main', 'figure_image_urls', 'province', 'city', 'county', 'street', 'region_id', 'poi_id', 'range_deliver',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = $this->input->post($name);
+					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
 				// 根据客户端类型等条件筛选可操作的字段名
 				if ($this->app_type !== 'admin'):

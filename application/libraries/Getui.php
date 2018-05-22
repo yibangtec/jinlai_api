@@ -38,13 +38,13 @@
             'offline_expire_time' => 1000 * 60 * 60 * 24, // 消息离线存储有效期默认为24小时
         );
 
-		// （可选）原始CodeIgniter对象
+		// 原始CodeIgniter对象
 		private $CI;
 
-		// （可选）构造函数
+		// 构造函数
 		public function __construct()
 		{
-			// (可选)引用原始CodeIgniter对象
+			// 引用原始CodeIgniter对象
 			$this->CI =& get_instance();
 
 			// 生成个推当前版本API根URL

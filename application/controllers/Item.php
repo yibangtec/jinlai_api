@@ -398,7 +398,7 @@
 					'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'barcode', 'url_image_main', 'name', 'slogan', 'description', 'price', 'stocks', 'promotion_id', 'freight_template_id',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
 				// 生成上架时间
                 $data_to_create['time_publish'] = (empty($time_to_publish) || $time_to_publish < time())? time(): NULL;
@@ -511,7 +511,7 @@
 					'category_biz_id', 'code_biz', 'barcode', 'url_image_main', 'name', 'slogan', 'description', 'price', 'stocks', 'promotion_id',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = $this->input->post($name);
+					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
                 // 生成上架时间
                 $data_to_edit['time_publish'] = (empty($time_to_publish) || $time_to_publish < time())? time(): NULL;

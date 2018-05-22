@@ -288,7 +288,7 @@
                         'vote_id', 'tag_id', 'index_id', 'name', 'description', 'url_image', 'mobile',
                     );
                     foreach ($data_need_no_prepare as $name)
-                        $data_to_create[$name] = $this->input->post($name);
+                        $data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
                     // 客户端创建的数据，默认为待审核状态
                     if ($this->app_type === 'client') $data_to_create['status'] = '待审核';
@@ -358,7 +358,7 @@
                     'tag_id', 'index_id', 'name', 'description', 'url_image',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = $this->input->post($name);
+					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
 				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);

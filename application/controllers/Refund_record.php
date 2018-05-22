@@ -140,7 +140,7 @@
 					'refund_id', 'biz_id', 'user_id', 'content',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
 				$result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):

@@ -230,7 +230,7 @@
 					'name', 'url_image', 'description',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
                 $result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):
@@ -307,7 +307,7 @@
 					'name', 'url_image', 'description',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = $this->input->post($name);
+					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
 				// 获取ID
 				$id = $this->input->post('id');
@@ -378,7 +378,7 @@
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array('operator_id');
 				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = $this->input->post($name);
+					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
 				// 根据待执行的操作赋值待编辑数据
 				switch ( $this->input->post('operation') ):

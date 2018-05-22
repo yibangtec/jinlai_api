@@ -215,7 +215,7 @@
 					'category_id', 'title', 'excerpt', 'content', 'url_images'
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
 				$result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):
@@ -282,7 +282,7 @@
 					'category_id', 'title', 'excerpt', 'content', 'url_images'
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = $this->input->post($name);
+					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
 				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);

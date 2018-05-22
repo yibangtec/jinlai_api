@@ -272,7 +272,7 @@
                     'category_id', 'name', 'brief_name', 'url_logo', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'url_image_product', 'url_image_produce', 'url_image_retail',
                 );
 				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 				// 从待创建数据中去除biz表中没有的user_id值，该值用于稍后创建员工关系
 				unset($data_to_create['user_id']);
 
@@ -348,7 +348,7 @@
                     'category_id', 'url_logo', 'brief_name',
                 );
                 foreach ($data_need_no_prepare as $name)
-                    $data_to_create[$name] = $this->input->post($name);
+                    $data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
                 // 从待创建数据中去除biz表中没有的user_id值，该值用于稍后创建员工关系
                 unset($data_to_create['user_id']);
 
@@ -430,7 +430,7 @@
                     'freight_template_id', 'ornament_id',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = $this->input->post($name);
+					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
 				// 根据客户端类型等条件筛选可操作的字段名
 				if ($this->app_type !== 'admin'):

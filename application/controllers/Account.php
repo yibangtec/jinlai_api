@@ -448,7 +448,7 @@
 			$mobile = $this->input->post('mobile');
 			$email = $this->input->post('email');
 			$wechat_union_id = $this->input->post('wechat_union_id');
-			if ( empty($mobile.$email.$wechat_union_id) ):
+			if ( empty( trim($mobile.$email.$wechat_union_id) ) ):
 				$this->result['status'] = 400;
 				$this->result['content']['error']['message'] = '手机号、Email及微信UnionID须至少传入一项';
 				exit();

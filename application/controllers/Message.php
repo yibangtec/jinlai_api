@@ -286,7 +286,7 @@
 					'user_id', 'biz_id', 'stuff_id',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
 				// 根据消息类型不同，赋值特定字段值
                 if ($type === 'location'):

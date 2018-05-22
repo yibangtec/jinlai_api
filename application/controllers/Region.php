@@ -226,7 +226,7 @@
 					'province', 'province_abbr', 'city', 'county',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
 				$result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):
@@ -294,7 +294,7 @@
                     'province', 'province_abbr', 'city', 'county',
                 );
                 foreach ($data_need_no_prepare as $name)
-                    $data_to_create[$name] = $this->input->post($name);
+                    $data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
                 // 依次操作数据并输出操作结果
                 // 将待操作行ID们的CSV格式字符串，转换为待操作行的ID数组
@@ -375,7 +375,7 @@
 					'province', 'province_abbr', 'city', 'county',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = $this->input->post($name);
+					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
 				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);

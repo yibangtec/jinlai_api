@@ -221,7 +221,7 @@
 					'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'description', 'max_amount', 'max_amount_user', 'min_subtotal', 'amount',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 				// 根据客户端类型等条件筛选可操作的字段名
                 if ($this->app_type === 'biz'):
                     unset($data_to_create['category_id']);
@@ -305,7 +305,7 @@
 					'category_id', 'category_biz_id', 'item_id', 'name', 'description', 'max_amount', 'max_amount_user', 'min_subtotal', 'amount',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = $this->input->post($name);
+					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
 				// 根据客户端类型等条件筛选可操作的字段名
 				if ($this->app_type === 'biz'):

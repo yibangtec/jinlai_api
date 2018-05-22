@@ -229,7 +229,7 @@
 					'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'nation', 'province', 'city', 'county', 'longitude', 'latitude', 'type_actual', 'max_amount', 'start_amount', 'unit_amount', 'fee_start', 'fee_unit', 'exempt_amount', 'exempt_subtotal',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
                 // 若已传入经纬度，直接进行设置；若未设置经纬度，则通过地址（若有）借助高德地图相关API转换获取
                 if ( !empty($this->input->post('longitude')) && !empty($this->input->post('latitude')) ):
@@ -326,7 +326,7 @@
                     'name', 'time_valid_from', 'time_valid_end', 'nation', 'province', 'city', 'county', 'longitude', 'latitude','type_actual', 'max_amount', 'start_amount', 'unit_amount', 'fee_start', 'fee_unit', 'exempt_amount', 'exempt_subtotal',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = $this->input->post($name);
+					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
                 // 若已传入经纬度，直接进行设置；若未设置经纬度，则通过地址（若有）借助高德地图相关API转换获取
                 if ( !empty($this->input->post('longitude')) && !empty($this->input->post('latitude')) ):

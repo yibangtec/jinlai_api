@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'name', 'description', 'url_image', 'url_audio', 'url_video', 'url_video_thumb', 'url_name', 'url_default_option_image', 'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'exturl_before', 'exturl_ongoing', 'exturl_after', 'time_start', 'time_end',
+			'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'time_start', 'time_end',
             'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 		
@@ -22,21 +22,23 @@
 	     * @var array 可根据最大值筛选的字段名
 	     */
 	    protected $max_needed = array(
-	        'time_create',
+            'max_user_total', 'max_user_daily', 'max_user_daily_each', 'time_start', 'time_end',
+            'time_create',
 	    );
 
 	    /**
 	     * @var array 可根据最小值筛选的字段名
 	     */
 	    protected $min_needed = array(
-	        'time_create',
+            'max_user_total', 'max_user_daily', 'max_user_daily_each', 'time_start', 'time_end',
+            'time_create',
 	    );
 		
 		/**
 		 * 可作为排序条件的字段名
 		 */
 		protected $names_to_order = array(
-			'name', 'url_name', 'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'time_start', 'time_end', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'time_start', 'time_end', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -220,7 +222,7 @@
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin'); // 客户端类型
+			$type_allowed = array('admin', 'biz',); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -286,7 +288,7 @@
                     'name', 'description', 'url_image', 'url_audio', 'url_video', 'url_video_thumb', 'url_default_option_image', 'signup_allowed',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
 				$result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):
@@ -308,7 +310,7 @@
 		public function edit()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin',); // 客户端类型
+			$type_allowed = array('admin', 'biz',); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -372,7 +374,7 @@
                     'name', 'description', 'url_image', 'url_audio', 'url_video', 'url_video_thumb', 'url_default_option_image', 'signup_allowed',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = $this->input->post($name);
+					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
                 endif;
 
@@ -417,7 +419,7 @@
 		public function edit_bulk()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin',); // 客户端类型
+			$type_allowed = array('admin'); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限

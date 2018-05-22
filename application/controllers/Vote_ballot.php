@@ -519,6 +519,7 @@
 		/**
 		 * 以下为工具类方法
 		 */
+
 		// 仅获取进行中的有效投票活动信息
 		protected function get_vote_pending($vote_id)
         {

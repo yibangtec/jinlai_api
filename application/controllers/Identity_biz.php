@@ -225,7 +225,7 @@
 				    'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = $this->input->post($name);
+					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
 				$result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):
@@ -304,7 +304,7 @@
                     'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = $this->input->post($name);
+					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
 				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);
