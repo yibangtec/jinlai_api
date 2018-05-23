@@ -36,12 +36,12 @@
 								},
 								{
 									"key": "sms_id",
-									"value": "296",
+									"value": "312",
 									"type": "text"
 								},
 								{
 									"key": "captcha",
-									"value": "786104",
+									"value": "156084",
 									"type": "text"
 								},
 								{
@@ -54,6 +54,12 @@
 									"key": "getui_id",
 									"value": "a24e50760b23f3f8dccf438e32ec18a9",
 									"description": "个推ID",
+									"type": "text"
+								},
+								{
+									"key": "promoter_id",
+									"value": "1",
+									"description": "推广者ID",
 									"type": "text"
 								}
 							]
@@ -69,6 +75,118 @@
 							"path": [
 								"account",
 								"login_sms"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ACT2 密码设置",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "password_confirm",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/account/password_set",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"account",
+								"password_set"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ACT3 密码修改",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "654321",
+									"type": "text"
+								},
+								{
+									"key": "password_confirm",
+									"value": "654321",
+									"type": "text"
+								},
+								{
+									"key": "password_current",
+									"value": "123456",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/account/password_change",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"account",
+								"password_change"
 							]
 						}
 					},
@@ -254,13 +372,13 @@
 								},
 								{
 									"key": "app_type",
-									"value": "biz",
+									"value": "client",
 									"description": "",
 									"type": "text"
 								},
 								{
 									"key": "wechat_union_id",
-									"value": "o0geuv4qf9z2DbtnsRSSzzzzz5",
+									"value": "o6_bmasdasdsad6_2sgVt7hMZOPfL",
 									"type": "text"
 								}
 							]
@@ -298,24 +416,100 @@
 								{
 									"key": "test_mode",
 									"value": "on",
-									"description": "",
 									"type": "text",
+									"description": "",
 									"disabled": true
 								},
 								{
 									"key": "app_type",
 									"value": "client",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "user_id",
 									"value": "7",
-									"type": "text"
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "mobile",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "nation",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "province",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "city",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "county",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "longitude",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "latitude",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "zipcode",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_create",
+									"value": "",
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "time_delete",
 									"value": "NULL",
-									"type": "text"
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_edit",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "creator_id",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "operator_id",
+									"value": "",
+									"type": "text",
+									"description": ""
 								}
 							]
 						},
@@ -814,7 +1008,7 @@
 			]
 		},
 		{
-			"name": "ATB 文章（商家级）",
+			"name": "ATB 商家文章",
 			"description": null,
 			"item": [
 				{
@@ -826,59 +1020,59 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "biz_id",
 									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "title",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "excerpt",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "content",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "url_images",
-									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "time_create",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "time_delete",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "time_edit",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "creator_id",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "operator_id",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": "",
+									"disabled": true
 								}
 							]
 						},
@@ -1203,7 +1397,7 @@
 			]
 		},
 		{
-			"name": "ATC 文章（平台级）",
+			"name": "ATC 平台文章",
 			"description": null,
 			"item": [
 				{
@@ -1215,9 +1409,54 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
-									"type": "text"
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "category_id",
+									"value": "",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "time_create",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_delete",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_edit",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "creator_id",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "operator_id",
+									"value": "",
+									"type": "text",
+									"description": ""
 								}
 							]
 						},
@@ -1232,6 +1471,92 @@
 							"path": [
 								"article",
 								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ATC1 文章列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "3",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/article/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"article",
+								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ATC2 文章详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_typ",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "3",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "url_name",
+									"value": "about-us",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/article/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"article",
+								"detail"
 							]
 						}
 					},
@@ -1355,50 +1680,6 @@
 					"response": []
 				},
 				{
-					"name": "ATC1 文章列表",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"description": "",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "limit",
-									"value": "3",
-									"description": "",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/article/index",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"article",
-								"index"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "ATC5 文章单项编辑",
 					"request": {
 						"method": "POST",
@@ -1473,53 +1754,11 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "ATC2 文章详情",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_typ",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "3",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "url_name",
-									"value": "about-us",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/article/detail",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"article",
-								"detail"
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
 		{
-			"name": "ATK 文章分类（平台级）",
+			"name": "ATK 平台文章分类",
 			"description": null,
 			"item": [
 				{
@@ -1531,9 +1770,54 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
-									"type": "text"
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "parent_id",
+									"value": "",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "time_create",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_delete",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_edit",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "creator_id",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "operator_id",
+									"value": "",
+									"type": "text",
+									"description": ""
 								}
 							]
 						},
@@ -1548,93 +1832,6 @@
 							"path": [
 								"article_category",
 								"count"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ATK4 文章分类编辑",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "biz",
-									"type": "text"
-								},
-								{
-									"key": "parent_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "分类名称，不超过30个字符",
-									"type": "text"
-								},
-								{
-									"key": "url_name",
-									"value": "text_article",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "1",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/article_category/edit",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"article_category",
-								"edit"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ATK2 文章分类详情",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "url_name",
-									"value": "text_article",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/article_category/detail",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"article_category",
-								"detail"
 							]
 						}
 					},
@@ -1672,6 +1869,50 @@
 					"response": []
 				},
 				{
+					"name": "ATK2 文章分类详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/article_category/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"article_category",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "ATK3 文章分类创建",
 					"request": {
 						"method": "POST",
@@ -1680,25 +1921,41 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "admin",
-									"type": "text"
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "parent_id",
 									"value": "1",
 									"type": "text",
-									"disabled": true
+									"description": ""
 								},
 								{
 									"key": "name",
 									"value": "分类名称，不超过30个字符",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "url_name",
-									"value": "text_article",
-									"type": "text"
+									"value": "test_article",
+									"type": "text",
+									"description": ""
 								}
 							]
 						},
@@ -1713,6 +1970,70 @@
 							"path": [
 								"article_category",
 								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ATK4 文章分类编辑",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "parent_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "分类名称，不超过30个字符",
+									"type": "text"
+								},
+								{
+									"key": "url_name",
+									"value": "text_article",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/article_category/edit",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"article_category",
+								"edit"
 							]
 						}
 					},
@@ -4875,6 +5196,180 @@
 					"response": []
 				},
 				{
+					"name": "FTB1 商家运费模板列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "limit",
+									"value": "",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "biz_id",
+									"value": "2",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "type",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_valid_from",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_valid_end",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "period_valid",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "expire_refund_rate",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "type_actual",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_latest_deliver",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "max_amount",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "start_amount",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "fee_start",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "fee_unit",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "exempt_amount",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "exempt_subtotal",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_create",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_delete",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_edit",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "creator_id",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "operator_id",
+									"value": "",
+									"type": "text",
+									"description": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/freight_template_biz/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"freight_template_biz",
+								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "FTB2 商家运费模板详情",
 					"request": {
 						"method": "POST",
@@ -4905,148 +5400,6 @@
 							"path": [
 								"freight_template_biz",
 								"detail"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "FTB4 商家运费模板编辑",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "biz",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "7",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "满68元包邮",
-									"type": "text"
-								},
-								{
-									"key": "time_valid_from",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_valid_end",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "period_valid",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "expire_refund_rate",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "type_actual",
-									"value": "毛重",
-									"type": "text"
-								},
-								{
-									"key": "time_latest_deliver",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "max_amount",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "start_amount",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "fee_start",
-									"value": "8",
-									"type": "text"
-								},
-								{
-									"key": "fee_unit",
-									"value": "3",
-									"type": "text"
-								},
-								{
-									"key": "exempt_amount",
-									"value": "2",
-									"type": "text"
-								},
-								{
-									"key": "exempt_subtotal",
-									"value": "68.00",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/freight_template_biz/edit",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"freight_template_biz",
-								"edit"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "FTB1 商家运费模板列表",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "biz_id",
-									"value": "2",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/freight_template_biz/index",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"freight_template_biz",
-								"index"
 							]
 						}
 					},
@@ -5158,6 +5511,112 @@
 							"path": [
 								"freight_template_biz",
 								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FTB4 商家运费模板编辑",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "biz",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "7",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "满68元包邮",
+									"type": "text"
+								},
+								{
+									"key": "time_valid_from",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_valid_end",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "period_valid",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "expire_refund_rate",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "type_actual",
+									"value": "毛重",
+									"type": "text"
+								},
+								{
+									"key": "time_latest_deliver",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "max_amount",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "start_amount",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "fee_start",
+									"value": "8",
+									"type": "text"
+								},
+								{
+									"key": "fee_unit",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "exempt_amount",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "exempt_subtotal",
+									"value": "68.00",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/freight_template_biz/edit",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"freight_template_biz",
+								"edit"
 							]
 						}
 					},
@@ -6154,7 +6613,7 @@
 			]
 		},
 		{
-			"name": "IBK 商品分类（商家级）",
+			"name": "IBK 商家商品分类",
 			"description": null,
 			"item": [
 				{
@@ -6393,7 +6852,7 @@
 			]
 		},
 		{
-			"name": "ITK 商品分类（系统级）",
+			"name": "ITK 平台商品分类",
 			"description": null,
 			"item": [
 				{
@@ -13018,73 +13477,97 @@
 									"key": "test_mode",
 									"value": "on",
 									"type": "text",
+									"description": "",
 									"disabled": true
 								},
 								{
 									"key": "app_type",
 									"value": "admin",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "nation",
 									"value": "中国",
 									"type": "text",
+									"description": "",
 									"disabled": true
 								},
 								{
 									"key": "province",
-									"value": "",
-									"type": "text"
+									"value": "浙江省",
+									"type": "text",
+									"description": ""
 								},
 								{
 									"key": "province_index",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "province_abbr",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "province_brief",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "city",
-									"value": "石家庄市",
-									"type": "text"
+									"value": "",
+									"type": "text",
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "county",
-									"value": "",
-									"type": "text"
+									"value": "东城区",
+									"type": "text",
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "time_create",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "time_delete",
-									"value": "",
-									"type": "text"
+									"value": "NULL",
+									"type": "text",
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "time_edit",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "creator_id",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "operator_id",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"description": "",
+									"disabled": true
 								}
 							]
 						},
@@ -13116,90 +13599,116 @@
 									"key": "test_mode",
 									"value": "on",
 									"type": "text",
+									"description": "",
 									"disabled": true
 								},
 								{
 									"key": "app_type",
 									"value": "client",
-									"type": "text"
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "limit",
+									"value": "3",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "ids",
+									"value": "2,9,93",
+									"type": "text",
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "nation",
 									"value": "中国",
 									"type": "text",
+									"description": "",
 									"disabled": true
 								},
 								{
 									"key": "province",
 									"value": "浙江省",
 									"type": "text",
+									"description": "",
 									"disabled": true
 								},
 								{
 									"key": "province_index",
 									"value": "",
 									"type": "text",
+									"description": "",
 									"disabled": true
 								},
 								{
 									"key": "province_abbr",
 									"value": "",
 									"type": "text",
+									"description": "",
 									"disabled": true
 								},
 								{
 									"key": "province_brief",
 									"value": "",
 									"type": "text",
+									"description": "",
 									"disabled": true
 								},
 								{
 									"key": "city",
 									"value": "",
 									"type": "text",
+									"description": "",
 									"disabled": true
 								},
 								{
 									"key": "county",
 									"value": "东城区",
 									"type": "text",
+									"description": "",
 									"disabled": true
 								},
 								{
 									"key": "time_create",
 									"value": "",
 									"type": "text",
+									"description": "",
 									"disabled": true
 								},
 								{
 									"key": "time_delete",
 									"value": "NULL",
 									"type": "text",
+									"description": "",
 									"disabled": true
 								},
 								{
 									"key": "time_edit",
 									"value": "",
 									"type": "text",
+									"description": "",
 									"disabled": true
 								},
 								{
 									"key": "creator_id",
 									"value": "",
 									"type": "text",
+									"description": "",
 									"disabled": true
 								},
 								{
 									"key": "operator_id",
 									"value": "",
 									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "ids",
-									"value": "2",
 									"description": "",
-									"type": "text",
 									"disabled": true
 								}
 							]
@@ -13241,7 +13750,7 @@
 								},
 								{
 									"key": "id",
-									"value": "256",
+									"value": "1044",
 									"type": "text"
 								}
 							]
@@ -14249,6 +14758,13 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"type": "text"
@@ -14521,7 +15037,7 @@
 			"description": null,
 			"item": [
 				{
-					"name": "SMS4 短信批量发送",
+					"name": "SMS1 短信列表",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -14529,19 +15045,92 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "mobile_list",
-									"value": "13668865673,13853263826,13295352107,17710356783,13969730612,18724749157,17664052627",
-									"type": "text"
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
 								},
 								{
-									"key": "content",
-									"value": "恭喜您成功创建商家，我们已自动为您生成入驻申请并安排事务最少的同事进行受理，敬请稍候。",
-									"type": "text"
+									"key": "app_type",
+									"value": "client",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "mobile",
+									"value": "",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "mobile_list",
+									"value": "",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "time",
+									"value": "",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "user_ip",
+									"value": "",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "time_expire",
+									"value": "",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "time_create",
+									"value": "",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "time_delete",
+									"value": "NULL",
+									"type": "text",
+									"description": "",
+									"disabled": true
 								}
 							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/sms/create_bulk",
+							"raw": "https://api.517ybang.com/sms/index",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -14550,7 +15139,50 @@
 							],
 							"path": [
 								"sms",
-								"create_bulk"
+								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SMS2 短信详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "307",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/sms/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"sms",
+								"detail"
 							]
 						}
 					},
@@ -14579,6 +15211,13 @@
 									"key": "mobile",
 									"value": "17664073966",
 									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "测试短信发送内容",
+									"description": "",
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},
@@ -14593,6 +15232,110 @@
 							"path": [
 								"sms",
 								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SMS4 短信批量发送",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "mobile_list",
+									"value": "13668865673,17664073966,13698673572",
+									"type": "text",
+									"description": "13668865673,13853263826,13295352107,17710356783,13969730612,18724749157,17664052627"
+								},
+								{
+									"key": "content",
+									"value": "恭喜您成功创建商家，我们已自动为您生成入驻申请并安排事务最少的同事进行受理，敬请稍候。",
+									"type": "text"
+								},
+								{
+									"key": "time_to_send",
+									"value": "2018-05-23 21:45:00",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/sms/create_bulk",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"sms",
+								"create_bulk"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SMS5 短信验证",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "sms_id",
+									"value": "308",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "mobile",
+									"value": "17664073966",
+									"type": "text"
+								},
+								{
+									"key": "captcha",
+									"value": "034682",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/sms/verify",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"sms",
+								"verify"
 							]
 						}
 					},
@@ -16608,16 +17351,6 @@
 					"mode": "urlencoded",
 					"urlencoded": [
 						{
-							"key": "table_name",
-							"value": "item",
-							"type": "text"
-						},
-						{
-							"key": "id_name",
-							"value": "item_id",
-							"type": "text"
-						},
-						{
 							"key": "class_name",
 							"value": "item",
 							"type": "text"
@@ -16626,6 +17359,18 @@
 							"key": "class_name_cn",
 							"value": "商品",
 							"type": "text"
+						},
+						{
+							"key": "table_name",
+							"value": "item",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "id_name",
+							"value": "item_id",
+							"type": "text",
+							"disabled": true
 						}
 					]
 				},

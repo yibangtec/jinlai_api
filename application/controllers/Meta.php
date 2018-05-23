@@ -29,7 +29,7 @@
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id', 'name', 'value',
+			'user_id', 'name', 'description',
 		);
 
 		/**
@@ -43,7 +43,7 @@
 		 * 完整编辑单行时必要的字段名
 		 */
 		protected $names_edit_required = array(
-			'user_id', 'id', 'name', 'value',
+			'user_id', 'id', 'name', 'description',
 		);
 
 		public function __construct()
@@ -89,7 +89,7 @@
 			// 检查必要参数是否已传入
 			$required_params = array();
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
@@ -112,12 +112,7 @@
             endif;
 
             // 获取列表；默认可获取已删除项
-            $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
-            if ( empty($ids) ):
-                $items = $this->basic_model->select($condition, $order_by);
-            else:
-                $items = $this->basic_model->select_by_ids($ids);
-            endif;
+            $items = $this->basic_model->select($condition, $order_by);
 
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
@@ -138,7 +133,7 @@
 			// 检查必要参数是否已传入
 			$id = $this->input->post('id');
             $name = $this->input->post('name');
-            if ( empty($id) && empty($url_name) ):
+            if ( empty($id) && empty($name) ):
 				$this->result['status'] = 400;
 				$this->result['content']['error']['message'] = '必要的请求参数未传入';
 				exit();
@@ -181,7 +176,7 @@
 			// 检查必要参数是否已传入
 			$required_params = $this->names_create_required;
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
@@ -195,7 +190,7 @@
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]');
 			$this->form_validation->set_rules('value', '内容', 'trim|max_length[255]');
-			$this->form_validation->set_rules('description', '说明', 'trim|max_length[255]');
+			$this->form_validation->set_rules('description', '说明', 'trim|required|max_length[255]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -206,6 +201,7 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
+
                     'name' => strtolower( $this->input->post('name') ),
 				);
 				// 自动生成无需特别处理的数据
@@ -246,7 +242,7 @@
 			// 检查必要参数是否已传入
 			$required_params = $this->names_edit_required;
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
@@ -259,7 +255,7 @@
 			$this->form_validation->set_error_delimiters('', '');
             $this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]');
             $this->form_validation->set_rules('value', '内容', 'trim|max_length[255]');
-            $this->form_validation->set_rules('description', '说明', 'trim|max_length[255]');
+            $this->form_validation->set_rules('description', '说明', 'trim|required|max_length[255]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -270,6 +266,7 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
+
                     'name' => strtolower( $this->input->post('name') ),
 				);
 				// 自动生成无需特别处理的数据
@@ -313,7 +310,7 @@
             // 检查必要参数是否已传入
             $required_params = $this->names_edit_bulk_required;
             foreach ($required_params as $param):
-                ${$param} = $this->input->post($param);
+                ${$param} = trim($this->input->post($param));
                 if ( !isset( ${$param} ) ):
                     $this->result['status'] = 400;
                     $this->result['content']['error']['message'] = '必要的请求参数未全部传入';

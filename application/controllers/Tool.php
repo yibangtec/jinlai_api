@@ -109,9 +109,9 @@
 		public function table_info()
 		{
 			// 检查必要参数是否已传入
-			$required_params = array('class_name', 'class_name_cn', 'table_name', 'id_name');
+			$required_params = array('class_name', 'class_name_cn');
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( empty( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
@@ -119,11 +119,16 @@
 				endif;
 			endforeach;
 
+            // 生成非必要参数值
+            $table_name = empty($this->input->post('table_name'))? $class_name: $this->input->post('table_name');
+            $id_name = empty($this->input->post('id_name'))? $class_name.'_id': $this->input->post('id_name');
+
+			// 获取表结构，并将部分字段名易读化
 			$this->db->select('COLUMN_NAME as name,COLUMN_TYPE as type,IS_NULLABLE as allow_null, COLUMN_DEFAULT as default,COLUMN_COMMENT as comment');
 			$this->db->where('table_name', $table_name);
 			$query = $this->db->get('information_schema.COLUMNS');
-
 			$result = $query->result_array();
+
 			if ( !empty($result) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = array(
@@ -155,21 +160,23 @@
 						$comment = substr($comment, 0, $length_to_end);
 					endif;
 
-					$this->result['content']['rules'] .= "\t\t\t". '$this->form_validation->set_rules('. "'$name', '$comment', 'trim|".($allow_null === 'NO'? 'required': NULL)."');". "\n";
+					$this->result['content']['rules'] .= "\t\t\t". '$this->form_validation->set_rules('. "'$name', '$comment', 'trim|". ($allow_null === 'NO'? 'required': NULL). "');". "\n";
 					$this->result['content']['params_respond'] .= '<tr><td>'. $name. '</td><td>'.$type.'</td><td>详见返回示例</td><td>'.$comment.'</td></tr>'. "\n";
 					$this->result['content']['elements'] .= '<tr><td>┣'. $name. '</td><td>1</td><td>文本</td><td>'.$comment.'</td></tr>'. "\n";
 					$this->result['content']['create'] .=
-						"\t\t\t\t\t\t"."<div class=form-group>
-							<label for=$name class=\"col-sm-2 control-label\">$comment</label>
+						"\t\t\t\t\t\t".
+                        "<div class=form-group>
+							<label for=$name class=\"col-sm-2 control-label\">$comment". ($allow_null === 'YES'? ' ※': NULL). "</label>
 							<div class=col-sm-10>
-								<input class=form-control name=$name type=text value=\"<?php echo set_value('$name') ?>\" placeholder=\"$comment\" required>
+								<input class=form-control name=$name type=text value=\"<?php echo set_value('$name') ?>\" placeholder=\"$comment\"". ($allow_null === 'YES'? ' required': NULL). ">
 							</div>
 						</div>". "\n";
 					$this->result['content']['edit'] .=
-						"\t\t\t\t\t\t"."<div class=form-group>
-							<label for=$name class=\"col-sm-2 control-label\">$comment</label>
+						"\t\t\t\t\t\t".
+                        "<div class=form-group>
+							<label for=$name class=\"col-sm-2 control-label\">$comment". ($allow_null === 'YES'? ' ※': NULL). "</label>
 							<div class=col-sm-10>
-								<input class=form-control name=$name type=text value=\"<?php echo empty(set_value('$name'))? ".'$item'."['$name']: set_value('$name') ?>\" placeholder=\"$comment\" required>
+								<input class=form-control name=$name type=text value=\"<?php echo empty(set_value('$name'))? ".'$item'."['$name']: set_value('$name') ?>\" placeholder=\"$comment\"". ($allow_null === 'YES'? ' required': NULL). ">
 							</div>
 						</div>". "\n";
 					$this->result['content']['detail'] .=
@@ -179,7 +186,7 @@
 
 			else:
 				$this->result['status'] = 400;
-				$this->result['content'] = '该表不存在或改表不含任何字段';
+				$this->result['content'] = '该表不存在或该表不含任何字段';
 
 			endif;
 		} // end table_columns

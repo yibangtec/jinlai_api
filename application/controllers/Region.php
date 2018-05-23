@@ -31,7 +31,7 @@
 		 */
 		protected $names_create_required = array(
 			'user_id',
-			'nation', 'province', 'province_index', 'province_abbr', 'province_brief', 'city', 'county',
+			'province', 'province_index', 'province_abbr', 'province_brief', 'city', 'county',
 		);
 
         /**
@@ -39,7 +39,7 @@
          */
         protected $names_create_bulk_required = array(
             'user_id',
-            'nation', 'province', 'province_index', 'province_abbr', 'province_brief', 'city', 'counties',
+            'province', 'province_index', 'province_abbr', 'province_brief', 'city', 'counties',
         );
 
 		/**
@@ -54,7 +54,7 @@
 		 */
 		protected $names_edit_required = array(
 			'user_id', 'id',
-			'nation', 'province', 'province_index', 'province_abbr', 'province_brief', 'city', 'county',
+			'province', 'province_index', 'province_abbr', 'province_brief', 'city', 'county',
 		);
 
 		public function __construct()
@@ -100,7 +100,7 @@
 			// 检查必要参数是否已传入
 			$required_params = array();
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
@@ -114,6 +114,8 @@
 			// 排序条件
             $order_by['nation'] = 'ASC';
             $order_by['province_index'] = 'ASC';
+            $order_by['city'] = 'ASC';
+            $order_by['county'] = 'ASC';
 
             // 限制可返回的字段
             if ($this->app_type === 'client'):
@@ -187,7 +189,7 @@
 			// 检查必要参数是否已传入
 			$required_params = $this->names_create_required;
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
@@ -256,7 +258,7 @@
             // 检查必要参数是否已传入
             $required_params = $this->names_create_bulk_required;
             foreach ($required_params as $param):
-                ${$param} = $this->input->post($param);
+                ${$param} = trim($this->input->post($param));
                 if ( !isset( ${$param} ) ):
                     $this->result['status'] = 400;
                     $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
@@ -337,7 +339,7 @@
 			// 检查必要参数是否已传入
 			$required_params = $this->names_edit_required;
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
@@ -411,7 +413,7 @@
 			// 检查必要参数是否已传入
 			$required_params = $this->names_edit_bulk_required;
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';

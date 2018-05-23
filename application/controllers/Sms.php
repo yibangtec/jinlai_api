@@ -40,7 +40,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'mobile', 'mobile_list', 'type', 'captcha', 'time', 'time_expire',
+			'mobile', 'mobile_list', 'type', 'time_to_send', 'user_ip', 'time_expire',
 			'time_create', 'time_delete',
 		);
 
@@ -48,7 +48,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'sms_id', 'mobile', 'mobile_list', 'type', 'captcha', 'content', 'time', 'user_ip', 'time_expire',
+			'sms_id', 'mobile', 'mobile_list', 'type', 'captcha', 'content', 'time_to_send', 'user_ip', 'time_expire',
 		);
 
 		public function __construct()
@@ -72,7 +72,7 @@
 			// 检查必要参数是否已传入
 			$required_params = array();
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( empty( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
@@ -90,12 +90,7 @@
             $this->db->select( implode(',', $this->names_to_return) );
 
             // 获取列表；默认可获取已删除项
-            $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
-            if ( empty($ids) ):
-                $items = $this->basic_model->select($condition, $order_by);
-            else:
-                $items = $this->basic_model->select_by_ids($ids);
-            endif;
+            $items = $this->basic_model->select($condition, $order_by);
 
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
@@ -183,9 +178,116 @@
 				$this->content = $content;
 
 				// 发送短信
-				$this->send();
+				$this->send_single();
 			endif;
 		} // create
+
+        /**
+         * 4 发送批量短信
+         *
+         * @params string $mobile_list 批量发信手机号清单；CSV
+         * @params string $content 待发送短信内容
+         * @params string $time_to_send 待发送时间；2016-04-01 12:30:00
+         */
+        public function create_bulk()
+        {
+            // 检查必要参数是否已传入
+            $required_params = array('mobile_list', 'content');
+            foreach ($required_params as $param):
+                ${$param} = trim($this->input->post($param));
+                if ( empty( ${$param} ) ):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+                    exit();
+                endif;
+            endforeach;
+
+            // 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
+            $this->load->library('form_validation');
+            $this->form_validation->set_error_delimiters('', '');
+            $this->form_validation->set_rules('mobile_list', '批量发信手机号清单', 'trim|required|min_length[11]');
+            $this->form_validation->set_rules('content', '短信内容', 'trim|required|max_length[67]');
+            $this->form_validation->set_rules('time_to_send', '批量发送定时', 'trim|required|exact_length[19]');
+
+            // 若表单提交不成功
+            if ($this->form_validation->run() === FALSE):
+                $this->result['status'] = 401;
+                $this->result['content']['error']['message'] = validation_errors();
+
+            else:
+                $this->mobile_list = trim($mobile_list, ',');
+                $this->content = $content;
+                $time = empty($this->input->post('time_to_send'))? NULL: $this->input->post('time_to_send');
+                if ( !empty($time) ) $this->time = $time;
+
+                $this->type = '9'; // 通知类群发短信类型为9
+                $this->send_bulk();
+
+            endif;
+        } // create_bulk
+
+        /**
+         * 5 验证短信验证码有效性
+         *
+         * @params $mobile 手机号
+         * @params $captcha 验证码
+         * @params $sms_id 短信ID
+         */
+        public function verify()
+        {
+            // 检查必要参数是否已传入
+            $required_params = array('mobile', 'captcha', 'sms_id');
+            foreach ($required_params as $param):
+                ${$param} = trim($this->input->post($param));
+                if ( empty( ${$param} ) ):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+                    exit();
+                endif;
+            endforeach;
+
+            // 初始化并配置表单验证库
+            $this->load->library('form_validation');
+            $this->form_validation->set_error_delimiters('', '');
+            // 动态设置待验证字段名及字段值
+            $this->form_validation->set_rules('mobile', '手机号', 'trim|required|exact_length[11]|is_natural');
+            $this->form_validation->set_rules('sms_id', '短信ID', 'trim|required|is_natural_no_zero');
+            $this->form_validation->set_rules('captcha', '短信验证码', 'trim|required|exact_length[6]|is_natural_no_zero');
+
+            // 若表单提交不成功
+            if ($this->form_validation->run() === FALSE):
+                $this->result['status'] = 401;
+                $this->result['content']['error']['message'] = validation_errors();
+
+            else:
+                // 筛选条件
+                $condition = array(
+                    'type' => '1', // 仅限验证码类短信
+
+                    'sms_id' => $sms_id,
+                    'mobile' => $mobile,
+                    'captcha' => $captcha,
+                    'time_expire >' => time(),
+                );
+
+                // 获取列表；默认不获取已删除项
+                $items = $this->basic_model->select($condition, NULL, FALSE, FALSE);
+                if ( !empty($items) ):
+                    $this->result['status'] = 200;
+                    $this->result['content'] = '验证码有效';
+
+                else:
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '验证码错误或已过期';
+
+                endif;
+
+            endif;
+        } // end verify
+
+        /*
+         * 以下为工具方法
+         */
 
 		/**
 		 * 发送单条短信并存储内容
@@ -196,7 +298,7 @@
 		 * @param string $content 短信内容；验证码短信可不传
 		 * @param string $type 短信类型；验证码1，非验证码2，默认1
 		 */
-		private function send()
+		private function send_single()
 		{
 			// 为短信内容添加后缀签名
 			$this->content .= $this->suffix;
@@ -211,7 +313,7 @@
 			// 根据短信发送结果进行相关操作
 			if ($result_array->error == 0):
 				// 保存短信内容
-				$this->save();
+				$this->save_single();
 
 			else:
 				// 获取错误码相应的文本提示
@@ -223,8 +325,8 @@
 			endif;
 		} // send
 
-		// 保存已单条发送成功的短信
-		private function save()
+		// 保存发送成功的单条短信
+		private function save_single()
 		{
 			$data_to_create = array(
 				'type' => $this->type,
@@ -241,53 +343,10 @@
 			$result = $this->basic_model->create($data_to_create, TRUE);
 
 			$this->result['status'] = 200;
-			$this->result['content']['sms_id'] = $result;
+			$this->result['content']['id'] = $result;
 			$this->result['content']['message'] = '短信发送成功';
 			$this->result['content']['time_expire'] = $this->time_expire;
 		} // save
-
-		/**
-		 * 4 发送批量短信
-		 *
-		 * @params string $mobile_list 目标手机号码列表，多个号码间使用1个半角逗号分隔
-		 * @params string $content 待发送短信内容
-		 * @params string $time 待发送时间；2016-04-01 12:30:00
-		 */
-		public function create_bulk()
-		{
-			// 检查必要参数是否已传入
-			$required_params = array('mobile_list', 'content');
-			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
-				if ( empty( ${$param} ) ):
-					$this->result['status'] = 400;
-					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-					exit();
-				endif;
-			endforeach;
-
-			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->load->library('form_validation');
-			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('mobile_list', '目标手机号码列表', 'trim|required');
-			$this->form_validation->set_rules('content', '短信内容', 'trim|required|max_length[67]');
-
-			// 若表单提交不成功
-			if ($this->form_validation->run() === FALSE):
-				$this->result['status'] = 401;
-				$this->result['content']['error']['message'] = validation_errors();
-
-			else:
-				$this->mobile_list = $mobile_list;
-				$this->content = $content;
-				$time = $this->input->post('time');
-				if ( !empty($time) ) $this->time = $time;
-
-				$this->type = '9'; // 通知类群发短信类型为9
-				$this->send_bulk();
-
-			endif;
-		} // create_bulk
 
 		/**
 		 * 发送批量短信并储存内容
@@ -327,7 +386,7 @@
 				'type' => $this->type,
 				'mobile_list' => $this->mobile_list,
 				'content' => $this->content,
-				'time' => $this->time,
+				'time_to_send' => $this->time,
 
 				'user_ip' => $this->input->post('ip')? $this->input->post('ip'): $this->input->ip_address(), // 对于不是通过服务器发来的请求，需要获取IP地址
 			);
@@ -335,67 +394,9 @@
 			$result = $this->basic_model->create($data_to_create, TRUE);
 
 			$this->result['status'] = 200;
-			$this->result['content']['sms_id'] = $result;
+			$this->result['content']['id'] = $result;
 			$this->result['content']['message'] = '群发短信成功';
 		} // end save_bulk
-
-		/**
-		 * 5 验证短信验证码有效性
-		 *
-		 * @params $mobile 手机号
-		 * @params $captcha 验证码
-		 * @params $sms_id 短信ID
-		 */
-		public function verify()
-		{
-			// 检查必要参数是否已传入
-			$required_params = array('mobile', 'captcha', 'sms_id');
-			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
-				if ( empty( ${$param} ) ):
-					$this->result['status'] = 400;
-					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-					exit();
-				endif;
-			endforeach;
-
-			// 初始化并配置表单验证库
-			$this->load->library('form_validation');
-			$this->form_validation->set_error_delimiters('', '');
-			// 动态设置待验证字段名及字段值
-			$this->form_validation->set_rules('mobile', '手机号', 'trim|required|exact_length[11]|is_unique[user.mobile]');
-			$this->form_validation->set_rules('sms_id', '短信ID', 'trim|required|is_natural_no_zero');
-			$this->form_validation->set_rules('captcha', '短信验证码', 'trim|required|exact_length[6]|is_natural_no_zero');
-
-			// 若表单提交不成功
-			if ($this->form_validation->run() === FALSE):
-				$this->result['status'] = 401;
-				$this->result['content']['error']['message'] = validation_errors();
-
-			else:
-				// 筛选条件
-				$condition = array(
-					'type' => '1', // 仅限验证码类短信
-					'sms_id' => $sms_id,
-					'mobile' => $mobile,
-					'captcha' => $captcha,
-					'time_expire >=' => time(),
-				);
-
-				// 获取列表；默认不获取已删除项
-				$items = $this->basic_model->select($condition, NULL, FALSE, FALSE);
-				if ( !empty($items) ):
-					$this->result['status'] = 200;
-					$this->result['content'] = '验证码有效';
-
-				else:
-					$this->result['status'] = 400;
-					$this->result['content']['error']['message'] = '验证码错误或已过期';
-
-				endif;
-			
-			endif;
-		} // end verify
 
 	} // end class Sms
 

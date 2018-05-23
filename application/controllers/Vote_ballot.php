@@ -105,7 +105,7 @@
 			// 检查必要参数是否已传入
 			$required_params = array();
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
@@ -131,12 +131,7 @@
             $this->db->select( implode(',', $this->names_to_return) );
 
             // 获取列表；默认可获取已删除项
-            $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
-            if ( empty($ids) ):
-                $items = $this->basic_model->select($condition, $order_by);
-            else:
-                $items = $this->basic_model->select_by_ids($ids);
-            endif;
+            $items = $this->basic_model->select($condition, $order_by);
 
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
@@ -190,7 +185,7 @@
 			// 检查必要参数是否已传入
 			$required_params = $this->names_create_required;
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( empty( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
@@ -341,7 +336,7 @@
                 'user_id', 'ids', 'password', 'vote_id', 'amount_min', 'amount_max',
             );
             foreach ($required_params as $param):
-                ${$param} = $this->input->post($param);
+                ${$param} = trim($this->input->post($param));
                 if ( !isset( ${$param} ) ):
                     $this->result['status'] = 400;
                     $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
@@ -446,7 +441,7 @@
 			// 检查必要参数是否已传入
 			$required_params = $this->names_edit_bulk_required;
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( !isset( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';

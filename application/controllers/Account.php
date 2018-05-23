@@ -24,6 +24,60 @@
 		} // end __construct
 
         /**
+         * ACT1 短信登录/注册
+         */
+        public function login_sms()
+        {
+            // 验证短信正确性
+            $this->verify_sms();
+
+            // 获取手机号
+            $mobile = $this->input->post('mobile');
+
+            // 获取用户/检查用户是否存在
+            $user_info = $this->check_mobile($mobile);
+
+            // 准备其它登录信息
+            $login_info = $this->generate_login_info();
+
+            // 若用户不存在，创建用户并返回用户信息；若存在，返回用户信息
+            if ( empty($user_info) ):
+                // 创建用户
+                $data_to_create['mobile'] = $mobile;
+                $data_to_create = array_merge($data_to_create, $login_info);
+                $result = $this->user_create($data_to_create);
+                if ( !empty($result) ):
+                    // 获取用户信息
+                    $item = $this->basic_model->select_by_id($result);
+                    // 不返回真实密码信息
+                    if ( !empty($item['password']) ) $item['password'] = 'set';
+
+                    $this->result['status'] = 200;
+                    $this->result['content'] = $item;
+
+                else:
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '用户创建失败';
+
+                endif;
+
+            else:
+                // 更新最后登录信息
+                @$this->basic_model->edit($user_info['user_id'], $login_info);
+
+                // 非客户端登录时，检查该用户是否为员工
+                if ($this->app_type !== 'client') $user_info = $this->check_stuff( $user_info );
+
+                // 不返回真实密码信息
+                if ( !empty($user_info['password']) ) $user_info['password'] = 'set';
+
+                $this->result['status'] = 200;
+                $this->result['content'] = array_merge($user_info, $login_info);
+
+            endif;
+        } // end login_sms
+
+        /**
          * ACT4 密码登录
          *
          * @params string $password 登录密码
@@ -103,60 +157,6 @@
             endif;
         } // end login
 
-		/**
-		 * ACT1 短信登录/注册
-		 */
-		public function login_sms()
-		{
-			// 验证短信正确性
-			$this->verify_sms();
-
-			// 获取手机号
-            $mobile = $this->input->post('mobile');
-
-			// 获取用户/检查用户是否存在
-			$user_info = $this->check_mobile($mobile);
-
-            // 准备其它登录信息
-            $login_info = $this->generate_login_info();
-
-            // 若用户不存在，创建用户并返回用户信息；若存在，返回用户信息
-			if ( empty($user_info) ):
-                // 创建用户
-                $data_to_create['mobile'] = $mobile;
-                $data_to_create = array_merge($data_to_create, $login_info);
-                $result = $this->user_create($data_to_create);
-                if ( !empty($result) ):
-                    // 获取用户信息
-                    $item = $this->basic_model->select_by_id($result);
-                    // 不返回真实密码信息
-                    if ( !empty($item['password']) ) $item['password'] = 'set';
-
-                    $this->result['status'] = 200;
-                    $this->result['content'] = $item;
-
-                else:
-                    $this->result['status'] = 400;
-                    $this->result['content']['error']['message'] = '用户创建失败';
-
-                endif;
-
-			else:
-                // 更新最后登录信息
-                @$this->basic_model->edit($user_info['user_id'], $login_info);
-
-                // 非客户端登录时，检查该用户是否为员工
-                if ($this->app_type !== 'client') $user_info = $this->check_stuff( $user_info );
-
-                // 不返回真实密码信息
-                if ( !empty($user_info['password']) ) $user_info['password'] = 'set';
-
-                $this->result['status'] = 200;
-                $this->result['content'] = array_merge($user_info, $login_info);
-
-			endif;
-		} // end login_sms
-
         /**
          * ACT7 微信登录
          *
@@ -235,7 +235,7 @@
 			// 检查必要参数是否已传入
 			$required_params = array('user_id', 'password', 'password_confirm');
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( empty( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
@@ -274,9 +274,7 @@
 				else:
 					// 设置密码并更新登录信息
 					$data_to_edit = array(
-						'password' => sha1($password),
-						'last_login_timestamp' => time(),
-						'last_login_ip' => empty($this->input->post('user_ip'))? $this->input->ip_address(): $this->input->post('user_ip'),
+						'password' => sha1( $password ),
 					);
 					
 					// 更新资料
@@ -303,7 +301,7 @@
 			// 检查必要参数是否已传入
 			$required_params = array('user_id', 'password_current', 'password', 'password_confirm');
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( empty( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
@@ -505,7 +503,7 @@
 			// 检查必要参数是否已传入
 			$required_params = array('mobile', 'captcha', 'sms_id');
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( empty( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';

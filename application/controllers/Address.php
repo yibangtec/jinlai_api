@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'user_id', 'brief', 'mobile', 'nation', 'province', 'city', 'county', 'longitude', 'latitude', 'zipcode', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'user_id', 'mobile', 'nation', 'province', 'city', 'county', 'longitude', 'latitude', 'zipcode', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
@@ -96,7 +96,7 @@
 			// 检查必要参数是否已传入
 			$required_params = array();
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( empty( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
@@ -173,7 +173,7 @@
 			// 检查必要参数是否已传入
 			$required_params = $this->names_create_required;
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( empty( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
@@ -206,6 +206,7 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
+
 					'user_id' => $user_id,
 					//'nation' => empty($this->input->post('nation'))? '中国': $this->input->post('nation'),
 					'nation' => '中国', // 暂时只支持中国
@@ -287,7 +288,7 @@
 			// 检查必要参数是否已传入
 			$required_params = $this->names_edit_required;
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( empty( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
@@ -319,6 +320,7 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
+
 					//'nation' => empty($this->input->post('nation'))? '中国': $this->input->post('nation'),
 					'nation' => '中国', // 暂时只支持中国
 				);
@@ -347,7 +349,6 @@
 				$result = $this->basic_model->edit($id, $data_to_edit);
 				if ($result !== FALSE):
                     $this->result['status'] = 200;
-                    $this->result['content']['id'] = $result;
                     $this->result['content']['message'] = '编辑成功';
 
 					// 若当前地址需要设为默认地址
@@ -382,7 +383,7 @@
 			// 检查必要参数是否已传入
 			$required_params = $this->names_edit_bulk_required;
 			foreach ($required_params as $param):
-				${$param} = $this->input->post($param);
+				${$param} = trim($this->input->post($param));
 				if ( empty( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
