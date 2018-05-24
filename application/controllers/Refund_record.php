@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'refund_id', 'biz_id', 'user_id', 'content',
+			'refund_id', 'biz_id', 'user_id',
             'time_create', 'time_delete', 'time_edit', 'operator_id',
 		);
 
@@ -142,6 +142,8 @@
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
+				// TODO 若为商家端，则biz_id只可使用该商家biz_id
+
 				$result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):
 					$this->result['status'] = 200;
@@ -155,6 +157,10 @@
 				endif;
 			endif;
 		} // end create
+
+        /**
+         * 以下为工具方法
+         */
 
 	} // end class Refund_record
 

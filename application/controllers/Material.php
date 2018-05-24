@@ -154,6 +154,10 @@
 			return $data;
 		} // end upload_process
 
+        /**
+         * 以下为工具类方法
+         */
+
 	} // end class Material
 
 /* End of file Material.php */

@@ -2689,7 +2689,8 @@
 									"key": "test_mode",
 									"value": "on",
 									"description": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "app_type",
@@ -4899,53 +4900,6 @@
 			"description": null,
 			"item": [
 				{
-					"name": "CRT5 购物车同步（上传）",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "1",
-									"description": "用户ID",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "cart_string",
-									"type": "text"
-								},
-								{
-									"key": "value",
-									"value": "2|4|0|1,9|14|0|2,2|8|0|2,9|17|0|1,2|3|0|1",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/cart/sync_up",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"cart",
-								"sync_up"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "CRT1 购物车列表（单用户）",
 					"request": {
 						"method": "POST",
@@ -5012,6 +4966,60 @@
 							"path": [
 								"cart",
 								"sync_down"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CRT5 购物车同步（上传）",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"description": "用户ID",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "cart_string",
+									"type": "text"
+								},
+								{
+									"key": "value",
+									"value": "2|4|0|1,9|14|0|2,2|8|0|2,9|17|0|1,2|3|0|1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/cart/sync_up",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"cart",
+								"sync_up"
 							]
 						}
 					},
@@ -6503,7 +6511,8 @@
 									"key": "id",
 									"value": "1",
 									"type": "text",
-									"description": ""
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "user_id",
@@ -6521,7 +6530,8 @@
 									"key": "last_viewed_time",
 									"value": "",
 									"type": "text",
-									"description": ""
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "last_viewed_platform",

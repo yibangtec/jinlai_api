@@ -30,7 +30,8 @@
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-            'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
+            'user_id',
+		    'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
 		);
 
 		/**
@@ -329,7 +330,7 @@
 		public function edit_bulk()
 		{
             // 操作可能需要检查客户端及设备信息
-            $type_allowed = array('admin',); // 客户端类型
+            $type_allowed = array('admin'); // 客户端类型
             $this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -337,24 +338,7 @@
 			//$min_level = 10; // 级别要求
 			//$this->permission_check($role_allowed, $min_level);
 
-			// 检查必要参数是否已传入
-			$required_params = $this->names_edit_bulk_required;
-			foreach ($required_params as $param):
-				${$param} = trim($this->input->post($param));
-				if ( !isset( ${$param} ) ):
-					$this->result['status'] = 400;
-					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-					exit();
-				endif;
-			endforeach;
-
-			// 初始化并配置表单验证库
-			$this->load->library('form_validation');
-			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
-			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore]');
-			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
-			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
+            $this->common_edit_bulk(TRUE); // 此类型方法通用代码块
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):

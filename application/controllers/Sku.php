@@ -29,19 +29,25 @@
 		/**
 		 * 创建时必要的字段名
 		 */
-		protected $names_create_required = array('user_id', 'biz_id', 'item_id', 'name_first', 'price', 'stocks',);
+		protected $names_create_required = array(
+		    'user_id',
+            'biz_id', 'item_id', 'name_first', 'price',
+        );
 
 		/**
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'item_id', 'url_image', 'name_first', 'name_second', 'name_third', 'tag_price', 'price', 'stocks', 'weight_net', 'weight_gross', 'weight_volume',
+			'url_image', 'name_first', 'name_second', 'name_third', 'tag_price', 'price', 'stocks', 'weight_net', 'weight_gross', 'weight_volume',
 		);
 
 		/**
 		 * 完整编辑单行时必要的字段名
 		 */
-		protected $names_edit_required = array('user_id', 'id', 'name_first', 'price', 'stocks',);
+		protected $names_edit_required = array(
+		    'user_id', 'id',
+            'name_first', 'price',
+        );
 
 		public function __construct()
 		{
@@ -173,7 +179,7 @@
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('biz',); // 客户端类型
+			$type_allowed = array('biz'); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -196,14 +202,14 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-			$this->form_validation->set_rules('item_id', '所属商品ID', 'trim|required');
+			$this->form_validation->set_rules('item_id', '所属商品ID', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('url_image', '图片', 'trim|max_length[255]');
             $this->form_validation->set_rules('name_first', '名称第一部分', 'trim|required|max_length[15]');
             $this->form_validation->set_rules('name_second', '名称第二部分', 'trim|max_length[15]');
             $this->form_validation->set_rules('name_third', '名称第三部分', 'trim|max_length[15]');
             $this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[99999.99]');
             $this->form_validation->set_rules('price', '价格（元）', 'trim|required|greater_than_equal_to[1]|less_than_equal_to[99999.99]');
-			$this->form_validation->set_rules('stocks', '库存量（单位）', 'trim|required|greater_than_equal_to[0]|less_than_equal_to[65535]');
+			$this->form_validation->set_rules('stocks', '库存量（单位）', 'trim|is_natural_no_zero|less_than_equal_to[65535]');
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
@@ -219,10 +225,11 @@
 					'creator_id' => $user_id,
 
                     'tag_price' => empty($this->input->post('tag_price'))? '0.00': $this->input->post('tag_price'),
+                    'stocks' => empty($this->input->post('stocks'))? 0: $this->input->post('stocks'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'biz_id', 'item_id', 'url_image', 'name_first', 'name_second', 'name_third', 'price', 'stocks', 'weight_net', 'weight_gross', 'weight_volume',
+					'biz_id', 'item_id', 'url_image', 'name_first', 'name_second', 'name_third', 'price', 'weight_net', 'weight_gross', 'weight_volume',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
@@ -232,6 +239,8 @@
 					$this->result['status'] = 200;
 					$this->result['content']['id'] = $result;
 					$this->result['content']['message'] = '创建成功';
+
+                    //TODO 更新所属商品总库存、最高/低价
 
 				else:
 					$this->result['status'] = 424;
@@ -259,7 +268,7 @@
 			$required_params = $this->names_edit_required;
 			foreach ($required_params as $param):
 				${$param} = trim($this->input->post($param));
-				if ( !isset( ${$param} ) ):
+				if ( empty( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();
@@ -275,7 +284,7 @@
             $this->form_validation->set_rules('name_third', '名称第三部分', 'trim|max_length[15]');
             $this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[99999.99]');
 			$this->form_validation->set_rules('price', '价格（元）', 'trim|required|greater_than[0]|less_than_equal_to[99999.99]');
-			$this->form_validation->set_rules('stocks', '库存量（单位）', 'trim|required|greater_than_equal_to[0]|less_than_equal_to[65535]');
+            $this->form_validation->set_rules('stocks', '库存量（单位）', 'trim|is_natural_no_zero|less_than_equal_to[65535]');
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
@@ -291,10 +300,11 @@
 					'operator_id' => $user_id,
 
                     'tag_price' => empty($this->input->post('tag_price'))? '0.00': $this->input->post('tag_price'),
+                    'stocks' => empty($this->input->post('stocks'))? 0: $this->input->post('stocks'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'url_image', 'name_first', 'name_second', 'name_third', 'price', 'stocks', 'weight_net', 'weight_gross', 'weight_volume',
+					'url_image', 'name_first', 'name_second', 'name_third', 'price', 'weight_net', 'weight_gross', 'weight_volume',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
@@ -305,6 +315,8 @@
                     $this->result['status'] = 200;
                     $this->result['content']['id'] = $id;
                     $this->result['content']['message'] = '编辑成功';
+
+                    //TODO 更新所属商品总库存、最高/低价
 
 				else:
 					$this->result['status'] = 434;
@@ -420,24 +432,8 @@
             //$min_level = 10; // 级别要求
             //$this->permission_check($role_allowed, $min_level);
 
-            // 检查必要参数是否已传入
-            $required_params = $this->names_edit_bulk_required;
-            foreach ($required_params as $param):
-                ${$param} = trim($this->input->post($param));
-                if ( empty( ${$param} ) ):
-                    $this->result['status'] = 400;
-                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-                    exit();
-                endif;
-            endforeach;
-
-            // 初始化并配置表单验证库
-            $this->load->library('form_validation');
-            $this->form_validation->set_error_delimiters('', '');
-            $this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
-            $this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore,suspend,publish]');
-            $this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
-            $this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
+            // 此类型方法通用代码块
+            $this->common_edit_bulk(TRUE, 'delete,restore,suspend,publish');
 
             // 验证表单值格式
             if ($this->form_validation->run() === FALSE):
@@ -490,7 +486,7 @@
             endif;
         } // end edit_bulk
 
-        /*
+        /**
          * 以下为工具方法
          */
 

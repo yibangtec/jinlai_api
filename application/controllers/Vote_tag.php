@@ -70,14 +70,6 @@
 			'name',
 		);
 
-		/**
-		 * 编辑多行特定字段时必要的字段名
-		 */
-		protected $names_edit_bulk_required = array(
-			'user_id', 'ids',
-			'operation', 'password',
-		);
-
 		public function __construct()
 		{
 			parent::__construct();
@@ -323,34 +315,16 @@
 		public function edit_bulk()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz', 'client'); // 客户端类型
-			$platform_allowed = array('ios', 'android', 'weapp', 'web'); // 客户端平台
-			$min_version = '0.0.1'; // 最低版本要求
-			$this->client_check($type_allowed, $platform_allowed, $min_version);
+			$type_allowed = array('admin', 'biz');
+			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
 			//$min_level = 10; // 级别要求
 			//$this->permission_check($role_allowed, $min_level);
 
-			// 检查必要参数是否已传入
-			$required_params = $this->names_edit_bulk_required;
-			foreach ($required_params as $param):
-				${$param} = trim($this->input->post($param));
-				if ( !isset( ${$param} ) ):
-					$this->result['status'] = 400;
-					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-					exit();
-				endif;
-			endforeach;
-
-			// 初始化并配置表单验证库
-			$this->load->library('form_validation');
-			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
-			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore]');
-			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
-			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
+            // 此类型方法通用代码块
+            $this->common_edit_bulk(TRUE);
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):
@@ -398,7 +372,6 @@
 
 			endif;
 		} // end edit_bulk
-		
 			
 		/**
 		 * 以下为工具类方法

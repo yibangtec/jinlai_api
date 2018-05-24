@@ -229,6 +229,10 @@
 		} // end notify
 
         /**
+         * 以下为工具方法
+         */
+
+        /**
          * 获取订单信息
          *
          * @param int/varchar $order_id 订单ID

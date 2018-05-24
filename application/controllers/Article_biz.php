@@ -30,7 +30,8 @@
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id', 'biz_id', 'title', 'content'
+			'user_id',
+            'biz_id', 'title', 'content'
 		);
 
 		/**
@@ -44,7 +45,8 @@
 		 * 完整编辑单行时必要的字段名
 		 */
 		protected $names_edit_required = array(
-			'user_id', 'id', 'title', 'content'
+			'user_id', 'id',
+            'title', 'content'
 		);
 
 		public function __construct()
@@ -293,91 +295,6 @@
 				endif;
 			endif;
 		} // end edit
-		
-		/**
-		 * 5 编辑单行数据特定字段
-		 *
-		 * 修改单行数据的单一字段值
-		 */
-		public function edit_certain()
-		{
-			// 操作可能需要检查客户端及设备信息
-            $type_allowed = array('biz',); // 客户端类型
-			$this->client_check($type_allowed);
-
-			// 管理类客户端操作可能需要检查操作权限
-			//$role_allowed = array('管理员', '经理'); // 角色要求
-			//$min_level = 10; // 级别要求
-			//$this->permission_check($role_allowed, $min_level);
-
-			// 检查必要参数是否已传入
-			$required_params = $this->names_edit_certain_required;
-			foreach ($required_params as $param):
-				${$param} = trim($this->input->post($param));
-				if ( $param !== 'value' && empty( ${$param} ) ): // value 可以为空；必要字段会在字段验证中另行检查
-					$this->result['status'] = 400;
-					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-					exit();
-				endif;
-			endforeach;
-
-			// 检查目标字段是否可编辑
-			if ( ! in_array($name, $this->names_edit_allowed) ):
-				$this->result['status'] = 431;
-				$this->result['content']['error']['message'] = '该字段不可被修改';
-				exit();
-			endif;
-
-			// 根据客户端类型检查是否可编辑
-			/*
-			$names_limited = array(
-				'biz' => array('name1', 'name2', 'name3', 'name4'),
-				'admin' => array('name1', 'name2', 'name3', 'name4'),
-			);
-			if ( in_array($name, $names_limited[$this->app_type]) ):
-				$this->result['status'] = 432;
-				$this->result['content']['error']['message'] = '该字段不可被当前类型的客户端修改';
-				exit();
-			endif;
-			*/
-
-			// 初始化并配置表单验证库
-			$this->load->library('form_validation');
-			$this->form_validation->set_error_delimiters('', '');
-			// 动态设置待验证字段名及字段值
-			$data_to_validate["{$name}"] = $value;
-			$this->form_validation->set_data($data_to_validate);
-            $this->form_validation->set_rules('title', '标题', 'trim|required|min_length[4]|max_length[30]');
-            $this->form_validation->set_rules('excerpt', '摘要', 'trim|min_length[10]|max_length[255]');
-            $this->form_validation->set_rules('content', '内容', 'trim|required|min_length[10]|max_length[20000]');
-            $this->form_validation->set_rules('url_images', '形象图', 'trim|max_length[255]');
-
-			// 若表单提交不成功
-			if ($this->form_validation->run() === FALSE):
-				$this->result['status'] = 401;
-				$this->result['content']['error']['message'] = validation_errors();
-
-			else:
-				// 需要编辑的数据
-				$data_to_edit['operator_id'] = $user_id;
-				$data_to_edit[$name] = $value;
-
-				// 获取ID
-				$id = $this->input->post('id');
-				$result = $this->basic_model->edit($id, $data_to_edit);
-
-				if ($result !== FALSE):
-                    $this->result['status'] = 200;
-                    $this->result['content']['id'] = $result;
-                    $this->result['content']['message'] = '编辑成功';
-
-				else:
-					$this->result['status'] = 434;
-					$this->result['content']['error']['message'] = '编辑失败';
-
-				endif;
-			endif;
-		} // end edit_certain
 
 		/**
 		 * 6 编辑多行数据特定字段
@@ -387,7 +304,7 @@
 		public function edit_bulk()
 		{
 			// 操作可能需要检查客户端及设备信息
-            $type_allowed = array('admin', 'biz',); // 客户端类型
+            $type_allowed = array('admin', 'biz'); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -395,24 +312,7 @@
 			//$min_level = 10; // 级别要求
 			//$this->permission_check($role_allowed, $min_level);
 
-			// 检查必要参数是否已传入
-			$required_params = $this->names_edit_bulk_required;
-			foreach ($required_params as $param):
-				${$param} = trim($this->input->post($param));
-				if ( empty( ${$param} ) ):
-					$this->result['status'] = 400;
-					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-					exit();
-				endif;
-			endforeach;
-
-			// 初始化并配置表单验证库
-			$this->load->library('form_validation');
-			$this->form_validation->set_error_delimiters('', '');
-			$this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
-			$this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore]');
-			$this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
-			$this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
+            $this->common_edit_bulk(TRUE); // 此类型方法通用代码块
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):
@@ -460,6 +360,10 @@
 
 			endif;
 		} // end edit_bulk
+
+        /**
+         * 以下为工具类方法
+         */
 
 	} // end class Article_biz
 

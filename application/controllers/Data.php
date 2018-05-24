@@ -139,6 +139,10 @@
 			endif;
 		} // end detail
 
+        /**
+         * 以下为工具类方法
+         */
+
 	} // end class Data
 
 /* End of file Data.php */

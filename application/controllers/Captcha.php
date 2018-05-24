@@ -105,6 +105,10 @@
 			endif;
 		} // end verify
 
+        /**
+         * 以下为工具类方法
+         */
+
 	} // end class Captcha
 
 /* End of file Captcha.php */

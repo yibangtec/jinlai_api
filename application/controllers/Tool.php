@@ -212,6 +212,10 @@
             $this->result['content'] = trim( $output );
         } // end curl
 
+        /**
+         * 以下为工具方法
+         */
+
 	} // end class Tool
 
 /* End of file Tool.php */

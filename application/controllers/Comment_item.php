@@ -38,13 +38,6 @@ class Comment_item extends MY_Controller
         'order_id', 'user_id', 'biz_id', 'item_id',
     );
 
-    /**
-     * 编辑多行特定字段时必要的字段名
-     */
-    protected $names_edit_bulk_required = array(
-        'user_id', 'ids', 'operation', 'password',
-    );
-
     // 商品评价信息（批量创建评价）
     protected $comment_item = array();
 
@@ -348,49 +341,6 @@ class Comment_item extends MY_Controller
     } // end create_bulk
 
     /**
-     * 创建单条商家评论
-     *
-     * @param $data_to_create 待创建的评价内容
-     */
-    protected function create_comment_biz($data_to_create)
-    {
-        $this->switch_model('comment_biz', 'comment_id');
-        $result = $this->basic_model->create($data_to_create, TRUE);
-        if ($result !== FALSE):
-            $this->result['status'] = 200;
-            $this->result['content']['comment_biz_id'] = $result;
-            $this->result['content']['message'] = '商家评论创建成功；';
-
-        else:
-            $this->result['status'] = 424;
-            $this->result['content']['error']['message'] = '商家评论创建失败';
-            exit();
-
-        endif;
-    } // end create_comment_biz
-
-    /**
-     * 创建单条商品评价
-     *
-     * @param $data_to_create 待创建的评价内容
-     */
-    protected function create_comment_item($data_to_create)
-    {
-        $result = $this->basic_model->create($data_to_create, TRUE);
-        if ($result !== FALSE):
-            $this->result['status'] = 200;
-            $this->result['content']['comment_item_ids'][] = $result;
-            $this->result['content']['message'] .= '商品ID['.$data_to_create['item_id'].']评论创建成功、';
-
-        else:
-            $this->result['status'] = 424;
-            $this->result['content']['error']['message'] .= '部分商品评论创建失败';
-            exit();
-
-        endif;
-    } // end create_comment_item
-
-    /**
      * 6 编辑多行数据特定字段
      *
      * 修改多行数据的单一字段值
@@ -406,24 +356,7 @@ class Comment_item extends MY_Controller
         //$min_level = 10; // 级别要求
         //$this->permission_check($role_allowed, $min_level);
 
-        // 检查必要参数是否已传入
-        $required_params = $this->names_edit_bulk_required;
-        foreach ($required_params as $param):
-            ${$param} = trim($this->input->post($param));
-            if (!isset(${$param})):
-                $this->result['status'] = 400;
-                $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-                exit();
-            endif;
-        endforeach;
-
-        // 初始化并配置表单验证库
-        $this->load->library('form_validation');
-        $this->form_validation->set_error_delimiters('', '');
-        $this->form_validation->set_rules('ids', '待操作数据ID们', 'trim|required|regex_match[/^(\d|\d,?)+$/]'); // 仅允许非零整数和半角逗号
-        $this->form_validation->set_rules('operation', '待执行操作', 'trim|required|in_list[delete,restore]');
-        $this->form_validation->set_rules('user_id', '操作者ID', 'trim|required|is_natural_no_zero');
-        $this->form_validation->set_rules('password', '密码', 'trim|required|min_length[6]|max_length[20]');
+        $this->common_edit_bulk(TRUE); // 此类型方法通用代码块
 
         // 验证表单值格式
         if ($this->form_validation->run() === FALSE):
@@ -472,6 +405,52 @@ class Comment_item extends MY_Controller
         endif;
     } // end edit_bulk
 
+    /**
+     * 以下为工具类方法
+     */
+
+    /**
+     * 创建单条商家评论
+     *
+     * @param $data_to_create 待创建的评价内容
+     */
+    protected function create_comment_biz($data_to_create)
+    {
+        $this->switch_model('comment_biz', 'comment_id');
+        $result = $this->basic_model->create($data_to_create, TRUE);
+        if ($result !== FALSE):
+            $this->result['status'] = 200;
+            $this->result['content']['comment_biz_id'] = $result;
+            $this->result['content']['message'] = '商家评论创建成功；';
+
+        else:
+            $this->result['status'] = 424;
+            $this->result['content']['error']['message'] = '商家评论创建失败';
+            exit();
+
+        endif;
+    } // end create_comment_biz
+
+    /**
+     * 创建单条商品评价
+     *
+     * @param $data_to_create 待创建的评价内容
+     */
+    protected function create_comment_item($data_to_create)
+    {
+        $result = $this->basic_model->create($data_to_create, TRUE);
+        if ($result !== FALSE):
+            $this->result['status'] = 200;
+            $this->result['content']['comment_item_ids'][] = $result;
+            $this->result['content']['message'] .= '商品ID['.$data_to_create['item_id'].']评论创建成功、';
+
+        else:
+            $this->result['status'] = 424;
+            $this->result['content']['error']['message'] .= '部分商品评论创建失败';
+            exit();
+
+        endif;
+    } // end create_comment_item
 
 } // end class Comment_item
 
