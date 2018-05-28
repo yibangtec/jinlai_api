@@ -194,7 +194,7 @@
 			$this->form_validation->set_rules('province', '省', 'trim|required|max_length[10]');
 			$this->form_validation->set_rules('city', '市', 'trim|required|max_length[10]');
 			$this->form_validation->set_rules('county', '区/县', 'trim|max_length[10]');
-			$this->form_validation->set_rules('street', '具体地址；小区名、路名、门牌号等', 'trim|required|max_length[50]');
+            $this->form_validation->set_rules('street', '具体地址', 'trim|required|min_length[5]|max_length[50]');
 			$this->form_validation->set_rules('longitude', '经度', 'trim|min_length[7]|max_length[10]|decimal');
 			$this->form_validation->set_rules('latitude', '纬度', 'trim|min_length[7]|max_length[10]|decimal');
 			$this->form_validation->set_rules('zipcode', '邮政编码', 'trim|integer|max_length[6]');
@@ -308,7 +308,7 @@
 			$this->form_validation->set_rules('province', '省', 'trim|required|max_length[10]');
 			$this->form_validation->set_rules('city', '市', 'trim|required|max_length[10]');
 			$this->form_validation->set_rules('county', '区/县', 'trim|max_length[10]');
-			$this->form_validation->set_rules('street', '具体地址；小区名、路名、门牌号等', 'trim|required|max_length[50]');
+			$this->form_validation->set_rules('street', '具体地址', 'trim|required|min_length[5]|max_length[50]');
 			$this->form_validation->set_rules('longitude', '经度', 'trim|min_length[7]|max_length[10]|decimal');
 			$this->form_validation->set_rules('latitude', '纬度', 'trim|min_length[7]|max_length[10]|decimal');
 			$this->form_validation->set_rules('zipcode', '邮政编码', 'trim|integer|max_length[6]');
@@ -382,7 +382,18 @@
 			$type_allowed = array('client'); // 客户端类型
 			$this->client_check($type_allowed);
 
-			$this->common_edit_bulk(FALSE); // 此类型方法通用代码块
+            // 检查必要参数是否已传入
+            $required_params = $this->names_edit_bulk_required;
+            foreach ($required_params as $param):
+                ${$param} = trim($this->input->post($param));
+                if ( empty( ${$param} ) ):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+                    exit();
+                endif;
+            endforeach;
+            // 此类型方法通用代码块
+			$this->common_edit_bulk(FALSE);
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):
@@ -425,7 +436,7 @@
 			endif;
 		} // end edit_bulk
 
-        /*
+        /**
          * 以下为工具方法
          */
 

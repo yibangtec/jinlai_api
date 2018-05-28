@@ -220,13 +220,17 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
+
+					'biz_id' => $biz_id,
+					'name' => $name,
+					'type' => $type,
 					'period_valid' => !empty('period_valid')? $this->input->post('period_valid'): 31622400, // 默认366天
 					'expire_refund_rate' => !empty('expire_refund_rate')? $this->input->post('expire_refund_rate'): 1, // 默认全额退款
 					'time_latest_deliver' => !empty('time_latest_deliver')? $this->input->post('time_latest_deliver'): 259200, // 默认3自然日
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'biz_id', 'name', 'type', 'time_valid_from', 'time_valid_end', 'nation', 'province', 'city', 'county', 'longitude', 'latitude', 'type_actual', 'max_amount', 'start_amount', 'unit_amount', 'fee_start', 'fee_unit', 'exempt_amount', 'exempt_subtotal',
+					'time_valid_from', 'time_valid_end', 'nation', 'province', 'city', 'county', 'longitude', 'latitude', 'type_actual', 'max_amount', 'start_amount', 'unit_amount', 'fee_start', 'fee_unit', 'exempt_amount', 'exempt_subtotal',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
@@ -317,13 +321,15 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
+
+                    'name' => $name,
 					'period_valid' => !empty('period_valid')? $this->input->post('period_valid'): 31622400, // 默认366天
 					'expire_refund_rate' => !empty('expire_refund_rate')? $this->input->post('expire_refund_rate'): 1, // 默认全额退款
 					'time_latest_deliver' => !empty('time_latest_deliver')? $this->input->post('time_latest_deliver'): 259200, // 默认3自然日
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-                    'name', 'time_valid_from', 'time_valid_end', 'nation', 'province', 'city', 'county', 'longitude', 'latitude','type_actual', 'max_amount', 'start_amount', 'unit_amount', 'fee_start', 'fee_unit', 'exempt_amount', 'exempt_subtotal',
+                    'time_valid_from', 'time_valid_end', 'nation', 'province', 'city', 'county', 'longitude', 'latitude','type_actual', 'max_amount', 'start_amount', 'unit_amount', 'fee_start', 'fee_unit', 'exempt_amount', 'exempt_subtotal',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
@@ -373,7 +379,18 @@
 			//$min_level = 10; // 级别要求
 			//$this->permission_check($role_allowed, $min_level);
 
-            $this->common_edit_bulk(TRUE); // 此类型方法通用代码块
+            // 检查必要参数是否已传入
+            $required_params = $this->names_edit_bulk_required;
+            foreach ($required_params as $param):
+                ${$param} = trim($this->input->post($param));
+                if ( empty( ${$param} ) ):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+                    exit();
+                endif;
+            endforeach;
+            // 此类型方法通用代码块
+            $this->common_edit_bulk(TRUE);
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):

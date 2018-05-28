@@ -219,8 +219,8 @@
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference、
 			$this->form_validation->set_rules('receiver_type', '目标客户端类型', 'trim|in_list[admin,biz,client]');
-			$this->form_validation->set_rules('user_id', '用户ID', 'trim|is_natural_no_zero');
-			$this->form_validation->set_rules('biz_id', '商家ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('user_id', '目标用户ID', 'trim|is_natural_no_zero');
+			$this->form_validation->set_rules('biz_id', '目标商家ID', 'trim|is_natural_no_zero');
             $this->form_validation->set_rules('article_id', '相关文章ID', 'trim|is_natural_no_zero');
 			$this->form_validation->set_rules('title', '标题', 'trim|max_length[30]');
 			$this->form_validation->set_rules('excerpt', '摘要', 'trim|max_length[100]');
@@ -304,7 +304,18 @@
 			//$min_level = 10; // 级别要求
 			//$this->permission_check($role_allowed, $min_level);
 
-            $this->common_edit_bulk(TRUE, 'delete,restore,revoke'); // 此类型方法通用代码块
+            // 检查必要参数是否已传入
+            $required_params = $this->names_edit_bulk_required;
+            foreach ($required_params as $param):
+                ${$param} = trim($this->input->post($param));
+                if ( empty( ${$param} ) ):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+                    exit();
+                endif;
+            endforeach;
+            // 此类型方法通用代码块
+            $this->common_edit_bulk(TRUE, 'delete,restore,revoke');
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):

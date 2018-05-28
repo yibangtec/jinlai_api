@@ -400,7 +400,18 @@
 			//$min_level = 10; // 级别要求
 			//$this->permission_check($role_allowed, $min_level);
 
-            $this->common_edit_bulk(FALSE, 'cancel,note,reprice,refuse,accept,deliver,confirm,delete,restore'); // 此类型方法通用代码块
+            // 检查必要参数是否已传入
+            $required_params = $this->names_edit_bulk_required;
+            foreach ($required_params as $param):
+                ${$param} = trim($this->input->post($param));
+                if ( empty( ${$param} ) ):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+                    exit();
+                endif;
+            endforeach;
+            // 此类型方法通用代码块
+            $this->common_edit_bulk(FALSE, 'cancel,note,reprice,refuse,accept,deliver,confirm,delete,restore');
 
 			// 用户取消订单时需要输入原因
 			if ($operation === 'cancel')
@@ -546,17 +557,14 @@
 				endif;
 			endforeach;
 
-			// 获取可用地址信息
+			// 获取当前用户可用地址信息
 			$conditions = array(
 				'user_id' => $user_id,
 				'time_delete' => 'NULL',
 			);
-			$this->switch_model('address', 'address_id');
-			$this->db->select('address_id, brief, fullname, mobile, nation, province, city, county, street, longitude, latitude, zipcode');
-			$addresses = $this->basic_model->select($conditions, NULL);
-			$this->reset_model();
+            $addresses = $this->get_items('address', 'address_id', $conditions);
 
-			// 获取商品信息
+			// 获取待下单商品信息
 			$this->cart_decode($cart_string);
 
             // 计算待生成子订单总数，即订单相关商家数
@@ -567,13 +575,12 @@
                 // 获取用户面额最高的有效商家优惠券（若有）
                 $this->load->model('coupon_model');
                 $coupon = $this->coupon_model->get_max_valid($user_id, $this->order_data[$i]['biz_id'], $this->order_data[$i]['subtotal']);
-                if ( !empty($coupon) )
+                if ( ! empty($coupon) )
                     $this->order_data[$i]['total'] -= $coupon['amount'];
                 // 无论是否有相应优惠券，均生成相应返回信息字段
                 $this->order_data[$i]['coupon_id'] = $coupon['coupon_id'];
                 $this->order_data[$i]['coupon_name'] = $coupon['name'];
                 $this->order_data[$i]['discount_coupon'] = $coupon['amount'];
-
             endfor;
 
 			$this->result['status'] = 200;
@@ -593,7 +600,7 @@
 			$this->client_check($type_allowed);
 
 			// 检查必要参数是否已传入
-			$required_params = array('biz_id', 'code_string',);
+			$required_params = array('biz_id', 'code_string');
 			foreach ($required_params as $param):
 				${$param} = trim($this->input->post($param));
 				if ( !isset( ${$param} ) ):
@@ -662,7 +669,7 @@
 			endif;
 		} // end valid
 
-        /*
+        /**
          * 以下为工具方法
          */
 

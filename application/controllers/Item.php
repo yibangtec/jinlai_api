@@ -131,8 +131,12 @@
             // 类特有筛选项
             $condition = $this->advanced_sorter($condition);
 
-            // 用户仅可查看未删除项
-            if ($this->app_type === 'client') $condition['time_delete'] = 'NULL';
+            // 用户仅可查看未删除、已上架、库存不为0项
+            if ($this->app_type === 'client'):
+                $condition['time_delete'] = 'NULL';
+                $condition['time_suspend'] = 'NULL';
+                $condition['stocks'] = '> 0';
+            endif;
 
 			// 排序条件
             $order_by['time_publish'] = 'DESC';
@@ -655,7 +659,18 @@
 			//$min_level = 10; // 级别要求
 			//$this->permission_check($role_allowed, $min_level);
 
-            $this->common_edit_bulk(TRUE, 'delete,restore,suspend,publish'); // 此类型方法通用代码块
+            // 检查必要参数是否已传入
+            $required_params = $this->names_edit_bulk_required;
+            foreach ($required_params as $param):
+                ${$param} = trim($this->input->post($param));
+                if ( empty( ${$param} ) ):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+                    exit();
+                endif;
+            endforeach;
+            // 此类型方法通用代码块
+            $this->common_edit_bulk(TRUE, 'delete,restore,suspend,publish');
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):

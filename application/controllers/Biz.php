@@ -466,7 +466,7 @@
 		public function edit_certain()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz',); // 客户端类型
+			$type_allowed = array('admin', 'biz'); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -576,7 +576,18 @@
 			//$min_level = 10; // 级别要求
 			//$this->permission_check($role_allowed, $min_level);
 
-            $this->common_edit_bulk(TRUE); // 此类型方法通用代码块
+            // 检查必要参数是否已传入
+            $required_params = $this->names_edit_bulk_required;
+            foreach ($required_params as $param):
+                ${$param} = trim($this->input->post($param));
+                if ( empty( ${$param} ) ):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+                    exit();
+                endif;
+            endforeach;
+            // 此类型方法通用代码块
+            $this->common_edit_bulk(TRUE);
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):

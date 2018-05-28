@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'biz_id', 'name', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_order', 'day_rest', 'time_open', 'time_close', 'url_image_main', 'figure_image_urls', 'nation', 'province', 'city', 'county', 'street', 'region_id', 'region', 'poi_id', 'poi', 'longitude', 'latitude', 'range_deliver', 'status',
+			'biz_id', 'day_rest', 'time_open', 'time_close', 'nation', 'province', 'city', 'county', 'region_id', 'region', 'poi_id', 'poi', 'longitude', 'latitude', 'range_deliver', 'status',
             'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -30,7 +30,8 @@
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'user_id', 'biz_id', 'name', 'province', 'city', 'street',
+			'user_id',
+            'biz_id', 'name', 'province', 'city', 'street',
 		);
 
 		/**
@@ -203,7 +204,7 @@
 			$this->form_validation->set_rules('province', '省', 'trim|required|max_length[10]');
 			$this->form_validation->set_rules('city', '市', 'trim|required|max_length[10]');
 			$this->form_validation->set_rules('county', '区/县', 'trim|max_length[10]');
-			$this->form_validation->set_rules('street', '具体地址；小区名、路名、门牌号等', 'trim|required|max_length[50]');
+            $this->form_validation->set_rules('street', '具体地址', 'trim|required|min_length[5]|max_length[50]');
 			$this->form_validation->set_rules('longitude', '经度', 'trim|min_length[7]|max_length[10]|decimal');
 			$this->form_validation->set_rules('latitude', '纬度', 'trim|min_length[7]|max_length[10]|decimal');
 			$this->form_validation->set_rules('region_id', '地区', 'trim');
@@ -219,6 +220,7 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
+
 					//'nation' => empty($this->input->post('nation'))? '中国': $this->input->post('nation'),
 					'nation' => '中国', // 暂时只支持中国
 					'time_open' => empty($this->input->post('time_open'))? '08': $this->input->post('time_open'),
@@ -302,7 +304,7 @@
 			$this->form_validation->set_rules('province', '省', 'trim|required|max_length[10]');
 			$this->form_validation->set_rules('city', '市', 'trim|required|max_length[10]');
 			$this->form_validation->set_rules('county', '区/县', 'trim|max_length[10]');
-			$this->form_validation->set_rules('street', '具体地址；小区名、路名、门牌号等', 'trim|required|max_length[50]');
+            $this->form_validation->set_rules('street', '具体地址', 'trim|required|min_length[5]|max_length[50]');
 			$this->form_validation->set_rules('longitude', '经度', 'trim|min_length[7]|max_length[10]|decimal');
 			$this->form_validation->set_rules('latitude', '纬度', 'trim|min_length[7]|max_length[10]|decimal');
 			$this->form_validation->set_rules('region_id', '地区', 'trim');
@@ -377,7 +379,18 @@
 			//$min_level = 10; // 级别要求
 			//$this->permission_check($role_allowed, $min_level);
 
-            $this->common_edit_bulk(TRUE); // 此类型方法通用代码块
+            // 检查必要参数是否已传入
+            $required_params = $this->names_edit_bulk_required;
+            foreach ($required_params as $param):
+                ${$param} = trim($this->input->post($param));
+                if ( empty( ${$param} ) ):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+                    exit();
+                endif;
+            endforeach;
+            // 此类型方法通用代码块
+            $this->common_edit_bulk(TRUE);
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):

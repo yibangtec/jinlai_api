@@ -416,17 +416,6 @@
          */
         protected function common_edit_bulk($need_password = FALSE, $operations = 'delete,restore')
         {
-            // 检查必要参数是否已传入
-			$required_params = $this->names_edit_bulk_required;
-			foreach ($required_params as $param):
-				${$param} = trim($this->input->post($param));
-                if ( empty( ${$param} ) ):
-                    $this->result['status'] = 400;
-                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
-                    exit();
-                endif;
-            endforeach;
-
             // 初始化并配置表单验证库
             $this->load->library('form_validation');
             $this->form_validation->set_error_delimiters('', '');

@@ -302,7 +302,7 @@
 		public function edit()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz',); // 客户端类型
+			$type_allowed = array('admin', 'biz'); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -314,7 +314,7 @@
 			$required_params = $this->names_edit_required;
 			foreach ($required_params as $param):
 				${$param} = trim($this->input->post($param));
-				if ( !isset( ${$param} ) ):
+				if ( empty( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();
@@ -368,13 +368,10 @@
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
-                endif;
-
 				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);
 				if ($result !== FALSE):
 					$this->result['status'] = 200;
-					$this->result['content']['id'] = $id;
 					$this->result['content']['message'] = '编辑成功';
 
                     // 对候选项进行排序，新增的选项将自动附加在最后
@@ -394,6 +391,7 @@
                             );
                             @$result =$this->basic_model->edit($option_orders_array[$i], $data_to_edit);
                         endfor;
+                    endif;
 
 				else:
 					$this->result['status'] = 434;
@@ -419,6 +417,16 @@
 			//$min_level = 10; // 级别要求
 			//$this->permission_check($role_allowed, $min_level);
 
+            // 检查必要参数是否已传入
+            $required_params = $this->names_edit_bulk_required;
+            foreach ($required_params as $param):
+                ${$param} = trim($this->input->post($param));
+                if ( empty( ${$param} ) ):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+                    exit();
+                endif;
+            endforeach;
             // 此类型方法通用代码块
             $this->common_edit_bulk(TRUE);
 

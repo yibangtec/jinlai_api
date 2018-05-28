@@ -36,31 +36,34 @@
 								},
 								{
 									"key": "sms_id",
-									"value": "312",
+									"value": "329",
 									"type": "text"
 								},
 								{
 									"key": "captcha",
-									"value": "156084",
+									"value": "082731",
 									"type": "text"
 								},
 								{
 									"key": "wechat_union_id",
 									"value": "o6_bmasdasdsad6_2sgVt7hMZOPfL",
 									"description": "微信UnionID",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "getui_id",
 									"value": "a24e50760b23f3f8dccf438e32ec18a9",
 									"description": "个推ID",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "promoter_id",
 									"value": "1",
 									"description": "推广者ID",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},
@@ -229,13 +232,15 @@
 									"key": "wechat_union_id",
 									"value": "o6_bmasdasdsad6_2sgVt7hMZOPfL",
 									"type": "text",
-									"description": ""
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "getui_id",
 									"value": "a24e50760b23f3f8dccf438e32ec18a9",
 									"type": "text",
-									"description": ""
+									"description": "",
+									"disabled": true
 								}
 							]
 						},
@@ -380,6 +385,13 @@
 									"key": "wechat_union_id",
 									"value": "o6_bmasdasdsad6_2sgVt7hMZOPfL",
 									"type": "text"
+								},
+								{
+									"key": "getui_id",
+									"value": "",
+									"description": "",
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},
@@ -804,7 +816,7 @@
 								},
 								{
 									"key": "fullname",
-									"value": "刘亚杰",
+									"value": "刘先生",
 									"type": "text",
 									"description": ""
 								},
@@ -886,12 +898,6 @@
 								{
 									"key": "operation",
 									"value": "delete",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "password",
-									"value": "123456",
 									"type": "text",
 									"description": ""
 								}
@@ -5226,14 +5232,14 @@
 								},
 								{
 									"key": "limit",
-									"value": "",
+									"value": "5",
 									"type": "text",
 									"description": "",
 									"disabled": true
 								},
 								{
 									"key": "offset",
-									"value": "",
+									"value": "0",
 									"type": "text",
 									"description": "",
 									"disabled": true
@@ -5242,8 +5248,7 @@
 									"key": "biz_id",
 									"value": "2",
 									"type": "text",
-									"description": "",
-									"disabled": true
+									"description": ""
 								},
 								{
 									"key": "name",
@@ -8163,6 +8168,13 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"type": "text"
@@ -8802,6 +8814,135 @@
 			"description": null,
 			"item": [
 				{
+					"name": "MTA0 系统参数计数",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "time_create",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_edit",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "creator_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "operator_id",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/meta/count",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"meta",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MTA1 系统参数列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "offset",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_create",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_edit",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "creator_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "operator_id",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/meta/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"meta",
+								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "MTA2 系统参数详情",
 					"request": {
 						"method": "POST",
@@ -8832,6 +8973,57 @@
 							"path": [
 								"meta",
 								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MTA3 系统参数创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "test_meta",
+									"type": "text"
+								},
+								{
+									"key": "value",
+									"value": "testing",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "测试系统参数",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/meta/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"meta",
+								"create"
 							]
 						}
 					},
@@ -8894,57 +9086,6 @@
 					"response": []
 				},
 				{
-					"name": "MTA3 系统参数创建",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "admin",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "test_meta",
-									"type": "text"
-								},
-								{
-									"key": "value",
-									"value": "testing",
-									"type": "text"
-								},
-								{
-									"key": "description",
-									"value": "测试系统参数",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/meta/create",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"meta",
-								"create"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "MTA6 系统参数批量操作",
 					"request": {
 						"method": "POST",
@@ -8990,128 +9131,6 @@
 							"path": [
 								"meta",
 								"edit_bulk"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "MTA1 系统参数列表",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "limit",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "offset",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_create",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_delete",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_edit",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "creator_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "operator_id",
-									"value": "",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/meta/index",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"meta",
-								"index"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "MTA0 系统参数计数",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "admin",
-									"type": "text"
-								},
-								{
-									"key": "time_create",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_delete",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_edit",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "creator_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "operator_id",
-									"value": "",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/meta/count",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"meta",
-								"count"
 							]
 						}
 					},
@@ -9962,6 +9981,12 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"type": "text"
@@ -9975,12 +10000,6 @@
 									"key": "cart_string",
 									"value": "2|2|5|1,9|14|0|3,2|8|0|2,9|17|0|1,2|3|0|1",
 									"type": "text"
-								},
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
 								}
 							]
 						},
@@ -10473,6 +10492,11 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text"
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"type": "text"
@@ -10522,8 +10546,9 @@
 									"disabled": true
 								},
 								{
-									"key": "test_mode",
-									"value": "on",
+									"key": "freight_template_biz_id",
+									"value": "",
+									"description": "",
 									"type": "text"
 								}
 							]
@@ -14183,18 +14208,25 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"type": "text"
 								},
 								{
 									"key": "limit",
-									"value": "",
+									"value": "5",
 									"type": "text"
 								},
 								{
 									"key": "offset",
-									"value": "",
+									"value": "3",
 									"type": "text"
 								},
 								{
@@ -15397,6 +15429,13 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"description": "",
@@ -15405,7 +15444,8 @@
 								{
 									"key": "limit",
 									"value": "3",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "offset",
@@ -15728,6 +15768,64 @@
 							"path": [
 								"user",
 								"edit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "USR5 用户单项编辑",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "\btest_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "36",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "36",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "getui_id",
+									"type": "text"
+								},
+								{
+									"key": "value",
+									"value": "2f874ddb157977f322022d794692d73a",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/user/edit_certain",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"user",
+								"edit_certain"
 							]
 						}
 					},
@@ -17351,12 +17449,7 @@
 			],
 			"request": {
 				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/x-www-form-urlencoded"
-					}
-				],
+				"header": [],
 				"body": {
 					"mode": "urlencoded",
 					"urlencoded": [
@@ -17635,6 +17728,124 @@
 						"push_result"
 					]
 				}
+			},
+			"response": []
+		},
+		{
+			"name": "工具 单商户版商品列表",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9a508eae-f04c-4a12-836e-9df98b138cff",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "limit",
+							"value": "3",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "offset",
+							"value": "0",
+							"type": "text",
+							"description": ""
+						},
+						{
+							"key": "order_by_name",
+							"value": "price_new",
+							"type": "text",
+							"description": "",
+							"disabled": true
+						},
+						{
+							"key": "order_by_type",
+							"value": "DESC",
+							"type": "text",
+							"description": "",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "https://www.ybslux.com/interface/api/products.ashx?limit=5&offset=0&order_by_name=price_new&order_by_type=desc",
+					"protocol": "https",
+					"host": [
+						"www",
+						"ybslux",
+						"com"
+					],
+					"path": [
+						"interface",
+						"api",
+						"products.ashx"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "5"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						},
+						{
+							"key": "order_by_name",
+							"value": "price_new"
+						},
+						{
+							"key": "order_by_type",
+							"value": "desc"
+						}
+					]
+				},
+				"description": "将相应数据表结构输出为CSV"
+			},
+			"response": []
+		},
+		{
+			"name": "工具 单商户版用户列表",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://www.ybslux.com/interface/api/users.ashx?limit=5&offset=0",
+					"protocol": "https",
+					"host": [
+						"www",
+						"ybslux",
+						"com"
+					],
+					"path": [
+						"interface",
+						"api",
+						"users.ashx"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "5"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						}
+					]
+				},
+				"description": "及用户收货地址"
 			},
 			"response": []
 		}

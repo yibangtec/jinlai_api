@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
+			'biz_id', 'name', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'nation', 'province', 'city', 'county', 'bank_name', 'bank_account',
             'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
@@ -202,11 +202,11 @@
 			$this->form_validation->set_rules('url_image_auth_ssn', '经办人身份证', 'trim|required|max_length[255]');
 			$this->form_validation->set_rules('url_image_auth_doc', '经办人授权书', 'trim|required|max_length[255]');
 			$this->form_validation->set_rules('url_verify_photo', '经办人持身份证照片', 'trim|required|max_length[255]');
-            $this->form_validation->set_rules('nation', '国家', 'trim');
-			$this->form_validation->set_rules('province', '省', 'trim|required');
-			$this->form_validation->set_rules('city', '市', 'trim|required');
-			$this->form_validation->set_rules('county', '区', 'trim|required');
-			$this->form_validation->set_rules('street', '具体地址', 'trim|required');
+            $this->form_validation->set_rules('nation', '国别', 'trim');
+            $this->form_validation->set_rules('province', '省', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('city', '市', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('county', '区/县', 'trim|max_length[10]');
+            $this->form_validation->set_rules('street', '具体地址', 'trim|required|min_length[5]|max_length[50]');
 			$this->form_validation->set_rules('bank_name', '开户行名称', 'trim|required|max_length[20]');
 			$this->form_validation->set_rules('bank_account', '开户行账号', 'trim|required|max_length[30]');
 
@@ -219,11 +219,13 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
-					//'name' => $this->input->post('name'),
+
+                    //'nation' => empty($this->input->post('nation'))? '中国': $this->input->post('nation'),
+                    'nation' => '中国', // 暂时只支持中国
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-				    'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
+				    'biz_id', 'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
@@ -281,11 +283,11 @@
             $this->form_validation->set_rules('url_image_auth_ssn', '经办人身份证', 'trim|required|max_length[255]');
             $this->form_validation->set_rules('url_image_auth_doc', '经办人授权书', 'trim|required|max_length[255]');
             $this->form_validation->set_rules('url_verify_photo', '经办人持身份证照片', 'trim|required|max_length[255]');
-            $this->form_validation->set_rules('nation', '国家', 'trim');
-            $this->form_validation->set_rules('province', '省', 'trim|required');
-            $this->form_validation->set_rules('city', '市', 'trim|required');
-            $this->form_validation->set_rules('county', '区', 'trim|required');
-            $this->form_validation->set_rules('street', '具体地址', 'trim|required');
+            $this->form_validation->set_rules('nation', '国别', 'trim');
+            $this->form_validation->set_rules('province', '省', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('city', '市', 'trim|required|max_length[10]');
+            $this->form_validation->set_rules('county', '区/县', 'trim|max_length[10]');
+            $this->form_validation->set_rules('street', '具体地址', 'trim|required|min_length[5]|max_length[50]');
             $this->form_validation->set_rules('bank_name', '开户行名称', 'trim|required|max_length[20]');
             $this->form_validation->set_rules('bank_account', '开户行账号', 'trim|required|max_length[30]');
 
@@ -298,11 +300,13 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
-					//'name' => $this->input->post('name'),
+
+                    //'nation' => empty($this->input->post('nation'))? '中国': $this->input->post('nation'),
+                    'nation' => '中国', // 暂时只支持中国
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-                    'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'nation', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
+                    'name', 'fullname_owner', 'fullname_auth', 'code_license', 'code_ssn_owner', 'code_ssn_auth', 'url_image_license', 'url_image_owner_ssn', 'url_image_auth_ssn', 'url_image_auth_doc', 'url_verify_photo', 'province', 'city', 'county', 'street', 'bank_name', 'bank_account',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
@@ -338,7 +342,18 @@
 			//$min_level = 10; // 级别要求
 			//$this->permission_check($role_allowed, $min_level);
 
-            $this->common_edit_bulk(TRUE); // 此类型方法通用代码块
+            // 检查必要参数是否已传入
+            $required_params = $this->names_edit_bulk_required;
+            foreach ($required_params as $param):
+                ${$param} = trim($this->input->post($param));
+                if ( empty( ${$param} ) ):
+                    $this->result['status'] = 400;
+                    $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+                    exit();
+                endif;
+            endforeach;
+            // 此类型方法通用代码块
+            $this->common_edit_bulk(TRUE);
 
 			// 验证表单值格式
 			if ($this->form_validation->run() === FALSE):
@@ -387,7 +402,7 @@
 			endif;
 		} // end edit_bulk
 
-        /*
+        /**
          * 以下为工具方法
          */
 
