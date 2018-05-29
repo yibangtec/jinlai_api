@@ -7304,7 +7304,8 @@
 								{
 									"key": "test_mode",
 									"value": "on",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "app_type",
@@ -7337,7 +7338,7 @@
 								},
 								{
 									"key": "biz_id",
-									"value": "2",
+									"value": "142",
 									"type": "text"
 								},
 								{
@@ -7355,94 +7356,112 @@
 								{
 									"key": "tag_price",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "price",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "price_min",
 									"value": "",
 									"type": "text",
-									"description": "最低商城价"
+									"description": "最低商城价",
+									"disabled": true
 								},
 								{
 									"key": "price_max",
 									"value": "",
 									"type": "text",
-									"description": "最高商城价"
+									"description": "最高商城价",
+									"disabled": true
 								},
 								{
 									"key": "unit_name",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "weight_net",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "weight_gross",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "weight_volume",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "stocks",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "quantity_max",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "quantity_min",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "coupon_allowed",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "discount_credit",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "commission_rate",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "time_to_publish",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "time_to_suspend",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "promotion_id",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "time_create",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "time_delete",
@@ -7454,22 +7473,26 @@
 								{
 									"key": "time_edit",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "creator_id",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "operator_id",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "status",
 									"value": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "ids",
@@ -8892,7 +8915,8 @@
 								{
 									"key": "limit",
 									"value": "3",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "offset",
@@ -9641,42 +9665,6 @@
 			"description": null,
 			"item": [
 				{
-					"name": "ORD2 商品订单详情",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "224",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/order/detail",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"order",
-								"detail"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "ORD0 商品订单计数",
 					"request": {
 						"method": "POST",
@@ -9967,161 +9955,6 @@
 							"path": [
 								"order",
 								"count"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ORD7 商品订单预览/预下单",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "cart_string",
-									"value": "2|2|5|1,9|14|0|3,2|8|0|2,9|17|0|1,2|3|0|1",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/order/prepare",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"order",
-								"prepare"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ORD6 商品订单批量操作",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "biz",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "ids",
-									"value": "38",
-									"type": "text"
-								},
-								{
-									"key": "password",
-									"value": "123456",
-									"type": "text"
-								},
-								{
-									"key": "operation",
-									"value": "deliver",
-									"type": "text"
-								},
-								{
-									"key": "deliver_method",
-									"value": "物流快递",
-									"type": "text"
-								},
-								{
-									"key": "deliver_biz",
-									"value": "圆通",
-									"type": "text"
-								},
-								{
-									"key": "waybill_id",
-									"value": "19654846759785TZ",
-									"type": "text"
-								},
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/order/edit_bulk",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"order",
-								"edit_bulk"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ORD-test 订单测试功能",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "order_id",
-									"value": "343",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/order/stock_update",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"order",
-								"stock_update"
 							]
 						}
 					},
@@ -10438,7 +10271,7 @@
 					"response": []
 				},
 				{
-					"name": "ORD8 商品订单商家验证",
+					"name": "ORD2 商品订单详情",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -10447,28 +10280,18 @@
 							"formdata": [
 								{
 									"key": "app_type",
-									"value": "biz",
+									"value": "client",
 									"type": "text"
 								},
 								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "biz_id",
-									"value": "2",
-									"type": "text"
-								},
-								{
-									"key": "code_string",
-									"value": "217684485196",
+									"key": "id",
+									"value": "224",
 									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/order/valid",
+							"raw": "https://api.517ybang.com/order/detail",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -10477,7 +10300,7 @@
 							],
 							"path": [
 								"order",
-								"valid"
+								"detail"
 							]
 						}
 					},
@@ -10564,6 +10387,215 @@
 							"path": [
 								"order",
 								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ORD6 商品订单批量操作",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "biz",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "38",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "operation",
+									"value": "deliver",
+									"type": "text"
+								},
+								{
+									"key": "deliver_method",
+									"value": "物流快递",
+									"type": "text"
+								},
+								{
+									"key": "deliver_biz",
+									"value": "圆通",
+									"type": "text"
+								},
+								{
+									"key": "waybill_id",
+									"value": "19654846759785TZ",
+									"type": "text"
+								},
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/order/edit_bulk",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"order",
+								"edit_bulk"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ORD7 商品订单预览/预下单",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "cart_string",
+									"value": "2|2|5|1,9|14|0|3,2|8|0|2,9|17|0|1,2|3|0|1",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "cart_string",
+									"value": "2|619|102|2",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/order/prepare",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"order",
+								"prepare"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ORD8 商品订单商家验证",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "biz",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "biz_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "code_string",
+									"value": "217684485196",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/order/valid",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"order",
+								"valid"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ORD-test 订单测试功能",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "order_id",
+									"value": "343",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/order/stock_update",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"order",
+								"stock_update"
 							]
 						}
 					},
@@ -14222,12 +14254,14 @@
 								{
 									"key": "limit",
 									"value": "5",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "offset",
 									"value": "3",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "name",

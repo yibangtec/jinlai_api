@@ -635,15 +635,23 @@
 		 */
 		private function generate_single_item($item_id, $sku_id = NULL, $count = 1)
 		{
+            // 获取规格信息
+            if ( !empty($sku_id) ):
+                $this->switch_model('sku', 'sku_id');
+                $sku = $this->basic_model->select_by_id($sku_id);
+
+                // 若未获取到规格信息，或不可购买，则不继续以下逻辑
+                if (empty($sku) || empty($sku['stocks']) || !empty($sku['time_delete'])) return;
+
+                // 若已获取规格信息，则以规格信息中的item_id覆盖传入的item_id
+                $item_id = $sku['item_id'];
+            endif;
+
 			// 获取商品信息
             $this->switch_model('item', 'item_id');
             $item = $this->basic_model->select_by_id($item_id);
-
-			// 获取规格信息
-			if ( !empty($sku_id) ):
-                $this->switch_model('sku', 'sku_id');
-				$sku = $this->basic_model->select_by_id($sku_id);
-			endif;
+            // 若未获取到商品信息，或不可购买，则不继续以下逻辑
+            if (empty($item) || empty($item['stocks']) || empty($item['time_publish']) || !empty($item['time_delete'])) return;
 
 			// 生成订单商品信息
 			$order_item = array(
@@ -665,11 +673,7 @@
 			);
 
 			// 判断当前商品/规格是否有效，并完善规格信息（若有）
-			if ( empty($sku) ):
-                // 无库存、当前未上架、已删除的商品视为失效商品
-                $order_item['valid'] = ( empty($item['stocks']) || empty($item['time_publish']) || !empty($item['time_delete']))? FALSE: TRUE;
-
-            else:
+			if ( !empty($sku) ):
 				$order_sku = array(
 					'sku_id' => $sku_id,
 					'sku_name' => trim($sku['name_first']. ' '.$sku['name_second']. ' '.$sku['name_third']),
@@ -679,7 +683,8 @@
                     'stocks' => $sku['stocks'],
 
 					// 无库存、已删除，或所属商品当前未上架的规格视为失效规格
-                    'valid' => ( empty($sku['stocks']) || empty($item['time_publish']) || !empty($sku['time_delete']))? FALSE: TRUE,
+                    //'valid' => ( empty($sku['stocks']) || empty($item['time_publish']) || !empty($sku['time_delete']))? FALSE: TRUE,
+                    'valid' => TRUE,
 				);
 				$order_item = array_merge($order_item, $order_sku);
 			endif;
@@ -707,10 +712,15 @@
 
 			// 若当前商家没有待创建订单，新建待创建订单
 			if ($need_to_create === TRUE):
-				// 获取需要写入订单信息的商家信息
-				$this->basic_model->table_name = 'biz';
-				$this->basic_model->id_name = 'biz_id';
+				// 获取商家信息
+				$this->switch_model('biz', 'biz_id');
 				$biz = $this->basic_model->select_by_id($item['biz_id']);
+
+                // 获取商家运费模板信息
+                $this->switch_model('freight_template_biz', 'template_id');
+                $conditions = array('biz_id' => $order_item['biz_id']);
+                $freight_templates = $this->basic_model->select($conditions, NULL, FALSE, FALSE); // 不获取已删除项
+                //var_dump($freight_templates);
 
 				$this->order_data[] = array(
 					'biz_id' => $order_item['biz_id'],
@@ -718,8 +728,10 @@
 					'biz_url_logo' => $biz['url_logo'],
 					'subtotal' => $order_item['single_total'],
 					'total' => $order_item['single_total'],
+					'freight_templates' => $freight_templates,
 					'order_items' => $order_items,
 				);
+
 			endif;
 		} // end generate_single_item
 

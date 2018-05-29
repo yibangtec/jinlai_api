@@ -577,6 +577,7 @@
                 $coupon = $this->coupon_model->get_max_valid($user_id, $this->order_data[$i]['biz_id'], $this->order_data[$i]['subtotal']);
                 if ( ! empty($coupon) )
                     $this->order_data[$i]['total'] -= $coupon['amount'];
+
                 // 无论是否有相应优惠券，均生成相应返回信息字段
                 $this->order_data[$i]['coupon_id'] = $coupon['coupon_id'];
                 $this->order_data[$i]['coupon_name'] = $coupon['name'];
@@ -749,6 +750,8 @@
         /**
          * 生成订单单品信息
          *
+         * TODO 参考MY_Controller类中同名方法调整此方法，并增加对商家级、平台级营销活动的支持
+         *
          * @param varchar/int $item_id 商品ID；商家ID需要从商品资料中获取
          * @param varchar/int $sku_id 规格ID
          * @param int $count 份数；默认为1，后续需核对每单最低限量
@@ -758,18 +761,20 @@
             // 获取规格信息
             if ( !empty($sku_id) ):
                 $this->switch_model('sku', 'sku_id');
-                $data_to_search = array(
-                    'sku_id' => $sku_id,
-                    'item_id' => $item_id,
-                );
-                $sku = $this->basic_model->match($data_to_search);
+                $sku = $this->basic_model->select_by_id($sku_id);
+
+                // 若未获取到规格信息，或不可购买，则不继续以下逻辑
+                if (empty($sku) || empty($sku['stocks']) || !empty($sku['time_delete'])) return;
+
+                // 若已获取规格信息，则以规格信息中的item_id覆盖传入的item_id
+                $item_id = $sku['item_id'];
             endif;
 
             // 获取商品信息
             $this->switch_model('item', 'item_id');
-            if ( !empty($sku) )
-                $item_id = $sku['item_id']; // 若已获取规格信息，以规格信息中的商品ID为准
             $item = $this->basic_model->select_by_id($item_id);
+            // 若未获取到商品信息，或不可购买，则不继续以下逻辑
+            if (empty($item) || empty($item['stocks']) || empty($item['time_publish']) || !empty($item['time_delete'])) return;
 
             // 生成订单商品信息
             $order_item = array(
