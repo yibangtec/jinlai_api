@@ -99,16 +99,15 @@
             // 生成筛选条件
             $condition = $this->condition_generate();
 
-			// 商家端若未请求特定状态的订单，则不返回部分状态的订单
-			if ($this->app_type === 'biz' && empty($this->input->post('status')))
-			    $this->db->where_not_in($this->table_name.'.status', array('已取消', '已拒绝', '已关闭'));
-			
-			// 排序条件
-			$order_by['time_create'] = 'DESC';
+            // 排序条件
+            $order_by['time_create'] = 'DESC';
 
-			// 获取列表；默认可获取已删除项
+            // 获取列表；默认可获取已删除项
             $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
             if ( empty($ids) ):
+                // 商家端若未请求特定状态的订单，则不返回部分状态的订单
+                if ($this->app_type === 'biz' && empty($this->input->post('status')))
+                    $this->db->where_not_in($this->table_name.'.status', array('已取消', '已拒绝', '已关闭'));
                 $this->load->model('order_model');
                 $items = $this->order_model->select($condition, $order_by);
             else:
@@ -557,18 +556,16 @@
 				endif;
 			endforeach;
 
-			// 获取当前用户可用地址信息
-			$conditions = array(
-				'user_id' => $user_id,
-				'time_delete' => 'NULL',
-			);
-            $addresses = $this->get_items('address', 'address_id', $conditions);
-
 			// 获取待下单商品信息
 			$this->cart_decode($cart_string);
 
             // 计算待生成子订单总数，即订单相关商家数
             $bizs_count = count($this->order_data);
+            // 若没有可生成的子订单（即所有商品/规格均无法下单），则不预生成订单数据
+            if ($bizs_count < 1):
+                $this->result['status'] = 424;
+                exit;
+            endif;
 
             // 以商家为单位预生成订单数据
             for ($i=0; $i<$bizs_count; $i++):
@@ -584,6 +581,13 @@
                 $this->order_data[$i]['discount_coupon'] = $coupon['amount'];
             endfor;
 
+            // 获取当前用户可用地址信息
+            $conditions = array(
+                'user_id' => $user_id,
+                'time_delete' => 'NULL',
+            );
+            $addresses = $this->get_items('address', 'address_id', $conditions);
+
 			$this->result['status'] = 200;
 			$this->result['content']['addresses'] = $addresses;
 			$this->result['content']['order_data'] = $this->order_data;
@@ -592,7 +596,7 @@
 		/**
 		 * 8 商家验证
 		 *
-		 * 根据验证码对卡券类订单进行核销
+		 * TODO 根据验证码对卡券类订单进行核销
 		 */
 		public function valid()
 		{
@@ -644,7 +648,7 @@
                 // 若验证码已过期
                 elseif ($item['time_expire'] < time()):
                     $this->result['status'] = 414;
-                    $this->result['content']['error']['message'] = '验证码无效';
+                    $this->result['content']['error']['message'] = '验证码已过期';
 
                 else:
                     // 更新订单及验证码为已使用状态
@@ -762,6 +766,7 @@
             if ( !empty($sku_id) ):
                 $this->switch_model('sku', 'sku_id');
                 $sku = $this->basic_model->select_by_id($sku_id);
+                //var_dump($sku);
 
                 // 若未获取到规格信息，或不可购买，则不继续以下逻辑
                 if (empty($sku) || empty($sku['stocks']) || !empty($sku['time_delete'])) return;
@@ -773,8 +778,11 @@
             // 获取商品信息
             $this->switch_model('item', 'item_id');
             $item = $this->basic_model->select_by_id($item_id);
+            //var_dump($item);
             // 若未获取到商品信息，或不可购买，则不继续以下逻辑
-            if (empty($item) || empty($item['stocks']) || empty($item['time_publish']) || !empty($item['time_delete'])) return;
+            $sku_and_item_no_stock = empty($item['stocks']) && empty($sku['stocks']);
+            $item_not_published = empty($item['time_publish']) || !empty($item['time_delete']);
+            if (empty($item) || $sku_and_item_no_stock || $item_not_published) return;
 
             // 生成订单商品信息
             $order_item = array(

@@ -79,16 +79,15 @@
             // 生成筛选条件
             $condition = $this->condition_generate();
 
-            // 商家端若未请求特定状态的退款，则不返回部分状态的退款
-            if ($this->app_type === 'biz' && empty($this->input->post('status')))
-                $this->db->where_not_in($this->table_name.'.status', array('已取消', '已拒绝', '已关闭'));
-
-			// 排序条件
-			$order_by = NULL;
+            // 排序条件
+            $order_by = NULL;
 
             // 获取列表；默认可获取已删除项
             $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
             if ( empty($ids) ):
+                // 商家端若未请求特定状态的退款，则不返回部分状态的退款
+                if ($this->app_type === 'biz' && empty($this->input->post('status')))
+                    $this->db->where_not_in($this->table_name.'.status', array('已取消', '已拒绝', '已关闭'));
                 $this->load->model('refund_model');
 			    $items = $this->refund_model->select($condition, $order_by);
             else:

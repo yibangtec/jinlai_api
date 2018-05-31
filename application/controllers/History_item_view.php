@@ -136,16 +136,20 @@
 					$order_by[$sorter] = $this->input->post('orderby_'.$sorter);
 			endforeach;
 
-            // 限制可返回的字段
-            if ($this->app_type === 'client'):
-                $condition['time_delete'] = 'NULL'; // 客户端仅可查看未删除项
+            // 获取列表；默认可获取已删除项
+            $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
+            if ( empty($ids) ):
+                // 限制可返回的字段
+                if ($this->app_type === 'client'):
+                    $condition['time_delete'] = 'NULL'; // 客户端仅可查看未删除项
+                else:
+                    $this->names_to_return = array_merge($this->names_to_return, $this->names_return_for_admin);
+                endif;
+                $this->db->select( implode(',', $this->names_to_return) );
+                $items = $this->basic_model->select($condition, $order_by);
             else:
-                $this->names_to_return = array_merge($this->names_to_return, $this->names_return_for_admin);
+                $items = $this->basic_model->select_by_ids($ids);
             endif;
-            $this->db->select( implode(',', $this->names_to_return) );
-
-			// 获取列表；默认可获取已删除项
-            $items = $this->basic_model->select($condition, $order_by);
 
 			if ( !empty($items) ):
 				$this->result['status'] = 200;

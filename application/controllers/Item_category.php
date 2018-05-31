@@ -110,15 +110,19 @@
                 $order_by['nature'] = $order_by['parent_id'] = $order_by['level'] = 'ASC';
             endif;
 
-            // 限制可返回的字段
-            if ($this->app_type === 'client'):
-                $condition['time_delete'] = 'NULL';
-                $this->names_to_return = array_diff($this->names_to_return, $this->names_return_for_admin);
+            // 获取列表；默认可获取已删除项
+            $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
+            if ( empty($ids) ):
+                // 限制可返回的字段
+                if ($this->app_type === 'client'):
+                    $condition['time_delete'] = 'NULL';
+                    $this->names_to_return = array_diff($this->names_to_return, $this->names_return_for_admin);
+                endif;
+                $this->db->select( implode(',', $this->names_to_return) );
+                $items = $this->basic_model->select($condition, $order_by);
+            else:
+                $items = $this->basic_model->select_by_ids($ids);
             endif;
-            $this->db->select( implode(',', $this->names_to_return) );
-
-			// 获取列表；默认不获取已删除项
-            $items = $this->basic_model->select($condition, $order_by, FALSE, FALSE);
 
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
@@ -398,7 +402,7 @@
 
 				// 添加全部操作成功后的提示
 				if ($this->result['status'] = 200)
-					$this->result['content'] = '全部操作成功';
+					$this->result['content']['message'] = '全部操作成功';
 
 			endif;
 		} // end edit_bulk

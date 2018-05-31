@@ -110,9 +110,9 @@
 			$order_by = NULL;
 
 			// 获取列表；默认可获取已删除项
-            $this->load->model('comment_biz_model');
             $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
             if ( empty($ids) ):
+                $this->load->model('comment_biz_model');
                 $items = $this->comment_biz_model->select($condition, $order_by);
             else:
                 $items = $this->basic_model->select_by_ids($ids);

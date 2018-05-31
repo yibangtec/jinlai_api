@@ -95,17 +95,16 @@ class Comment_item extends MY_Controller
         // 生成筛选条件
         $condition = $this->condition_generate();
 
-        // 商家端若未请求特定状态的退款，则不返回部分状态的退款
-        if ($this->app_type === 'biz' && empty($this->input->post('status')))
-            $this->db->where_not_in($this->table_name.'.status', array('冻结',));
-
         // 排序条件
         $order_by = NULL;
 
         // 获取列表；默认可获取已删除项
-        $this->load->model('comment_item_model');
         $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
         if ( empty($ids) ):
+            // 商家端若未请求特定状态的退款，则不返回部分状态的退款
+            if ($this->app_type === 'biz' && empty($this->input->post('status')))
+                $this->db->where_not_in($this->table_name.'.status', array('冻结',));
+            $this->load->model('comment_item_model');
             $items = $this->comment_item_model->select($condition, $order_by);
         else:
             $items = $this->basic_model->select_by_ids($ids);

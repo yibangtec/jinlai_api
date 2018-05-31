@@ -124,12 +124,6 @@
 			// 生成筛选条件
 			$condition = $this->condition_generate();
 
-            // 用户仅可查看未删除的有效项
-            if ($this->app_type === 'client'):
-                $condition['time_delete'] = 'NULL';
-                $condition['status'] = '正常';
-            endif;
-
 			// 排序条件
 			$order_by = NULL;
 			foreach ($this->names_to_order as $sorter):
@@ -137,15 +131,20 @@
 					$order_by[$sorter] = $this->input->post('orderby_'.$sorter);
 			endforeach;
 
-            // 限制可返回的字段
-            if ($this->app_type === 'client'):
-                $condition['time_delete'] = 'NULL';
-                $this->names_to_return = array_diff($this->names_to_return, $this->names_return_for_admin);
-            endif;
-            $this->db->select( implode(',', $this->names_to_return) );
-
             // 获取列表；默认可获取已删除项
-            $items = $this->basic_model->select($condition, $order_by);
+            $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
+            if ( empty($ids) ):
+                // 限制可返回的字段
+                if ($this->app_type === 'client'):
+                    $condition['time_delete'] = 'NULL';
+                    $condition['status'] = '正常';
+                    $this->names_to_return = array_diff($this->names_to_return, $this->names_return_for_admin);
+                endif;
+                $this->db->select( implode(',', $this->names_to_return) );
+                $items = $this->basic_model->select($condition, $order_by);
+            else:
+                $items = $this->basic_model->select_by_ids($ids);
+            endif;
 
 			if ( !empty($items) ):
 				$this->result['status'] = 200;

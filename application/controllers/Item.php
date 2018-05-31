@@ -131,28 +131,26 @@
             // 类特有筛选项
             $condition = $this->advanced_sorter($condition);
 
-            // 用户仅可查看未删除、已上架、库存不为0项
-            if ($this->app_type === 'client'):
-                $condition['time_delete'] = 'NULL';
-                $condition['time_suspend'] = 'NULL';
-                $condition['stocks'] = '> 0';
-            endif;
-
-			// 排序条件
+            // 排序条件
             $order_by['time_publish'] = 'DESC';
-			// （可选）遍历筛选条件
-			foreach ($this->names_to_order as $sorter):
-				if ( !empty($this->input->post('orderby_'.$sorter)) )
-					$order_by[$sorter] = $this->input->post('orderby_'.$sorter);
-			endforeach;
+            // （可选）遍历筛选条件
+            foreach ($this->names_to_order as $sorter):
+            endforeach;
+            if ( !empty($this->input->post('orderby_'.$sorter)) )
+                $order_by[$sorter] = $this->input->post('orderby_'.$sorter);
 
+            // 获取列表；默认可获取已删除项
+            $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
+            if ( empty($ids) ):
+                // 用户仅可查看未删除、已上架、库存不为0项
+                if ($this->app_type === 'client'):
+                    $condition['time_delete'] = 'NULL';
+                    $condition['time_suspend'] = 'NULL';
+                    $condition['stocks'] = '> 0';
+                endif;
+                $this->db->select( implode(',', $this->names_to_return) );
+                $items = $this->basic_model->select($condition, $order_by);
             // 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
-
-			// 获取列表；默认可获取已删除项
-			$ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
-			if ( empty($ids) ):
-				$items = $this->basic_model->select($condition, $order_by);
 			else:
 				$items = $this->basic_model->select_by_ids($ids);
 			endif;

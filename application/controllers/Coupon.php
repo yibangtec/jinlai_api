@@ -79,10 +79,9 @@
 			//$order_by['name'] = 'value';
 
 			// 获取列表；默认可获取已删除项
-            $this->load->model('coupon_model');
-            // 获取列表；默认可获取已删除项
             $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
             if ( empty($ids) ):
+                $this->load->model('coupon_model');
                 $items = $this->coupon_model->select($condition, $order_by);
             else:
                 $items = $this->basic_model->select_by_ids($ids);
