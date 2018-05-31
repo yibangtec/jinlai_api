@@ -14,7 +14,7 @@
 		protected $app_id = WEPAY_APP_ID;
 		protected $mch_id = WEPAY_MCH_ID;
 		protected $key = WEPAY_KEY;
-		protected $app_secret = WEPAY_APP_SECRET;
+		//protected $app_secret = WEPAY_APP_SECRET;
 		protected $sslcert_path = WEPAY_SSLCERT_PATH;
 		protected $sslkey_path = WEPAY_SSLKEY_PATH;
 		protected $notify_url = WEPAY_NOTIFY_URL;
@@ -123,8 +123,7 @@
             $order = $this->get_order_detail($order_id);
             $order_data = array(
                 'body' => SITE_NAME. ($type === 'order'? '商品订单': '充值订单'),
-                'total_fee' => '0.01',
-                //'total_fee' => $order['total'],
+                'total_fee' => (ENVIRONMENT === 'production')? $order['total']: 0.01, // 非生产环境下所有订单只需支付0.01元
             );
 
 			// 重组请求参数

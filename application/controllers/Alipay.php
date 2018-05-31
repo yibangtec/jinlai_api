@@ -108,8 +108,7 @@
             $order = $this->get_order_detail($order_id);
             $order_data = array(
 				'body' => SITE_NAME. ($type === 'order'? '商品订单': '充值订单'),
-				'total_fee' => '0.01',
-                //'total_fee' => $order['total'],
+                'total_fee' => (ENVIRONMENT === 'production')? $order['total']: 0.01, // 非生产环境下所有订单只需支付0.01元
 			);
 
 			// 请求地址

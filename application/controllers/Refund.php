@@ -183,7 +183,7 @@
 			$this->form_validation->set_rules('record_id', '订单商品ID', 'trim|required|is_natural_no_zero');
 			$this->form_validation->set_rules('type', '类型', 'trim|required');
 			$this->form_validation->set_rules('cargo_status', '货物状态', 'trim|required');
-			$this->form_validation->set_rules('reason', '原因', 'trim|required');
+			$this->form_validation->set_rules('reason', '原因', 'trim|required|in_list[无理由,退运费,未收到,不开发票]');
 			$this->form_validation->set_rules('description', '补充说明', 'trim|max_length[255]');
 			$this->form_validation->set_rules('url_images', '相关图片URL', 'trim|max_length[255]');
 
