@@ -234,7 +234,8 @@
 					$this->result['content']['id'] = $result;
 					$this->result['content']['message'] = '创建成功';
 
-                    //TODO 更新所属商品总库存、最高/低价
+                    // 更新所属商品相关信息
+                    $this->update_item_for_sku(NULL, $item_id);
 
 				else:
 					$this->result['status'] = 424;
@@ -310,7 +311,8 @@
                     $this->result['content']['id'] = $id;
                     $this->result['content']['message'] = '编辑成功';
 
-                    //TODO 更新所属商品总库存、最高/低价
+                    // 更新所属商品相关信息
+                    $this->update_item_for_sku($id);
 
 				else:
 					$this->result['status'] = 434;
@@ -402,6 +404,9 @@
                     $this->result['content']['id'] = $id;
                     $this->result['content']['message'] = '编辑成功';
 
+                    // 更新所属商品相关信息
+                    $this->update_item_for_sku($id);
+
 				else:
 					$this->result['status'] = 434;
 					$this->result['content']['error']['message'] = '编辑失败';
@@ -481,6 +486,8 @@
                         $this->result['content']['row_failed'][] = $id;
                     endif;
 
+                    // 更新所属商品相关信息
+                    $this->update_item_for_sku($id);
                 endforeach;
 
                 // 添加全部操作成功后的提示

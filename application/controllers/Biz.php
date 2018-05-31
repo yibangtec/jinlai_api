@@ -126,6 +126,7 @@
 
 			// 排序条件
 			$order_by = NULL;
+            $order_by['time_edit'] = 'DESC'; // 临时性调序，主要用于演示视频生成
 
             // 获取列表；默认可获取已删除项
             $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
@@ -184,8 +185,10 @@
                 if ($this->app_type === 'client'):
                     $this->switch_model('item', 'item_id');
                     $condition = array(
-                        'biz_id' => $id,
                         'time_delete' => 'NULL',
+                        'time_publish' => 'IS NOT NULL',
+
+                        'biz_id' => $id,
                     );
                     $this->result['content']['item_count'] = $this->basic_model->count($condition);
                 endif;

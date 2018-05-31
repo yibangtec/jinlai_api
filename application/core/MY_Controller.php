@@ -798,6 +798,49 @@
             return $result;
         } // end select_by_id
 
+        /**
+         * 更新商品的规格相关信息
+         *
+         * @param $sku_id
+         * @param $item_id
+         */
+        protected function update_item_for_sku($sku_id = NULL, $item_id = NULL)
+        {
+            // 获取需要更新规格相关信息的商品ID
+            if ($item_id.$sku_id === NULL):
+                $this->result['content']['error']['message'] .= '；规格所属商品更新失败（未传入规格相关商品信息）';
+            elseif ($sku_id !== NULL):
+                // 获取规格信息，以获取商品信息
+                $sku = $this->get_item('sku', 'sku_id', $sku_id);
+                $item_id = $sku['item_id'];
+            endif;
+
+            // 获取当前规格商品所属的所有规格摘要信息
+            $sku_metas = $this->db->query("SELECT SUM(`stocks`) as 'overall_stocks', MIN(`tag_price`) as 'tag_price_max', MIN(`price`) as 'price_min', MAX(`price`) as 'price_max' FROM `sku` WHERE `item_id` = ".$item_id." AND `time_delete` IS NULL")->row_array();
+
+            // 更新商品信息
+            $data_to_edit = array(
+                'stocks' => $sku_metas['overall_stocks'],
+                'tag_price' => $sku_metas['tag_price_max'], // 商品的price、tag_price字段值也根据规格相关信息进行更新
+                'price' => $sku_metas['price_min'],
+                'price_min' => $sku_metas['price_min'],
+                'price_max' => $sku_metas['price_max'],
+            );
+
+            // 更新商品信息
+            $this->switch_model('item', 'item_id');
+            $result = $this->basic_model->edit($item_id, $data_to_edit);
+            if ($result !== FALSE):
+                $this->result['status'] = 200;
+                $this->result['content']['message'] .= '；规格所属商品更新成功';
+
+            else:
+                $this->result['status'] = 434;
+                $this->result['content']['error']['message'] .= '；规格所属商品更新失败';
+
+            endif;
+        } // end update_item_for_sku
+
 	} // end class MY_Controller
 
 /* End of file MY_Controller.php */

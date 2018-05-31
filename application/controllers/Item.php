@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'barcode', 'tag_price', 'price', 'sold_overall', 'sold_monthly', 'sold_daily', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id', 'status',
+			'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'barcode', 'tag_price', 'price', 'price_min', 'price_max', 'sold_overall', 'sold_monthly', 'sold_daily', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id', 'status',
 			'time_create', 'time_delete', 'time_publish', 'time_suspend', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -135,9 +135,9 @@
             $order_by['time_publish'] = 'DESC';
             // （可选）遍历筛选条件
             foreach ($this->names_to_order as $sorter):
+                if ( !empty($this->input->post('orderby_'.$sorter)) )
+                    $order_by[$sorter] = $this->input->post('orderby_'.$sorter);
             endforeach;
-            if ( !empty($this->input->post('orderby_'.$sorter)) )
-                $order_by[$sorter] = $this->input->post('orderby_'.$sorter);
 
             // 获取列表；默认可获取已删除项
             $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
@@ -145,8 +145,8 @@
                 // 用户仅可查看未删除、已上架、库存不为0项
                 if ($this->app_type === 'client'):
                     $condition['time_delete'] = 'NULL';
-                    $condition['time_suspend'] = 'NULL';
-                    $condition['stocks'] = '> 0';
+                    $condition['time_publish'] = 'IS NOT NULL';
+                    $condition['stocks >'] = 0;
                 endif;
                 $this->db->select( implode(',', $this->names_to_return) );
                 $items = $this->basic_model->select($condition, $order_by);

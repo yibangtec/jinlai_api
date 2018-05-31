@@ -108,6 +108,7 @@
             $order_by = NULL;
             if ($this->app_type === 'client'):
                 $order_by['nature'] = $order_by['parent_id'] = $order_by['level'] = 'ASC';
+                $order_by['time_edit'] = 'DESC'; // 临时性调序，主要用于演示视频生成
             endif;
 
             // 获取列表；默认可获取已删除项

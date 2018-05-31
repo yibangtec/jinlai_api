@@ -70,10 +70,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | The $query_builder variables lets you determine whether or not to load
 | the query builder class.
 */
-$active_group = 'aliyun_jinlai_sandbox';
+$active_group = (ENVIRONMENT === 'production')? 'production': 'aliyun_jinlai_sandbox';
 $query_builder = TRUE;
 
-$db['aliyun_jinlai'] = array(
+$db['production'] = array(
 	'dsn' => 'mysqli://liuyajie728:Yibang2017@ybdevelopinner01.mysql.zhangbei.rds.aliyuncs.com/jinlai',
 	'hostname' => 'ybdevelopinner01.mysql.zhangbei.rds.aliyuncs.com', // 数据库URL，以阿里云为例
 	'username' => 'liuyajie728', // 数据库用户名
@@ -82,7 +82,7 @@ $db['aliyun_jinlai'] = array(
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),
+	'db_debug' => FALSE,
 	'cache_on' => FALSE,
 	'cachedir' => APPPATH.'cache_database',
 	'char_set' => 'utf8',
