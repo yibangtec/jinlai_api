@@ -1,172 +1,187 @@
 {
-    {
-        "meta_id": "1",
-        "name": "greating_image_url",
-        "value": "https://www.ybslux.com/uploadfiles/images/app/1797e7d7-8e96-4dc3-aea0-59c9d3a0b108.jpg"
-    },
-    {
-        "meta_id": "2",
-        "name": "greating_target_url",
-        "value": "https://www.517ybang.com/item/detail?id=619"
-    },
-    {
-        "meta_id": "3",
-        "name": "recent_version_ios",
-        "value": "1.0.0"
-    },
-    {
-        "meta_id": "7",
-        "name": "next_greating_image_url",
-        "value": null
-    },
-    {
-        "meta_id": "6",
-        "name": "recent_url_android",
-        "value": null
-    },
-    {
-        "meta_id": "5",
-        "name": "recent_url_ios",
-        "value": null
-    },
-    {
-        "meta_id": "4",
-        "name": "recent_version_android",
-        "value": "1.0.0"
-    },
-    {
-        "meta_id": "8",
-        "name": "time_expire_to_delete",
-        "value": "259200"
-    },
-    {
-        "meta_id": "9",
-        "name": "time_created_to_expire",
-        "value": "10800"
-    },
-    {
-        "meta_id": "12",
-        "name": "tel_public_biz",
-        "value": null
-    },
-    {
-        "meta_id": "11",
-        "name": "tel_public_inform",
-        "value": null
-    },
-    {
-        "meta_id": "10",
-        "name": "tel_public_customer",
-        "value": null
-    },
-    {
-        "meta_id": "13",
-        "name": "time_pay_to_deliver",
-        "value": "259200"
-    },
-    {
-        "meta_id": "14",
-        "name": "time_deliver_to_confirm",
-        "value": "604800"
-    },
-    {
-        "meta_id": "15",
-        "name": "time_confirm_to_comment",
-        "value": "2592000"
-    },
-    {
-        "meta_id": "16",
-        "name": "api_url_develop",
-        "value": "https://api.517ybang.com/"
-    },
-    {
-        "meta_id": "17",
-        "name": "api_url_production",
-        "value": "https://api.jinlaimall.com/"
-    },
-    {
-        "meta_id": "19",
-        "name": "min_version_android",
-        "value": "1.0.0"
-    },
-    {
-        "meta_id": "18",
-        "name": "min_version_ios",
-        "value": "1.0.0"
-    },
-    {
-        "meta_id": "20",
-        "name": "media_url_develop",
-        "value": "https://medias.517ybang.com/"
-    },
-    {
-        "meta_id": "21",
-        "name": "media_url_production",
-        "value": "https://medias.jinlaimall.com/"
-    },
-    {
-        "meta_id": "22",
-        "name": "web_url_develop",
-        "value": "https://www.517ybang.com/"
-    },
-    {
-        "meta_id": "23",
-        "name": "web_url_production",
-        "value": "https://www.jinlaimall.com/"
-    },
-    {
-        "meta_id": "24",
-        "name": "inner_urls_develop",
-        "value": "https://www.517ybang.com/,https://biz.517ybang.com/,https://admin.517ybang.com/"
-    },
-    {
-        "meta_id": "25",
-        "name": "inner_urls_production",
-        "value": "https://www.jinlaimall.com/,https://biz.jinlaimall.com/,https://admin.jinlaimall.com/"
-    },
-    {
-        "meta_id": "26",
-        "name": "slogan",
-        "value": "青岛人自己的品控网购平台"
-    },
-    {
-        "meta_id": "27",
-        "name": "logo_url",
-        "value": "icon/jinlai_client/icon108@3x.png"
-    },
-    {
-        "meta_id": "28",
-        "name": "invitation_title",
-        "value": "这个平台不错呦，你也来看看吧"
-    },
-    {
-        "meta_id": "29",
-        "name": "invitation_slogan",
-        "value": "新人专享满99减50元特权~"
-    },
-    {
-        "meta_id": "30",
-        "name": "invitation_image_url",
-        "value": ""
-    },
-    {
-        "meta_id": "31",
-        "name": "template_id_inviter",
-        "value": "18"
-    },
-    {
-        "meta_id": "32",
-        "name": "template_id_invitee",
-        "value": "18"
-    },
-    {
-        "meta_id": "33",
-        "name": "resource_version_client_androi",
-        "value": "0.0.1"
-    },
-    {
-        "meta_id": "34",
-        "name": "resource_version_client_ios",
-        "value": "0.0.1"
-    }
+        {
+            "meta_id": "1",
+            "name": "greating_image_url",
+            "value": "https://www.ybslux.com/uploadfiles/images/app/f43ad01a-d457-4109-b0c5-a6ec678f0b9b.jpg"
+        },
+        {
+            "meta_id": "2",
+            "name": "greating_target_url",
+            "value": "https://www.517ybang.com/item/detail?id=619"
+        },
+        {
+            "meta_id": "3",
+            "name": "recent_version_ios",
+            "value": "0.0.1"
+        },
+        {
+            "meta_id": "7",
+            "name": "next_greating_image_url",
+            "value": null
+        },
+        {
+            "meta_id": "6",
+            "name": "recent_url_android",
+            "value": "https://www.517ybang.com/download/app/jinlai_client_recent"
+        },
+        {
+            "meta_id": "5",
+            "name": "recent_url_ios",
+            "value": "https://www.517ybang.com/download/app/jinlai_client_recent"
+        },
+        {
+            "meta_id": "4",
+            "name": "recent_version_android",
+            "value": "0.0.1"
+        },
+        {
+            "meta_id": "8",
+            "name": "time_expire_to_delete",
+            "value": "259200"
+        },
+        {
+            "meta_id": "9",
+            "name": "time_created_to_expire",
+            "value": "10800"
+        },
+        {
+            "meta_id": "12",
+            "name": "tel_public_biz",
+            "value": null
+        },
+        {
+            "meta_id": "11",
+            "name": "tel_public_inform",
+            "value": null
+        },
+        {
+            "meta_id": "10",
+            "name": "tel_public_customer",
+            "value": null
+        },
+        {
+            "meta_id": "13",
+            "name": "time_pay_to_deliver",
+            "value": "259200"
+        },
+        {
+            "meta_id": "14",
+            "name": "time_deliver_to_confirm",
+            "value": "604800"
+        },
+        {
+            "meta_id": "15",
+            "name": "time_confirm_to_comment",
+            "value": "2592000"
+        },
+        {
+            "meta_id": "16",
+            "name": "api_url_develop",
+            "value": "https://api.517ybang.com/"
+        },
+        {
+            "meta_id": "17",
+            "name": "api_url_production",
+            "value": "https://api.517ybang.com/"
+        },
+        {
+            "meta_id": "19",
+            "name": "min_version_android",
+            "value": "0.0.1"
+        },
+        {
+            "meta_id": "18",
+            "name": "min_version_ios",
+            "value": "0.0.1"
+        },
+        {
+            "meta_id": "20",
+            "name": "media_url_develop",
+            "value": "https://medias.517ybang.com/"
+        },
+        {
+            "meta_id": "21",
+            "name": "media_url_production",
+            "value": "https://medias.517ybang.com/"
+        },
+        {
+            "meta_id": "22",
+            "name": "web_url_develop",
+            "value": "https://www.517ybang.com/"
+        },
+        {
+            "meta_id": "23",
+            "name": "web_url_production",
+            "value": "https://www.jinlaimall.com/"
+        },
+        {
+            "meta_id": "25",
+            "name": "inner_urls_production",
+            "value": "https://www.517ybang.com/,https://biz.517ybang.com/,https://admin.517ybang.com/"
+        },
+        {
+            "meta_id": "24",
+            "name": "inner_urls_develop",
+            "value": "https://www.517ybang.com/,https://biz.517ybang.com/,https://admin.517ybang.com/"
+        },
+        {
+            "meta_id": "26",
+            "name": "slogan",
+            "value": "青岛人自己的品控网购平台"
+        },
+        {
+            "meta_id": "27",
+            "name": "logo_url",
+            "value": "icon/jinlai_client/icon108@3x.png"
+        },
+        {
+            "meta_id": "30",
+            "name": "invitation_image_url",
+            "value": ""
+        },
+        {
+            "meta_id": "29",
+            "name": "invitation_slogan",
+            "value": "新人专享满99减50元特权~"
+        },
+        {
+            "meta_id": "28",
+            "name": "invitation_title",
+            "value": "这个平台不错呦，你也来看看吧"
+        },
+        {
+            "meta_id": "31",
+            "name": "initation_reward_inviter",
+            "value": "coupon_template|18|1"
+        },
+        {
+            "meta_id": "32",
+            "name": "initation_reward_invitee",
+            "value": "coupon_template|18|1"
+        },
+        {
+            "meta_id": "33",
+            "name": "resource_version_client_androi",
+            "value": "0.0.1"
+        },
+        {
+            "meta_id": "34",
+            "name": "resource_version_client_ios",
+            "value": "0.0.1"
+        },
+        {
+            "meta_id": "35",
+            "name": "remind_version_ios",
+            "value": "0.0.1"
+        },
+        {
+            "meta_id": "36",
+            "name": "remind_version_android",
+            "value": "0.0.1"
+        },
+        {
+            "meta_id": "37",
+            "name": "recent_version_info",
+            "value": "进来商城公测版本上线啦！岛城品质生活新选择！"
+        }
 }

@@ -456,7 +456,7 @@
                     break;
 
                 case 'item':
-                    $this->db->select('item_id,url_image_main,name,tag_price,price,max_price,min_price');
+                    $this->db->select('item_id,url_image_main,name,tag_price,price,price_max,price_min');
                     break;
 
                 case 'order':

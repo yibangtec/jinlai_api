@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'user_id', 'combo_id', 'template_id', 'category_id', 'biz_id', 'category_biz_id', 'item_id', 'name', 'description', 'amount', 'min_subtotal', 'time_start', 'time_end', 'time_expire', 'order_id', 'time_used', 'time_create', 'time_delete', 'status',
+			'user_id', 'combo_id', 'template_id', 'category_id', 'biz_id', 'category_biz_id', 'item_id', 'name', 'amount', 'min_subtotal', 'time_start', 'time_end', 'time_expire', 'order_id', 'time_used', 'time_create', 'time_delete', 'status',
 		);
 
 		public function __construct()
@@ -171,7 +171,7 @@
 				//var_dump($combo);
 				if ($combo === FALSE):
 					$this->result['status'] = 414;
-					$this->result['content']['error']['message'] = '该优惠券包不可领取';
+					//$this->result['content']['error']['message'] = '该优惠券包不可领取';
 
 				else:
 					$template_ids = $combo['template_ids'];
@@ -365,7 +365,7 @@
                 return $template;
 
             endif;
-        } // get_template
+        } // end get_template
 
         /**
          * 检查优惠券包有效性
@@ -381,7 +381,10 @@
 
             // 开放领取的开始时间需早于当前时间，结束时间需晚于当前时间
             $this->db->where('time_delete', NULL)
+                ->group_start()
+                ->where('time_start', NULL)
                 ->or_where('time_start <', time())
+                ->group_end()
 
                 ->group_start()
                 ->where('time_end', NULL)
@@ -395,7 +398,7 @@
 
             // 若无符合条件的优惠券包，返回false
             if ( empty($combo) ):
-                $this->result['content']['error']['message'] = '该优惠券包已不可领取';
+                $this->result['content']['error']['message'] = '该优惠券包当前不可领取';
                 return FALSE;
 
             // 若单独被领取，检查总限量及单个用户限量
@@ -432,6 +435,7 @@
                     endif;
                 endif;
 
+                //var_dump($this->result['content']['error']['message']);
                 // 若无异常，返回优惠券模板信息
                 if ($is_valid === TRUE):
                     return $combo;
@@ -440,7 +444,7 @@
                 endif;
 
             endif;
-        } // get_combo
+        } // end get_combo
 
         /**
          * 生成优惠券
@@ -490,7 +494,6 @@
                     'category_id' => $template['category_id'],
                     'category_biz_id' => $template['category_biz_id'],
                     'name' => $template['name'],
-                    'description' => $template['description'],
                     'item_id' => $template['item_id'],
                     'amount' => $template['amount'],
                     'min_subtotal' => $template['min_subtotal'],
