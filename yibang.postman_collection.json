@@ -4914,13 +4914,20 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"type": "text"
 								},
 								{
 									"key": "user_id",
-									"value": "1",
+									"value": "40",
 									"type": "text"
 								}
 							]
@@ -4999,7 +5006,7 @@
 								},
 								{
 									"key": "id",
-									"value": "1",
+									"value": "40",
 									"description": "用户ID",
 									"type": "text"
 								},
@@ -5759,6 +5766,11 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text"
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"type": "text"
@@ -5775,7 +5787,7 @@
 								},
 								{
 									"key": "user_id",
-									"value": "1",
+									"value": "202",
 									"type": "text"
 								},
 								{
@@ -5797,12 +5809,6 @@
 									"key": "time_edit",
 									"value": "",
 									"type": "text"
-								},
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
 								}
 							]
 						},
@@ -7314,7 +7320,7 @@
 								},
 								{
 									"key": "limit",
-									"value": "3",
+									"value": "5",
 									"type": "text",
 									"disabled": true
 								},
@@ -7338,8 +7344,9 @@
 								},
 								{
 									"key": "biz_id",
-									"value": "142",
-									"type": "text"
+									"value": "2",
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "category_biz_id",
@@ -7496,9 +7503,8 @@
 								},
 								{
 									"key": "ids",
-									"value": "1,4,5",
-									"type": "text",
-									"disabled": true
+									"value": "5,14,8",
+									"type": "text"
 								},
 								{
 									"key": "orderby_price",
@@ -7581,7 +7587,7 @@
 								},
 								{
 									"key": "id",
-									"value": "173",
+									"value": "2782",
 									"type": "text"
 								},
 								{
@@ -10490,16 +10496,23 @@
 								},
 								{
 									"key": "cart_string",
-									"value": "2|2|5|1,9|14|0|3,2|8|0|2,9|17|0|1,2|3|0|1",
+									"value": "2|4|0|1,9|14|0|2,2|8|0|2,9|17|0|1,2|3|0|1",
 									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "cart_string",
+									"value": "2|189|85|2",
 									"description": "",
+									"type": "text",
 									"disabled": true
 								},
 								{
 									"key": "cart_string",
-									"value": "2|619|102|2",
-									"description": "",
-									"type": "text"
+									"value": "2|2|5|1,9|14|0|3,2|8|0|2,9|17|0|1",
+									"description": "全部无法下单",
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},
@@ -13070,15 +13083,15 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
 									"key": "test_mode",
 									"value": "on",
 									"type": "text",
 									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
 								},
 								{
 									"key": "user_id",
@@ -13087,7 +13100,7 @@
 								},
 								{
 									"key": "record_id",
-									"value": "1",
+									"value": "268",
 									"type": "text"
 								},
 								{
@@ -13154,7 +13167,7 @@
 								},
 								{
 									"key": "app_type",
-									"value": "biz",
+									"value": "client",
 									"type": "text"
 								},
 								{
@@ -13169,7 +13182,7 @@
 								},
 								{
 									"key": "user_id",
-									"value": "",
+									"value": "1",
 									"type": "text"
 								},
 								{
@@ -13276,7 +13289,8 @@
 									"key": "ids",
 									"value": "41",
 									"description": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},
@@ -14701,6 +14715,12 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"type": "text"
@@ -14724,7 +14744,8 @@
 								{
 									"key": "item_id",
 									"value": "129",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "url_image",
@@ -14784,7 +14805,8 @@
 								{
 									"key": "time_delete",
 									"value": "NULL",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "time_edit",
@@ -14802,10 +14824,10 @@
 									"type": "text"
 								},
 								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
+									"key": "ids",
+									"value": "",
+									"description": "",
+									"type": "text"
 								}
 							]
 						},
@@ -14908,7 +14930,7 @@
 								},
 								{
 									"key": "name_second",
-									"value": "49",
+									"value": "52",
 									"type": "text"
 								},
 								{
@@ -14923,12 +14945,12 @@
 								},
 								{
 									"key": "price",
-									"value": "1199",
+									"value": "1399",
 									"type": "text"
 								},
 								{
 									"key": "stocks",
-									"value": "1",
+									"value": "65",
 									"type": "text"
 								},
 								{
@@ -14972,6 +14994,12 @@
 						"body": {
 							"mode": "formdata",
 							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text"
+								},
 								{
 									"key": "app_type",
 									"value": "biz",
@@ -15019,7 +15047,7 @@
 								},
 								{
 									"key": "stocks",
-									"value": "1",
+									"value": "2",
 									"type": "text"
 								},
 								{
@@ -17431,9 +17459,10 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "order_id",
-									"value": "1",
-									"type": "text"
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "type",
@@ -17442,10 +17471,9 @@
 									"disabled": true
 								},
 								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
+									"key": "order_id",
+									"value": "1",
+									"type": "text"
 								}
 							]
 						},

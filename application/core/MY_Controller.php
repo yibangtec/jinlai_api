@@ -617,10 +617,14 @@
 					$items_to_create[] = array(
 						'biz_id' => $biz_id,
 						'item_id' => $item_id,
-						'sku_id' => $sku_id,
+						'sku_id' => ($sku_id === '0')? NULL: $sku_id,
 						'count' => $count,
 					);
 				endforeach;
+
+                // 无效项
+                $this->result['content']['invalid_items'] = array();
+                $this->result['content']['invalid_item_ids'] = '';
 
 				// 生成订单单品信息
 				foreach ($items_to_create as $item_to_create):
@@ -647,10 +651,20 @@
 
                 // 若未获取到规格信息，或不可购买，则不继续以下逻辑
                 if (empty($sku) || !empty($sku['time_delete'])):
-                    $this->result['content']['error']['message'] .= '规格未开售或不存在；';
+                    $this->result['content']['invalid_items'][] = array(
+                        'type' => 'sku',
+                        'id' => $sku_id,
+                        'message' => '规格未开售或不存在',
+                    );
+                    $this->result['content']['invalid_item_ids'] .= $item_id.',';
                     return;
                 elseif ( empty($sku['stocks']) ):
-                    $this->result['content']['error']['message'] .= '（规格）'.$sku['name_first'].$sku['name_second'].$sku['name_third'].'已售罄；';
+                    $this->result['content']['invalid_items'][] = array(
+                        'type' => 'sku',
+                        'id' => $sku_id,
+                        'message' => $sku['name_first'].$sku['name_second'].$sku['name_third'].'规格已售罄',
+                    );
+                    $this->result['content']['invalid_item_ids'] .= $item_id.',';
                     return;
                 endif;
 
@@ -667,13 +681,28 @@
             $sku_and_item_no_stock = empty($item['stocks']) && empty($sku['stocks']);
             $item_not_published = empty($item['time_publish']) || !empty($item['time_delete']);
             if (empty($item)):
-                $this->result['content']['error']['message'] .= '该商品不存在；';
+                $this->result['content']['invalid_items'][] = array(
+                    'type' => 'item',
+                    'id' => $item_id,
+                    'message' => '商品不存在',
+                );
+                $this->result['content']['invalid_item_ids'] .= $item_id.',';
                 return;
             elseif ($item_not_published):
-                $this->result['content']['error']['message'] .= '（商品）'.$item['name'].'未开售；';
+                $this->result['content']['invalid_items'][] = array(
+                    'type' => 'item',
+                    'id' => $item_id,
+                    'message' => '商品未开售',
+                );
+                $this->result['content']['invalid_item_ids'] .= $item_id.',';
                 return;
             elseif ($sku_and_item_no_stock):
-                $this->result['content']['error']['message'] .= '（商品）'.$item['name'].'已售罄；';
+                $this->result['content']['invalid_items'][] = array(
+                    'type' => 'item',
+                    'id' => $item_id,
+                    'message' => '商品已售罄',
+                );
+                $this->result['content']['invalid_item_ids'] .= $item_id.',';
                 return;
             endif;
 

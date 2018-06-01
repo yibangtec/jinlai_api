@@ -63,11 +63,13 @@
 				$this->result['content']['error']['message'] = '购物车是空的';
 
 			else:
+                //var_dump($item['cart_string']);
+
 				// 解码为数组
 				$this->cart_decode($item['cart_string']);
 
 				$this->result['status'] = 200;
-				$this->result['content'] = $this->order_data;
+				$this->result['content']['order_items'] = $this->order_data;
 
 			endif;
 		} // end index

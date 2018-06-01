@@ -549,7 +549,7 @@
 			$required_params = array('user_id', 'cart_string');
 			foreach ($required_params as $param):
 				${$param} = trim($this->input->post($param));
-				if ( !isset( ${$param} ) ):
+				if ( empty( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();

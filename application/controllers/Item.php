@@ -132,12 +132,11 @@
             $condition = $this->advanced_sorter($condition);
 
             // 排序条件
-            $order_by['time_publish'] = 'DESC';
-            // （可选）遍历筛选条件
             foreach ($this->names_to_order as $sorter):
                 if ( !empty($this->input->post('orderby_'.$sorter)) )
                     $order_by[$sorter] = $this->input->post('orderby_'.$sorter);
             endforeach;
+            $order_by['time_publish'] = 'DESC';
 
             // 获取列表；默认可获取已删除项
             $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
@@ -252,7 +251,6 @@
                         $this->db->select('AVG(`score`) AS score_description');
                         $conditions = array(
                             'biz_id' => $item['biz_id'],
-                            'time_delete' => 'IS NULL',
                         );
                         $result = $this->basic_model->select($conditions);
                         $this->result['content']['biz']['score_description'] = !empty($result['score_description'])? $result['score_description']: 4.5;
@@ -269,7 +267,6 @@
                     $this->switch_model('promotion_biz', 'promotion_id');
                     $conditions = array(
                         'biz_id' => $item['biz_id'],
-                        'time_delete' => 'NULL',
                     );
                     $this->db->select('promotion_id, type, name, time_start, time_end');
                     $this->result['content']['biz_promotions'] = $this->basic_model->select($conditions, NULL);
@@ -292,7 +289,6 @@
                     $this->switch_model('comment_item', 'comment_id');
                     $conditions = array(
                         'item_id' => $id,
-                        'time_delete' => 'NULL',
                     );
                     $this->load->model('comment_item_model');
                     $this->result['content']['comments'] = $this->comment_item_model->select($conditions, NULL);
