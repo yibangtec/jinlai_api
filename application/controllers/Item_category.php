@@ -2,7 +2,7 @@
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
 
 	/**
-	 * Item_category/ITK 商品分类（系统级）类
+	 * Item_category/ITK 平台商品分类类
 	 *
 	 * 系统级商品分类
 	 *
@@ -16,7 +16,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'parent_id', 'nature', 'level', 'name', 'url_name', 'url_image',
+            'ancestor_id', 'parent_id', 'nature', 'level',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -24,7 +24,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'category_id', 'parent_id', 'nature', 'level', 'name', 'description', 'url_name', 'url_image',
+			'category_id', 'ancestor_id', 'parent_id', 'nature', 'level', 'name', 'description', 'url_name', 'url_image', 'url_image_index', 'url_image_detail', 'item_id',
             'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -40,7 +40,7 @@
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-		    'parent_id', 'name', 'description', 'url_name', 'url_image',
+            'ancestor_id', 'parent_id', 'name', 'description', 'url_name', 'url_image', 'url_image_index', 'url_image_detail', 'item_id',
         );
 
 		/**
@@ -107,8 +107,8 @@
 			// 排序条件
             $order_by = NULL;
             if ($this->app_type === 'client'):
-                $order_by['nature'] = $order_by['parent_id'] = $order_by['level'] = 'ASC';
-                $order_by['time_edit'] = 'DESC'; // 临时性调序，主要用于演示视频生成
+                $order_by['nature'] = $order_by['ancestor_id'] = $order_by['parent_id'] = $order_by['level'] = 'ASC';
+                //$order_by['time_edit'] = 'DESC'; // 临时性调序，主要用于演示视频生成
             endif;
 
             // 获取列表；默认可获取已删除项
@@ -199,12 +199,15 @@
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
-            $this->form_validation->set_rules('parent_id', '所属分类', 'trim|is_natural_no_zero');
+            $this->form_validation->set_rules('parent_id', '所属上级分类', 'trim|is_natural_no_zero');
             $this->form_validation->set_rules('nature', '商品性质', 'trim|in_list[商品,服务]');
             $this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]');
             $this->form_validation->set_rules('description', '描述', 'trim|max_length[100]');
             $this->form_validation->set_rules('url_name', '自定义域名', 'trim|alpha_dash|max_length[30]');
             $this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_image_index', '列表页形象图', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_image_detail', '详情页形象图', 'trim|max_length[255]');
+            $this->form_validation->set_rules('item_id', '主推商品ID', 'trim|is_natural_no_zero');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -214,22 +217,25 @@
 			else:
                 // 若指定所属分类，获取并相关信息
                 $parent_id = $this->input->post('parent_id');
-                if ( ! empty($parent_id))
+                if ( ! empty($parent_id)):
                     $parent_category = $this->get_item('item_category', 'category_id', $parent_id, FALSE);
+                    $ancestor_id = $parent_category['parent_id']; // 根据所属上级分类设置所属顶级分类
+                endif;
 
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
 
-					'url_name' => strtolower($this->input->post('url_name')),
+					'url_name' => empty($this->input->post('url_name'))? NULL: strtolower($this->input->post('url_name')),
 
+                    'ancestor_id' => isset($ancestor_id)? $ancestor_id: NULL,
                     'parent_id' => empty($parent_id)? NULL: $parent_id,
                     'nature' => empty($parent_category)? $this->input->post('nature'): $parent_category['nature'],
                     'level' => empty($parent_category)? 1: ($parent_category['level'] + 1),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'url_image', 'description',
+					'name', 'url_image', 'url_image_index', 'url_image_detail', 'item_id', 'description',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
@@ -282,6 +288,9 @@
             $this->form_validation->set_rules('description', '描述', 'trim|max_length[100]');
             $this->form_validation->set_rules('url_name', '自定义域名', 'trim|alpha_dash|max_length[30]');
             $this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_image_index', '列表页形象图', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_image_detail', '详情页形象图', 'trim|max_length[255]');
+            $this->form_validation->set_rules('item_id', '主推商品ID', 'trim|is_natural_no_zero');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -291,34 +300,43 @@
 			else:
                 // 若指定所属分类，获取并相关信息
                 $parent_id = $this->input->post('parent_id');
-                if ( ! empty($parent_id))
+                if ( ! empty($parent_id)):
                     $parent_category = $this->get_item('item_category', 'category_id', $parent_id, FALSE);
+                    $ancestor_id = empty($parent_category['parent_id'])? $parent_category['category_id']: $parent_category['parent_id']; // 根据所属上级分类设置所属顶级分类
+                endif;
+
+                // 级别
+                $level = empty($parent_category)? 1: ($parent_category['level'] + 1);
 
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
 
-                    'url_name' => strtolower($this->input->post('url_name')),
+                    'url_name' => empty($this->input->post('url_name'))? NULL: strtolower($this->input->post('url_name')),
 
+                    'ancestor_id' => isset($ancestor_id)? $ancestor_id: NULL,
                     'parent_id' => empty($parent_id)? NULL: $parent_id,
                     'nature' => empty($parent_category)? $this->input->post('nature'): $parent_category['nature'],
-                    'level' => empty($parent_category)? 1: ($parent_category['level'] + 1),
+                    'level' => $level,
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'url_image', 'description',
+					'name', 'url_image', 'url_image_index', 'url_image_detail', 'item_id', 'description',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
-				// 获取ID
-				$id = $this->input->post('id');
 				$result = $this->basic_model->edit($id, $data_to_edit);
-
 				if ($result !== FALSE):
 					$this->result['status'] = 200;
                     $this->result['content']['id'] = $id;
                     $this->result['content']['message'] = '编辑成功';
+
+                    // 若当前不是顶级分类，则更新所有下属分类的所属顶级分类
+                    if ( ! empty($parent_id)):
+                        $level += 1;
+                        $query = $this->db->query("UPDATE `item_category` SET `level` = $level, `ancestor_id` = $ancestor_id WHERE `parent_id` = $id");
+                    endif;
 
 				else:
 					$this->result['status'] = 434;

@@ -31,7 +31,7 @@
 			// 主要数据库信息到基础模型类
 			$this->basic_model->table_name = $this->table_name;
 			$this->basic_model->id_name = $this->id_name;
-		}
+		} // end __construct
 
 		/**
 		 * 0 计数
@@ -142,7 +142,7 @@
 			if ( !empty($user_id) && !empty($template_id) ):
 				// 若传入了$template_id，尝试获取$count
 				$count = $this->input->post('count');
-			elseif ( empty($user_id) || empty($combo_id) ):
+			elseif ( empty($user_id.$combo_id) ):
 				$this->result['status'] = 400;
 				$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 				exit();

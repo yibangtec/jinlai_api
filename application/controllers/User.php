@@ -238,7 +238,7 @@
 				endif;
 			endif;
 		} // end edit
-		
+
 		/**
 		 * 5 编辑单行数据特定字段
 		 *
@@ -383,7 +383,6 @@
 						$this->result['status'] = 434;
 						$this->result['content']['row_failed'][] = $id;
 					endif;
-
 				endforeach;
 
 				// 添加全部操作成功后的提示
@@ -392,6 +391,24 @@
 
 			endif;
 		} // end edit_bulk
+
+        /**
+         * 清空特定项所有相关记录
+         */
+        public function truncate()
+        {
+            // 检查必要参数是否已传入
+            $user_id = $this->input->post('user_id');
+            $mobile = $this->input->post('mobile');
+            if (empty($user_id.$mobile)):
+                $this->result['status'] = 400;
+                $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
+                exit();
+            endif;
+
+            // 获取订单相关商品数据
+            $query = !empty($user_id)? $this->db->query("CALL delete_user_by_id( $user_id )"): $this->db->query("CALL delete_user_by_mobile( $mobile )");
+        } // end truncate
 
         /**
          * 以下为工具方法

@@ -125,7 +125,7 @@
             $condition = $this->advanced_sorter($condition);
 
 			// 排序条件
-			$order_by = NULL;
+            $order_by['index_id'] = 'ASC'; // 按索引值
             $order_by['time_edit'] = 'DESC'; // 临时性调序，主要用于演示视频生成
 
             // 获取列表；默认可获取已删除项

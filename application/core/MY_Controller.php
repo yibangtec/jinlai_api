@@ -852,8 +852,8 @@
                 'stocks' => $sku_metas['overall_stocks'],
                 'tag_price' => $sku_metas['tag_price_max'], // 商品的price、tag_price字段值也根据规格相关信息进行更新
                 'price' => $sku_metas['price_min'],
-                'price_min' => $sku_metas['price_min'],
-                'price_max' => $sku_metas['price_max'],
+                'sku_price_min' => $sku_metas['price_min'],
+                'sku_price_max' => $sku_metas['price_max'],
             );
 
             // 更新商品信息

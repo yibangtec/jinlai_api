@@ -2650,13 +2650,20 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"type": "text"
 								},
 								{
 									"key": "id",
-									"value": "9",
+									"value": "1",
 									"type": "text"
 								}
 							]
@@ -4440,6 +4447,12 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text"
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"type": "text"
@@ -4456,7 +4469,7 @@
 								},
 								{
 									"key": "template_id",
-									"value": "9",
+									"value": "13",
 									"type": "text",
 									"disabled": true
 								},
@@ -6924,7 +6937,8 @@
 								{
 									"key": "test_mode",
 									"value": "on",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "app_type",
@@ -6938,8 +6952,16 @@
 									"disabled": true
 								},
 								{
-									"key": "time_delete",
-									"value": "NULL",
+									"key": "ancestor_id",
+									"value": "142",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "parent_id",
+									"value": "149",
+									"description": "",
 									"type": "text"
 								},
 								{
@@ -6947,12 +6969,6 @@
 									"value": "189,175,173,36,3,2",
 									"type": "text",
 									"disabled": true
-								},
-								{
-									"key": "parent_id",
-									"value": "4",
-									"description": "",
-									"type": "text"
 								}
 							]
 						},
@@ -6981,13 +6997,20 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"type": "text"
 								},
 								{
 									"key": "id",
-									"value": "130",
+									"value": "177",
 									"type": "text"
 								},
 								{
@@ -7100,7 +7123,7 @@
 								},
 								{
 									"key": "id",
-									"value": "2",
+									"value": "149",
 									"type": "text"
 								},
 								{
@@ -7110,17 +7133,37 @@
 								},
 								{
 									"key": "parent_id",
-									"value": "1",
+									"value": "141",
 									"type": "text"
 								},
 								{
 									"key": "name",
-									"value": "女装/女士精品",
+									"value": "进口水果",
 									"type": "text"
 								},
 								{
 									"key": "url_name",
 									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "url_image",
+									"value": "url_image/201806/0604/174930.jpg",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "url_image_index",
+									"value": "",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "url_image_detail",
+									"value": "url_image_detail/201806/0604/174936.jpg",
+									"description": "",
 									"type": "text",
 									"disabled": true
 								}
@@ -7320,15 +7363,13 @@
 								},
 								{
 									"key": "limit",
-									"value": "5",
-									"type": "text",
-									"disabled": true
+									"value": "10",
+									"type": "text"
 								},
 								{
 									"key": "offset",
-									"value": "3",
-									"type": "text",
-									"disabled": true
+									"value": "0",
+									"type": "text"
 								},
 								{
 									"key": "category_id",
@@ -7344,9 +7385,8 @@
 								},
 								{
 									"key": "biz_id",
-									"value": "2",
-									"type": "text",
-									"disabled": true
+									"value": "1",
+									"type": "text"
 								},
 								{
 									"key": "category_biz_id",
@@ -7374,10 +7414,9 @@
 								},
 								{
 									"key": "price_min",
-									"value": "",
+									"value": "100",
 									"type": "text",
-									"description": "最低商城价",
-									"disabled": true
+									"description": "最低商城价"
 								},
 								{
 									"key": "price_max",
@@ -7503,7 +7542,7 @@
 								},
 								{
 									"key": "ids",
-									"value": "5,14,8",
+									"value": "3302,3289,3285",
 									"type": "text"
 								},
 								{
@@ -7531,8 +7570,7 @@
 									"key": "orderby_sold_overall",
 									"value": "DESC",
 									"description": "按总销量排序",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "orderby_sold_monthly",
@@ -7588,13 +7626,20 @@
 								{
 									"key": "id",
 									"value": "2782",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "biz_id",
 									"value": "2",
 									"type": "text",
 									"disabled": true
+								},
+								{
+									"key": "code_biz",
+									"value": "A3027",
+									"description": "",
+									"type": "text"
 								}
 							]
 						},
@@ -8703,7 +8748,7 @@
 								},
 								{
 									"key": "type",
-									"value": "text",
+									"value": "item",
 									"type": "text",
 									"description": ""
 								},
@@ -8732,14 +8777,14 @@
 									"key": "content",
 									"value": "测试文本消息",
 									"type": "text",
-									"description": "{\"nation\": \"中国\",\"province\": \"山东省\",\"city\": \"青岛市\",\"county\": \"崂山区\",\"street\": \"东海东路1号45-2栋意帮管家3楼产品技术部\"}"
+									"description": "{\"nation\": \"中国\",\"province\": \"山东省\",\"city\": \"青岛市\",\"county\": \"崂山区\",\"street\": \"东海东路1号45-2栋意帮管家3楼产品技术部\"}",
+									"disabled": true
 								},
 								{
 									"key": "ids",
-									"value": "1",
+									"value": "2",
 									"type": "text",
-									"description": "",
-									"disabled": true
+									"description": ""
 								},
 								{
 									"key": "longitude",
@@ -9999,7 +10044,7 @@
 								},
 								{
 									"key": "biz_id",
-									"value": "1",
+									"value": "2",
 									"type": "text"
 								},
 								{
@@ -10014,9 +10059,8 @@
 								},
 								{
 									"key": "user_id",
-									"value": "39",
-									"type": "text",
-									"disabled": true
+									"value": "1",
+									"type": "text"
 								},
 								{
 									"key": "user_ip",
@@ -10797,8 +10841,15 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
-									"value": "admin",
+									"value": "client",
 									"type": "text"
 								},
 								{
@@ -10813,7 +10864,7 @@
 								},
 								{
 									"key": "biz_id",
-									"value": "",
+									"value": "1",
 									"type": "text"
 								},
 								{

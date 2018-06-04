@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'barcode', 'tag_price', 'price', 'price_min', 'price_max', 'sold_overall', 'sold_monthly', 'sold_daily', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id', 'status',
+			'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'barcode', 'tag_price', 'price', 'sku_price_min', 'sku_price_max', 'sold_overall', 'sold_monthly', 'sold_daily', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id', 'status',
 			'time_create', 'time_delete', 'time_publish', 'time_suspend', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -36,14 +36,14 @@
 		 * 可作为排序条件的字段名
 		 */
 		protected $names_to_order = array(
-            'tag_price', 'price', 'stocks', 'time_publish', 'time_to_suspend', 'sold_overall', 'sold_monthly', 'sold_daily', 'time_create',
+            'index_id', 'sku_price_min', 'sku_price_max', 'tag_price', 'price', 'stocks', 'time_publish', 'time_to_suspend', 'sold_overall', 'sold_monthly', 'sold_daily', 'time_create',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'item_id', 'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'barcode', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'sold_overall', 'sold_monthly', 'sold_daily', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id',
+			'item_id', 'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'index_id', 'code_biz', 'barcode', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'sold_overall', 'sold_monthly', 'sold_daily', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id',
 			'time_create', 'time_delete', 'time_publish', 'time_suspend', 'time_edit', 'creator_id', 'operator_id', 'note_admin', 'status',
 		);
 
@@ -59,7 +59,7 @@
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'category_biz_id', 'code_biz', 'barcode', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id', 'status',
+			'category_biz_id', 'index_id', 'code_biz', 'barcode', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id', 'status',
 		);
 
 		/**
@@ -136,6 +136,7 @@
                 if ( !empty($this->input->post('orderby_'.$sorter)) )
                     $order_by[$sorter] = $this->input->post('orderby_'.$sorter);
             endforeach;
+            $order_by['index_id'] = 'DESC';
             $order_by['time_publish'] = 'DESC';
 
             // 获取列表；默认可获取已删除项
@@ -194,8 +195,9 @@
 		{
 			// 检查必要参数是否已传入
 			$id = $this->input->post('id');
+            $code_biz = $this->input->post('code_biz');
             $barcode = $this->input->post('barcode');
-			if ( empty($id.$barcode) ):
+			if ( empty($id.$code_biz.$barcode) ):
 				$this->result['status'] = 400;
 				$this->result['content']['error']['message'] = '必要的请求参数未传入';
 				exit();
@@ -210,6 +212,8 @@
 			// 获取特定项；默认可获取已删除项
             if ( !empty($barcode) ):
                 $item = $this->basic_model->find('barcode', $barcode);
+            elseif ( !empty($code_biz) ):
+                $item = $this->basic_model->find('code_biz', $code_biz);
             else:
                 $item = $this->basic_model->select_by_id($id);
             endif;
