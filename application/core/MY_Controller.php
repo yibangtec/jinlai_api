@@ -590,7 +590,7 @@
             $result = $this->getui->push_app($message, $type);
 
             if ( empty($result) || $result['result'] !== 'ok'):
-                $this->result['content']['push_result'] = '推送失败，原因为：'.$result['status'].' '.$result['desc'];
+                $this->result['content']['push_result'] = '推送失败，原因为：'.$result['result'];
             else:
                 $this->result['content']['push_task_id'] = $result['taskid'];
             endif;

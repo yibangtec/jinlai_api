@@ -51,7 +51,7 @@
 		 * 创建时必要的字段名
 		 */
 		protected $names_create_required = array(
-			'creator_id', 'sender_type', 'receiver_type', 'type',
+			'creator_id', 'receiver_type',
 		);
 
 		/**
@@ -200,16 +200,27 @@
 			//$min_level = 10; // 级别要求
 			//$this->permission_check($role_allowed, $min_level);
 
-			// 检查必要参数是否已传入
+            // 假设必要的请求参数未传入
+            $this->result['status'] = 400;
+
+            // 检查必要参数是否已传入
 			$required_params = $this->names_create_required;
 			foreach ($required_params as $param):
 				${$param} = trim($this->input->post($param));
 				if ( !isset( ${$param} ) ):
-					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();
 				endif;
 			endforeach;
+
+			// 根据收信人类型判断必要参数是否传入
+            if ($receiver_type === 'biz' && empty($this->input->post('biz_id'))):
+                $this->result['content']['error']['message'] = '需传入商家ID';
+                exit();
+            elseif ($receiver_type === 'client' && empty($this->input->post('user_id'))):
+                $this->result['content']['error']['message'] = '需传入用户ID';
+                exit();
+            endif;
 
 			// 对部分类型消息，content为必要参数
             $types_require_content = array(
@@ -222,7 +233,6 @@
             if ( in_array($type, $types_require_content) ):
                 $content = $this->input->post('content');
                 if (empty($content)):
-                    $this->result['status'] = 400;
                     $this->result['content']['error']['message'] = '创建该类消息需content值';
                     exit();
                 endif;
@@ -230,7 +240,6 @@
             elseif ( in_array($type, $types_require_ids) ):
                 $ids = trim($this->input->post('ids'), ',');
                 if (empty($ids)):
-                    $this->result['status'] = 400;
                     $this->result['content']['error']['message'] = '创建该类消息需ids值';
                     exit();
                 endif;
@@ -241,7 +250,6 @@
                 $longitude = $this->input->post('longitude');
                 $latitude = $this->input->post('latitude');
                 if ( empty($longitude) || empty($latitude)):
-                    $this->result['status'] = 400;
                     $this->result['content']['error']['message'] = '创建位置类消息需传入经纬度（小数点后保留5位数字）';
                     exit();
                 endif;
@@ -273,8 +281,8 @@
 					'creator_id' => $creator_id,
                     'time_create' => time(),
 
-                    'sender_type' => empty($this->input->post('sender_type'))? 'client': $this->input->post('sender_type'),
-                    'receiver_type' => empty($this->input->post('receiver_type'))? 'biz': $this->input->post('receiver_type'),
+                    'sender_type' => empty($this->input->post('sender_type'))? $this->app_type: $this->input->post('sender_type'),
+                    'receiver_type' => $receiver_type,
 
                     'type' => $type,
 				);
@@ -289,6 +297,7 @@
                 if ($type === 'location'):
                     $data_to_create['longitude'] = $longitude;
                     $data_to_create['latitude'] = $latitude;
+                    $data_to_create['content'] = $longitude.','.$latitude;
                 elseif ( in_array($type, $types_require_content) ):
                     $data_to_create['content'] = $content;
                 else:

@@ -2430,7 +2430,8 @@
 								{
 									"key": "name",
 									"value": "雅顿",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},
@@ -5692,6 +5693,13 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"type": "text"
@@ -7397,8 +7405,7 @@
 								{
 									"key": "name",
 									"value": "手机",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "tag_price",
@@ -7416,7 +7423,8 @@
 									"key": "price_min",
 									"value": "100",
 									"type": "text",
-									"description": "最低商城价"
+									"description": "最低商城价",
+									"disabled": true
 								},
 								{
 									"key": "price_max",
@@ -7543,7 +7551,8 @@
 								{
 									"key": "ids",
 									"value": "3302,3289,3285",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "orderby_price",
@@ -7570,7 +7579,8 @@
 									"key": "orderby_sold_overall",
 									"value": "DESC",
 									"description": "按总销量排序",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "orderby_sold_monthly",
@@ -7637,7 +7647,7 @@
 								},
 								{
 									"key": "code_biz",
-									"value": "A3027",
+									"value": "A1252",
 									"description": "",
 									"type": "text"
 								}
@@ -8519,10 +8529,9 @@
 								},
 								{
 									"key": "limit",
-									"value": "10",
+									"value": "3",
 									"type": "text",
-									"description": "",
-									"disabled": true
+									"description": ""
 								},
 								{
 									"key": "offset",
@@ -8533,13 +8542,13 @@
 								},
 								{
 									"key": "sender_type",
-									"value": "",
+									"value": "client",
 									"type": "text",
 									"description": ""
 								},
 								{
 									"key": "receiver_type",
-									"value": "",
+									"value": "biz",
 									"type": "text",
 									"description": ""
 								},
@@ -8547,11 +8556,12 @@
 									"key": "user_id",
 									"value": "",
 									"type": "text",
-									"description": ""
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "biz_id",
-									"value": "",
+									"value": "1",
 									"type": "text",
 									"description": ""
 								},
@@ -8629,7 +8639,7 @@
 								},
 								{
 									"key": "creator_id",
-									"value": "2",
+									"value": "59",
 									"type": "text",
 									"description": ""
 								}
@@ -9388,12 +9398,11 @@
 									"key": "test_mode",
 									"value": "on",
 									"type": "text",
-									"description": "",
-									"disabled": true
+									"description": ""
 								},
 								{
 									"key": "app_type",
-									"value": "client",
+									"value": "biz",
 									"type": "text",
 									"description": ""
 								},
@@ -9410,13 +9419,13 @@
 									"description": ""
 								},
 								{
-									"key": "article_id",
+									"key": "receiver_type",
 									"value": "",
-									"type": "text",
-									"description": ""
+									"description": "",
+									"type": "text"
 								},
 								{
-									"key": "receiver_type",
+									"key": "article_id",
 									"value": "",
 									"type": "text",
 									"description": ""
@@ -9425,7 +9434,8 @@
 									"key": "user_id",
 									"value": "38",
 									"type": "text",
-									"description": ""
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "biz_id",
@@ -9581,25 +9591,25 @@
 								},
 								{
 									"key": "receiver_type",
-									"value": "client",
-									"description": "",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "",
+									"value": "biz",
 									"type": "text",
 									"description": ""
 								},
 								{
 									"key": "biz_id",
-									"value": "",
+									"value": "1",
 									"type": "text",
 									"description": ""
 								},
 								{
 									"key": "article_id",
-									"value": "1",
+									"value": "8",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "url_image",
+									"value": "url_image/201806/0605/232030.png",
 									"type": "text",
 									"description": ""
 								},
@@ -9611,7 +9621,7 @@
 								},
 								{
 									"key": "excerpt",
-									"value": "这类通知有点击事件",
+									"value": "这类通知有点击事件，摘要图不会显示出来",
 									"type": "text",
 									"description": ""
 								},
@@ -9623,15 +9633,15 @@
 								},
 								{
 									"key": "creator_id",
-									"value": "1",
+									"value": "4",
 									"type": "text",
 									"description": ""
 								},
 								{
 									"key": "push_type",
 									"value": "transmission",
-									"description": "notification|transmission",
-									"type": "text"
+									"type": "text",
+									"description": ""
 								}
 							]
 						},
@@ -10989,13 +10999,27 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
-									"value": "admin",
+									"value": "client",
 									"type": "text"
 								},
 								{
 									"key": "id",
-									"value": "2",
+									"value": "128",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "biz_id",
+									"value": "1",
+									"description": "",
 									"type": "text"
 								}
 							]

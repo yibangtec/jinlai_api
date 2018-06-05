@@ -133,19 +133,28 @@
 
 		/**
 		 * 2 详情
+         *
+         * 根据ID获取商家装修方案，或根据商家ID获取该商家默认装修方案
 		 */
 		public function detail()
 		{
 			// 检查必要参数是否已传入
 			$id = $this->input->post('id');
-			if ( !isset($id) ):
+			$biz_id = $this->input->post('biz_id');
+			if ( empty($id.$biz_id) ):
 				$this->result['status'] = 400;
 				$this->result['content']['error']['message'] = '必要的请求参数未传入';
 				exit();
 			endif;
 
-			// 限制可返回的字段
-			$this->db->select( implode(',', $this->names_to_return) );
+			// 若传入了商家ID，则先获取商家默认装修方案ID
+			if ( !empty($biz_id) ):
+                $biz = $this->get_item('biz', 'biz_id', $biz_id);
+                $id = $biz['ornament_id']; // 默认装修方案ID
+            endif;
+
+            // 限制可返回的字段
+            $this->db->select( implode(',', $this->names_to_return) );
 			
 			// 获取特定项；默认可获取已删除项
 			$item = $this->basic_model->select_by_id($id);
