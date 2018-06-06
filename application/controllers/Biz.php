@@ -195,8 +195,7 @@
 
                 // 客户端同时获取商家店铺装修方案（若有）
                 if (($this->app_type === 'client') && !empty($item['ornament_id']) ):
-                    $this->switch_model('ornament_biz', 'ornament_id');
-                    $this->result['content']['ornament'] = $this->basic_model->select_by_id($item['ornament_id']);
+                    $this->result['content']['ornament'] = $this->get_item('ornament_biz', 'ornament_id', $item['ornament_id']);
                 endif;
 
                 // 获取当前商家可用的优惠券模板信息

@@ -31,7 +31,7 @@
 								},
 								{
 									"key": "mobile",
-									"value": "17664073966",
+									"value": "19900000115",
 									"type": "text"
 								},
 								{
@@ -212,13 +212,13 @@
 								},
 								{
 									"key": "app_type",
-									"value": "client",
+									"value": "biz",
 									"type": "text",
 									"description": ""
 								},
 								{
 									"key": "mobile",
-									"value": "17664073966",
+									"value": "19900000115",
 									"type": "text",
 									"description": ""
 								},
@@ -2105,69 +2105,7 @@
 					"response": []
 				},
 				{
-					"name": "BIZ6 商家批量操作",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"tests[\"Body is correct\"] = responseBody === \"response_body_string\";"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "biz",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "7",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "url_image_license",
-									"type": "text"
-								},
-								{
-									"key": "value",
-									"value": "sth",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/biz/edit_bulk",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"biz",
-								"edit_bulk"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "BIZ7 商家快速创建",
+					"name": "BIZ1 商家列表",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -2182,38 +2120,37 @@
 								},
 								{
 									"key": "app_type",
-									"value": "biz",
+									"value": "client",
 									"type": "text"
 								},
 								{
-									"key": "user_id",
-									"value": "999",
-									"type": "text"
+									"key": "limit",
+									"value": "10",
+									"type": "text",
+									"disabled": true
 								},
 								{
-									"key": "url_logo",
-									"value": "",
-									"type": "text"
+									"key": "offset",
+									"value": "0",
+									"type": "text",
+									"disabled": true
 								},
 								{
-									"key": "brief_name",
-									"value": "双蝶专卖店",
-									"type": "text"
+									"key": "category_id",
+									"value": "4",
+									"type": "text",
+									"disabled": true
 								},
 								{
-									"key": "tel_public",
-									"value": "13668865674",
-									"type": "text"
-								},
-								{
-									"key": "category_ids",
-									"value": "1",
-									"type": "text"
+									"key": "name",
+									"value": "雅顿",
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/biz/create_quick",
+							"raw": "https://api.517ybang.com/biz/index",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -2222,7 +2159,50 @@
 							],
 							"path": [
 								"biz",
-								"create_quick"
+								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BIZ2 商家详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/biz/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"biz",
+								"detail"
 							]
 						}
 					},
@@ -2329,123 +2309,6 @@
 							"path": [
 								"biz",
 								"create"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "BIZ5 商家单项编辑",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "skip_sign",
-									"value": "please",
-									"type": "text"
-								},
-								{
-									"key": "app_type",
-									"value": "biz",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "7",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "url_image_license",
-									"type": "text"
-								},
-								{
-									"key": "value",
-									"value": "sth",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/biz/edit_certain",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"biz",
-								"edit_certain"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "BIZ1 商家列表",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "limit",
-									"value": "10",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "offset",
-									"value": "0",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "category_id",
-									"value": "4",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "name",
-									"value": "雅顿",
-									"type": "text",
-									"disabled": true
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/biz/index",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"biz",
-								"index"
 							]
 						}
 					},
@@ -2643,7 +2506,125 @@
 					"response": []
 				},
 				{
-					"name": "BIZ2 商家详情",
+					"name": "BIZ5 商家单项编辑",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "skip_sign",
+									"value": "please",
+									"type": "text"
+								},
+								{
+									"key": "app_type",
+									"value": "biz",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "7",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "url_image_license",
+									"type": "text"
+								},
+								{
+									"key": "value",
+									"value": "sth",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/biz/edit_certain",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"biz",
+								"edit_certain"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BIZ6 商家批量操作",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"tests[\"Body is correct\"] = responseBody === \"response_body_string\";"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "biz",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "7",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "url_image_license",
+									"type": "text"
+								},
+								{
+									"key": "value",
+									"value": "sth",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/biz/edit_bulk",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"biz",
+								"edit_bulk"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "BIZ7 商家快速创建",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -2653,24 +2634,43 @@
 								{
 									"key": "test_mode",
 									"value": "on",
-									"description": "",
 									"type": "text",
 									"disabled": true
 								},
 								{
 									"key": "app_type",
-									"value": "client",
+									"value": "biz",
 									"type": "text"
 								},
 								{
-									"key": "id",
+									"key": "user_id",
+									"value": "999",
+									"type": "text"
+								},
+								{
+									"key": "url_logo",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "brief_name",
+									"value": "双蝶专卖店",
+									"type": "text"
+								},
+								{
+									"key": "tel_public",
+									"value": "13668865674",
+									"type": "text"
+								},
+								{
+									"key": "category_ids",
 									"value": "1",
 									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/biz/detail",
+							"raw": "https://api.517ybang.com/biz/create_quick",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -2679,7 +2679,7 @@
 							],
 							"path": [
 								"biz",
-								"detail"
+								"create_quick"
 							]
 						}
 					},
@@ -7968,206 +7968,6 @@
 			"description": null,
 			"item": [
 				{
-					"name": "MBB6 商家会员批量操作",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "ids",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "operation",
-									"value": "restore",
-									"type": "text"
-								},
-								{
-									"key": "password",
-									"value": "123456",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/member_biz/edit_bulk",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"member_biz",
-								"edit_bulk"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "MBB2 商家会员详情",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "1",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "biz_id",
-									"value": "2",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/member_biz/detail",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"member_biz",
-								"detail"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "MBB1 商家会员列表",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text"
-								},
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "limit",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "offset",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "40",
-									"type": "text"
-								},
-								{
-									"key": "biz_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "category_id",
-									"value": "4",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "name",
-									"value": "多乐",
-									"type": "text"
-								},
-								{
-									"key": "mobile",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "level",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_create",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_delete",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_edit",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "creator_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "operator_id",
-									"value": "",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/member_biz/index",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"member_biz",
-								"index"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "MBB0 商家会员计数",
 					"request": {
 						"method": "POST",
@@ -8244,6 +8044,209 @@
 					"response": []
 				},
 				{
+					"name": "MBB1 商家会员列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "offset",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "biz_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "category_id",
+									"value": "4",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "多乐",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "mobile",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "level",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_create",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_edit",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "creator_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "operator_id",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/member_biz/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"member_biz",
+								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MBB2 商家会员详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "biz_id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/member_biz/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"member_biz",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MBB3 商家会员创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "biz_id",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "mobile",
+									"value": "17664073966",
+									"type": "text"
+								},
+								{
+									"key": "level",
+									"value": "1",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/member_biz/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"member_biz",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "MBB4 商家会员编辑",
 					"request": {
 						"method": "POST",
@@ -8302,7 +8305,7 @@
 					"response": []
 				},
 				{
-					"name": "MBB3 商家会员创建",
+					"name": "MBB6 商家会员批量操作",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -8320,25 +8323,24 @@
 									"type": "text"
 								},
 								{
-									"key": "biz_id",
-									"value": "2",
-									"type": "text"
-								},
-								{
-									"key": "mobile",
-									"value": "17664073966",
-									"type": "text"
-								},
-								{
-									"key": "level",
+									"key": "ids",
 									"value": "1",
-									"type": "text",
-									"disabled": true
+									"type": "text"
+								},
+								{
+									"key": "operation",
+									"value": "restore",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/member_biz/create",
+							"raw": "https://api.517ybang.com/member_biz/edit_bulk",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -8347,7 +8349,7 @@
 							],
 							"path": [
 								"member_biz",
-								"create"
+								"edit_bulk"
 							]
 						}
 					},
@@ -8725,12 +8727,6 @@
 									"description": ""
 								},
 								{
-									"key": "sender_type",
-									"value": "client",
-									"type": "text",
-									"description": ""
-								},
-								{
 									"key": "receiver_type",
 									"value": "biz",
 									"type": "text",
@@ -8745,7 +8741,7 @@
 								},
 								{
 									"key": "biz_id",
-									"value": "2",
+									"value": "1",
 									"type": "text",
 									"description": ""
 								},
@@ -8812,7 +8808,7 @@
 								},
 								{
 									"key": "creator_id",
-									"value": "2",
+									"value": "1",
 									"type": "text",
 									"description": ""
 								}

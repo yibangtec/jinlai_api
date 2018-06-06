@@ -653,30 +653,31 @@
 
             // 默认用户非员工
             $this->result['status'] = 415;
-            if ( empty($stuff) ):
-                $this->result['content']['error']['message'] = '该用户并非员工';
-                exit();
+            // 不允许已冻结员工登录
+            if ($stuff['status'] === '已冻结'):
+                    $this->result['content']['error']['message'] = '该用户的员工身份已冻结';
+                    exit();
 
             else:
-                // 不允许商家员工登录管理端
-                if ($this->app_type === 'admin' && !empty($stuff['biz_id']) ):
-                    $this->result['content']['error']['message'] = '该用户并非管理端员工';
-                    exit();
+                // 管理端员工规则
+                if ($this->app_type === 'admin'):
+                    if (empty($stuff)):
+                        $this->result['content']['error']['message'] = '该用户并非管理端员工';
+                        exit();
+                    endif;
 
-                // 不允许管理员工登录非管理端
-                elseif ($this->app_type !== 'admin' && empty($stuff['biz_id']) ):
-                    $this->result['content']['error']['message'] = '该用户并非商户端员工';
-                    exit();
-
-                else:
-                    $user_info['stuff_id'] = $stuff['stuff_id'];
-                    $user_info['biz_id'] = $stuff['biz_id'];
-                    $user_info['role'] = $stuff['role'];
-                    $user_info['level'] = $stuff['level'];
-
-                    return $user_info;
+                // 商家端员工规则
+                elseif ($this->app_type === 'biz'):
 
                 endif;
+
+                $user_info['stuff_id'] = $stuff['stuff_id'];
+                $user_info['biz_id'] = $stuff['biz_id'];
+                $user_info['role'] = $stuff['role'];
+                $user_info['level'] = $stuff['level'];
+
+                return $user_info;
+
             endif;
 		} // end check_stuff
 

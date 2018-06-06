@@ -259,7 +259,7 @@
 						);
 						$address_count = $this->basic_model->count($condition);
 						$this->result['content']['count'] = $address_count; // 当前用户未删除地址数
-						if ( $address_count === 1):
+						if ($address_count === 1):
 							$update_result = $this->default_this($id, $user_id);
 							if ( $update_result !== FALSE ):
 								$this->result['content']['address_id'] = $id; // 通知前端更新本地默认地址
