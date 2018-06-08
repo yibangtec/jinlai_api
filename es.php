@@ -23,9 +23,10 @@ header('Cache-Control:no-cache');
 $content = array(
     array('type' => 'text', 'content' => '测试一下测试一下测试一下测试一下前端是否可以正常接收并解析JSON格式返回的EventStream信息'), // 文字
     array('type' => 'image', 'content' => 'image/201806/0607/1202018064.jpg'), // 图片
+    array('type' => 'location', 'content' => '120.44208,36.06894'), // 位置
     //array('type' => 'url', 'url_page' => 'https://www.517ybang.com/', 'title' => '进来商城', 'url_image' => NULL), // 网页
     //array('type' => 'item', 'ids' => 3), // 商品
-    array('type' => 'location', 'content' => '120.44208,36.06894'),
+
     //array('type' => 'order', 'order_id' => 1, 'content' => array()), // 订单
 );
 
@@ -56,8 +57,8 @@ while (TRUE)
         'creator_id' => 1,
     );
     $data = array_merge($data, $extra_data);
-    //$data = array_merge($data, $content[ round( rand(0, count($content)) ) ]);
-    $data = array_merge($data, $content[0]);
+    $data = array_merge($data, $content[ round( rand(0, count($content)) ) ]);
+    //$data = array_merge($data, $content[0]);
 
     // 发送内容
     try {
