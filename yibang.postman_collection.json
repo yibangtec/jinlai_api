@@ -26,22 +26,22 @@
 								},
 								{
 									"key": "app_type",
-									"value": "biz",
+									"value": "client",
 									"type": "text"
 								},
 								{
 									"key": "mobile",
-									"value": "19900000115",
+									"value": "17664073966",
 									"type": "text"
 								},
 								{
 									"key": "sms_id",
-									"value": "329",
+									"value": "446",
 									"type": "text"
 								},
 								{
 									"key": "captcha",
-									"value": "082731",
+									"value": "073652",
 									"type": "text"
 								},
 								{
@@ -212,13 +212,13 @@
 								},
 								{
 									"key": "app_type",
-									"value": "biz",
+									"value": "admin",
 									"type": "text",
 									"description": ""
 								},
 								{
 									"key": "mobile",
-									"value": "19900000115",
+									"value": "18678966981",
 									"type": "text",
 									"description": ""
 								},
@@ -383,7 +383,7 @@
 								},
 								{
 									"key": "wechat_union_id",
-									"value": "o6_bmasdasdsad6_2sgVt7hMZOPfL",
+									"value": "o0geuv1gYOza99ncltzFyN6f1SGQ",
 									"type": "text"
 								},
 								{
@@ -926,6 +926,50 @@
 			"description": null,
 			"item": [
 				{
+					"name": "APY3 支付宝下单",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "order_id",
+									"value": "22",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "order",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/alipay/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"alipay",
+								"create"
+							]
+						},
+						"description": "https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_1"
+					},
+					"response": []
+				},
+				{
 					"name": "APY4 支付宝异步通知",
 					"request": {
 						"method": "POST",
@@ -968,7 +1012,7 @@
 					"response": []
 				},
 				{
-					"name": "APY3 支付宝下单",
+					"name": "APY5 支付宝退款",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -977,25 +1021,21 @@
 							"formdata": [
 								{
 									"key": "order_id",
-									"value": "1",
+									"value": "27",
+									"description": "待退款单号",
 									"type": "text"
 								},
 								{
-									"key": "type",
-									"value": "order",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "test_mode",
-									"value": "on",
+									"key": "total_to_refund",
+									"value": "0.01",
+									"description": "待退款金额；全额退款时传入'all'",
 									"type": "text",
 									"disabled": true
 								}
 							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/alipay/create",
+							"raw": "https://api.517ybang.com/alipay/refund",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -1004,10 +1044,10 @@
 							],
 							"path": [
 								"alipay",
-								"create"
+								"refund"
 							]
 						},
-						"description": "https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_1"
+						"description": "测试用API，无固定用途"
 					},
 					"response": []
 				}
@@ -5685,171 +5725,6 @@
 			"description": null,
 			"item": [
 				{
-					"name": "FVB3 商家关注创建",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"description": "",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "biz_id",
-									"value": "1",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/fav_biz/create",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"fav_biz",
-								"create"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "FVB6 商家关注删除",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "ids",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "operation",
-									"value": "delete",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/fav_biz/edit_bulk",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"fav_biz",
-								"edit_bulk"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "FVB1 商家关注列表",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text"
-								},
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "limit",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "offset",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "202",
-									"type": "text"
-								},
-								{
-									"key": "biz_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_create",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_delete",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_edit",
-									"value": "",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/fav_biz/index",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"fav_biz",
-								"index"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "FVB0 商家关注计数",
 					"request": {
 						"method": "POST",
@@ -5904,6 +5779,126 @@
 					"response": []
 				},
 				{
+					"name": "FVB1 商家关注列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "offset",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "biz_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_create",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_edit",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/fav_biz/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"fav_biz",
+								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FVB3 商家关注创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "biz_id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/fav_biz/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"fav_biz",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "FVB5 商家关注单行删除",
 					"request": {
 						"method": "POST",
@@ -5945,6 +5940,52 @@
 							"path": [
 								"fav_biz",
 								"edit_certain"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FVB6 商家关注删除",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "operation",
+									"value": "delete",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/fav_biz/edit_bulk",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"fav_biz",
+								"edit_bulk"
 							]
 						}
 					},
@@ -11989,7 +12030,7 @@
 								},
 								{
 									"key": "biz_id",
-									"value": "2",
+									"value": "",
 									"type": "text"
 								},
 								{
@@ -17452,16 +17493,34 @@
 			"description": null,
 			"item": [
 				{
-					"name": "WPY1 微信支付 开发测试",
+					"name": "WPY3 微信支付下单",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": ""
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "order",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "order_id",
+									"value": "1",
+									"type": "text"
+								}
+							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/wepay/index",
+							"raw": "https://api.517ybang.com/wepay/create",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -17470,10 +17529,10 @@
 							],
 							"path": [
 								"wepay",
-								"index"
+								"create"
 							]
 						},
-						"description": "测试用API，无固定用途"
+						"description": "https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_1"
 					},
 					"response": []
 				},
@@ -17522,7 +17581,7 @@
 					"response": []
 				},
 				{
-					"name": "WPY3 微信支付下单",
+					"name": "WPY5 微信支付退款",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -17530,26 +17589,22 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "type",
-									"value": "order",
-									"type": "text",
-									"disabled": true
-								},
-								{
 									"key": "order_id",
-									"value": "1",
+									"value": "88",
+									"description": "待退款单号",
 									"type": "text"
+								},
+								{
+									"key": "total_to_refund",
+									"value": "0.01",
+									"description": "待退款金额；全额退款时传入'all'",
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/wepay/create",
+							"raw": "https://api.517ybang.com/wepay/refund",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -17558,10 +17613,10 @@
 							],
 							"path": [
 								"wepay",
-								"create"
+								"refund"
 							]
 						},
-						"description": "https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_1"
+						"description": "测试用API，无固定用途"
 					},
 					"response": []
 				}

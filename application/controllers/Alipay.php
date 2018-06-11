@@ -10,6 +10,21 @@
 	 */
 	class Alipay extends CI_Controller
 	{
+	    // 支付宝API公共URL
+	    private $gateway_url = 'https://openapi.alipay.com/gateway.do';
+
+        // 公共参数
+        private $params = array(
+            'app_id' => ALIPAY_APP_ID,
+            'method' => '', // 在业务方法中赋值
+                //'format' => 'JSON',
+            'charset' => 'utf-8',
+            'sign_type' => 'RSA2',
+            'timestamp' => '', // 在构造方法中赋值
+            'version' => '1.0',
+            'biz_content' => '', // 请求参数的集合字符串，除公共参数外所有请求参数都通过该参数传递
+        );
+
 		// 待签名/待验签字符串
 		private $sign_string = '';
 		
@@ -42,6 +57,8 @@
 			// 测试环境可跳过签名检查
 			if ( ENVIRONMENT !== 'development' && $this->input->post('skip_sign') !== 'please' )
 				$this->sign_check();
+
+			$this->params['timestamp'] = date('Y-m-d H:i:s');
 		} // end manual_construct
 
         // 仅部分方法适用解构函数
@@ -76,6 +93,8 @@
 
 		/**
 		 * APY3 获取支付宝支付所需参数
+         *
+         * https://docs.open.alipay.com/api_1/alipay.trade.app.pay/
 		 */
 		public function create()
 		{
@@ -111,21 +130,13 @@
                 'total_fee' => (ENVIRONMENT === 'production')? $order['total']: 0.01, // 非生产环境下所有订单只需支付0.01元
 			);
 
-			// 请求地址
-			$gateway_url = 'https://openapi.alipay.com/gateway.do';
+            // API
+            $gateway_url = $this->gateway_url;
 
 			// 公共参数
-			$params = array(
-				'app_id' => ALIPAY_APP_ID,
-				'method' => 'alipay.trade.app.pay', // 接口名称在具体请求中赋值，此处仅为示例
-				'charset' => 'utf-8',
-				//'format' => 'JSON',
-				'sign_type' => 'RSA2',
-				'timestamp' => date('Y-m-d H:i:s'),
-				'version' => '1.0',
-				'notify_url' => base_url('alipay/notify'),
-				'biz_content' => '', // 请求参数的集合字符串，除公共参数外所有请求参数都通过该参数传递
-			);
+			$params = $this->params;
+			$params['method'] = 'alipay.trade.app.pay';
+            $params['notify_url'] = base_url('alipay/notify');
 
 			// 参与签名的参数
 			$out_trade_no = date('YmdHis').'_'. $type.'_'. $order_id; // 拼装订单号，64个字符以内
@@ -174,7 +185,7 @@
                 // 交易状态
                 $trade_status = $_POST['trade_status'];
 
-                if ($_POST['trade_status'] == 'TRADE_FINISHED'): // 即时到帐交易确认支付后返回这个状态
+                if ($trade_status == 'TRADE_FINISHED'): // 即时到帐交易确认支付后返回这个状态
                     //判断该笔订单是否在商户网站中已经做过处理
                     //如果没有做过处理，根据订单号（out_trade_no）在商户网站的订单系统中查到该笔订单的详细，并执行商户的业务程序
                     //如果有做过处理，不执行商户的业务程序
@@ -182,7 +193,7 @@
                     //注意：
                     //退款日期超过可退款期限后（如三个月可退款），支付宝系统发送该交易状态通知
 
-                elseif ($_POST['trade_status'] == 'TRADE_SUCCESS'): // 付款完成后，支付宝系统发送该交易状态通知
+                elseif ($trade_status == 'TRADE_SUCCESS'): // 付款完成后，支付宝系统发送该交易状态通知
                     // 获取基本订单信息及支付信息
                     list($order_prefix, $type, $order_id) = preg_split('/_/', $_POST['out_trade_no']); // 分解出防冗余下单订单前缀、订单类型（商品、券码、服务等）、订单号等
                     $data_to_edit['payment_type'] = '支付宝'; // 支付方式
@@ -209,6 +220,163 @@
         } // end notify
 
         /**
+         * 5 退款
+         *
+         * https://docs.open.alipay.com/api_1/alipay.trade.refund/
+         */
+        public function refund()
+        {
+            // 手动构造函数
+            $this->manual_construct();
+
+            // 检查必要参数是否已传入
+            $order_id = $this->input->post('order_id');
+            if ( empty($order_id) ):
+                $this->result['status'] = 400;
+                $this->result['content']['error']['message'] = '必要的请求参数未传入';
+                $this->manual_destruct();
+                exit();
+            endif;
+
+            // 初始化并配置表单验证库
+            $this->load->library('form_validation');
+            $this->form_validation->set_error_delimiters('', '');
+            // 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
+            $this->form_validation->set_rules('order_id', '所属订单号', 'trim|required|is_natural_no_zero');
+            $this->form_validation->set_rules('total_to_refund', '待退款金额', 'trim|greater_than_equal_to[0.01]');
+
+            // 若表单提交不成功
+            if ($this->form_validation->run() === FALSE):
+                $this->result['status'] = 401;
+                $this->result['content']['error']['message'] = validation_errors();
+
+            else:
+                // 获取待退款金额；若不传入则全额退款
+                $total_to_refund = empty($this->input->post('total_to_refund'))? 'all': $this->input->post('total_to_refund'); // 待退款金额
+
+                // 获取订单类型，默认为商品订单
+                $type = $this->input->post('type')? $this->input->post('type'): 'order';
+
+                /*
+                // 根据订单类型和订单编号获取订单信息
+                if ($type == 'daigou'):
+                    $this->load->model('daigou_model');
+                    $order = $this->daigou_model->select_by_id($order_id);
+                else:
+                    $this->load->model('order_model');
+                    $order = $this->order_model->select_by_id($order_id);
+                endif;
+                */
+
+                // 获取订单信息备用
+                $order = $this->get_order_detail($order_id);
+                //var_dump($order);
+                if ( empty($order) ):
+                    $this->result['status'] = 414;
+                    $this->result['content']['error']['message'] = '未找到待退款订单';
+                    $this->manual_destruct();
+                    exit();
+
+                elseif ( empty($order['payment_id']) ):
+                    $this->result['status'] = 414;
+                    $this->result['content']['error']['message'] = '该订单尚未付款';
+                    $this->manual_destruct();
+                    exit();
+
+                elseif ( $order['total_payed'] === $order['total_refund'] ):
+                    $this->result['status'] = 414;
+                    $this->result['content']['error']['message'] = '该订单已全额退款';
+                    $this->manual_destruct();
+                    exit();
+
+                elseif ( $order['payment_type'] !== '支付宝' ):
+                    $this->result['status'] = 414;
+                    $this->result['content']['error']['message'] = '该订单是通过'.$order['payment_type'].'支付的';
+                    $this->manual_destruct();
+                    exit();
+
+                elseif ( $total_to_refund !== 'all' && $total_to_refund > $order['total_payed']):
+                    $this->result['status'] = 424;
+                    $this->result['content']['error']['message'] = '申请退款金额不可超出实际支付金额';
+                    $this->manual_destruct();
+                    exit();
+                endif;
+
+                // 公共参数
+                $this->params['method'] = 'alipay.trade.refund';
+
+                // 参与签名的参数
+                $request_params = array(
+                    'out_request_no' => date('YmdHis').'_orderrefund_'.$order_id, // 退款单号
+                    'trade_no' => $order['payment_id'],
+                    'refund_amount' => ($total_to_refund === 'all')? $order['total_payed']: $total_to_refund, // 全额或部分退款
+                );
+                $this->params['biz_content'] = json_encode($request_params, JSON_UNESCAPED_UNICODE); // 订单信息
+
+                // 生成签名，并拼合不参与签名的参数到请求参数
+                $this->sign_string_generate($this->params); // 生成待签名及支付参数字符串
+                $this->params['sign'] = $this->sign_generate(); // 生成签名
+
+                // 拼合请求URL
+                $api_url = $this->gateway_url.'?';
+                foreach ($this->params as $key => $value):
+                    $api_url .= $key.'='. urlencode($value).'&';
+                endforeach;
+
+                // 发送请求
+                $result = $this->curl($api_url);
+                $result = json_decode($result, TRUE);
+                $result = $result['alipay_trade_refund_response']; // 暂时只取用交易退款响应部分
+
+                // 处理退款结果
+                if ($result['msg'] === 'Success'):
+                    $this->result['status'] = 200;
+                    $this->result['content'] = '退款成功';
+
+                else:
+                    $this->result['status'] = 424;
+
+                    if (isset($result['msg'])):
+                        $this->result['content'] = $result['sub_msg'];
+
+                    else:
+                        $this->result['content'] = '退款失败';
+
+                    endif;
+
+                endif;
+
+            endif;
+
+            // 手动析构函数
+            $this->manual_destruct();
+        } // end refund
+
+        private function curl($url)
+        {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_FAILONERROR, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+            $result = curl_exec($ch);
+
+            if (curl_errno($ch)) {
+
+                throw new Exception(curl_error($ch), 0);
+            } else {
+                $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                if (200 !== $httpStatusCode) {
+                    throw new Exception($reponse, $httpStatusCode);
+                }
+            }
+
+            curl_close($ch);
+            return $result;
+        }
+
+        /**
          * 获取订单信息
          *
          * @param int/varchar $order_id 订单ID
@@ -217,7 +385,7 @@
         private function get_order_detail($order_id)
         {
             $this->switch_model('order', 'order_id');
-            $this->db->select('total');
+            $this->db->select('total, total_payed, total_refund, payment_type, payment_id, status');
             $result = $this->basic_model->find('order_id', $order_id);
 
             return $result;
