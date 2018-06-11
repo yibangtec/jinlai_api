@@ -228,6 +228,130 @@
 		} // end notify
 
         /**
+         * 5 退款
+         */
+        public function refund()
+        {
+            // 检查必要参数是否已传入
+            $order_id = $this->input->post('order_id');
+            if ( empty($order_id) ):
+                $this->result['status'] = 400;
+                $this->result['content']['error']['message'] = '必要的请求参数未传入';
+                $this->manual_destruct();
+                exit();
+            endif;
+
+            // 初始化并配置表单验证库
+            $this->load->library('form_validation');
+            $this->form_validation->set_error_delimiters('', '');
+            // 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
+            $this->form_validation->set_rules('order_id', '所属订单号', 'trim|required|is_natural_no_zero');
+            $this->form_validation->set_rules('total_to_refund', '待退款金额', 'trim|greater_than_equal_to[0.01]');
+
+            // 若表单提交不成功
+            if ($this->form_validation->run() === FALSE):
+                $this->result['status'] = 401;
+                $this->result['content']['error']['message'] = validation_errors();
+
+            else:
+                // 获取待退款金额；若不传入则全额退款
+                $total_to_refund = empty($this->input->post('total_to_refund'))? 'all': $this->input->post('total_to_refund'); // 待退款金额
+
+                // 获取订单类型，默认为商品订单
+                $type = $this->input->post('type')? $this->input->post('type'): 'order';
+
+                /*
+                // 根据订单类型和订单编号获取订单信息
+                if ($type == 'daigou'):
+                    $this->load->model('daigou_model');
+                    $order = $this->daigou_model->select_by_id($order_id);
+                else:
+                    $this->load->model('order_model');
+                    $order = $this->order_model->select_by_id($order_id);
+                endif;
+                */
+
+                // 获取订单信息备用
+                $order = $this->get_order_detail($order_id);
+                //var_dump($order);
+                if ( empty($order) ):
+                    $this->result['status'] = 414;
+                    $this->result['content']['error']['message'] = '未找到待退款订单';
+                    $this->manual_destruct();
+                    exit();
+
+                elseif ( empty($order['payment_id']) ):
+                    $this->result['status'] = 414;
+                    $this->result['content']['error']['message'] = '该订单尚未付款';
+                    $this->manual_destruct();
+                    exit();
+
+                elseif ( $order['total_payed'] === $order['total_refund'] ):
+                    $this->result['status'] = 414;
+                    $this->result['content']['error']['message'] = '该订单已全额退款';
+                    $this->manual_destruct();
+                    exit();
+
+                elseif ( $order['payment_type'] !== '微信支付' ):
+                    $this->result['status'] = 414;
+                    $this->result['content']['error']['message'] = '该订单是通过'.$order['payment_type'].'支付的';
+                    $this->manual_destruct();
+                    exit();
+
+                elseif ( $total_to_refund !== 'all' && $total_to_refund > $order['total_payed']):
+                    $this->result['status'] = 424;
+                    $this->result['content']['error']['message'] = '申请退款金额不可超出实际支付金额';
+                    $this->manual_destruct();
+                    exit();
+                endif;
+
+                // 退款API
+                $this->url = 'https://api.mch.weixin.qq.com/secapi/pay/refund';
+
+                // 重组请求参数
+                $this->parameters['out_refund_no'] = date('YmdHis').'_orderrefund_'.$order_id; // 退款单号
+                $this->parameters['transaction_id'] = $order['payment_id'];
+                $this->parameters['total_fee'] = $order['total_payed'] * 100; // 默认以分为货币单位
+                $this->parameters['refund_fee'] = ($total_to_refund === 'all')? $order['total_payed']: $total_to_refund; // 全额或部分退款
+                $this->parameters['refund_fee'] *= 100; // 默认以分为货币单位
+
+                // 公共参数
+                $this->parameters['appid'] = $this->app_id; // 公众账号ID
+                $this->parameters['mch_id'] = $this->mch_id; // 商户号
+                $this->parameters['nonce_str'] = $this->createNoncestr(); // 随机字符串
+                // $this->parameters['notify_url'] = $this->notify_url; // (可选)异步通知URL
+                $this->parameters['sign'] = $this->getSign($this->parameters); // 根据以上参数生成的签名
+                $xml = $this->arrayToXml($this->parameters);
+
+                // 发送请求
+                $this->postXmlSSL($xml);
+                $result = $this->xmlToArray($this->response);
+
+                // 处理退款结果
+                if ($result['result_code'] === 'SUCCESS'):
+                    $this->result['status'] = 200;
+                    $this->result['content'] = '退款成功';
+
+                else:
+                    $this->result['status'] = 424;
+
+                    if ($result['result_code'] === 'FAIL'):
+                        $this->result['content'] = ($result['err_code'] === 'ERROR')? $result['err_code_des']: $result['err_code'];
+
+                    else:
+                        $this->result['content'] = '退款失败';
+
+                    endif;
+
+                endif;
+
+            endif;
+
+            // 手动析构函数
+            $this->manual_destruct();
+        } // end refund
+
+        /**
          * 以下为工具方法
          */
 
@@ -240,7 +364,7 @@
         private function get_order_detail($order_id)
         {
             $this->switch_model('order', 'order_id');
-            $this->db->select('total');
+            $this->db->select('total, total_payed, total_refund, payment_type, payment_id, status');
             $result = $this->basic_model->find('order_id', $order_id);
 
             return $result;
@@ -474,6 +598,10 @@
 			curl_setopt($ch, CURLOPT_POST, TRUE);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
 			$data = curl_exec($ch);
+
+            // 输出CURL请求头以便调试
+            //var_dump(curl_getinfo($ch));
+
 			//返回结果
 			if ($data):
 				curl_close($ch);

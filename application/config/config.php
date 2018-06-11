@@ -53,19 +53,20 @@ define('AES_KEY', '');
 
 // 微信支付
 define('WEPAY_NOTIFY_URL', BASE_URL.'/wepay/notify'); // 异步回调URL
-define('WEPAY_SSLCERT_PATH', BASE_URL.'/payment/wepay/cert/apiclient_cert.pem');
-define('WEPAY_SSLKEY_PATH', BASE_URL.'/payment/wepay/cert/apiclient_key.pem');
+define('WEPAY_SSLCERT_PATH', '/www/web/jinlai_api/public_html/payment/wepay/cert/apiclient_cert.pem');
+define('WEPAY_SSLKEY_PATH', '/www/web/jinlai_api/public_html/payment/wepay/cert/apiclient_key.pem');
 // APP
-define('WEPAY_MCH_ID', '1489776982'); // APP的商户号
+define('WEPAY_MCH_ID', '1489776982'); // 商户号
 define('WEPAY_APP_ID', 'wx9b19c66cc2b8bfb1'); // APP的AppId
 define('WEPAY_KEY', 'OHLAt2qyVdNVHqWWoWoc5Q4UbpFycpH6');
 // TODO 公众号
-//define('WEPAY_MCH_ID', ''); // APP的商户号
+//define('WEPAY_MCH_ID', '1488874732'); // 商户号
 //define('WEPAY_APP_ID', ''); // APP的AppId
 //define('WEPAY_APP_SECRET', ''); // APP的AppSecret，不适用于APP支付
 //define('WEPAY_KEY', '');
 
 // 支付宝
+define('ALIPAY_CACERT_PATH', '/www/web/jinlai_api/public_html/payment/alipay/cacert.pem');
 define('ALIPAY_APP_ID', '2017092508927608');
 define('ALIPAY_KEY_PUBLIC', 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuA5NLDQD6swadmKSX00RbVKfxISY2fP6gl39/Pc8jxBRBMr/B9Ciy4Gm8YJ/Y8d58Km18escwTeCaEcoYPrCOk5nLJrpPSAiIdmlaD74VQRCJZoYop98XL64nOtFY4GNzCp4Hgmyp3Jd7XlZ/M9eIzHWRWsj2FWuIDdegEZ+7XPw8qU6txfIdOhD+/lufrZdoX8ElCDxXa8n9wUPk8wjX0H556lorriu0Wmy5OWzXqxN0G0ywlkbETGWZzAhbaT57l1jjultGn/4WaGsJkfXpHYlvdxLwJ8n4Mk/F58wp0ZHFOr9TuklGfVVVqBz8HvRq12mNkxCZJsvGKVP17rvuwIDAQAB'); // 公钥
 define('ALIPAY_KEY_PRIVATE',
