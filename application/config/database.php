@@ -70,51 +70,73 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | The $query_builder variables lets you determine whether or not to load
 | the query builder class.
 */
-$active_group = (ENVIRONMENT === 'production')? 'production': 'aliyun_jinlai_sandbox';
+$active_group = (ENVIRONMENT === 'production')? 'production': 'development_liuyajie';
 $query_builder = TRUE;
 
 $db['production'] = array(
-	'dsn' => 'mysqli://liuyajie728:Yibang2017@ybdevelopinner01.mysql.zhangbei.rds.aliyuncs.com/jinlai',
-	'hostname' => 'ybdevelopinner01.mysql.zhangbei.rds.aliyuncs.com', // 数据库URL，以阿里云为例
-	'username' => 'liuyajie728', // 数据库用户名
-	'password' => 'Yibang2017', // 数据库密码
-	'database' => 'jinlai', // 数据库名
-	'dbdriver' => 'mysqli',
-	'dbprefix' => '',
-	'pconnect' => FALSE,
-	'db_debug' => FALSE,
-	'cache_on' => FALSE,
-	'cachedir' => APPPATH.'cache_database',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => FALSE,
-	'stricton' => FALSE,
-	'failover' => array(),
-	'save_queries' => TRUE,
+    'dsn' => 'mysqli://jinlai_client:Yibang2017@rm-uf6l409rr1qg4g2qso.mysql.rds.aliyuncs.com/jinlai',
+    'hostname' => 'rm-uf6l409rr1qg4g2qso.mysql.rds.aliyuncs.com', // 数据库URL，以阿里云为例
+    'username' => 'jinlai_client', // 数据库用户名
+    'password' => 'Yibang2017', // 数据库密码
+    'database' => 'jinlai', //数据库名
+    'dbdriver' => 'mysqli',
+    'dbprefix' => '',
+    'pconnect' => FALSE,
+    'db_debug' => FALSE, // 生产环境中不显示错误报告
+    'cache_on' => FALSE,
+    'cachedir' => '',
+    'char_set' => 'utf8',
+    'dbcollat' => 'utf8_general_ci',
+    'swap_pre' => '',
+    'encrypt' => FALSE,
+    'compress' => FALSE,
+    'stricton' => FALSE,
+    'failover' => array(),
+    'save_queries' => TRUE,
 );
 
-$db['aliyun_jinlai_sandbox'] = array(
-	'dsn' => 'mysqli://jinlai:Yibang2017@sensestrong.mysql.rds.aliyuncs.com/jinlai',
-	'hostname' => 'sensestrong.mysql.rds.aliyuncs.com', // 数据库URL，以阿里云为例
-	'username' => 'jinlai', // 数据库用户名
-	'password' => 'Yibang2017', // 数据库密码
-	'database' => 'jinlai', // 数据库名
-	'dbdriver' => 'mysqli',
-	'dbprefix' => '',
-	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),
-	'cache_on' => FALSE,
-	'cachedir' => '',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => FALSE,
-	'stricton' => FALSE,
-	'failover' => array(),
-	'save_queries' => TRUE,
+$db['development'] = array(
+    'dsn' => 'mysqli://jinlai_biz:Yibang2017@rm-8vb342181z70ol0xy.mysql.zhangbei.rds.aliyuncs.com/jinlai',
+    'hostname' => 'rm-8vb342181z70ol0xy.mysql.zhangbei.rds.aliyuncs.com', // 数据库URL，以阿里云为例
+    'username' => 'jinlai_biz', // 数据库用户名
+    'password' => 'Yibang2017', // 数据库密码
+    'database' => 'jinlai', //数据库名
+    'dbdriver' => 'mysqli',
+    'dbprefix' => '',
+    'pconnect' => FALSE,
+    'db_debug' => TRUE,
+    'cache_on' => FALSE,
+    'cachedir' => '',
+    'char_set' => 'utf8',
+    'dbcollat' => 'utf8_general_ci',
+    'swap_pre' => '',
+    'encrypt' => FALSE,
+    'compress' => FALSE,
+    'stricton' => FALSE,
+    'failover' => array(),
+    'save_queries' => TRUE,
+);
+
+$db['development_liuyajie'] = array(
+    'dsn' => 'mysqli://jinlai:Yibang2017@sensestrong.mysql.rds.aliyuncs.com/jinlai',
+    'hostname' => 'sensestrong.mysql.rds.aliyuncs.com', // 数据库URL，以阿里云为例
+    'username' => 'jinlai', // 数据库用户名
+    'password' => 'Yibang2017', // 数据库密码
+    'database' => 'jinlai', //数据库名
+    'dbdriver' => 'mysqli',
+    'dbprefix' => '',
+    'pconnect' => FALSE,
+    'db_debug' => TRUE,
+    'cache_on' => FALSE,
+    'cachedir' => '',
+    'char_set' => 'utf8',
+    'dbcollat' => 'utf8_general_ci',
+    'swap_pre' => '',
+    'encrypt' => FALSE,
+    'compress' => FALSE,
+    'stricton' => FALSE,
+    'failover' => array(),
+    'save_queries' => TRUE,
 );
 
 /* End of file database.php */

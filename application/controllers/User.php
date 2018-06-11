@@ -407,7 +407,8 @@
             endif;
 
             // 获取订单相关商品数据
-            $query = !empty($user_id)? $this->db->query("CALL delete_user_by_id( $user_id )"): $this->db->query("CALL delete_user_by_mobile( $mobile )");
+            $query = !empty($user_id)? $this->db->query("CALL truncate_user_by_id( $user_id )"): $this->db->query("CALL delete_user_by_mobile( $mobile )");
+            var_dump($query);
         } // end truncate
 
         /**

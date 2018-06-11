@@ -97,7 +97,7 @@
             $condition = $this->condition_generate();
 
 			// 排序条件
-			$order_by = NULL;
+			$order_by['time_edit'] = 'DESC';
 
 			// 获取列表；默认可获取已删除项
 			$this->load->model('fav_biz_model');
@@ -125,13 +125,10 @@
                     $this->db->select('item_id, name, url_image_main, price');
                     $this->db->order_by('time_publish', 'DESC');
 
-					$biz_recent_items = $this->basic_model->select($condition);
-                    $this->result['content'][$i]['recent_items'] = $biz_recent_items;
-                    $this->result['content'][$i]['recent_items_count'] = count($biz_recent_items);
+                    $this->result['content'][$i]['recent_items'] = $this->basic_model->select($condition);
 
                     // 重置部分数据库参数
                     $this->basic_model->limit = $this->basic_model->offset = NULL;
-
 				endfor;
 
 			else:
