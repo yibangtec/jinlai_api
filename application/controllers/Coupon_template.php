@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'description', 'max_amount', 'max_amount_user', 'min_subtotal', 'amount', 'period', 'time_start', 'time_end', 
+			'biz_id', 'category_id', 'category_biz_id', 'item_id', 'amount', 'rate', 'max_amount', 'max_amount_user', 'min_subtotal', 'period', 'time_start', 'time_end',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -23,14 +23,14 @@
 		 */
 		protected $names_create_required = array(
 		    'user_id',
-            'name', 'amount',
+            'name',
         );
 
 		/**
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'category_id', 'category_biz_id', 'item_id', 'name', 'description', 'max_amount', 'max_amount_user', 'min_subtotal', 'amount', 'period', 'time_start', 'time_end',
+			'category_id', 'category_biz_id', 'item_id', 'name', 'description', 'amount', 'rate', 'max_amount', 'max_amount_user', 'min_subtotal', 'period', 'time_start', 'time_end',
 		);
 
 		/**
@@ -38,7 +38,7 @@
 		 */
 		protected $names_edit_required = array(
 		    'user_id', 'id',
-            'name', 'amount',
+            'name',
         );
 
         // 优惠券默认有效时长
@@ -159,7 +159,7 @@
 		public function create()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz',); // 客户端类型
+			$type_allowed = array('admin', 'biz'); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -178,17 +178,27 @@
 				endif;
 			endforeach;
 
+			// 可选的必要参数（其中之一不可为空）
+            $amount = empty($this->input->post('amount'))? NULL: $this->input->post('amount');
+            $rate = empty($this->input->post('rate'))? NULL: $this->input->post('rate');
+			if (empty($amount.$rate)):
+                $this->result['status'] = 400;
+                $this->result['content']['error']['message'] = '可选的必要请求参数未传入';
+                exit();
+            endif;
+
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			// 验证规则 https://www.codeigniter.com/user_guide/libraries/form_validation.html#rule-reference
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
 			$this->form_validation->set_rules('description', '说明', 'trim|max_length[30]');
-			$this->form_validation->set_rules('amount', '面值（元）', 'trim|required|greater_than_equal_to[1]|less_than_equal_to[999]');
-			$this->form_validation->set_rules('min_subtotal', '起用金额（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
-            $this->form_validation->set_rules('max_amount', '总限量', 'trim|is_natural|greater_than_equal_to[0]|less_than_equal_to[999999]');
-            $this->form_validation->set_rules('max_amount_user', '单个用户限量', 'trim|is_natural|greater_than_equal_to[0]|less_than_equal_to[99]');
-            $this->form_validation->set_rules('period', '有效时长', 'trim|is_natural_no_zero|greater_than_equal_to[3600]|less_than_equal_to[31622400]');
+			$this->form_validation->set_rules('amount', '面值（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999]');
+            $this->form_validation->set_rules('rate', '折扣率', 'trim|greater_than_equal_to[0]|less_than_equal_to[0.5]');
+			$this->form_validation->set_rules('min_subtotal', '起用金额（元）', 'trim|greater_than_equal_to[1]|less_than_equal_to[9999]');
+            $this->form_validation->set_rules('max_amount', '总限量', 'trim|greater_than_equal_to[0]|less_than_equal_to[999999]');
+            $this->form_validation->set_rules('max_amount_user', '单个用户限量', 'trim|greater_than_equal_to[0]|less_than_equal_to[99]');
+            $this->form_validation->set_rules('period', '有效时长', 'trim|greater_than_equal_to[3600]|less_than_equal_to[31622400]');
 			$this->form_validation->set_rules('time_start', '有效期开始时间', 'trim|exact_length[10]|integer|callback_time_start');
 			$this->form_validation->set_rules('time_end', '有效期结束时间', 'trim|exact_length[10]|integer|callback_time_end');
             $this->form_validation->set_message('time_start', '领取开始时间需详细到分，且早于结束时间');
@@ -212,13 +222,20 @@
 				$data_to_create = array(
 					'creator_id' => $user_id,
 
-					'period' => $period,
-					'time_start' => empty($this->input->post('time_start'))? 0: $this->input->post('time_start'),
+                    'amount' => empty($amount)? 0: $amount,
+                    'rate' => empty($rate)? 0: $rate,
+
+                    'min_subtotal' => empty($this->input->post('min_subtotal'))? 1: $this->input->post('min_subtotal'),
+                    'max_amount' => empty($this->input->post('max_amount'))? 0: $this->input->post('max_amount'),
+                    'max_amount_user' => empty($this->input->post('max_amount_user'))? 0: $this->input->post('max_amount_user'),
+
+                    'period' => $period,
+                    'time_start' => empty($this->input->post('time_start'))? time(): $this->input->post('time_start'),
 					'time_end' => empty($this->input->post('time_end'))? time() + $period: $this->input->post('time_end'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'description', 'max_amount', 'max_amount_user', 'min_subtotal', 'amount',
+					'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'description',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
@@ -247,7 +264,7 @@
 		public function edit()
 		{
 			// 操作可能需要检查客户端及设备信息
-			$type_allowed = array('admin', 'biz',); // 客户端类型
+			$type_allowed = array('admin', 'biz'); // 客户端类型
 			$this->client_check($type_allowed);
 
 			// 管理类客户端操作可能需要检查操作权限
@@ -266,16 +283,26 @@
 				endif;
 			endforeach;
 
+            // 可选的必要参数（其中之一不可为空）
+            $amount = empty($this->input->post('amount'))? NULL: $this->input->post('amount');
+            $rate = empty($this->input->post('rate'))? NULL: $this->input->post('rate');
+            if (empty($amount.$rate)):
+                $this->result['status'] = 400;
+                $this->result['content']['error']['message'] = '可选的必要请求参数未传入';
+                exit();
+            endif;
+
 			// 初始化并配置表单验证库
 			$this->load->library('form_validation');
 			$this->form_validation->set_error_delimiters('', '');
 			$this->form_validation->set_rules('name', '名称', 'trim|required|max_length[20]');
 			$this->form_validation->set_rules('description', '说明', 'trim|max_length[30]');
-			$this->form_validation->set_rules('amount', '面值（元）', 'trim|required|greater_than_equal_to[1]|less_than_equal_to[999]');
-			$this->form_validation->set_rules('min_subtotal', '起用金额（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
-            $this->form_validation->set_rules('max_amount', '总限量', 'trim|is_natural|greater_than_equal_to[0]|less_than_equal_to[999999]');
-            $this->form_validation->set_rules('max_amount_user', '单个用户限量', 'trim|is_natural|greater_than_equal_to[0]|less_than_equal_to[99]');
-            $this->form_validation->set_rules('period', '有效时长', 'trim|is_natural_no_zero|greater_than_equal_to[3600]|less_than_equal_to[31622400]');
+            $this->form_validation->set_rules('amount', '面值（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999]');
+            $this->form_validation->set_rules('rate', '折扣率', 'trim|greater_than_equal_to[0]|less_than_equal_to[0.5]');
+            $this->form_validation->set_rules('min_subtotal', '起用金额（元）', 'trim|greater_than_equal_to[1]|less_than_equal_to[9999]');
+            $this->form_validation->set_rules('max_amount', '总限量', 'trim|greater_than_equal_to[0]|less_than_equal_to[999999]');
+            $this->form_validation->set_rules('max_amount_user', '单个用户限量', 'trim|greater_than_equal_to[0]|less_than_equal_to[99]');
+            $this->form_validation->set_rules('period', '有效时长', 'trim|greater_than_equal_to[3600]|less_than_equal_to[31622400]');
 			$this->form_validation->set_rules('time_start', '有效期开始时间', 'trim|exact_length[10]|integer|callback_time_start');
 			$this->form_validation->set_rules('time_end', '有效期结束时间', 'trim|exact_length[10]|integer|callback_time_end');
             $this->form_validation->set_message('time_start', '领取开始时间需详细到分，且早于结束时间');
@@ -296,13 +323,20 @@
 				$data_to_edit = array(
 					'operator_id' => $user_id,
 
+                    'amount' => empty($amount)? 0: $amount,
+                    'rate' => empty($rate)? 0: $rate,
+
+                    'min_subtotal' => empty($this->input->post('min_subtotal'))? 1: $this->input->post('min_subtotal'),
+                    'max_amount' => empty($this->input->post('max_amount'))? 0: $this->input->post('max_amount'),
+                    'max_amount_user' => empty($this->input->post('max_amount_user'))? 0: $this->input->post('max_amount_user'),
+
                     'period' => $period,
-					'time_start' => empty($this->input->post('time_start'))? 0: $this->input->post('time_start'),
+                    'time_start' => empty($this->input->post('time_start'))? time(): $this->input->post('time_start'),
                     'time_end' => empty($this->input->post('time_end'))? time() + $period: $this->input->post('time_end'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_id', 'category_biz_id', 'item_id', 'name', 'description', 'max_amount', 'max_amount_user', 'min_subtotal', 'amount',
+					'category_id', 'category_biz_id', 'item_id', 'name', 'description',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);

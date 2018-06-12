@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'user_id', 'combo_id', 'template_id', 'category_id', 'biz_id', 'category_biz_id', 'item_id', 'name', 'amount', 'min_subtotal', 'time_start', 'time_end', 'time_expire', 'order_id', 'time_used', 'time_create', 'time_delete', 'status',
+			'user_id', 'combo_id', 'template_id', 'category_id', 'biz_id', 'category_biz_id', 'item_id', 'amount', 'rate', 'min_subtotal', 'time_start', 'time_end', 'time_expire', 'order_id', 'time_used', 'time_create', 'time_delete', 'status',
 		);
 
 		public function __construct()
@@ -496,6 +496,7 @@
                     'name' => $template['name'],
                     'item_id' => $template['item_id'],
                     'amount' => $template['amount'],
+                    'rate' => $template['rate'],
                     'min_subtotal' => $template['min_subtotal'],
                     'time_start' => $time_start,
                     'time_end' => $time_end,

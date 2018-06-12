@@ -127,6 +127,8 @@
          * @param string/int $user_id
          * @param string/int $biz_id
          * @param string $subtotal
+         *
+         * @return mixed 优惠券信息
          */
         public function get_max_valid($user_id, $biz_id, $subtotal)
         {
@@ -136,7 +138,6 @@
                 'order_id' => 'NULL', // 未被使用
                 'user_id' => $user_id,
                 'biz_id' => $biz_id,
-                'amount <' => $subtotal, // 面值低于订单小计
                 'min_subtotal <' => $subtotal, // 起用金额低于订单小计
                 'time_end >' => time(),
             );
@@ -158,7 +159,9 @@
                     ->or_where('time_start <', time())
                 ->group_end();
 
+            // 按面值、折扣率从高到底排序
             $this->db->order_by('amount', 'DESC');
+            $this->db->order_by('rate', 'DESC');
 
             $query = $this->db->get($this->table_name);
             return $query->row_array();

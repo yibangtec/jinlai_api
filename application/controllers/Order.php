@@ -237,7 +237,7 @@
 				$this->result['status'] = 411;
 				$this->result['content']['error']['message'] = '收货地址不可用';
 
-			// 生成订单数据
+			// 以商家为单位生成子订单数据
 			elseif ($this->generate_order_data() === FALSE):
 				$this->result['status'] = 411;
 				$this->result['content']['error']['message'] = $this->order_data['content']['error']['message'];
@@ -270,9 +270,12 @@
                     $this->load->model('coupon_model');
                     $coupon = $this->coupon_model->get_max_valid($user_id, $data_to_create['biz_id'], $data_to_create['subtotal']);
                     if ( !empty($coupon) ):
+                        // 计算优惠券抵扣额
+                        $discount_coupon = !empty($coupon['amount'])? $coupon['amount']: $data_to_create['subtotal']*$coupon['rate'];
+
                         $data_to_create['coupon_id'] = $coupon['coupon_id'];
-                        $data_to_create['discount_coupon'] = $coupon['amount'];
-                        $data_to_create['total'] -= $coupon['amount'];
+                        $data_to_create['discount_coupon'] = $discount_coupon;
+                        $data_to_create['total'] -= $discount_coupon;
                     endif;
 
                     // 计算运费
