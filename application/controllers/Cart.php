@@ -63,9 +63,7 @@
 				$this->result['content']['error']['message'] = '购物车是空的';
 
 			else:
-                //var_dump($item['cart_string']);
-
-				// 解码为数组
+				// 解析购物车字符串
 				$this->cart_decode($item['cart_string']);
 
 				$this->result['status'] = 200;
@@ -151,6 +149,36 @@
 				endif;
 			endif;
 		} // end sync_up
+
+        /**
+         * 6 解析
+         *
+         * 解析出购物车内容
+         *
+         * @param int/string $cart_string 购物车字符串
+         */
+        public function parse($cart_string = NULL)
+        {
+            // 检查必要参数是否已传入
+            $cart_string = empty($cart_string)? $this->input->post('cart_string'): $cart_string;
+            if ( empty($cart_string) ):
+                $this->result['status'] = 400;
+                $this->result['content']['error']['message'] = '必要的请求参数未传入';
+                exit();
+            endif;
+
+            // 解析购物车字符串
+            $item = $this->cart_decode($cart_string);
+            if ($item !== FALSE):
+                $this->result['status'] = 200;
+                $this->result['content'] = $item;
+
+            else:
+                $this->result['status'] = 414;
+                $this->result['content']['error']['message'] = '购物车是空的';
+
+            endif;
+        } // end parse
 
         /**
          * 以下为工具类方法

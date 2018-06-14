@@ -443,7 +443,7 @@
             $text = trim($text, $seperator);
 
             // 拆分文本为数组并清理可被转换为布尔型FALSE的数组元素（空数组、空字符、NULL、0、’0‘等）
-            $array = array_filter( explode(',', $text) );
+            $array = array_filter( explode($seperator, $text) );
 
             return $array;
         } // end explode_csv
@@ -771,7 +771,10 @@
 
                 // 获取商家运费模板信息
                 $this->switch_model('freight_template_biz', 'template_id');
-                $conditions = array('biz_id' => $order_item['biz_id']);
+                $conditions = array(
+                    'biz_id' => $order_item['biz_id'],
+                    'time_delete' => 'NULL',
+                );
                 $freight_templates = $this->basic_model->select($conditions, NULL, FALSE, FALSE); // 不获取已删除项
                 //var_dump($freight_templates);
 

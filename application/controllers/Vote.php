@@ -184,7 +184,10 @@
 				$this->result['content'] = $item;
 
 				// 获取候选项标签信息
-                $conditions = array('time_delete' => 'NULL');
+                $conditions = array(
+                    'vote_id' => $id,
+                    'time_delete' => 'NULL'
+                );
                 $this->result['content']['tags'] = $this->get_items('vote_tag', 'tag_id', $conditions);
 
                 // 获取投票候选项信息

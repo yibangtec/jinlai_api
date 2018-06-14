@@ -3780,129 +3780,6 @@
 			"description": null,
 			"item": [
 				{
-					"name": "CPC2 优惠券包详情",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"description": "",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "1",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/coupon_combo/detail",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"coupon_combo",
-								"detail"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "CPC3 优惠券包创建",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "app_type",
-									"value": "biz",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "biz_id",
-									"value": "2",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "template_ids",
-									"value": "1",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "time_start",
-									"value": "1524734700",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "time_end",
-									"value": "1524741960",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "name",
-									"value": "五一大礼包",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "max_amount",
-									"value": "30",
-									"type": "text",
-									"description": ""
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/coupon_combo/create",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"coupon_combo",
-								"create"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "CPC0 优惠券包计数",
 					"request": {
 						"method": "POST",
@@ -3988,77 +3865,6 @@
 							"path": [
 								"coupon_combo",
 								"count"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "CPC4 优惠券包编辑",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "biz",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "name",
-									"value": "七夕虐狗节",
-									"type": "text"
-								},
-								{
-									"key": "description",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "template_ids",
-									"value": "1,2|2,47|3",
-									"type": "text"
-								},
-								{
-									"key": "max_amount",
-									"value": "600",
-									"type": "text"
-								},
-								{
-									"key": "time_start",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_end",
-									"value": "",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/coupon_combo/edit",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"coupon_combo",
-								"edit"
 							]
 						}
 					},
@@ -4160,6 +3966,200 @@
 							"path": [
 								"coupon_combo",
 								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CPC2 优惠券包详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "9",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/coupon_combo/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"coupon_combo",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CPC3 优惠券包创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "app_type",
+									"value": "biz",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "biz_id",
+									"value": "2",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "template_ids",
+									"value": "1",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_start",
+									"value": "1524734700",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_end",
+									"value": "1524741960",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "name",
+									"value": "五一大礼包",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "max_amount",
+									"value": "30",
+									"type": "text",
+									"description": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/coupon_combo/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"coupon_combo",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CPC4 优惠券包编辑",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "biz",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "七夕虐狗节",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "template_ids",
+									"value": "1,2|2,47|3",
+									"type": "text"
+								},
+								{
+									"key": "max_amount",
+									"value": "600",
+									"type": "text"
+								},
+								{
+									"key": "time_start",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_end",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/coupon_combo/edit",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"coupon_combo",
+								"edit"
 							]
 						}
 					},
@@ -4373,7 +4373,7 @@
 								},
 								{
 									"key": "user_id",
-									"value": "",
+									"value": "1",
 									"type": "text"
 								},
 								{
@@ -4480,65 +4480,6 @@
 					"response": []
 				},
 				{
-					"name": "CPN3 优惠券创建（领取）",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"description": "",
-									"type": "text"
-								},
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "combo_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "template_id",
-									"value": "13",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "count",
-									"value": "3",
-									"type": "text",
-									"disabled": true
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/coupon/create",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"coupon",
-								"create"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "CPN2 优惠券详情",
 					"request": {
 						"method": "POST",
@@ -4569,6 +4510,66 @@
 							"path": [
 								"coupon",
 								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CPN3 优惠券创建（领取）",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "combo_id",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "template_id",
+									"value": "14",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "count",
+									"value": "3",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/coupon/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"coupon",
+								"create"
 							]
 						}
 					},
@@ -4668,6 +4669,160 @@
 							"path": [
 								"coupon_template",
 								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CPT2 优惠券模板详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/coupon_template/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"coupon_template",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CPT3 优惠券模板创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "biz",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "user_id",
+									"value": "3",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "biz_id",
+									"value": "1",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "name",
+									"value": "鲜果节98折 ",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "amount",
+									"value": "50",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "rate",
+									"value": "0.02",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "min_subtotal",
+									"value": "100",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "max_amount",
+									"value": "3",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "max_amount_user",
+									"value": "1",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "period",
+									"value": "2592000",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "time_start",
+									"value": "1524643140",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "time_end",
+									"value": "",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/coupon_template/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"coupon_template",
+								"create"
 							]
 						}
 					},
@@ -4774,129 +4929,6 @@
 							"path": [
 								"coupon_template",
 								"edit"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "CPT2 优惠券模板详情",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"description": "",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "id",
-									"value": "2",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/coupon_template/detail",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"coupon_template",
-								"detail"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "CPT3 优惠券模板创建",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "biz",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "biz_id",
-									"value": "2",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "name",
-									"value": "满100减50",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "max_amount",
-									"value": "3",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "max_amount_user",
-									"value": "1",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "min_subtotal",
-									"value": "100",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "amount",
-									"value": "50",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "time_start",
-									"value": "1524643140",
-									"type": "text",
-									"description": ""
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/coupon_template/create",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"coupon_template",
-								"create"
 							]
 						}
 					},
@@ -10712,7 +10744,7 @@
 			"description": null,
 			"item": [
 				{
-					"name": "ORN3 店铺装修创建",
+					"name": "ORN0 店铺装修计数",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -10721,22 +10753,17 @@
 							"formdata": [
 								{
 									"key": "app_type",
-									"value": "biz",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
+									"value": "admin",
 									"type": "text"
 								},
 								{
 									"key": "biz_id",
-									"value": "9",
+									"value": "",
 									"type": "text"
 								},
 								{
 									"key": "name",
-									"value": "测试装修方案",
+									"value": "",
 									"type": "text"
 								},
 								{
@@ -10805,15 +10832,34 @@
 									"type": "text"
 								},
 								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
+									"key": "time_create",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "time_edit",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "creator_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "operator_id",
+									"value": "",
+									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/ornament_biz/create",
+							"raw": "https://api.517ybang.com/ornament_biz/count",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -10822,58 +10868,7 @@
 							],
 							"path": [
 								"ornament_biz",
-								"create"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ORN6 店铺装修批量操作",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "biz",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "ids",
-									"value": "2",
-									"type": "text"
-								},
-								{
-									"key": "operation",
-									"value": "restore",
-									"type": "text"
-								},
-								{
-									"key": "password",
-									"value": "123456",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/ornament_biz/edit_bulk",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"ornament_biz",
-								"edit_bulk"
+								"count"
 							]
 						}
 					},
@@ -11078,6 +11073,123 @@
 					"response": []
 				},
 				{
+					"name": "ORN3 店铺装修创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "biz",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "biz_id",
+									"value": "9",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "测试装修方案",
+									"type": "text"
+								},
+								{
+									"key": "content_json",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "content_html",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "template_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "home_slides",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "home_m1_ace_url",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "home_m1_ace_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "home_m1_ids",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "home_m2_ace_url",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "home_m2_ace_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "home_m2_ids",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "home_m3_ace_url",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "home_m3_ace_id",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "home_m3_ids",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/ornament_biz/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"ornament_biz",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "ORN4 店铺装修编辑",
 					"request": {
 						"method": "POST",
@@ -11189,7 +11301,7 @@
 					"response": []
 				},
 				{
-					"name": "ORN0 店铺装修计数",
+					"name": "ORN6 店铺装修批量操作",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -11198,113 +11310,33 @@
 							"formdata": [
 								{
 									"key": "app_type",
-									"value": "admin",
+									"value": "biz",
 									"type": "text"
 								},
 								{
-									"key": "biz_id",
-									"value": "",
+									"key": "user_id",
+									"value": "1",
 									"type": "text"
 								},
 								{
-									"key": "name",
-									"value": "",
+									"key": "ids",
+									"value": "2",
 									"type": "text"
 								},
 								{
-									"key": "content_json",
-									"value": "",
+									"key": "operation",
+									"value": "restore",
 									"type": "text"
 								},
 								{
-									"key": "content_html",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "template_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "home_slides",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "home_m1_ace_url",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "home_m1_ace_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "home_m1_ids",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "home_m2_ace_url",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "home_m2_ace_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "home_m2_ids",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "home_m3_ace_url",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "home_m3_ace_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "home_m3_ids",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_create",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_delete",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "time_edit",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "creator_id",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "operator_id",
-									"value": "",
+									"key": "password",
+									"value": "123456",
 									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/ornament_biz/count",
+							"raw": "https://api.517ybang.com/ornament_biz/edit_bulk",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -11313,7 +11345,7 @@
 							],
 							"path": [
 								"ornament_biz",
-								"count"
+								"edit_bulk"
 							]
 						}
 					},
@@ -17514,7 +17546,7 @@
 								},
 								{
 									"key": "order_id",
-									"value": "1",
+									"value": "118",
 									"type": "text"
 								}
 							]

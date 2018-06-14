@@ -22,6 +22,7 @@
 			parent::__construct();
 
 			// 初始化待用类属性
+            $this->result['status'] = 200;
 			$this->result['content']['ids'] = $this->result['content']['message'] = '';
 
 			// 设置主要数据库信息
@@ -168,7 +169,6 @@
 			elseif ( !empty($combo_id) ):
 				// 获取优惠券包
 				$combo = $this->get_combo($combo_id, $user_id);
-				//var_dump($combo);
 				if ($combo === FALSE):
 					$this->result['status'] = 414;
 					//$this->result['content']['error']['message'] = '该优惠券包不可领取';
@@ -176,30 +176,34 @@
 				else:
 					$template_ids = $combo['template_ids'];
 
-					// 拆分字符串为数组
-					$template_ids = explode(',', trim($template_ids, ',')); // 清除多余的前后半角逗号
+					// 解析所含优惠券模板信息并生成相应数量的优惠券
+					$template_ids = $this->explode_csv($template_ids);
 					foreach ($template_ids as $template_id):
-						$this->generate_coupon($user_id, $template_id, $combo_id);
+                        // 分解出优惠券模板ID及张数
+                        if (strpos($template_id, '|') === FALSE):
+                            $count = 1;
+                        else:
+                            list($template_id, $count) = preg_split('/\|/', $template_id);
+                        endif;
+
+                        // 生成相应张数的优惠券
+                        for ($i=0; $i<$count; $i++):
+						    $this->generate_coupon($user_id, $template_id, $combo_id);
+                        endfor;
 					endforeach;
 
 				endif;
 
-				// 清楚冗余的分隔符
+				// 清除冗余的分隔符
 				$this->result['content']['ids'] = trim($this->result['content']['ids'], ',');
 
-			// 领取单种优惠券（优惠券模板）
+			// 领取优惠券模板（单种优惠券）
 			else:
-				// 若未传入张数，直接生成
-				if ( empty($count) ):
-					$this->generate_coupon($user_id, $template_id);
-
-				// 若传入了张数，则尝试生成多张；最大可领取张数将在相关类方法中进行检查
-				else:
-					for ($i=0; $i<$count; $i++):
-						$this->generate_coupon($user_id, $template_id);
-					endfor;
-
-				endif;
+                // 生成相应张数的优惠券
+                $count = empty($count)? 1: $count;
+                for ($i=0; $i<$count; $i++):
+                    $this->generate_coupon($user_id, $template_id);
+                endfor;
 
 			endif;
 			
@@ -417,9 +421,10 @@
                 );
                 $count = $this->basic_model->count($condition);
                 //var_dump($count);
-                if ($count > 0)
+                if ($count > 0):
                     $this->result['content']['error']['message'] = '这个优惠券包已经领过了';
                     $is_valid = FALSE;
+                endif;
 
                 // 若当前模板有总限量，进行检查
                 if ($combo['max_amount'] != 0):
@@ -430,16 +435,16 @@
                     );
                     $count = $this->basic_model->count($condition);
                     if ($count >= $combo['max_amount']):
-                        $this->result['content']['error']['message'] = '优惠券包已经被抢光了';
+                        $this->result['content']['error']['message'] = '这个优惠券包已经被抢光了';
                         $is_valid = FALSE;
                     endif;
                 endif;
 
-                //var_dump($this->result['content']['error']['message']);
                 // 若无异常，返回优惠券模板信息
                 if ($is_valid === TRUE):
                     return $combo;
                 else:
+                    //var_dump($this->result['content']['error']['message']);
                     return FALSE;
                 endif;
 
@@ -455,7 +460,7 @@
          */
         protected function generate_coupon($user_id, $template_id, $combo_id = NULL)
         {
-            // 获取优惠券模板
+            // 获取优惠券模板信息
             $template = $this->get_template($template_id, $user_id, $combo_id);
 
             if ($template === FALSE):
@@ -475,7 +480,7 @@
                 endif;
 
             else:
-                // 获取当前时间
+                // 获取当前时间戳
                 $time_now = time();
 
                 // 计算有效期开始时间；以开始时间和当前时间中较晚者作为有效期实际开始时间
@@ -493,8 +498,8 @@
                     'biz_id' => $template['biz_id'],
                     'category_id' => $template['category_id'],
                     'category_biz_id' => $template['category_biz_id'],
-                    'name' => $template['name'],
                     'item_id' => $template['item_id'],
+                    'name' => $template['name'],
                     'amount' => $template['amount'],
                     'rate' => $template['rate'],
                     'min_subtotal' => $template['min_subtotal'],
@@ -509,7 +514,7 @@
 
                     if ($combo_id === NULL):
                         $this->result['content']['id'] = $result;
-                        $this->result['content']['message'] = '领取成功';
+                        $this->result['content']['message'] = '优惠券领取成功';
                     else:
                         $this->result['content']['ids'] .= ','.$result;
                         $this->result['content']['message'] .= '<li>“'.$template['name'].'”领取成功</li>';
