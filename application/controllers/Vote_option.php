@@ -269,8 +269,10 @@
                     foreach ($data_need_no_prepare as $name)
                         $data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
-                    // 客户端创建的数据，默认为待审核状态
-                    if ($this->app_type === 'client') $data_to_create['status'] = '待审核';
+                    // 若为客户端创建的数据，检查活动是否需要审核候选项，若是则候选项默认为待审核状态
+                    if ($this->app_type === 'client'):
+                        if ($vote['option_censor'] === '是') $data_to_create['status'] = '待审核';
+                    endif;
 
                     $result = $this->basic_model->create($data_to_create, TRUE);
                     if ($result !== FALSE):

@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'time_start', 'time_end',
+			'signup_allowed', 'option_censor', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'time_start', 'time_end',
             'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 		
@@ -38,14 +38,14 @@
 		 * 可作为排序条件的字段名
 		 */
 		protected $names_to_order = array(
-			'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'time_start', 'time_end', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+			'signup_allowed', 'option_censor', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'time_start', 'time_end', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
 		/**
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'vote_id', 'name', 'description', 'url_image', 'url_video', 'url_video_thumb', 'url_audio', 'url_name', 'url_default_option_image', 'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'exturl_before', 'exturl_ongoing', 'exturl_after', 'time_start', 'time_end',
+			'vote_id', 'name', 'description', 'extra', 'url_image', 'url_video', 'url_video_thumb', 'url_audio', 'url_name', 'url_default_option_image', 'signup_allowed', 'option_censor', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'exturl_before', 'exturl_ongoing', 'exturl_after', 'content_css', 'time_start', 'time_end',
             'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -61,7 +61,7 @@
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'name', 'description', 'url_image', 'url_video', 'url_video_thumb', 'url_audio', 'url_name', 'url_default_option_image', 'signup_allowed', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'time_start', 'time_end',
+			'name', 'description', 'extra', 'url_image', 'url_video', 'url_video_thumb', 'url_audio', 'url_name', 'url_default_option_image', 'signup_allowed', 'option_censor', 'max_user_total', 'max_user_daily', 'max_user_daily_each', 'content_css', 'time_start', 'time_end',
 		);
 
 		/**
@@ -242,16 +242,18 @@
             $this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]|is_unique['.$this->table_name.'.name]');
             $this->form_validation->set_rules('url_name', 'URL名称', 'trim|min_length[5]|max_length[30]|alpha_dash|is_unique['.$this->table_name.'.url_name]');
             $this->form_validation->set_rules('description', '描述', 'trim|max_length[255]');
+            $this->form_validation->set_rules('extra', '补充描述', 'trim|max_length[5000]');
             $this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
             $this->form_validation->set_rules('url_audio', '背景音乐', 'trim|max_length[255]');
             $this->form_validation->set_rules('url_video', '形象视频', 'trim|max_length[255]');
             $this->form_validation->set_rules('url_video_thumb', '形象视频缩略图', 'trim|max_length[255]');
             $this->form_validation->set_rules('url_default_option_image', '选项默认占位图', 'trim|max_length[255]');
-
-			$this->form_validation->set_rules('signup_allowed', '可报名', 'trim|in_list[否,是]');
+			$this->form_validation->set_rules('signup_allowed', '用户可报名', 'trim|in_list[否,是]');
+            $this->form_validation->set_rules('option_censor', '候选项需审核', 'trim|in_list[否,是]');
 			$this->form_validation->set_rules('max_user_total', '每选民最高总选票数', 'trim|is_natural|greater_than_equal_to[0]|less_than_equal_to[999]');
 			$this->form_validation->set_rules('max_user_daily', '每选民最高日选票数', 'trim|is_natural_no_zero|greater_than[0]|less_than_equal_to[99]');
 			$this->form_validation->set_rules('max_user_daily_each', '每选民同选项最高日选票数', 'trim|is_natural_no_zero|greater_than[0]|less_than_equal_to[99]');
+            $this->form_validation->set_rules('content_css', '自定义样式', 'trim|max_length[5000]');
 			
 			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]|integer|callback_time_start');
 			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]|integer|callback_time_end');
@@ -271,6 +273,7 @@
 
                     'url_name' => strtolower( $this->input->post('url_name') ),
                     'signup_allowed' => empty($this->input->post('signup_allowed'))? '否': $this->input->post('signup_allowed'),
+                    'option_censor' => empty($this->input->post('option_censor'))? '否': $this->input->post('option_censor'),
                     'max_user_total' => empty($this->input->post('max_user_total'))? 0: $this->input->post('max_user_total'),
                     'max_user_daily' => empty($this->input->post('max_user_daily'))? 1: $this->input->post('max_user_daily'),
                     'max_user_daily_each' => empty($this->input->post('max_user_daily_each'))? 1: $this->input->post('max_user_daily_each'),
@@ -279,8 +282,8 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-                    'name', 'description', 'url_image', 'url_audio', 'url_video', 'url_video_thumb', 'url_default_option_image', 'signup_allowed',
-				);
+                    'name', 'description', 'url_image', 'url_audio', 'url_video', 'url_video_thumb', 'url_default_option_image', 'signup_allowed', 'content_css',
+                );
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 
@@ -329,16 +332,18 @@
             $this->form_validation->set_rules('name', '名称', 'trim|required|max_length[30]');
             $this->form_validation->set_rules('url_name', 'URL名称', 'trim|min_length[5]|max_length[30]|alpha_dash');
             $this->form_validation->set_rules('description', '描述', 'trim|max_length[255]');
+            $this->form_validation->set_rules('extra', '补充描述', 'trim|max_length[5000]');
             $this->form_validation->set_rules('url_image', '形象图', 'trim|max_length[255]');
             $this->form_validation->set_rules('url_audio', '背景音乐', 'trim|max_length[255]');
             $this->form_validation->set_rules('url_video', '形象视频', 'trim|max_length[255]');
             $this->form_validation->set_rules('url_video_thumb', '形象视频缩略图', 'trim|max_length[255]');
             $this->form_validation->set_rules('url_default_option_image', '选项默认占位图', 'trim|max_length[255]');
-
-			$this->form_validation->set_rules('signup_allowed', '可报名', 'trim|in_list[否,是]');
+            $this->form_validation->set_rules('signup_allowed', '用户可报名', 'trim|in_list[否,是]');
+            $this->form_validation->set_rules('option_censor', '候选项需审核', 'trim|in_list[否,是]');
             $this->form_validation->set_rules('max_user_total', '每选民最高总选票数', 'trim|is_natural|greater_than_equal_to[0]|less_than_equal_to[999]');
             $this->form_validation->set_rules('max_user_daily', '每选民最高日选票数', 'trim|is_natural_no_zero|greater_than[0]|less_than_equal_to[99]');
             $this->form_validation->set_rules('max_user_daily_each', '每选民同选项最高日选票数', 'trim|is_natural_no_zero|greater_than[0]|less_than_equal_to[99]');
+            $this->form_validation->set_rules('content_css', '自定义样式', 'trim|max_length[5000]');
 			
 			$this->form_validation->set_rules('time_start', '开始时间', 'trim|exact_length[10]|integer|callback_time_start');
 			$this->form_validation->set_rules('time_end', '结束时间', 'trim|exact_length[10]|integer|callback_time_end');
@@ -357,6 +362,7 @@
 
                     'url_name' => strtolower( $this->input->post('url_name') ),
                     'signup_allowed' => empty($this->input->post('signup_allowed'))? '否': $this->input->post('signup_allowed'),
+                    'option_censor' => empty($this->input->post('option_censor'))? '否': $this->input->post('option_censor'),
                     'max_user_total' => empty($this->input->post('max_user_total'))? 0: $this->input->post('max_user_total'),
                     'max_user_daily' => empty($this->input->post('max_user_daily'))? 1: $this->input->post('max_user_daily'),
                     'max_user_daily_each' => empty($this->input->post('max_user_daily_each'))? 1: $this->input->post('max_user_daily_each'),
@@ -365,8 +371,8 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-                    'name', 'description', 'url_image', 'url_audio', 'url_video', 'url_video_thumb', 'url_default_option_image', 'signup_allowed',
-				);
+                    'name', 'description', 'url_image', 'url_audio', 'url_video', 'url_video_thumb', 'url_default_option_image', 'signup_allowed', 'content_css',
+                );
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
 

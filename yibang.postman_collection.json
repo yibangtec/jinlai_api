@@ -5013,7 +5013,7 @@
 								},
 								{
 									"key": "user_id",
-									"value": "40",
+									"value": "1",
 									"type": "text"
 								}
 							]
@@ -5119,6 +5119,49 @@
 							"path": [
 								"cart",
 								"sync_up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CRT6 购物车解析",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "cart_string",
+									"value": "2|3|0|1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/cart/parse",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"cart",
+								"parse"
 							]
 						}
 					},
@@ -10111,20 +10154,19 @@
 								},
 								{
 									"key": "limit",
-									"value": "2",
-									"type": "text",
-									"disabled": true
+									"value": "10",
+									"type": "text"
 								},
 								{
 									"key": "offset",
-									"value": "2",
-									"type": "text",
-									"disabled": true
+									"value": "0",
+									"type": "text"
 								},
 								{
 									"key": "biz_id",
 									"value": "2",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "biz_name",
@@ -10446,7 +10488,8 @@
 								{
 									"key": "test_mode",
 									"value": "on",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "app_type",
@@ -10465,7 +10508,7 @@
 								},
 								{
 									"key": "address_id",
-									"value": "5",
+									"value": "88",
 									"type": "text"
 								},
 								{
@@ -10474,34 +10517,10 @@
 									"type": "text"
 								},
 								{
-									"key": "item_id",
-									"value": "6",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "sku_id",
-									"value": "",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "count",
-									"value": "",
-									"type": "text",
-									"disabled": true
-								},
-								{
 									"key": "note_user",
 									"value": "{\"2\":\"用户留言1\",\"9\":\"用户留言2\"}",
 									"type": "text",
 									"disabled": true
-								},
-								{
-									"key": "freight_template_biz_id",
-									"value": "",
-									"description": "",
-									"type": "text"
 								}
 							]
 						},
