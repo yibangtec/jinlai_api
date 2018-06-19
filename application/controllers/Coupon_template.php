@@ -219,13 +219,16 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
                 $period = empty($this->input->post('period'))? $this->default_period: $this->input->post('period');
 
+			    // 生成起用金额
+                $min_subtotal = $this->generate_min_subtotal($amount);
+
 				$data_to_create = array(
 					'creator_id' => $user_id,
 
                     'amount' => empty($amount)? 0: $amount,
                     'rate' => empty($rate)? 0: $rate,
 
-                    'min_subtotal' => empty($this->input->post('min_subtotal'))? 1: $this->input->post('min_subtotal'),
+                    'min_subtotal' => $min_subtotal,
                     'max_amount' => empty($this->input->post('max_amount'))? 0: $this->input->post('max_amount'),
                     'max_amount_user' => empty($this->input->post('max_amount_user'))? 0: $this->input->post('max_amount_user'),
 
@@ -320,13 +323,16 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
                 $period = empty($this->input->post('period'))? $this->default_period: $this->input->post('period');
 
-				$data_to_edit = array(
+                // 生成起用金额
+                $min_subtotal = $this->generate_min_subtotal($amount);
+
+			    $data_to_edit = array(
 					'operator_id' => $user_id,
 
                     'amount' => empty($amount)? 0: $amount,
                     'rate' => empty($rate)? 0: $rate,
 
-                    'min_subtotal' => empty($this->input->post('min_subtotal'))? 1: $this->input->post('min_subtotal'),
+                    'min_subtotal' => $min_subtotal,
                     'max_amount' => empty($this->input->post('max_amount'))? 0: $this->input->post('max_amount'),
                     'max_amount_user' => empty($this->input->post('max_amount_user'))? 0: $this->input->post('max_amount_user'),
 
@@ -441,7 +447,26 @@
 		 * 以下为工具类方法
 		 */
 
-	} // end class Coupon_template
+        /**
+         * 生成起用金额
+         *
+         * @param int $amount 定额型优惠券抵扣额
+         * @return number
+         */
+        protected function generate_min_subtotal($amount = 0)
+        {
+            // 传入入的起用金额
+            $inputed = empty($this->input->post('min_subtotal'))? 1: $this->input->post('min_subtotal');
+
+            // 系统允许的最低起用金额
+            $minimum = empty($amount)? 1: ($amount+1); // 若为折扣型优惠券，则起用金额为1元，否则为面值+1元
+
+            // 以较高者为准
+            return ($minimum > $inputed)? $minimum: $inputed;
+        } // end generate_min_subtotal
+
+
+    } // end class Coupon_template
 
 /* End of file Coupon_template.php */
 /* Location: ./application/controllers/Coupon_template.php */

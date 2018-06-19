@@ -14,7 +14,8 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'user_id', 'biz_id', 'time_create', 'time_create_end', 'time_delete', 'time_edit',
+			'user_id', 'biz_id',
+            'time_create', 'time_create_end', 'time_delete', 'time_edit',
 		);
 
 		/**
@@ -147,7 +148,7 @@
 			$required_params = $this->names_create_required;
 			foreach ($required_params as $param):
 				${$param} = trim($this->input->post($param));
-				if ( !isset( ${$param} ) ):
+				if ( empty( ${$param} ) ):
 					$this->result['status'] = 400;
 					$this->result['content']['error']['message'] = '必要的请求参数未全部传入';
 					exit();
@@ -219,14 +220,14 @@
         public function edit_certain()
         {
             // 操作可能需要检查客户端及设备信息
-            $type_allowed = array('client',); // 客户端类型
+            $type_allowed = array('client'); // 客户端类型
             $this->client_check($type_allowed);
 
             // 检查必要参数是否已传入
             $required_params = $this->names_edit_required;
             foreach ($required_params as $param):
                 ${$param} = trim($this->input->post($param));
-                if ( !isset( ${$param} ) ):
+                if ( empty( ${$param} ) ):
                     $this->result['status'] = 400;
                     $this->result['content']['error']['message'] = '必要的请求参数未全部传入';
                     exit();
@@ -271,7 +272,7 @@
 		public function edit_bulk()
 		{
             // 操作可能需要检查客户端及设备信息
-            $type_allowed = array('admin', 'biz'); // 客户端类型
+            $type_allowed = array('client'); // 客户端类型
             $this->client_check($type_allowed);
 
 		    // 检查必要参数是否已传入
