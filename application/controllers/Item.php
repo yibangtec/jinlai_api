@@ -92,7 +92,7 @@
             $condition = $this->condition_generate();
 			// 类特有筛选项
             $condition = $this->advanced_sorter($condition);
-			
+
 			// 商家仅可操作自己的数据
             if ($this->app_type === 'biz') $condition['biz_id'] = $this->input->post('biz_id');
 
@@ -131,13 +131,14 @@
             // 类特有筛选项
             $condition = $this->advanced_sorter($condition);
 
-            // 排序条件
+			// 排序条件
             foreach ($this->names_to_order as $sorter):
                 if ( !empty($this->input->post('orderby_'.$sorter)) )
                     $order_by[$sorter] = $this->input->post('orderby_'.$sorter);
             endforeach;
             $order_by['index_id'] = 'DESC';
-            $order_by['time_publish'] = 'DESC';
+            if ( ! isset($order_by['time_publish']))
+                $order_by['time_publish'] = 'DESC';
 
             // 获取列表；默认可获取已删除项
             $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
@@ -733,7 +734,7 @@
 			endif;
 		} // end edit_bulk
 
-        /*
+        /**
          * 以下为工具方法
          */
 
