@@ -22,7 +22,7 @@
 		 * 可作为查询结果返回的字段名
 		 */
 		protected $names_to_return = array(
-			'article_id', 'category_id', 'title', 'excerpt', 'content', 'url_name', 'url_images',
+			'article_id', 'category_id', 'title', 'excerpt', 'content', 'url_name', 'url_images', 'url_video', 'url_video_thumb',
             'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
 		);
 
@@ -38,7 +38,7 @@
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'category_id', 'title', 'excerpt', 'content', 'url_name', 'url_images',
+			'category_id', 'title', 'excerpt', 'content', 'url_name', 'url_images', 'url_video', 'url_video_thumb',
 		);
 
 		/**
@@ -200,6 +200,8 @@
             $this->form_validation->set_rules('content', '内容', 'trim|required|min_length[10]|max_length[20000]');
             $this->form_validation->set_rules('url_name', '自定义域名', 'trim|alpha_dash|max_length[30]');
             $this->form_validation->set_rules('url_images', '形象图', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_video', '形象视频', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_video_thumb', '形象视频缩略图', 'trim|max_length[255]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -214,7 +216,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_id', 'title', 'excerpt', 'content', 'url_images'
+					'category_id', 'title', 'excerpt', 'content', 'url_images', 'url_video', 'url_video_thumb',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
@@ -267,6 +269,8 @@
             $this->form_validation->set_rules('content', '内容', 'trim|required|min_length[10]|max_length[20000]');
             $this->form_validation->set_rules('url_name', '自定义域名', 'trim|alpha_dash|max_length[30]');
             $this->form_validation->set_rules('url_images', '形象图', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_video', '形象视频', 'trim|max_length[255]');
+            $this->form_validation->set_rules('url_video_thumb', '形象视频缩略图', 'trim|max_length[255]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -281,7 +285,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_id', 'title', 'excerpt', 'content', 'url_images'
+					'category_id', 'title', 'excerpt', 'content', 'url_images', 'url_video', 'url_video_thumb',
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);

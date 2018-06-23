@@ -491,7 +491,7 @@
 			endif;
 		} // end user_exist
 
-        /*
+        /**
          * 以下为工具方法
          */
 
