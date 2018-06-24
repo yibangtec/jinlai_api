@@ -689,8 +689,23 @@
          */
         private function generate_login_info($wechat_union_id = NULL)
         {
+            // 用户登录信息
+            $login_info = array();
+
+            // 获取传入的第三方登录信息
+            $sns_info = json_decode($this->input->post('sns_info'), TRUE);
+            if ( ! empty($sns_info)):
+                // 生成可用于生成/更新的用户信息
+                $sns_data = array(
+                    'nickname' => $sns_info['nickname'],
+                    'gender' => $sns_info['sex'] == 1? '男': '女',
+                    'avatar' => @$this->get_wechat_largest_avatar($sns_info['headimgurl']),
+                );
+                $login_info = array_merge($login_info, $sns_data);
+            endif;
+
             // 若未传入微信UnionID，尝试获取
-            if ($wechat_union_id === NULL) $login_info['wechat_union_id'] = $this->input->post('wechat_union_id');
+            if (empty($wechat_union_id)) $login_info['wechat_union_id'] = $this->input->post('wechat_union_id');
 
             // 个推ID
             $login_info['getui_id'] = $this->input->post('getui_id');
@@ -701,6 +716,27 @@
 
             return array_filter($login_info);
         } // end generate_login_info
+
+        /**
+         * 获取最大尺寸的微信用户头像
+         * 相关方法调试完成后应移到API，先判断当前用户头像是否为内部资源文件，若否则使用本方法获取最大尺寸的微信头像并更新用户资料
+         *
+         * @param string $avatar 微信用户头像，例如"http://thirdwx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/46"；最后一个数值代表正方形头像大小（有0、46、64、96、132数值可选，0代表640*640正方形头像）
+         * @return string 最大尺寸的头像文件URL
+         */
+        private function get_wechat_largest_avatar($avatar)
+        {
+            if (empty($avatar)):
+                return NULL;
+
+            else:
+                // 截取当前头像URL至最后一次出现"/"符号的位置，并拼上表示最大尺寸的"0"作为新头像URL
+                $base_url = substr($avatar, 0, (strripos($avatar, '/') + 1));
+                $largest_avatar_url = $base_url.'0';
+                return $largest_avatar_url;
+
+            endif;
+        } // end get_wechat_largest_avatar
 
 	} // end class Account
 

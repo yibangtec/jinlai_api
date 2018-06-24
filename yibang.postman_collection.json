@@ -372,8 +372,7 @@
 									"key": "test_mode",
 									"value": "on",
 									"description": "",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "app_type",
@@ -392,11 +391,23 @@
 									"description": "",
 									"type": "text",
 									"disabled": true
+								},
+								{
+									"key": "user_ip",
+									"value": "218.201.110.203",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "sns_info",
+									"value": "{\"subscribe\":1,\"openid\":\"oD71o0S_9rx_Ph3xONvE9ZHSpjx4\",\"nickname\":\"Lau\",\"sex\":1,\"language\":\"zh_CN\",\"city\":\"\\u73c0\\u65af\",\"province\":\"\\u897f\\u6fb3\\u5927\\u5229\\u4e9a\",\"country\":\"\\u6fb3\\u5927\\u5229\\u4e9a\",\"headimgurl\":\"http:\\/\\/thirdwx.qlogo.cn\\/mmopen\\/pl1zDMibCtXywOXhiczx5EDEWQes2qFCgRUicr8ibYFJhDDJaUl5guWqntlIgCNXfiaU3T5pw3ePHMdht0OkNUBibicyGeTLcIZXdiaY\\/132\",\"subscribe_time\":1521705996,\"unionid\":\"o0geuv1gYOza99ncltzFyN6f1SGQ\",\"remark\":\"\",\"groupid\":0,\"tagid_list\":[],\"subscribe_scene\":\"ADD_SCENE_QR_CODE\",\"qr_scene\":0,\"qr_scene_str\":\"\"}\n",
+									"description": "",
+									"type": "text"
 								}
 							]
 						},
 						"url": {
-							"raw": "https://api.517ybang.com/account_new/login_wechat",
+							"raw": "https://api.517ybang.com/account/login_wechat",
 							"protocol": "https",
 							"host": [
 								"api",
@@ -404,7 +415,7 @@
 								"com"
 							],
 							"path": [
-								"account_new",
+								"account",
 								"login_wechat"
 							]
 						}
@@ -6144,6 +6155,13 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"type": "text"
@@ -6151,6 +6169,12 @@
 								{
 									"key": "user_id",
 									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "item_id",
+									"value": "4336",
+									"description": "",
 									"type": "text"
 								}
 							]
@@ -6277,8 +6301,7 @@
 								{
 									"key": "test_mode",
 									"value": "on",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "app_type",
@@ -6287,12 +6310,12 @@
 								},
 								{
 									"key": "user_id",
-									"value": "1",
+									"value": "200",
 									"type": "text"
 								},
 								{
 									"key": "ids",
-									"value": "563",
+									"value": "300",
 									"type": "text"
 								},
 								{
@@ -6833,7 +6856,7 @@
 								},
 								{
 									"key": "app_type",
-									"value": "biz",
+									"value": "client",
 									"type": "text"
 								},
 								{
@@ -7484,8 +7507,7 @@
 								{
 									"key": "test_mode",
 									"value": "on",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "app_type",
@@ -7516,7 +7538,7 @@
 								},
 								{
 									"key": "biz_id",
-									"value": "1",
+									"value": "2",
 									"type": "text"
 								},
 								{
@@ -7528,7 +7550,8 @@
 								{
 									"key": "name",
 									"value": "手机",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "tag_price",
@@ -7686,7 +7709,7 @@
 								},
 								{
 									"key": "orderby_time_publish",
-									"value": "DESC",
+									"value": "ASC",
 									"type": "text",
 									"description": "按上架时间排序",
 									"disabled": true
