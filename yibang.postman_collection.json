@@ -7116,13 +7116,20 @@
 									"key": "parent_id",
 									"value": "149",
 									"description": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "ids",
 									"value": "189,175,173,36,3,2",
 									"type": "text",
 									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "服饰",
+									"description": "",
+									"type": "text"
 								}
 							]
 						},
@@ -7507,7 +7514,8 @@
 								{
 									"key": "test_mode",
 									"value": "on",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "app_type",
@@ -7517,18 +7525,19 @@
 								{
 									"key": "limit",
 									"value": "10",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "offset",
 									"value": "0",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "category_id",
-									"value": "4",
-									"type": "text",
-									"disabled": true
+									"value": "1",
+									"type": "text"
 								},
 								{
 									"key": "brand_id",
@@ -7539,7 +7548,8 @@
 								{
 									"key": "biz_id",
 									"value": "2",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "category_biz_id",
@@ -7549,7 +7559,7 @@
 								},
 								{
 									"key": "name",
-									"value": "手机",
+									"value": "国产水果",
 									"type": "text",
 									"disabled": true
 								},

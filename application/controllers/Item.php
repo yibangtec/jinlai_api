@@ -158,6 +158,7 @@
 
 			if ( ! empty($items)):
                 // 若为客户端调用，则一并返回规格
+                /*
                 if ($this->app_type === 'client'):
                     // 获取各项相应规格
                     $this->switch_model('sku', 'sku_id');
@@ -168,6 +169,7 @@
                         $items[$i]['skus'] = $this->basic_model->select($condition, NULL);
                     endfor;
 				endif;
+                */
 
 				// 若非客户端调用，则输出相应统计信息
                 /*
@@ -762,7 +764,7 @@
                     $sub_categories[] = $condition['category_id'];
                     unset($condition['category_id']);
 
-                    $this->db->or_where_in('biz.category_id', $sub_categories);
+                    $this->db->or_where_in('category_id', $sub_categories);
                 endif;
             endif;
 
