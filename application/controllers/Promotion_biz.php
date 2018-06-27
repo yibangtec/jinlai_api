@@ -248,7 +248,7 @@
 					'biz_id', 'type', 'name', 'description', 'url_image', 'url_image_wide', 'fold_allowed', 'discount', 'present_trigger_amount', 'present_trigger_count', 'present', 'reduction_trigger_amount', 'reduction_trigger_count', 'reduction_amount', 'reduction_amount_time', 'reduction_discount', 'coupon_id', 'coupon_combo_id', 'deposit', 'balance', 'time_book_start', 'time_book_end', 'time_complete_start', 'time_complete_end', 'groupbuy_order_amount', 'groupbuy_quantity_max',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
+					$data_to_create[$name] = $this->input->post($name);
 
 				$result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):
@@ -334,7 +334,7 @@
 					'name', 'description', 'url_image', 'url_image_wide', 'fold_allowed', 'discount', 'present_trigger_amount', 'present_trigger_count', 'present', 'reduction_trigger_amount', 'reduction_trigger_count', 'reduction_amount', 'reduction_amount_time', 'reduction_discount', 'coupon_id', 'coupon_combo_id', 'deposit', 'balance', 'time_book_start', 'time_book_end', 'time_complete_start', 'time_complete_end', 'groupbuy_order_amount', 'groupbuy_quantity_max',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
+					$data_to_edit[$name] = $this->input->post($name);
 
 				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);

@@ -108,6 +108,7 @@
                 if ($this->app_type === 'client'):
                     $condition['time_delete'] = 'NULL';
                     $condition['time_end >'] = time(); // 仅获取有效期内的数据
+                    $condition['scope'] = 'public'; // 仅获取公开数据
                 endif;
                 $this->load->model('coupon_template_model');
                 $items = $this->coupon_template_model->select($condition, $order_by);

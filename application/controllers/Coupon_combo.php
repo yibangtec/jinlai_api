@@ -115,6 +115,7 @@
                 // 限制可返回的字段
                 if ($this->app_type === 'client'):
                     $condition['time_delete'] = 'NULL';
+                    $condition['scope'] = 'public'; // 仅获取公开数据
                     $this->names_to_return = array_diff($this->names_to_return, $this->names_return_for_admin);
                 endif;
                 $this->db->select( implode(',', $this->names_to_return) );
