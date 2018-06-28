@@ -25,7 +25,7 @@
 		 */
 		protected $names_to_return = array(
 			'page_id', 'name', 'url_name', 'description', 'content_type', 'content_html', 'content_file',
-            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'item_ids',
 		);
 
 		/**
@@ -40,7 +40,7 @@
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'name', 'url_name', 'description', 'content_type', 'content_html', 'content_file',
+			'name', 'url_name', 'description', 'content_type', 'content_html', 'content_file','item_ids',
 		);
 
 		/**
@@ -159,7 +159,11 @@
             if ( !empty($item) ):
                 $this->result['status'] = 200;
                 $this->result['content'] = $item;
-
+                // 获取相关商品
+            	if ( !empty($item['item_ids']) ) :
+            		$this->switch_model('item', 'item_id');
+            		$this->result['content']['items'] = $this->basic_model->select_by_ids($item['item_ids']);
+            	endif;
             else:
                 $this->result['status'] = 414;
                 $this->result['content']['error']['message'] = '没有符合条件的数据';
@@ -202,6 +206,7 @@
 			$this->form_validation->set_rules('content_type', '内容形式', 'trim|in_list[HTML,文件]');
 			$this->form_validation->set_rules('content_html', '页面内容（HTML格式）', 'trim|max_length[20000]');
 			$this->form_validation->set_rules('content_file', '页面文件', 'trim|max_length[255]');
+			$this->form_validation->set_rules('item_ids', '相关商品ID', 'trim|max_length[255]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -217,7 +222,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'name', 'description', 'content_type', 'content_html',
+					'name', 'description', 'content_type', 'content_html', 'item_ids'
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
@@ -270,6 +275,7 @@
             $this->form_validation->set_rules('content_type', '内容形式', 'trim|in_list[HTML,文件]');
             $this->form_validation->set_rules('content_html', '页面内容（HTML格式）', 'trim|max_length[20000]');
             $this->form_validation->set_rules('content_file', '页面文件', 'trim|max_length[255]');
+            $this->form_validation->set_rules('item_ids', '相关商品ID', 'trim|max_length[255]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
@@ -285,7 +291,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-                    'name', 'description', 'content_type', 'content_html',
+                    'name', 'description', 'content_type', 'content_html', 'item_ids'
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
@@ -315,7 +321,6 @@
             // 操作可能需要检查客户端及设备信息
             $type_allowed = array('admin',); // 客户端类型
             $this->client_check($type_allowed);
-
 			// 管理类客户端操作可能需要检查操作权限
 			//$role_allowed = array('管理员', '经理'); // 角色要求
 			//$min_level = 10; // 级别要求
@@ -364,6 +369,7 @@
             $this->form_validation->set_rules('content_type', '内容形式', 'trim|in_list[HTML,文件]');
             $this->form_validation->set_rules('content_html', '页面内容（HTML格式）', 'trim|max_length[20000]');
             $this->form_validation->set_rules('content_file', '页面文件', 'trim|max_length[255]');
+            $this->form_validation->set_rules('item_ids', '相关商品ID', 'trim|max_length[255]');
 
 			// 若表单提交不成功
 			if ($this->form_validation->run() === FALSE):
