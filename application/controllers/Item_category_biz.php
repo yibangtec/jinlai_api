@@ -203,13 +203,15 @@
 				// 需要创建的数据；逐一赋值需特别处理的字段
 				$data_to_create = array(
 					'creator_id' => $user_id,
+
+                    'parent_id' => empty($this->input->post('parent_id'))? '0': $this->input->post('parent_id'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'biz_id', 'parent_id', 'name', 'url_image',
+					'biz_id', 'name', 'url_image',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
+					$data_to_create[$name] = $this->input->post($name);
 
 				$result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):
@@ -270,13 +272,15 @@
 				// 需要编辑的数据；逐一赋值需特别处理的字段
 				$data_to_edit = array(
 					'operator_id' => $user_id,
+
+                    'parent_id' => empty($this->input->post('parent_id'))? '0': $this->input->post('parent_id'),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'parent_id', 'name', 'url_image',
+					'name', 'url_image',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
+					$data_to_edit[$name] = $this->input->post($name);
 
 				// 根据客户端类型等条件筛选可操作的字段名
 				if ($this->app_type !== 'admin'):
