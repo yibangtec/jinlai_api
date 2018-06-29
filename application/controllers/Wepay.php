@@ -123,7 +123,7 @@
             $order = $this->get_order_detail($order_id);
             $order_data = array(
                 'body' => SITE_NAME. ($type === 'order'? '商品订单': '充值订单'),
-                'total_fee' => (ENVIRONMENT === 'production')? $order['total']: 0.01, // 非生产环境下所有订单只需支付0.01元
+                'total_fee' => $order['total'], // 待付款金额
             );
 
 			// 重组请求参数

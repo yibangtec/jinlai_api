@@ -217,7 +217,6 @@
                     'date_create' => $date_create,
                 );
 
-                $this->reset_model(); // 需要操作的数据库参数与之前不同，需重置数据库参数
                 $result = $this->basic_model->create($data_to_create, TRUE);
                 if ($result !== FALSE):
                     $this->result['status'] = 200;
@@ -507,13 +506,13 @@
 		 */
 
 		// 仅获取进行中的有效投票活动信息
-		protected function get_vote_pending($vote_id)
+		protected function get_vote_pending($id)
         {
             $this->switch_model('vote', 'vote_id');
             $current_timestamp = time();
 
             $condition = array(
-                'vote_id' => $vote_id,
+                'vote_id' => $id,
                 'time_start <=' => $current_timestamp,
                 'time_end >' => $current_timestamp,
                 'time_delete' => NULL,
@@ -523,7 +522,7 @@
             return (empty($result))? FALSE: $result;
         } // end get_vote_pending
 
-        // 获取当天特定用户日选票数
+        // 获取特定用户总选票数
         protected function user_total_ballots($user_id, $vote_id)
         {
             $condition = array(

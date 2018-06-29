@@ -272,7 +272,7 @@
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-                    'category_id', 'name', 'brief_name', 'url_logo', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'url_image_product', 'url_image_produce', 'url_image_retail',
+                    'category_id', 'name', 'brief_name', 'url_logo', 'description', 'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order', 'url_image_product', 'url_image_produce', 'url_image_retail',
                 );
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
@@ -638,7 +638,7 @@
 			endif;
 		} // end edit_bulk
 
-        /*
+        /**
          * 以下为工具方法
          */
 
