@@ -114,7 +114,9 @@
 		 * 1 列表/基本搜索
 		 */
 		public function index()
-		{
+		{	
+			
+
 			// 检查必要参数是否已传入
 			$required_params = array();
 			foreach ($required_params as $param):
@@ -195,7 +197,7 @@
 		 * 2 详情
 		 */
 		public function detail()
-		{
+		{	
 			// 检查必要参数是否已传入
 			$id = $this->input->post('id');
             $code_biz = $this->input->post('code_biz');
@@ -309,6 +311,212 @@
 			endif;
 		} // end detail
 
+		/**
+		 * 2 详情
+		 */
+		public function detail_cache()
+		{	
+			//打开缓存
+			$this->init_item_cache();
+			
+			// 检查必要参数是否已传入
+			$id = $this->input->post('id');
+            $code_biz = $this->input->post('code_biz');
+            $barcode = $this->input->post('barcode');
+			if ( empty($id.$code_biz.$barcode) ):
+				$this->result['status'] = 400;
+				$this->result['content']['error']['message'] = '必要的请求参数未传入';
+				exit();
+			endif;
+
+            // 用户仅可查看未删除项
+            if ($this->app_type === 'client') $this->db->where('time_delete IS NULL');
+
+			// 限制可返回的字段
+			$this->db->select(implode(',', $this->names_to_return));
+
+			// 获取特定项；默认可获取已删除项
+            if ( !empty($barcode) ):
+                $item = $this->basic_model->find('barcode', $barcode);
+            elseif ( !empty($code_biz) ):
+                $item = $this->basic_model->find('code_biz', $code_biz);
+            else:
+                $item = $this->basic_model->select_by_id($id);
+            endif;
+
+			if ( !empty($item) ):
+				$this->result['status'] = 200;
+				$this->result['content'] = $item;
+
+                // 获取该商品相关SKU列表
+                // 先检查缓存 有的话尝试从缓存获取 have_sku_{$item_id} sku_hash_{$itemid}
+                $have_sku = $this->myredis->have("have_sku", $item['item_id']);
+                $this->result['content']['skus'] = [];
+                if ($have_sku) {
+                	$this->result['content']['skus'] = $this->myredis->gethash("sku_hash_{$item['item_id']}", 'getall');
+                	//缓存没有
+	                if (empty($this->result['content']['skus'])) {
+	                	$this->switch_model('sku', 'sku_id');
+	                	$conditions = array(
+		                    'item_id' => $item['item_id'],
+		                    'time_delete' => 'NULL',
+	                	);
+	                	$this->db->select('sku_id, biz_id, item_id, url_image, name_first, name_second, name_third, tag_price, price, stocks, weight_net, weight_gross, weight_volume');
+	                	$this->result['content']['skus'] = $this->basic_model->select($conditions, NULL);
+
+	                	if (empty($this->result['content']['skus'])) {
+							$this->myredis->give("have_sku", $item['item_id'], 0);
+	                	} else {
+	                		$sku = [];
+	                		foreach ($this->result['content']['skus'] as $key => $value) {
+	                			$sku[] = json_encode($value);
+	                		}
+	                	}
+	                	//保存到缓存 商品售卖后需要更新此数据的库存 避免超卖  后期需要考虑并发问题
+	                	$this->myredis->savehash("sku_hash_{$item['item_id']}", $sku);
+	                } else {
+	                	foreach ($this->result['content']['skus'] as $key => $value) {
+                			$this->result['content']['skus'][$key] = json_decode($value, true);
+                		}
+	                }
+                }
+                // 若存在规格，则以各规格的库存量求和作为商品库存量
+                if ( ! empty($this->result['content']['skus']) ):
+                    $sku_stocks_total = 0;
+                    foreach ($this->result['content']['skus'] as $sku):
+                        $sku_stocks_total += $sku['stocks'];
+                    endforeach;
+                    $this->result['content']['stocks'] = $sku_stocks_total;
+                endif;
+                
+
+                // 若请求来自客户端，额外获取一些信息
+				if ($this->app_type === 'client'):
+                    // 获取该商品所属商家基本信息、在售商品总数、被关注数、各项评分、当前商品评价列表等信息
+                    $this->switch_model('biz', 'biz_id');
+                    $this->db->select(
+                        'brief_name, url_logo, slogan, tel_public,
+                        (SELECT COUNT(*) FROM item WHERE item.biz_id = biz.biz_id AND time_publish IS NOT NULL) AS item_count,
+                        (SELECT COUNT(*) FROM fav_biz WHERE fav_biz.biz_id = biz.biz_id AND time_delete IS NULL) AS fav_biz_count'
+                    );
+                    $this->result['content']['biz'] = $this->basic_model->select_by_id($item['biz_id']);
+
+                        // 获取该商家商品描述评价分数
+                    	// 缓存 key comment_item_{$biz_id}
+                    	$conditions = array(
+                            'biz_id' => $item['biz_id'],
+                        );
+                    	$this->result['content']['biz']['score_description'] = $this->myredis->get("comment_item_{$item['biz_id']}");
+                    	if (empty($this->result['content']['biz']['score_description'])) {
+	                    	$this->switch_model('comment_item', 'comment_id');
+	                        $this->db->select('AVG(`score`) AS score_description');
+	                        
+	                        $result = $this->basic_model->select($conditions);
+	                        $this->result['content']['biz']['score_description'] = !empty($result['score_description'])? $result['score_description']: 4.5;
+	                        //保存评价分数 comment_item_hash	过期时间一天
+	                        $this->myredis->set("comment_item_{$item['biz_id']}", $this->result['content']['biz']['score_description'], 86400);
+                    	}
+                        
+
+                        // 获取该商家服务态度、物流配送、环境分数（客户端按需取用）
+                        // 尝试从缓存获取 key ： comment_biz_hash_{$biz_id}
+                        $result = $this->myredis->gethash("comment_biz_hash_{$item['biz_id']}", "getall");
+                        if( empty($result)) {
+                        	$this->switch_model('comment_biz', 'comment_id');
+	                        $this->db->select('AVG(`score_service`) AS score_service, AVG(`score_deliver`) AS score_deliver, AVG(`score_environment`) AS score_environment');
+	                        $result = $this->basic_model->select($conditions);
+	                        //保存评价分数 comment_biz_hash_{$biz_id}	过期时间一天
+	                        $this->myredis->set("comment_biz_hash_{$item['biz_id']}", $result, 3600 * 24);
+                        }
+                        $this->result['content']['biz']['score_service'] = !empty($result['score_service'])? $result['score_service']: 4.5;
+	                    $this->result['content']['biz']['score_deliver'] = !empty($result['score_deliver'])? $result['score_deliver']: 4.5;
+	                    $this->result['content']['biz']['score_environment'] = !empty($result['score_environment'])? $result['score_environment']: 4.5;
+                        
+
+                    // 获取当前商家营销活动
+	                // 缓存key 是否有：have_promotion_biz,  数据： promotion_biz_hash_{$biz_id}
+	                $have_promotion_biz = $this->myredis->have("have_promotion_biz", $item['biz_id']);
+	                if ($have_promotion_biz) {
+	                	$this->result['content']['biz_promotions'] = $this->myredis->gethash("promotion_biz_hash_{$item['biz_id']}", "getall");
+	                	if (empty($this->result['content']['biz_promotions'])) {
+		                	$this->switch_model('promotion_biz', 'promotion_id');
+	                    	$conditions = array(
+		                        'biz_id' => $item['biz_id'],
+		                    );
+	                    	$this->db->select('promotion_id, type, name, time_start, time_end');
+	                    	$this->result['content']['biz_promotions'] = $this->basic_model->select($conditions, NULL);
+	                    	// 缓存营销活动 过期时间一天
+	                    	if (empty($this->result['content']['biz_promotions'])) {
+								$this->myredis->give("have_promotion_biz", $item['biz_id'], 0);
+		                	}
+	                    	$this->myredis->savehash("promotion_biz_hash_{$item['biz_id']}", $this->result['content']['biz_promotions'], 86400);
+		                }
+	                }
+	                
+
+                    // 获取平台级营销活动
+                    // 缓存key promotion_hash  如果没有缓存同时没有活动 都会返回空数据 这个时候 会多查一次库
+                    $this->result['content']['promotions'] = $this->myredis->gethash("promotion_hash", "getall");
+                    if (empty($this->result['content']['promotions'])) {
+                    	$this->switch_model('promotion', 'promotion_id');
+                    	$this->db->where('time_delete IS NULL');
+                    	$this->result['content']['promotions'] = $this->basic_model->select(NULL, NULL);
+                    	// 缓存营销活动 过期时间 俩小时
+                    	$this->myredis->savehash("promotion_hash", $this->result['content']['promotions'], 7200);
+                    }
+
+                    // 获取商家及平台优惠券模板信息
+                    //平台优惠券key coupon_hash 商家优惠券key coupon_template_hash_{$biz_id}
+                    //是否有优惠券 :平台 have_coupon  商家 have_coupon_biz
+                    $this->switch_model('coupon_template', 'template_id');
+                    $this->db->where('time_delete IS NULL');
+                    //分别处理两种优惠券
+                    $biz_coupon = $coupon = [];
+                    $have_coupon_biz = $this->myredis->have('have_coupon_biz', $item['biz_id']);
+                    if ($have_coupon_biz) {
+                    	$biz_coupon = $this->myredis->gethash("coupon_template_hash_{$item['biz_id']}", "getall");
+                    	if (empty($biz_coupon)) {
+                    		//商家
+	                		$this->db->where('biz_id', $item['biz_id']);
+	                		$biz_coupon = $this->basic_model->select(NULL,NULL);
+	                		if (empty($biz_coupon)) {
+								$this->myredis->give("have_coupon_biz", $item['biz_id'], 0);
+	                		}
+	                		$this->myredis->savehash("coupon_template_hash_{$item['biz_id']}", $biz_coupon);
+	                	}
+                    }
+
+                    $have_coupon = $this->myredis->have('have_coupon', $item['biz_id']);
+                    if ($have_coupon) {
+                    	$coupon = $this->myredis->gethash("coupon_hash", "getall");
+                    	if (empty($coupon)) {
+                    		//平台
+                    		$this->db->where('biz_id IS NULL');
+                    		$coupon = $this->basic_model->select(NULL,NULL);
+                    		if (empty($biz_coupon)) {
+								$this->myredis->give("have_coupon", $item['biz_id'], 0);
+	                		}
+                    		$this->myredis->savehash("coupon_hash", $coupon);
+                    	}
+                    }
+                    $this->result['content']['coupon_templates'] = $biz_coupon + $coupon;
+
+                    // 获取商品评价
+                    // $this->switch_model('comment_item', 'comment_id');
+                    // $conditions = array(
+                    //     'item_id' => $id,
+                    // );
+                    // $this->load->model('comment_item_model');
+                    // $this->result['content']['comments'] = $this->comment_item_model->select($conditions, NULL);
+
+                endif;
+
+			else:
+				$this->result['status'] = 414;
+				$this->result['content']['error']['message'] = '没有符合条件的数据';
+
+			endif;
+		} // end detail
 		/**
 		 * 3 创建
 		 */
@@ -823,6 +1031,27 @@
             return trim($slogan, '，'); // 清理冗余全角逗号
         } // end slogan_generate
 
+
+        /**
+         * 
+         * 设置detail需要设置缓存字段的假数据
+         * @return bool
+         *
+         */
+        public function init_item_cache(){
+        	$this->load->library('Myredis');
+        	$have = $this->myredis->getinstance()->bitcount('have_sku');
+        	if($have == 1024 * 8) {
+        		return TRUE;
+        	}
+			$this->myredis->placeholder('have_sku', 1, 1);
+			$this->myredis->placeholder('have_promotion_biz', 1, 1);
+			$this->myredis->placeholder('have_coupon', 1, 1);
+			$this->myredis->placeholder('have_comment', 1, 1);
+			$this->myredis->set('have_coupon',1);
+			// var_dump($r);
+			return TRUE;
+        }
 	} // end class Item
 
 /* End of file Item.php */
