@@ -311,6 +311,8 @@
 					$this->result['content']['id'] = $result;
 					$this->result['content']['message'] = '创建成功';
 
+                    /*
+                    // 推送消息
                     $data_to_create[$this->id_name] = $result;
                     if (empty($data_to_create['title'])) $data_to_create['title'] = '聊天消息';
                     if (empty($data_to_create['excerpt'])) $data_to_create['excerpt'] = '点击查看详情';
@@ -324,6 +326,17 @@
                     // 推送方式
                     $push_type = empty($this->input->post('push_type'))? 'notification': $this->input->post('push_type');
                     //$this->push_send($message, $push_type);
+                    */
+
+                    // TODO 短信通知聊天功能调试中
+                    if ($this->app_type === 'client'):
+                        // 获取用户手机号
+                        $user = $this->get_item('user', 'user_id', $creator_id);
+
+                        $content = '尊敬的用户您好，公测版的客服对话功能目前正在紧张调试中，在此期间您可以通过专属消费者热线 400-882-0532 咨询相关事宜。';
+
+                        $this->sms_send($user['mobile'], $content);
+                    endif;
 
 				else:
 					$this->result['status'] = 424;

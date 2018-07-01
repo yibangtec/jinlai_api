@@ -314,17 +314,43 @@
                             );
                             $result = $this->basic_model->create($data_to_create, TRUE);
                             if ($result !== FALSE):
+                                // 更新当前奖项余量
+                                @$this->db->query('CALL update_lottery_prize_stocks('.$prize['prize_id'].')');
+                                $this->db->reconnect(); // 调用存储过程后需重连数据库
+
                                 $this->result['status'] = 200;
                                 $this->result['content']['id'] = $result;
                                 $this->result['content']['prize_id'] = $prize['prize_id'];
-                                $this->result['content']['message'] = '创建成功';
+                                $this->result['content']['message'] = '抽奖成功';
 
-                                // 更新当前奖项余量
-                                @$this->db->query('CALL update_lottery_prize_stocks('.$prize['prize_id'].')');
+                                // 若为优惠券类奖品，则自动发送到相应用户账户
+                                if ( ! empty($prize['template_id']) ):
+                                    $data_to_create = array(
+                                        'user_id' => $user_id,
+                                        'template_id' => $prize['template_id'],
+                                    );
+
+                                    // 向API服务器发送待创建数据
+                                    $params = $data_to_create;
+                                    $url = api_url('coupon/create');
+                                    $this->load->library('curl');
+                                    $result = $this->curl->go($url, $params, 'array');
+                                    if ($result['status'] === 200):
+                                        $this->result['content']['message'] .= $result['content']['message'];
+                                        $this->result['content']['coupon_id'] = $result['content']['id']; // 创建后的信息ID
+
+                                    else:
+                                        // 若创建失败，则进行提示
+                                        $this->result['content']['error']['message'] = $result['content']['error']['message'];
+
+                                    endif;
+
+                                    NULL;
+                                endif; // end 发放优惠券
 
                             else:
                                 $this->result['status'] = 424;
-                                $this->result['content']['error']['message'] = '创建失败';
+                                $this->result['content']['error']['message'] = '抽奖失败';
 
                             endif;
 

@@ -106,10 +106,11 @@
             $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
             if ( empty($ids) ):
                 // 商家端若未请求特定状态的订单，则不返回部分状态的订单
-                if ($this->app_type === 'biz' && empty($this->input->post('status')))
+                if ($this->app_type === 'biz' && empty($this->input->post('status'))):
                     $this->db->where_not_in($this->table_name.'.status', array('已取消', '已拒绝', '已关闭'));
+                endif;
                 $this->load->model('order_model');
-                $items = $this->order_model->select($condition, $order_by);
+                $items = $this->order_model->select($condition, $order_by, FALSE, $this->app_type == 'biz');
             else:
                 $items = $this->basic_model->select_by_ids($ids);
             endif;
@@ -242,7 +243,11 @@
 				$this->result['status'] = 411;
 				$this->result['content']['error']['message'] = $this->order_data['content']['error']['message'];
 
-			else:
+			elseif (count($this->order_data) === 0):
+                $this->result['status'] = 411;
+                $this->result['content']['error']['message'] = '商品库存不足，未上架，或超出限购数量';
+
+            else:
 				// 生成全局订单数据
 				$common_meta = array(
 					'time_create' => time(),
@@ -254,10 +259,10 @@
 				$common_meta = array_merge($common_meta, $this->order_address);
 				unset($this->order_address); // 释放内存资源，下同
 
-				// 计算待生成子订单总数，即订单相关商家数
-				$bizs_count = count($this->order_data);
+                // 计算待生成子订单总数，即订单相关商家数
+                $bizs_count = count($this->order_data);
 
-				// 以商家为单位生成订单
+                // 以商家为单位生成订单
 				for ($i=0; $i<$bizs_count; $i++):
 					// 合并通用订单及每笔订单数据
 					$data_to_create = array_merge($common_meta, $this->order_data[$i]);
@@ -345,7 +350,7 @@
                     unset($data_to_create['weight_volume']);
                     // end 计算运费
 
-					// 创建订单
+					// 生成订单记录
 					$this->reset_model();// 重置数据库参数
 					$result = $this->basic_model->create($data_to_create, TRUE);
 					if ($result !== FALSE):
@@ -377,7 +382,7 @@
 						$this->result['status'] = 424;
 						$this->result['content']['error']['message'] = '创建失败';
 
-					endif;
+					endif; // 生成订单记录
 				endfor;
 				
 				// 转换已创建订单ID数组为CSV字符串
@@ -771,8 +776,8 @@
                 $sku = $this->basic_model->select_by_id($sku_id);
                 //var_dump($sku);
 
-                // 若未获取到规格信息，或不可购买，则不继续以下逻辑
-                if (empty($sku) || empty($sku['stocks']) || !empty($sku['time_delete'])) return;
+                // 若未获取到规格信息，库存不足，或不可购买，则不继续其它逻辑
+                if (empty($sku) || $sku['stocks'] < $count || !empty($sku['time_delete'])) return;
 
                 // 若已获取规格信息，则以规格信息中的item_id覆盖传入的item_id
                 $item_id = $sku['item_id'];
@@ -785,7 +790,24 @@
             // 若未获取到商品信息，或不可购买，则不继续以下逻辑
             $sku_and_item_no_stock = empty($item['stocks']) && empty($sku['stocks']);
             $item_not_published = empty($item['time_publish']) || !empty($item['time_delete']);
-            if (empty($item) || $sku_and_item_no_stock || $item_not_published) return;
+            if (empty($item) || $sku_and_item_no_stock || $item_not_published || $item['stocks'] < $count):
+                // echo '该商品库存不足或未上架';
+                //exit();
+                return;
+            endif;
+
+            // 若超出终身限购数，则不可购买
+            if ($item['limit_lifetime'] > 0):
+                // 获取已购买的相关商品数量
+                $query = $this->db->query("SELECT count(`count`) as bought_count FROM `order_items` WHERE `item_id` =".$item_id);
+                $bought_count = $query->row_array()['bought_count'];
+
+                if ($bought_count+$count > $item['limit_lifetime']):
+                    // echo '该商品限购'.$item['limit_lifetime'].'次';
+                    //exit();
+                    return;
+                endif;
+            endif;
 
             // 生成订单商品信息
             $order_item = array(

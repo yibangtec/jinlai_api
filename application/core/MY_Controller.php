@@ -536,10 +536,11 @@
 		protected function sms_send($mobile, $content)
 		{
 			// 为短信内容添加后缀签名
-			$content .= '【'. SITE_NAME. '】';
+			$content .= '【进来商城】';
 
 			$this->load->library('luosimao');
 			$result = $this->luosimao->send($mobile, $content);
+			if ($this->input->post('test_mode') == 'on') var_dump($result);
 		} // end sms_send
 
 		/**

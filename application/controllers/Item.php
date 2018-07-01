@@ -564,6 +564,7 @@
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
             $this->form_validation->set_rules('quantity_max', '每单最高限量（份）', 'trim|greater_than_equal_to[0]|less_than_equal_to[50]');
             $this->form_validation->set_rules('quantity_min', '每单最低限量（份）', 'trim|greater_than_equal_to[0]|less_than_equal_to[50]');
+            $this->form_validation->set_rules('limit_lifetime', '终身限购数量（份）', 'trim|greater_than_equal_to[0]|less_than_equal_to[255]');
 			$this->form_validation->set_rules('coupon_allowed', '是否可用优惠券', 'trim|in_list[0,1]');
 			$this->form_validation->set_rules('discount_credit', '积分抵扣率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
@@ -598,6 +599,7 @@
                     'weight_volume' => empty($this->input->post('weight_volume'))? '0.00': $this->input->post('weight_volume'),
 					'quantity_max' => empty($this->input->post('quantity_max'))? '50': $this->input->post('quantity_max'),
 					'quantity_min' => empty($this->input->post('quantity_min'))? 1: $this->input->post('quantity_min'),
+                    'limit_lifetime' => empty($this->input->post('limit_lifetime'))? 0: $this->input->post('limit_lifetime'),
                     'coupon_allowed' => empty($this->input->post('coupon_allowed'))? 1: $this->input->post('coupon_allowed'), // 默认允许使用优惠券
 					'discount_credit' => empty($this->input->post('discount_credit'))? '0.00': $this->input->post('discount_credit'),
 					'commission_rate' => empty($this->input->post('commission_rate'))? '0.00': $this->input->post('commission_rate'),
@@ -678,6 +680,7 @@
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
             $this->form_validation->set_rules('quantity_max', '每单最高限量（份）', 'trim|greater_than_equal_to[0]|less_than_equal_to[50]');
             $this->form_validation->set_rules('quantity_min', '每单最低限量（份）', 'trim|greater_than_equal_to[0]|less_than_equal_to[50]');
+            $this->form_validation->set_rules('limit_lifetime', '终身限购数量（份）', 'trim|greater_than_equal_to[0]|less_than_equal_to[255]');
 			$this->form_validation->set_rules('coupon_allowed', '是否可用优惠券', 'trim|in_list[0,1]');
 			$this->form_validation->set_rules('discount_credit', '积分抵扣率', 'trim|less_than_equal_to[0.5]');
 			$this->form_validation->set_rules('commission_rate', '佣金比例/提成率', 'trim|less_than_equal_to[0.5]');
@@ -712,6 +715,7 @@
                     'weight_volume' => empty($this->input->post('weight_volume'))? '0.00': $this->input->post('weight_volume'),
 					'quantity_max' => empty($this->input->post('quantity_max'))? '50': $this->input->post('quantity_max'),
 					'quantity_min' => empty($this->input->post('quantity_min'))? 1: $this->input->post('quantity_min'),
+                    'limit_lifetime' => empty($this->input->post('limit_lifetime'))? 0: $this->input->post('limit_lifetime'),
                     'coupon_allowed' => empty($this->input->post('coupon_allowed'))? 1: $this->input->post('coupon_allowed'), // 默认允许使用优惠券
                     'discount_credit' => empty($this->input->post('discount_credit'))? '0.00': $this->input->post('discount_credit'),
 					'commission_rate' => empty($this->input->post('commission_rate'))? '0.00': $this->input->post('commission_rate'),
@@ -723,7 +727,7 @@
 					'category_biz_id', 'code_biz', 'barcode', 'url_image_main', 'name', 'slogan', 'description', 'price', 'promotion_id',
 				);
 				foreach ($data_need_no_prepare as $name)
-					$data_to_edit[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
+					$data_to_edit[$name] = $this->input->post($name);
 
                 // 生成上架时间
                 $data_to_edit['time_publish'] = (empty($time_to_publish) || $time_to_publish < time())? time(): NULL;
@@ -735,7 +739,6 @@
 				// 商家仅可操作自己的数据
 				if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
 
-                // 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);
 				if ($result !== FALSE):
                     $this->result['status'] = 200;

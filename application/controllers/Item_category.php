@@ -119,8 +119,16 @@
                     $condition['time_delete'] = 'NULL';
                     $this->names_to_return = array_diff($this->names_to_return, $this->names_return_for_admin);
                 endif;
-                $this->db->select( implode(',', $this->names_to_return) );
-                $items = $this->basic_model->select($condition, $order_by);
+
+                // 仅获取有商品在售的分类
+                if ($this->input->post('available') != 1):
+                    $this->db->select( implode(',', $this->names_to_return) );
+                    $items = $this->basic_model->select($condition, $order_by);
+                else:
+                    $this->load->model('item_category_model');
+                    $this->switch_model('item', 'item_id');
+                    $items = $this->item_category_model->select_available($condition);
+                endif;
             else:
                 $items = $this->basic_model->select_by_ids($ids);
             endif;
@@ -128,6 +136,7 @@
 			if ( !empty($items) ):
 				$this->result['status'] = 200;
 				$this->result['content'] = $items;
+				$this->result['count'] = count($items);
 
 			else:
 				$this->result['status'] = 414;

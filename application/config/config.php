@@ -35,6 +35,15 @@ endif;
 define('SITE_NAME', '进来API'); // 站点名称
 
 define('BASE_URL', 'https://'. $_SERVER['SERVER_NAME']); // 可对外使用的站点URL；在本地测试时须替换为类似“localhost/BasicCodeigniter”形式
+define('API_URL', 'https://api'.ROOT_URL); // API URL
+define('WEB_URL', 'https://www'.ROOT_URL); // 客户端 URL
+define('BIZ_URL', 'https://biz'.ROOT_URL); // 商家端 URL
+define('ADMIN_URL', 'https://admin'.ROOT_URL); // 管理端 URL
+function api_url($api_name)
+{
+    return API_URL. $api_name;
+}
+
 define('COOKIE_DOMAIN', NULL); // cookie存储路径；方便起见可让所有子域共享，若需分离可自行配置
 define('SESSION_COOKIE_NAME', NULL); // 用于cookie存储的session名（设置此值后，前后台session互不影响）
 define('SESSION_TABLE', NULL); // 用于session存储的数据库表名
