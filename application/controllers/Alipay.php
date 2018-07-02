@@ -416,7 +416,7 @@
                 default: // 实物类订单
                     $data_to_edit['time_accept'] = $current_time; // 收款即接单（等待发货）
                     $data_to_edit['status'] = '待发货';
-                    $this->stocks_update($order_id);
+                    //$this->stocks_update($order_id);
             endswitch;
 
             // 更新订单信息

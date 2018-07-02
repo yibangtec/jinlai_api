@@ -137,7 +137,6 @@
                 'time_delete' => 'NULL', // 未被删除
                 'order_id' => 'NULL', // 未被使用
                 'user_id' => $user_id,
-                'biz_id' => $biz_id,
                 'min_subtotal <' => $subtotal, // 起用金额低于订单小计
                 'time_end >' => time(),
             );
@@ -152,6 +151,12 @@
                     $this->db->where($this->table_name.'.'.$name, $value);
                 endif;
             endforeach;
+
+            // 当前商家，或不限商家
+            $this->db->group_start()
+                ->where('biz_id IS NULL')
+                ->or_where('biz_id', $biz_id)
+                ->group_end();
 
             // 未指定起用日期，或未超过起用日期
             $this->db->group_start()

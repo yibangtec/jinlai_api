@@ -198,6 +198,8 @@
 				endif;
 			endforeach;
 
+			$this->user_id = $user_id;
+
 			// 检查是否单品及购物车信息均未传入
 			$item_id = $this->input->post('item_id');
 			$cart_string = $this->input->post('cart_string');
@@ -378,6 +380,10 @@
 							$result = $this->basic_model->create($order_item, TRUE);
 						endforeach;
 
+                        // 更新商品/SKU库存
+                        // 若要调整成付款减库存，需要去掉各付款渠道控制器中同名方法的注释
+                        @$this->stocks_update($order_id);
+
 					else:
 						$this->result['status'] = 424;
 						$this->result['content']['error']['message'] = '创建失败';
@@ -390,6 +396,28 @@
 
 			endif;
 		} // end create
+
+        /**
+         * 更新实物订单相关商品/规格的库存值
+         *
+         * @param $order_id 相关订单ID
+         */
+        protected function stocks_update($order_id)
+        {
+            // 获取订单相关商品数据
+            $query = $this->db->query("CALL get_order_items( $order_id )");
+            $order_items = $query->result_array();
+            $this->db->reconnect(); // 调用存储过程后必须重新连接数据库，下同
+
+            foreach ($order_items as $item):
+                if ( empty($item['sku_id']) ):
+                    $this->db->query("CALL stocks_update('item', ". $item['item_id'].','. $item['count'].')');
+                else:
+                    $this->db->query("CALL stocks_update('sku', ". $item['sku_id'].','. $item['count'].')');
+                endif;
+                $this->db->reconnect();
+            endforeach;
+        } // end stocks_update
 
 		/**
 		 * 6 编辑多行数据特定字段
@@ -799,12 +827,18 @@
             // 若超出终身限购数，则不可购买
             if ($item['limit_lifetime'] > 0):
                 // 获取已购买的相关商品数量
-                $query = $this->db->query("SELECT count(`count`) as bought_count FROM `order_items` WHERE `item_id` =".$item_id);
+                $query = $this->db->query("SELECT count(`count`) as bought_count FROM `order_items` WHERE `item_id` =".$item_id.' AND `user_id` ='.$this->user_id);
                 $bought_count = $query->row_array()['bought_count'];
 
                 if ($bought_count+$count > $item['limit_lifetime']):
-                    // echo '该商品限购'.$item['limit_lifetime'].'次';
-                    //exit();
+                    /*
+                    if ($this->input->post('test_mode') == 'on'):
+                        echo $bought_count+$count;
+                        var_dump($count);
+                        echo '该商品lifetime限购'.$item['limit_lifetime'].'次';
+                        exit();
+                    endif;
+                    */
                     return;
                 endif;
             endif;

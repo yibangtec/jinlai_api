@@ -14,28 +14,30 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'prize_id', 'lottery_id', 'index_id', 'name', 'description', 'url_image', 'rate', 'stocks', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+			'lottery_id', 'index_id', 'name', 'rate', 'stocks',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 		
 		/**
 	     * @var array 可根据最大值筛选的字段名
 	     */
 	    protected $max_needed = array(
-	        'time_create', 'score',
+	        'time_create',
 	    );
 
 	    /**
 	     * @var array 可根据最小值筛选的字段名
 	     */
 	    protected $min_needed = array(
-	        'time_create', 'score',
+	        'time_create',
 	    );
 		
 		/**
 		 * 可作为排序条件的字段名
 		 */
 		protected $names_to_order = array(
-			'prize_id', 'lottery_id', 'index_id', 'name', 'description', 'url_image', 'rate', 'stocks', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+			'lottery_id', 'index_id', 'name', 'description', 'url_image', 'rate', 'stocks',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
 		/**
@@ -44,7 +46,8 @@
          * 应删除time_create等需在MY_Controller通过names_return_for_admin等类属性声明的字段名
 		 */
 		protected $names_to_return = array(
-			'prize_id', 'lottery_id', 'index_id', 'name', 'description', 'url_image', 'rate', 'stocks', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+			'prize_id', 'lottery_id', 'index_id', 'name', 'description', 'url_image', 'rate', 'stocks',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
 		/**
@@ -52,14 +55,14 @@
 		 */
 		protected $names_create_required = array(
 			'user_id',
-            'prize_id', 'lottery_id', 'index_id', 'name', 'description', 'url_image', 'rate', 'stocks', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+            'lottery_id', 'name', 'rate', 'stocks',
 		);
 
 		/**
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'prize_id', 'lottery_id', 'index_id', 'name', 'description', 'url_image', 'rate', 'stocks', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+			'index_id', 'name', 'description', 'url_image', 'rate', 'stocks',
 		);
 
 		/**
@@ -67,7 +70,7 @@
 		 */
 		protected $names_edit_required = array(
 			'user_id', 'id',
-            'prize_id', 'lottery_id', 'index_id', 'name', 'description', 'url_image', 'rate', 'stocks', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+            'lottery_id', 'name', 'rate', 'stocks',
 		);
 
 		/**

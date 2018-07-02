@@ -36,7 +36,8 @@
 		 * 可作为排序条件的字段名
 		 */
 		protected $names_to_order = array(
-			'lottery_id', 'prize_id', 'user_id', 'date_create', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
+			'lottery_id', 'prize_id', 'user_id', 'date_create',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
 		/**
@@ -45,7 +46,8 @@
          * 应删除time_create等需在MY_Controller通过names_return_for_admin等类属性声明的字段名
 		 */
 		protected $names_to_return = array(
-			'record_id', 'lottery_id', 'prize_id', 'user_id', 'date_create', 'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status', 
+			'record_id', 'lottery_id', 'prize_id', 'user_id', 'date_create',
+            'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
 
 		/**
