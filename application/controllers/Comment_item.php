@@ -193,7 +193,7 @@ class Comment_item extends MY_Controller
             );
             // 自动生成无需特别处理的数据
             $data_need_no_prepare = array(
-                'order_id', 'user_id', 'biz_id', 'item_id', 'content', 'image_urls',
+                'order_id', 'user_id', 'biz_id', 'item_id', 'image_urls',
             );
             foreach ($data_need_no_prepare as $name)
                 $data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);

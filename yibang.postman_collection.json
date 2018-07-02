@@ -573,7 +573,7 @@
 								},
 								{
 									"key": "limit",
-									"value": "5",
+									"value": "0",
 									"type": "text"
 								},
 								{
@@ -4004,7 +4004,7 @@
 								},
 								{
 									"key": "id",
-									"value": "9",
+									"value": "10",
 									"type": "text"
 								}
 							]
@@ -4363,6 +4363,13 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
 									"key": "app_type",
 									"value": "client",
 									"type": "text"
@@ -4384,7 +4391,7 @@
 								},
 								{
 									"key": "user_id",
-									"value": "1",
+									"value": "230",
 									"type": "text"
 								},
 								{
@@ -4538,8 +4545,7 @@
 									"key": "test_mode",
 									"value": "on",
 									"description": "",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "app_type",
@@ -4548,12 +4554,12 @@
 								},
 								{
 									"key": "user_id",
-									"value": "1",
+									"value": "230",
 									"type": "text"
 								},
 								{
 									"key": "combo_id",
-									"value": "10",
+									"value": "13",
 									"type": "text"
 								},
 								{
@@ -4565,6 +4571,13 @@
 								{
 									"key": "count",
 									"value": "3",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "mobile",
+									"value": "",
+									"description": "",
 									"type": "text",
 									"disabled": true
 								}
@@ -7091,8 +7104,7 @@
 								{
 									"key": "test_mode",
 									"value": "on",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "app_type",
@@ -7101,9 +7113,8 @@
 								},
 								{
 									"key": "level",
-									"value": "1",
-									"type": "text",
-									"disabled": true
+									"value": "2",
+									"type": "text"
 								},
 								{
 									"key": "ancestor_id",
@@ -7129,7 +7140,28 @@
 									"key": "name",
 									"value": "服饰",
 									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "available",
+									"value": "1",
+									"description": "",
 									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "3",
+									"description": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "",
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},
@@ -7537,7 +7569,8 @@
 								{
 									"key": "category_id",
 									"value": "1",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "brand_id",
@@ -7559,7 +7592,7 @@
 								},
 								{
 									"key": "name",
-									"value": "国产水果",
+									"value": "P10",
 									"type": "text",
 									"disabled": true
 								},
@@ -7791,9 +7824,8 @@
 								},
 								{
 									"key": "id",
-									"value": "2782",
-									"type": "text",
-									"disabled": true
+									"value": "627",
+									"type": "text"
 								},
 								{
 									"key": "biz_id",
@@ -7805,7 +7837,8 @@
 									"key": "code_biz",
 									"value": "A1252",
 									"description": "",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								}
 							]
 						},
@@ -7862,26 +7895,33 @@
 								{
 									"key": "category_biz_id",
 									"value": "3",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "url_image_main",
-									"value": "url_image_main/201712/1218/214548.png",
+									"value": "https://cdn-remote.517ybang.com/default_avatar.png",
 									"type": "text"
 								},
 								{
 									"key": "name",
-									"value": "满1000免运费",
+									"value": "测试导入商品",
+									"type": "text"
+								},
+								{
+									"key": "slogan",
+									"value": "测试广告语",
+									"description": "",
 									"type": "text"
 								},
 								{
 									"key": "price",
-									"value": "1",
+									"value": "5.01",
 									"type": "text"
 								},
 								{
 									"key": "stocks",
-									"value": "0",
+									"value": "13",
 									"type": "text"
 								}
 							]
@@ -8116,6 +8156,965 @@
 						}
 					},
 					"response": []
+				}
+			]
+		},
+		{
+			"name": "LTP 抽奖奖项",
+			"description": null,
+			"item": [
+				{
+					"name": "LTP0 抽奖奖项计数",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "NULL",
+									"type": "text"
+								},
+								{
+									"key": "option_id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/lottery_prize/count",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"lottery_prize",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LTP1 抽奖奖项列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "5",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "time_delete",
+									"value": "NULL",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/lottery_prize/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"lottery_prize",
+								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LTP2 抽奖奖项详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/lottery_prize/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"lottery_prize",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LTP3 抽奖奖项创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "lottery_id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/lottery_prize/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"lottery_prize",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LTP6 抽奖奖项操作",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "operation",
+									"value": "delete",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/lottery_prize/edit_bulk",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"lottery_prize",
+								"edit_bulk"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "01a60ab3-fe09-4431-a030-4ee70d8791ed",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e2ecfe17-5398-4dc6-abb4-6ac3a73917bf",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "LTC 抽奖记录",
+			"description": null,
+			"item": [
+				{
+					"name": "LTC0 抽奖记录计数",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "NULL",
+									"type": "text"
+								},
+								{
+									"key": "option_id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/lottery_record/count",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"lottery_record",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LTC1 抽奖记录列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "5",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "time_delete",
+									"value": "NULL",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/lottery_record/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"lottery_record",
+								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LTC2 抽奖记录详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/lottery_record/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"lottery_record",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LTC3 抽奖记录创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "lottery_id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/lottery_record/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"lottery_record",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LTC6 抽奖记录操作",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "operation",
+									"value": "delete",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/lottery_record/edit_bulk",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"lottery_record",
+								"edit_bulk"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "01a60ab3-fe09-4431-a030-4ee70d8791ed",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e2ecfe17-5398-4dc6-abb4-6ac3a73917bf",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "LTR 抽奖活动",
+			"description": null,
+			"item": [
+				{
+					"name": "LTR0 抽奖活动计数",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "time_delete",
+									"value": "NULL",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/lottery/count",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"lottery",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LTR1 抽奖活动列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "limit",
+									"value": "5",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "time_delete",
+									"value": "NULL",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/lottery/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"lottery",
+								"index"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LTR2 抽奖活动详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/lottery/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"lottery",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LTR3 抽奖活动创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "进来商城匠心商家评选",
+									"type": "text"
+								},
+								{
+									"key": "max_user_total",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "max_user_daily",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "max_user_daily_each",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/lottery/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"lottery",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LTR4 抽奖活动修改",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "进来商城匠心商家评选",
+									"type": "text"
+								},
+								{
+									"key": "max_user_total",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "max_user_daily",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "max_user_daily_each",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "signup_allowed",
+									"value": "是",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "url_image",
+									"value": "url_image/vote_id1.png",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "url_audio",
+									"value": "url_audio/vote_id1.mp3",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "url_video",
+									"value": "url_video/jinlai_pr_2017_710.mp4",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "url_video_thumb",
+									"value": "url_video_thumb/jinlai_pr_2017.jpg",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "url_default_option_image",
+									"value": "url_default_option_image/vote_id1.jpg",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "<p>第一期：万物复苏3月《匠心计划》，「进来」百万助力<br>只要ta是精良的，只要ta具匠心精神——请选ta<br>你让ta出现，我助ta发光——「进来」与精良为伍</p>\n <p>第二期：春暖花开4月……敬请期待</p>",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/lottery/edit",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"lottery",
+								"edit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LTR6 抽奖活动操作",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "ids",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "operation",
+									"value": "delete",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/lottery/edit_bulk",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"lottery",
+								"edit_bulk"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "01a60ab3-fe09-4431-a030-4ee70d8791ed",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e2ecfe17-5398-4dc6-abb4-6ac3a73917bf",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
 				}
 			]
 		},
@@ -8873,8 +9872,7 @@
 									"key": "test_mode",
 									"value": "on",
 									"type": "text",
-									"description": "",
-									"disabled": true
+									"description": ""
 								},
 								{
 									"key": "app_type",
@@ -8910,7 +9908,7 @@
 								},
 								{
 									"key": "type",
-									"value": "item",
+									"value": "text",
 									"type": "text",
 									"description": ""
 								},
@@ -8939,14 +9937,14 @@
 									"key": "content",
 									"value": "测试文本消息",
 									"type": "text",
-									"description": "{\"nation\": \"中国\",\"province\": \"山东省\",\"city\": \"青岛市\",\"county\": \"崂山区\",\"street\": \"东海东路1号45-2栋意帮管家3楼产品技术部\"}",
-									"disabled": true
+									"description": "{\"nation\": \"中国\",\"province\": \"山东省\",\"city\": \"青岛市\",\"county\": \"崂山区\",\"street\": \"东海东路1号45-2栋意帮管家3楼产品技术部\"}"
 								},
 								{
 									"key": "ids",
 									"value": "2",
 									"type": "text",
-									"description": ""
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "longitude",
@@ -9042,6 +10040,189 @@
 						}
 					},
 					"response": []
+				}
+			]
+		},
+		{
+			"name": "MSS 即时消息",
+			"description": null,
+			"item": [
+				{
+					"name": "MSS1 聊天消息列表",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "biz",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "limit",
+									"value": "3",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"type": "text",
+									"description": "",
+									"disabled": true
+								},
+								{
+									"key": "sender_type",
+									"value": "biz",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "receiver_type",
+									"value": "client",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "biz_id",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "stuff_id",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "type",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "title",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "excerpt",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "url_image",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "content",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "ids",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "longitude",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "latitude",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_create",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_delete",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "time_revoke",
+									"value": "",
+									"type": "text",
+									"description": ""
+								},
+								{
+									"key": "creator_id",
+									"value": "59",
+									"type": "text",
+									"description": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/messages/index",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"messages",
+								"index"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "135aa860-47d6-401c-92cc-80b27e16573b",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "2e2484fe-da2c-402b-86c9-48808a4fe933",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
 				}
 			]
 		},
@@ -10184,8 +11365,7 @@
 								{
 									"key": "test_mode",
 									"value": "on",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "app_type",
@@ -10535,8 +11715,7 @@
 								{
 									"key": "test_mode",
 									"value": "on",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "app_type",
@@ -10545,7 +11724,7 @@
 								},
 								{
 									"key": "user_id",
-									"value": "1",
+									"value": "323",
 									"type": "text"
 								},
 								{
@@ -10555,13 +11734,14 @@
 								},
 								{
 									"key": "address_id",
-									"value": "88",
+									"value": "10",
 									"type": "text"
 								},
 								{
 									"key": "cart_string",
-									"value": "21|92|0|1,21|90|0|1,21|91|0|3",
-									"type": "text"
+									"value": "0|4762|0|1",
+									"type": "text",
+									"description": "21|92|0|1,21|90|0|1,21|91|0|3"
 								},
 								{
 									"key": "note_user",
@@ -13285,83 +14465,6 @@
 					"response": []
 				},
 				{
-					"name": "RFD3 退款/售后创建",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "user_id",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "record_id",
-									"value": "268",
-									"type": "text"
-								},
-								{
-									"key": "type",
-									"value": "仅退款",
-									"type": "text"
-								},
-								{
-									"key": "cargo_status",
-									"value": "已收货",
-									"type": "text"
-								},
-								{
-									"key": "reason",
-									"value": "无理由",
-									"type": "text"
-								},
-								{
-									"key": "description",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "url_images",
-									"value": "",
-									"type": "text"
-								},
-								{
-									"key": "total_applied",
-									"value": "",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/refund/create",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"refund",
-								"create"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "RFD1 退款/售后列表",
 					"request": {
 						"method": "POST",
@@ -13521,6 +14624,131 @@
 					"response": []
 				},
 				{
+					"name": "RFD2 退款/售后详情",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "20",
+									"type": "text"
+								},
+								{
+									"key": "record_id",
+									"value": "23",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/refund/detail",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"refund",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RFD3 退款/售后创建",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "test_mode",
+									"value": "on",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "app_type",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "user_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "record_id",
+									"value": "268",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "仅退款",
+									"type": "text"
+								},
+								{
+									"key": "cargo_status",
+									"value": "已收货",
+									"type": "text"
+								},
+								{
+									"key": "reason",
+									"value": "无理由",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "url_images",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "total_applied",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.517ybang.com/refund/create",
+							"protocol": "https",
+							"host": [
+								"api",
+								"517ybang",
+								"com"
+							],
+							"path": [
+								"refund",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "RFD6 退款批量操作",
 					"request": {
 						"method": "POST",
@@ -13599,54 +14827,6 @@
 							"path": [
 								"refund",
 								"edit_bulk"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "RFD2 退款/售后详情",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "app_type",
-									"value": "client",
-									"type": "text"
-								},
-								{
-									"key": "test_mode",
-									"value": "on",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "id",
-									"value": "20",
-									"type": "text"
-								},
-								{
-									"key": "record_id",
-									"value": "23",
-									"type": "text",
-									"disabled": true
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.517ybang.com/refund/detail",
-							"protocol": "https",
-							"host": [
-								"api",
-								"517ybang",
-								"com"
-							],
-							"path": [
-								"refund",
-								"detail"
 							]
 						}
 					},
@@ -14938,7 +16118,8 @@
 								{
 									"key": "limit",
 									"value": "3",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "offset",
@@ -14947,15 +16128,13 @@
 								},
 								{
 									"key": "biz_id",
-									"value": "21",
-									"type": "text",
-									"disabled": true
+									"value": "2",
+									"type": "text"
 								},
 								{
 									"key": "item_id",
-									"value": "129",
-									"type": "text",
-									"disabled": true
+									"value": "",
+									"type": "text"
 								},
 								{
 									"key": "url_image",
