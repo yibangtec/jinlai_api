@@ -28,6 +28,8 @@
 
         public $limit = 10;
 
+        public $time_min; // 最后获取时间，Unix时间戳
+
 		public function __construct()
 		{
 			parent::__construct();
@@ -46,20 +48,27 @@
             $this->biz_id = $this->input->post_get('biz_id');
             $this->stuff_id = $this->input->post_get('stuff_id');
 
-//            header("Content-Type:text/event-stream;charset=utf-8");
-//            header('Cache-Control:no-cache');
+            // 若未传入消息获取截止时间，默认为从3分钟前至今
+            $this->time_min = empty($this->input->get_post('time_min'))? time() - 60 * 3: $this->input->get_post('time_min');
+
+            header("Content-Type:text/event-stream;charset=utf-8");
+            header('Cache-Control:no-cache');
 		} // end __construct
 
 		// 获取消息
 		public function index()
 		{
             // 间隔多少秒后继续运行
-            $second_to_sleep = 3;
+            $second_to_sleep = 5;
 
             while (TRUE)
             {
                 // 获取待发送信息
                 $messages = $this->get_messages();
+                //var_dump($messages);
+
+                // 标记下次获取时间为当前时间
+                $this->time_min = time();
 
                 foreach ($messages as $message):
                     // 发送内容
@@ -87,6 +96,7 @@
             $condition = array(
                 'receiver_type' => $this->receiver_type,
                 'time_delete' => 'NULL',
+                'time_create >' => $this->time_min,
             );
 
             // 根据收信者类型添加限制条件
@@ -101,7 +111,8 @@
                     $condition['biz_id'] = $this->biz_id;
             endif;
 
-            var_dump($condition);
+            $order_by = NULL;
+
             $items = $this->basic_model->select($condition, $order_by);
 
             return $items;
@@ -110,7 +121,7 @@
         // 输出待发送内容
         private function output($data)
         {
-            echo "id:". $data['id']. "\n"; // 可选
+            echo "id:". $data['message_id']. "\n"; // 可选
             // echo "event:message". "\n"; // 可选，默认为message
             echo "retry:5000". "\n"; // 可选
             echo "data:". json_encode($data). "\n";

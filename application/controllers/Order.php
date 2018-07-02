@@ -559,7 +559,7 @@
                             $deliver_info = $data_to_edit['deliver_biz']. (!empty($data_to_edit['waybill_id'])? $data_to_edit['waybill_id']: NULL);
                             $sms_content = '您在“'. $current_order['biz_name']. '”的订单'.$id.'已通过'. $deliver_info. '发货，请准备查收。';
                         endif;
-                        $this->sms_send($sms_mobile, $sms_content);
+                        @$this->sms_send($sms_mobile, $sms_content);
 					endif;
 				endforeach;
 

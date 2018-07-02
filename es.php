@@ -35,7 +35,7 @@ $data = array(
 );
 
 // 间隔多少秒后继续运行
-$second_to_sleep = 4;
+$second_to_sleep = 5;
 
 while (TRUE)
 {
