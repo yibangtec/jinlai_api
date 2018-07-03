@@ -14,7 +14,7 @@
 		 * 可作为列表筛选条件的字段名；可在具体方法中根据需要删除不需要的字段并转换为字符串进行应用，下同
 		 */
 		protected $names_to_sort = array(
-			'user_id', 'biz_id', 'record_id', 'type', 'cargo_status', 'reason', 'description', 'url_images', 'total_applied', 'total_approved', 'status', 'time_create', 'time_cancel', 'time_close', 'time_refuse', 'time_accept', 'time_refund', 'time_edit', 'operator_id',
+			'user_id', 'biz_id', 'order_id', 'record_id', 'type', 'cargo_status', 'reason', 'description', 'url_images', 'total_applied', 'total_approved', 'status', 'time_create', 'time_cancel', 'time_close', 'time_refuse', 'time_accept', 'time_refund', 'time_edit', 'operator_id',
 		);
 
 		/**
@@ -354,6 +354,49 @@
                     elseif ($operation !== 'note'):
                         $record_id = $current_refund['record_id'];
 
+                        // 自动执行退款
+                        if ($operation == 'accept'):
+                            // 使用id获取退款申请信息，并获取相应待退款订单ID
+                            $refund_item = $this->get_item('refund', 'refund_id', $id);
+                            $order = $this->get_item('order', 'order_id', $refund_item['order_id']);
+                            //var_dump($order);
+
+                            // 获取订单信息并调用相应付款方式的退款API
+                            $params = array(
+                                'order_id' => $order['order_id'],
+                                'total_to_refund' => $refund_item['total_approved']
+                            );
+
+                            // 判断需调用哪个支付方式的退款API
+                            if ($order['payment_type'] == '微信支付'):
+                                $payment_type = 'wepay';
+                            elseif ($order['payment_type'] == '支付宝'):
+                                $payment_type = 'alipay';
+                            endif;
+                            $url = api_url($payment_type.'/refund');
+
+                            // 向API服务器发送待创建数据
+                            $this->load->library('curl');
+                            $result = $this->curl->go($url, $params, 'array');
+                            //var_dump($result);
+                            if ($result['status'] === 200):
+                                $this->result['content']['message'] .= $result['content']['message'];
+                                $this->result['content']['coupon_id'] = $result['content']['id']; // 创建后的信息ID
+                                $data_to_edit = array(
+                                    'refund_status' => '已退款',
+                                );
+
+                            else:
+                                // 若创建失败，则进行提示
+                                $this->result['content']['error']['message'] .= '退款ID'.$id.'/订单ID'.$order['order_id'].'自动退款失败，请通知财务介入';
+                                $data_to_edit = array(
+                                    // 'refund_status' => $target_status, // TODO 待ERP等可追踪货物情况系统接入或开发前，暂时默认为"待退款"
+                                    'refund_status' => '待退款',
+                                );
+
+                            endif;
+                        endif;
+
                         // 更新相应订单商品退款状态
                         $this->switch_model('order_items', 'record_id');
                         if ($operation === 'refuse'):
@@ -366,10 +409,10 @@
                                 'refund_status' => '待退款',
                             );
 
-                        elseif ($operation === 'accept'):
-                            $data_to_edit = array(
-                                'refund_status' => $target_status,
-                            );
+//                        elseif ($operation === 'accept'):
+//                            $data_to_edit = array(
+//                                'refund_status' => $target_status,
+//                            );
                         endif;
                         $this->basic_model->edit($record_id, $data_to_edit);
 
