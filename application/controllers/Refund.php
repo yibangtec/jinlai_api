@@ -342,7 +342,8 @@
 
                     // 若同意退款，需根据货物状态决定待退货还是待退款
                     if ($operation === 'accept'):
-				        $target_status = ($current_refund['cargo_status'] === '已收货')? '待退货': '待退款';
+				        //$target_status = ($current_refund['cargo_status'] === '已收货')? '待退货': '待退款';
+                        $target_status = '待退款'; // TODO 待ERP等可追踪货物情况系统接入或开发前，暂时默认为"待退款"
                         $data_to_edit['status'] = $target_status;
                     endif;
 
@@ -364,7 +365,7 @@
                             // 获取订单信息并调用相应付款方式的退款API
                             $params = array(
                                 'order_id' => $order['order_id'],
-                                'total_to_refund' => $refund_item['total_approved']
+                                'total_to_refund' => $refund_item['total_approved'],
                             );
 
                             // 判断需调用哪个支付方式的退款API
@@ -380,8 +381,26 @@
                             $result = $this->curl->go($url, $params, 'array');
                             //var_dump($result);
                             if ($result['status'] === 200):
-                                $this->result['content']['message'] .= $result['content']['message'];
+                                $this->result['content']['message'] .= $result['content'];
                                 $this->result['content']['coupon_id'] = $result['content']['id']; // 创建后的信息ID
+                                unset($params, $result); // 释放内存
+
+                                // 更新退款详情
+                                $data_to_edit = array(
+                                    'status' => '已退款',
+                                    'total_payed' => $refund_item['total_approved'],
+                                );
+                                @$this->basic_model->edit($id, $data_to_edit);
+                                unset($refund_item); // 释放内存
+
+                                // 短信通知
+                                $mobile = '17664073966';
+                                $content = '您的订单 '. $order['order_id']. ' 已通过'.$order['payment_type'].'退款，款项将由付款时支付渠道退回；感谢您本次选购，希望下次给您更好体验！';
+                                @$this->sms_send($mobile, $content);
+
+                                unset($order); // 释放内存
+
+                                // 更新相应订单商品退款状态
                                 $data_to_edit = array(
                                     'refund_status' => '已退款',
                                 );
@@ -389,6 +408,8 @@
                             else:
                                 // 若创建失败，则进行提示
                                 $this->result['content']['error']['message'] .= '退款ID'.$id.'/订单ID'.$order['order_id'].'自动退款失败，请通知财务介入';
+
+                                // 更新相应订单商品退款状态
                                 $data_to_edit = array(
                                     // 'refund_status' => $target_status, // TODO 待ERP等可追踪货物情况系统接入或开发前，暂时默认为"待退款"
                                     'refund_status' => '待退款',
@@ -409,10 +430,6 @@
                                 'refund_status' => '待退款',
                             );
 
-//                        elseif ($operation === 'accept'):
-//                            $data_to_edit = array(
-//                                'refund_status' => $target_status,
-//                            );
                         endif;
                         $this->basic_model->edit($record_id, $data_to_edit);
 
