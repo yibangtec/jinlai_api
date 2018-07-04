@@ -394,7 +394,7 @@
                                 unset($refund_item); // 释放内存
 
                                 // 短信通知
-                                $mobile = '17664073966';
+                                $mobile = $order['mobile'];
                                 $content = '您的订单 '. $order['order_id']. ' 已通过'.$order['payment_type'].'退款，款项将由付款时支付渠道退回；感谢您本次选购，希望下次给您更好体验！';
                                 @$this->sms_send($mobile, $content);
 
