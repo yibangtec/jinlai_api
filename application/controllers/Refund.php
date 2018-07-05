@@ -367,6 +367,8 @@
                                 'order_id' => $order['order_id'],
                                 'total_to_refund' => $refund_item['total_approved'],
                             );
+                            if ($this->input->post('test_mode') == 'on')
+                                var_dump($params);
 
                             // 判断需调用哪个支付方式的退款API
                             if ($order['payment_type'] == '微信支付'):
@@ -379,7 +381,8 @@
                             // 向API服务器发送待创建数据
                             $this->load->library('curl');
                             $result = $this->curl->go($url, $params, 'array');
-                            //var_dump($result);
+                            if ($this->input->post('test_mode') == 'on')
+                                var_dump($result);
                             if ($result['status'] === 200):
                                 $this->result['content']['message'] .= $result['content'];
                                 $this->result['content']['coupon_id'] = $result['content']['id']; // 创建后的信息ID

@@ -275,7 +275,7 @@
 
                 // 获取订单信息备用
                 $order = $this->get_order_detail($order_id);
-                //var_dump($order);
+                if ($this->input->post('test_mode') == 'on') var_dump($order);
                 if ( empty($order) ):
                     $this->result['status'] = 414;
                     $this->result['content']['error']['message'] = '未找到待退款订单';
@@ -323,11 +323,13 @@
                 $this->parameters['nonce_str'] = $this->createNoncestr(); // 随机字符串
                 // $this->parameters['notify_url'] = $this->notify_url; // (可选)异步通知URL
                 $this->parameters['sign'] = $this->getSign($this->parameters); // 根据以上参数生成的签名
+                if ($this->input->post('test_mode') == 'on') var_dump($this->parameters);
                 $xml = $this->arrayToXml($this->parameters);
 
                 // 发送请求
                 $this->postXmlSSL($xml);
                 $result = $this->xmlToArray($this->response);
+                if ($this->input->post('test_mode') == 'on') var_dump($result);
 
                 // 处理退款结果
                 if ($result['result_code'] === 'SUCCESS'):

@@ -10086,11 +10086,12 @@
 									"key": "sender_type",
 									"value": "biz",
 									"type": "text",
-									"description": ""
+									"description": "",
+									"disabled": true
 								},
 								{
 									"key": "receiver_type",
-									"value": "client",
+									"value": "biz",
 									"type": "text",
 									"description": ""
 								},
@@ -10102,85 +10103,7 @@
 								},
 								{
 									"key": "biz_id",
-									"value": "",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "stuff_id",
-									"value": "",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "type",
-									"value": "",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "title",
-									"value": "",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "excerpt",
-									"value": "",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "url_image",
-									"value": "",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "content",
-									"value": "",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "ids",
-									"value": "",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "longitude",
-									"value": "",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "latitude",
-									"value": "",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "time_create",
-									"value": "",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "time_delete",
-									"value": "",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "time_revoke",
-									"value": "",
-									"type": "text",
-									"description": ""
-								},
-								{
-									"key": "creator_id",
-									"value": "59",
+									"value": "1",
 									"type": "text",
 									"description": ""
 								}
@@ -14759,7 +14682,8 @@
 								{
 									"key": "test_mode",
 									"value": "on",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "app_type",
@@ -14768,12 +14692,12 @@
 								},
 								{
 									"key": "user_id",
-									"value": "1",
+									"value": "249",
 									"type": "text"
 								},
 								{
 									"key": "ids",
-									"value": "20",
+									"value": "30",
 									"type": "text"
 								},
 								{
@@ -14783,35 +14707,18 @@
 								},
 								{
 									"key": "operation",
-									"value": "confirm",
+									"value": "accept",
 									"type": "text"
 								},
 								{
 									"key": "total_approved",
-									"value": "8",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "deliver_method",
-									"value": "用户自提",
+									"value": "29.9",
 									"type": "text"
 								},
 								{
-									"key": "deliver_biz",
-									"value": "圆通",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "waybill_id",
-									"value": "19654846759785TZ",
-									"type": "text",
-									"disabled": true
-								},
-								{
 									"key": "note_stuff",
-									"value": "测试用户自提发货",
+									"value": "",
+									"description": "",
 									"type": "text"
 								}
 							]
@@ -18868,15 +18775,27 @@
 							"mode": "formdata",
 							"formdata": [
 								{
+									"key": "test_mode",
+									"value": "on",
+									"description": "",
+									"type": "text"
+								},
+								{
 									"key": "order_id",
-									"value": "88",
+									"value": "379",
 									"description": "待退款单号",
 									"type": "text"
 								},
 								{
 									"key": "total_to_refund",
-									"value": "0.01",
+									"value": "65",
 									"description": "待退款金额；全额退款时传入'all'",
+									"type": "text"
+								},
+								{
+									"key": "",
+									"value": "",
+									"description": "",
 									"type": "text",
 									"disabled": true
 								}

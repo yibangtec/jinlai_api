@@ -26,7 +26,6 @@ $content = array(
     array('type' => 'location', 'content' => '120.44208,36.06894'), // 位置
     //array('type' => 'url', 'url_page' => 'https://www.517ybang.com/', 'title' => '进来商城', 'url_image' => NULL), // 网页
     //array('type' => 'item', 'ids' => 3), // 商品
-
     //array('type' => 'order', 'order_id' => 1, 'content' => array()), // 订单
 );
 
@@ -41,16 +40,13 @@ while (TRUE)
 {
     $timestamp = time();
 
-    // 生成一个0-1之间的随机数，根据随机数是否大于0.5决定是客户类消息还是商家类消息（即相应字段是否有值）
-    $random = rand(0,1);
-
     $extra_data = array(
-        'message_id' => substr($timestamp, 7),
+        'message_id' => substr(time(), 7),
 
-        'sender_type' => ($random > 0.5)? 'client': 'biz',
-        'receiver_type' => ($random > 0.5)? 'biz': 'client',
+        'sender_type' => 'client',
+        'receiver_type' => 'biz',
 
-        'user_id' => ($random > 0.5)? NULL: 1,
+        'user_id' => $_GET['user_id'],
         'biz_id' => $_GET['biz_id'],
 
         'time_create' => $timestamp,
@@ -59,6 +55,7 @@ while (TRUE)
     $data = array_merge($data, $extra_data);
     $data = array_merge($data, $content[ round( rand(0, count($content)) ) ]);
     //$data = array_merge($data, $content[0]);
+    //var_dump($data);
 
     // 发送内容
     try
@@ -68,7 +65,6 @@ while (TRUE)
     catch(Exception $e)
     {
         print $e->getMessage();
-        exit();
     }
 
     // 稍作间隔以节省数据库连接数
@@ -78,7 +74,7 @@ while (TRUE)
 // 输出待发送内容
 function output($data)
 {
-    echo "id:". $data['id']. "\n"; // 可选
+    echo "id:". $data['message_id']. "\n"; // 可选
     // echo "event:message". "\n"; // 可选，默认为message
     echo "retry:5000". "\n"; // 可选
     echo "data:". json_encode($data). "\n";

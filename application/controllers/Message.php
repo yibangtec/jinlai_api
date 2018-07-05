@@ -333,7 +333,7 @@
                         // 获取用户手机号
                         $user = $this->get_item('user', 'user_id', $creator_id);
 
-                        $content = '尊敬的用户您好，公测版的客服对话功能目前正在紧张调试中，在此期间您可以通过专属消费者热线 400-882-0532 咨询相关事宜。';
+                        $content = '尊敬的用户您好，公测版客服对话功能正在紧张调试中，在此期间专属消费者热线400-882-0532可为您服务。';
 
                         $this->sms_send($user['mobile'], $content);
                     endif;
