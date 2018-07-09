@@ -76,6 +76,9 @@
 		/* 主要相关表的主键名*/
 		public $id_name;
 
+        // 访问设备信息
+        public $user_agent = array();
+
 		// 客户端类型
 		protected $app_type;
 
@@ -114,6 +117,9 @@
 			$this->app_version = $this->input->post('app_version');
 			$this->device_platform = $this->input->post('device_platform');
 			$this->device_number = $this->input->post('device_number');
+
+            // 检查当前设备信息
+            //$this->user_agent_determine();
 
 			// 签名有效性检查
 			// 测试环境可跳过签名检查

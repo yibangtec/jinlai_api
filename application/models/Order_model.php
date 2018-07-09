@@ -96,6 +96,37 @@
             endif;
 		} // end select
 
+        // 获取有所属商品在退款中（待处理、待退货、待退款）状态的订单
+        public function select_refunding($condition = NULL)
+        {
+            $limit = $this->input->get_post('limit')? $this->input->get_post('limit'): NULL; // 需要从数据库获取的数据行数
+            $offset = $this->input->get_post('offset')? $this->input->get_post('offset'): NULL; // 需要从数据库获取的数据起始行数（与$limit配合可用于分页等功能）
+
+            // 拆分筛选条件（若有）
+            if ($condition !== NULL):
+                foreach ($condition as $name => $value):
+                    if ($value === 'NULL'):
+                        $this->db->where($this->table_name.'.'."$name IS NULL");
+
+                    elseif ($value === 'IS NOT NULL'):
+                        $this->db->where($this->table_name.'.'."$name IS NOT NULL");
+
+                    else:
+                        $this->db->where($this->table_name.'.'.$name, $value);
+                    endif;
+                endforeach;
+            endif;
+
+            $this->db->select('distinct(order_items.order_id), order.*');
+            $this->db->join('order', 'order_items.order_id = order.order_id', 'left outer');
+            //$this->db->where('item.time_delete IS NULL');
+            //$this->db->order_by('item_category.category_id', 'ASC');
+
+            $this->db->limit($limit, $offset);
+            $query = $this->db->get('order_items');
+            return $query->result_array();
+        }
+
         /**
          * 根据ID获取特定项，默认可返回已删除项
          *

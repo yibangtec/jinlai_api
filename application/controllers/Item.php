@@ -205,7 +205,7 @@
 			endif;
 
             // 用户仅可查看未删除项
-            if ($this->app_type === 'client') $this->db->where('time_delete IS NULL');
+            //if ($this->app_type === 'client') $this->db->where('time_delete IS NULL');
 
 			// 限制可返回的字段
 			$this->db->select(implode(',', $this->names_to_return));
@@ -220,6 +220,9 @@
             endif;
 
 			if ( !empty($item) ):
+                // 解决在APP中以webview加载商品详情的样式问题
+                //$item['description'] = '<style>head{display:none}*{line-height:1;padding:0;margin:0;border:0;display:block;} img{width:100%;max-width:100%;}</style>'.$item['description'];
+
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
 
