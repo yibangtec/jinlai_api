@@ -109,6 +109,18 @@
                 if ($this->app_type === 'biz' && empty($this->input->post('status'))):
                     $this->db->where_not_in($this->table_name.'.status', array('已取消', '已拒绝', '已关闭'));
                 endif;
+
+                // TODO 仅获取有商品在退款中（待处理、待退货、待退款）的订单
+                /*
+                if ($this->input->post('available') != 1):
+                    $this->db->select( implode(',', $this->names_to_return) );
+                    $items = $this->basic_model->select($condition, $order_by);
+                else:
+                    $this->load->model('item_category_model');
+                    $this->switch_model('item', 'item_id');
+                    $items = $this->item_category_model->select_available($condition);
+                endif;
+                */
                 $this->load->model('order_model');
                 $items = $this->order_model->select($condition, $order_by, FALSE, $this->app_type == 'biz');
             else:

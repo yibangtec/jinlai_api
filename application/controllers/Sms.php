@@ -12,9 +12,6 @@
 	 */
 	class Sms extends MY_Controller
 	{
-		// 设置短信后缀签名
-		protected $suffix = '【进来商城】';
-		
 		// 短信类型；1验证码2非验证码
 		protected $type = '1';
 		
@@ -304,9 +301,6 @@
 		 */
 		private function send_single()
 		{
-			// 为短信内容添加后缀签名
-			$this->content .= $this->suffix;
-
 			// 发送短信
 			$this->load->library('luosimao');
 			$result = $this->luosimao->send($this->mobile, $this->content);
@@ -358,9 +352,6 @@
 		 */
 		private function send_bulk()
 		{
-			// 为短信内容添加后缀签名
-			$this->content .= $this->suffix;
-
 			// 发送短信
 			$this->load->library('luosimao');
 			$result = $this->luosimao->send_bulk($this->mobile_list, $this->content, $this->time);

@@ -399,7 +399,7 @@
 				default: // 实物类订单
 					$data_to_edit['time_accept'] = $current_time; // 收款即接单（等待发货）
 					$data_to_edit['status'] = '待发货';
-					//$this->stocks_update($order_id);
+					//$this->stocks_update($order_id); // 当前已调整为下单减库存
 			endswitch;
 
 			// 更新订单信息
@@ -434,9 +434,6 @@
          */
         protected function sms_send($mobile, $content)
         {
-            // 为短信内容添加后缀签名
-            $content .= '【进来商城】';
-
             $this->load->library('luosimao');
             @$result = $this->luosimao->send($mobile, $content);
         } // end sms_send

@@ -14,17 +14,23 @@
 		// API_key
 		protected $api_key = 'api:key-c0bbe006a696cd3e403d6bd4d5790906';
 
+		// 短信签名
+		public $sms_sign = '【进来商城】';
+
 		/**
 		 * 发送单条短信
 		 *
 		 * @param string $mobile 收信人手机号
 		 * @param string $content 短信内容
-		 * @return json 发送状态码及返回字符串
+		 * @return string/json 发送状态码及返回字符串
 		 */
 		public function send($mobile, $content)
 		{
 			$url = 'http://sms-api.luosimao.com/v1/send.json';
-			$params = array('mobile' => $mobile, 'message' => $content);
+			$params = array(
+			    'mobile' => $mobile,
+                'message' => $content.$this->sms_sign
+            );
 
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $url);
@@ -50,14 +56,14 @@
 		 * @params string $mobile_list 目标手机号码列表，CSV
 		 * @params string $content 待发送短信内容
 		 * @params string $time 待发送时间；2016-04-01 12:30:00
-		 * @return json 发送状态码及返回字符串
+		 * @return string/json 发送状态码及返回字符串
 		 */
 		public function send_bulk($mobile_list, $content, $time)
 		{
 			$url = 'http://sms-api.luosimao.com/v1/send_batch.json';
 			$params = array(
 				'mobile_list' => $mobile_list,
-				'message' => $content,
+				'message' => $content.$this->sms_sign,
 			);
 			if ( $time !== NULL ) $params['time'] = $time; // 定时时间
 
