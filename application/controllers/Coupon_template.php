@@ -253,7 +253,11 @@
 					$this->result['status'] = 200;
 					$this->result['content']['id'] = $result;
 					$this->result['content']['message'] = '创建成功';
-
+					if ($this->app_type === 'biz') :
+						$this->update_coupon($data_need_no_prepare['biz_id']);
+					else :
+						$this->update_coupon();
+					endif;
 				else:
 					$this->result['status'] = 424;
 					$this->result['content']['error']['message'] = '创建失败';
@@ -355,11 +359,16 @@
 
 				// 进行修改
 				$result = $this->basic_model->edit($id, $data_to_edit);
+				$detail = $this->basic_model->select_by_id($id);
 				if ($result !== FALSE):
                     $this->result['status'] = 200;
                     $this->result['content']['id'] = $result;
                     $this->result['content']['message'] = '编辑成功';
-
+                    if ( !empty($detail['biz_id']) ):
+						$this->update_coupon($detail['biz_id']);
+					else :
+						$this->update_coupon();
+					endif;
 				else:
 					$this->result['status'] = 434;
 					$this->result['content']['error']['message'] = '编辑失败';
@@ -421,20 +430,25 @@
 						$data_to_edit['time_delete'] = NULL;
 						break;
 				endswitch;
-
+				$coupons = $this->basic_model->select_by_ids($ids);
 				// 依次操作数据并输出操作结果
 				// 将待操作行ID们的CSV格式字符串，转换为待操作行的ID数组
 				$ids = explode(',', $ids);
 
 				// 默认批量处理全部成功，若有任一处理失败则将处理失败行进行记录
 				$this->result['status'] = 200;
-				foreach ($ids as $id):
+				foreach ($ids as $key => $id):
 					$result = $this->basic_model->edit($id, $data_to_edit);
 					if ($result === FALSE):
 						$this->result['status'] = 434;
 						$this->result['content']['row_failed'][] = $id;
 					endif;
 
+					if ( !empty($coupons[$key]['biz_id']) ):
+						$this->update_coupon($coupons[$key]['biz_id']);
+					else :
+						$this->update_coupon();
+					endif;
 				endforeach;
 
 				// 添加全部操作成功后的提示
@@ -466,6 +480,21 @@
             return ($minimum > $inputed)? $minimum: $inputed;
         } // end generate_min_subtotal
 
+        /**
+        *
+        * 清除redis缓存
+        */
+        private function update_coupon($biz_id = ''){
+        	$this->init_redis();
+        	if (empty($biz_id)) :
+        		$this->myredis->set("have_coupon", 1);
+        		$this->myredis->delete("coupon_hash");
+        	else :
+        		var_dump(123);
+        		$this->myredis->give("have_coupon_biz", $biz_id, 1);
+				$this->myredis->delete("coupon_template_hash_{$biz_id}");
+        	endif;
+        } // end update_promotion_biz
 
     } // end class Coupon_template
 

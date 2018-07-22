@@ -429,6 +429,34 @@
             endforeach;
         } // end stocks_update
 
+       
+        public function update_redis($count, $item_id, $sku_id = ''){
+        	$this->init_redis();
+        	if (empty($sku_id)) :
+        		$old = $this->myredis->gethash("item_{$item_id}", "getall");
+        		if ($old) :
+        			$old['stocks'] = intval($old['stocks']) - $count;
+        			$this->myredis->savehash("item_{$item_id}", $old);
+        		endif;
+        	else :
+        		$skus = $this->myredis->getlist("sku_list_{$item_id}");
+        		if (empty($skus)) :
+        			return FALSE;
+        		endif;
+        		$index = -1;
+        		foreach ($skus as $key => $value) :
+        			if (intval($value['sku_id']) == intval($sku_id)) :
+        				$index = $key;
+        				$skus[$key]['stocks'] = intval($value['stocks']) - $count;
+        				break;
+        			endif;
+        		endforeach;
+        		if ($index >= 0) :
+        			$this->myredis->setlist("sku_list_{$item_id}", $skus[$index], $index);
+        		endif;
+        	endif;
+        	return true;
+        }
 		/**
 		 * 6 编辑多行数据特定字段
 		 *

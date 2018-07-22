@@ -64,9 +64,9 @@
 				'get' => array(), // GET请求参数
 				'post' => array(), // POST请求参数
 			), // 接收到的请求参数
-			'timestamp' => null, // 返回时时间戳
-			'datetime' => null, // 返回时可读日期
-			'timezone' => null, // 服务器本地时区
+			// 'timestamp' => null, // 返回时时间戳
+			// 'datetime' => null, // 返回时可读日期
+			// 'timezone' => null, // 服务器本地时区
 			'elapsed_time' => null, // 处理业务请求时间
 		);
 
@@ -137,20 +137,20 @@
 		public function __destruct()
 		{
             // 仅以JSON格式返回响应内容
-		    header("Content-type:application/json;charset=utf-8");
+		    // header("Content-type:application/json;charset=utf-8");
 
 		    // 若返回了错误信息，则标注为服务端错误信息
             if ( ! empty($this->result['content']['error']['message']))
                 $this->result['content']['error']['message'] .= ' ERROR_API';
 
 			// 将请求参数一并返回以便调试
-			$this->result['param']['get'] = $this->input->get();
-			$this->result['param']['post'] = $this->input->post();
+			$this->result['param']['get'] = count($this->input->get());
+			$this->result['param']['post'] = count($this->input->post());
 
 			// 返回服务器端时间信息
-			$this->result['timestamp'] = time();
-			$this->result['datetime'] = date('Y-m-d H:i:s');
-			$this->result['timezone'] = date_default_timezone_get();
+			//$this->result['timestamp'] = time();
+			//$this->result['datetime'] = date('Y-m-d H:i:s');
+			//$this->result['timezone'] = date_default_timezone_get();
 
 			// 统计业务逻辑运行时间终点
 			$this->benchmark->mark('end');
@@ -239,6 +239,7 @@
 			if ( array_intersect_key($params_required, array_keys($params)) !== $params_required ):
 				$this->result['status'] = 440;
 				$this->result['content']['error']['message'] = '必要的签名参数未全部传入；安全起见不做具体提示，请参考开发文档。';
+				exit();
 			else:
 				return TRUE;
 			endif;
@@ -841,7 +842,10 @@
          * @param $item_id
          */
         protected function update_item_for_sku($sku_id = NULL, $item_id = NULL)
-        {
+        {		
+        	if (!isset($this->result['content']['message'])) {
+        		$this->result['content']['message'] = '';
+        	}
             // 获取需要更新规格相关信息的商品ID
             if ($item_id.$sku_id === NULL):
                 $this->result['content']['error']['message'] .= '；规格所属商品更新失败（未传入规格相关商品信息）';
@@ -869,7 +873,6 @@
             if ($result !== FALSE):
                 $this->result['status'] = 200;
                 $this->result['content']['message'] .= '；规格所属商品更新成功';
-
             else:
                 $this->result['status'] = 434;
                 $this->result['content']['error']['message'] .= '；规格所属商品更新失败';
@@ -877,6 +880,21 @@
             endif;
         } // end update_item_for_sku
 
+        /**
+         * 
+         * 打开Redis链接
+         * @return bool
+         *
+         */
+        public function init_redis(){
+        	if (!isset($this->myredis)) :
+        		$this->load->library('Myredis');
+        		if (!$this->myredis->_status) {
+        			return FALSE;
+        	}
+        	endif;
+			return TRUE;
+        }
 	} // end class MY_Controller
 
 /* End of file MY_Controller.php */

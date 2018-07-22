@@ -234,9 +234,10 @@
 					$this->result['content']['id'] = $result;
 					$this->result['content']['message'] = '创建成功';
 
+                     // 更新redis信息
+                    $this->update_sku($item_id);
                     // 更新所属商品相关信息
-                    $this->update_item_for_sku(NULL, $item_id);
-
+                    $this->update_item_for_sku($item_id);
 				else:
 					$this->result['status'] = 424;
 					$this->result['content']['error']['message'] = '创建失败';
@@ -311,9 +312,10 @@
                     $this->result['content']['id'] = $id;
                     $this->result['content']['message'] = '编辑成功';
 
+                    // 更新redis信息
+                    $this->update_sku($item_id);
                     // 更新所属商品相关信息
-                    $this->update_item_for_sku($id);
-
+                    $this->update_item_for_sku($item_id);
 				else:
 					$this->result['status'] = 434;
 					$this->result['content']['error']['message'] = '编辑失败';
@@ -404,9 +406,10 @@
                     $this->result['content']['id'] = $id;
                     $this->result['content']['message'] = '编辑成功';
 
+                    // 更新redis信息
+                    $this->update_sku($item_id);
                     // 更新所属商品相关信息
-                    $this->update_item_for_sku($id);
-
+                    $this->update_item_for_sku($item_id);
 				else:
 					$this->result['status'] = 434;
 					$this->result['content']['error']['message'] = '编辑失败';
@@ -458,7 +461,6 @@
             else:
                 // 需要编辑的数据；逐一赋值需特别处理的字段
                 $data_to_edit['operator_id'] = $user_id;
-
                 // 根据待执行的操作赋值待编辑数据
                 switch ( $operation ):
                     case 'delete': // 删除
@@ -468,7 +470,7 @@
                         $data_to_edit['time_delete'] = NULL;
                         break;
                 endswitch;
-
+                $skus = $this->basic_model->select_by_ids($ids);
                 // 依次操作数据并输出操作结果
                 // 将待操作行ID们的CSV格式字符串，转换为待操作行的ID数组
                 $ids = explode(',', $ids);
@@ -479,15 +481,20 @@
 
                 // 默认批量处理全部成功，若有任一处理失败则将处理失败行进行记录
                 $this->result['status'] = 200;
-                foreach ($ids as $id):
+                foreach ($ids as $key => $id):
+                	
+                	//找到当前sku的itemid
                     $result = $this->basic_model->edit($id, $data_to_edit);
                     if ($result === FALSE):
                         $this->result['status'] = 434;
                         $this->result['content']['row_failed'][] = $id;
                     endif;
-
+                    // 更新redis缓存
+                    $this->update_sku($skus[$key]['item_id']);
                     // 更新所属商品相关信息
-                    $this->update_item_for_sku($id);
+                    $this->update_item_for_sku($skus[$key]['item_id']);
+                    // 还原表
+                    $this->switch_model('sku', 'sku_id');
                 endforeach;
 
                 // 添加全部操作成功后的提示
@@ -500,6 +507,18 @@
         /**
          * 以下为工具方法
          */
+
+        /**
+		 * 修改规格redis缓存
+		 */
+		private function update_sku($item_id) {
+            $this->init_redis();
+            $this->myredis->give("have_sku", $item_id, 1);
+            $this->myredis->delete("sku_hash_{$item_id}");
+            //更新规格也会更新商品信息 所以一并删除
+            $this->myredis->delete("item_{$item_id}");
+		} //end update_sku
+
 
 	} // end Class Sku
 

@@ -70,7 +70,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | The $query_builder variables lets you determine whether or not to load
 | the query builder class.
 */
-$active_group = (ENVIRONMENT === 'production')? 'production': 'development_liuyajie';
+$active_group = (ENVIRONMENT === 'production')? 'production': 'huangxin';
 $query_builder = TRUE;
 
 $db['production'] = array(
@@ -139,5 +139,50 @@ $db['development_liuyajie'] = array(
     'save_queries' => TRUE,
 );
 
+$db['huangxin'] = array(
+    // 'dsn' => 'mysqli://basic:Basic2016@sensestrong.mysql.rds.aliyuncs.com/basic',
+    'dsn'      => 'mysqli://huangxin:Huangxin2261@sensestrong.mysql.rds.aliyuncs.com/jinlai',
+    'hostname' => 'sensestrong.mysql.rds.aliyuncs.com', // 数据库URL，以阿里云为例
+    'username' => 'huangxin', // 数据库用户名
+    'password' => 'Huangxin2261', // 数据库密码
+    'database' => 'jinlai', //数据库名
+    'dbdriver' => 'mysqli',
+    'dbprefix' => '',
+    'pconnect' => FALSE,
+    'db_debug' => (ENVIRONMENT !== 'production'),
+    'cache_on' => FALSE,
+    'cachedir' => '',
+    'char_set' => 'utf8',
+    'dbcollat' => 'utf8_general_ci',
+    'swap_pre' => '',
+    'encrypt' => FALSE,
+    'compress' => FALSE,
+    'stricton' => FALSE,
+    'failover' => array(),
+    'save_queries' => TRUE
+);
+
+/* 适用于本地开发环境的数据库参数 */
+$db['local'] = array(
+    'dsn'   => '',
+    'hostname' => 'localhost',
+    'username' => 'root',
+    'password' => '',
+    'database' => 'jinlailocal',
+    'dbdriver' => 'mysqli', // 根据本地环境的不同，可能需要修改为mysql
+    'dbprefix' => '',
+    'pconnect' => FALSE,
+    'db_debug' => TRUE,
+    'cache_on' => FALSE,
+    'cachedir' => '',
+    'char_set' => 'utf8',
+    'dbcollat' => 'utf8_general_ci',
+    'swap_pre' => '',
+    'encrypt' => FALSE,
+    'compress' => FALSE,
+    'stricton' => FALSE,
+    'failover' => array(),
+    'save_queries' => TRUE
+);
 /* End of file database.php */
 /* Location: ./application/config/database.php */

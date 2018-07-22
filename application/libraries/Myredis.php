@@ -17,6 +17,8 @@
 			'database' => 0
 		);
 		
+		public $_status = TRUE;
+		public $_redis = FALSE;
 	   /**
 		* 构建函数
 		* @param $argv 
@@ -27,7 +29,7 @@
 			if ( ! $this->is_supported())
 			{
 				log_message('error', 'Cache: Failed to create Redis object; extension not loaded?');
-				return;
+				exit;
 			}
 
 			$CI =& get_instance();
@@ -46,8 +48,11 @@
 			try
 			{
 				if ( ! $this->_redis->connect($config['host'], ($config['host'][0] === '/' ? 0 : $config['port']), $config['timeout']))
-				{
-					log_message('error', 'Cache: Redis connection failed. Check your configuration.');
+				{	
+					$this->_status = FALSE;
+					$CI->result['status'] = '503';
+					$CI->result['content']['error']['message'] = '缓存服务器失效';
+					exit();
 				}
 
 				if (isset($config['password']) && ! $this->_redis->auth($config['password']))
@@ -61,8 +66,9 @@
 				}
 			}
 			catch (RedisException $e)
-			{
+			{	
 				log_message('error', 'Cache: Redis connection refused ('.$e->getMessage().')');
+				exit();
 			}
 		}
 
@@ -86,11 +92,12 @@
 
 	   /**
 		* Class destructor
-		* Closes the connection to Redis if present.
+		* Close the connection to Redis
 		* @return	void
 		*/
 		public function __destruct()
-		{
+		{	
+			$this->_redis = false;
 			if ($this->_redis)
 			{
 				$this->_redis->close();
@@ -197,8 +204,45 @@
 			return $this->_redis->bitcount($key);
 		}
 
-
-
+		/**
+		* 只用来存 被转json的数据
+		* 创建list
+		* @param key
+		* @param data ,array
+		* @return length
+		*/
+		public function insert($key, $data){
+			$r = 0;
+			foreach ($data as $index => $value) :
+				$r += $this->_redis->rpush($key, json_encode($value));
+			endforeach;
+			return $r;
+			//return call_user_func_array([$this->_redis, 'rpush'], $list); 猜测redis拓展有问题，报错
+		}
+		/**
+		* 
+		* 修改list的某项 必定会转为json
+		* @param key
+		* @param data ,array
+		* @return length
+		*/
+		public function setlist($key, $data, $index) {
+			return is_array($data) && is_numeric($index) ? $this->_redis->lset($key, $index, json_encode($data)) : FALSE;
+		}
+		/**
+		* 只用来取 被json的数据
+		* 获取list
+		* @param key
+		* @param data ,array
+		* @return data
+		*/
+		public function getlist($key){
+			$data = $this->_redis->lrange($key, 0, -1);
+			foreach ($data as $key => $value) :
+				$data[$key] = json_decode($value, true);
+			endforeach;
+			return $data;
+		}
 		//list,sorted set to be continued
 
 	} //endmyredisclass

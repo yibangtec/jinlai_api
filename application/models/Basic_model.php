@@ -234,6 +234,18 @@
 			return $query->result_array();
 		} // end select_by_ids
 
+
+		/**
+         * 设置select字段
+         *
+         * @param arrat fields
+         */
+		public function setfields($fields)
+		{
+            $this->db->select($fields);
+		} // end select_by_ids
+
+
 		/**
 		 * 获取已删除项列表
 		 *
@@ -338,10 +350,9 @@
 			// 尝试更新
 			$this->db->where($this->id_name, $id);
 			$update_result = $this->db->update($this->table_name, $data);
-
 			// 直接返回结果，或返回编辑过的行数量
 			if ($return_rows === TRUE && $update_result === TRUE):
-				$this->db->affected_rows();
+				return $this->db->affected_rows();
 			else:
 				return $update_result;
 			endif;
