@@ -253,7 +253,7 @@
 			$this->form_validation->set_rules('brief_name', '店铺名称', 'trim|required|max_length[20]|is_unique['.$this->table_name.'.brief_name]');
             $this->form_validation->set_rules('url_logo', '店铺LOGO', 'trim|max_length[255]');
 			$this->form_validation->set_rules('description', '简介', 'trim|max_length[255]');
-			$this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]|is_unique['.$this->table_name.'.tel_public]');
+			$this->form_validation->set_rules('tel_public', '消费者联系电话', 'trim|required|min_length[10]|max_length[13]');
 			$this->form_validation->set_rules('tel_protected_biz', '商务联系手机号', 'trim|required|exact_length[11]|is_natural|is_unique['.$this->table_name.'.tel_protected_biz]');
 			$this->form_validation->set_rules('tel_protected_fiscal', '财务联系手机号', 'trim|required|exact_length[11]|is_natural|is_unique['.$this->table_name.'.tel_protected_fiscal]');
 			$this->form_validation->set_rules('url_image_product', '产品', 'trim|max_length[255]');
@@ -287,8 +287,9 @@
 					$this->result['content']['message'] = '创建商家成功，我们将尽快受理您的入驻申请';
 
                     // 创建当前用户为该商家的管理员
-                    $this->admin_stuff_create($user_id, $biz_id, $tel_protected_biz);
-
+                    if (!isset($_GET['update'])) :
+                    	$this->admin_stuff_create($user_id, $biz_id, $tel_protected_biz);
+                    endif;
 				else:
 					$this->result['status'] = 424;
 					$this->result['content']['error']['message'] = '创建商家失败';

@@ -330,7 +330,6 @@
                 $this->postXmlSSL($xml);
                 $result = $this->xmlToArray($this->response);
                 if ($this->input->post('test_mode') == 'on') var_dump($result);
-
                 // 处理退款结果
                 if ($result['result_code'] === 'SUCCESS'):
                     $this->result['status'] = 200;
@@ -338,7 +337,7 @@
 
                 else:
                     $this->result['status'] = 424;
-
+                    // var_dump($result);
                     if ($result['result_code'] === 'FAIL'):
                         $this->result['content'] = ($result['err_code'] === 'ERROR')? $result['err_code_des']: $result['err_code'];
 
@@ -405,6 +404,9 @@
 			// 更新订单信息
 			$this->switch_model($type, 'order_id');
 			$this->basic_model->edit($order_id, $data_to_edit);
+
+			$this->load->model('order_model');
+            $this->order_model->update_status(['order_id'=>$order_id], '未消费');
 		} // end order_update
 
         /**

@@ -148,6 +148,16 @@
             return $query->row_array();
         } // end select_by_id
 
+        public function update_status($where, $status){
+            if (array_key_exists('order_id', $where)) {
+                $query = $this->db->query("update order_items set status='" . $status . "'  where nature='服务' and order_id=" . $where['order_id']);
+            } elseif (array_key_exists('record_id', $status)) {
+                $query = $this->db->query("update order_items set status='" . $status . "'  where nature='服务' and order_id=" . $where['order_id']);
+            } else {
+                return 0;
+            }
+            return $query;
+        }
 	} // end class Order_model
 
 /* End of file Order_model.php */

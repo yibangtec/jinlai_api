@@ -424,6 +424,9 @@
             // 更新订单信息
             $this->switch_model($type, 'order_id');
             $this->basic_model->edit($order_id, $data_to_edit);
+
+            $this->load->model('order_model');
+            $this->order_model->update_status(['order_id'=>$order_id], '未消费');
         } // end order_update
 
         /**

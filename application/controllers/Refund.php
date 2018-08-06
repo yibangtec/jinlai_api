@@ -381,11 +381,12 @@
                             // 向API服务器发送待创建数据
                             $this->load->library('curl');
                             $result = $this->curl->go($url, $params, 'array');
+                            //$result = ['status'=>200 ,'content'=>'123'];
                             if ($this->input->post('test_mode') == 'on')
                                 var_dump($result);
                             if ($result['status'] === 200):
-                                $this->result['content']['message'] .= $result['content'];
-                                $this->result['content']['coupon_id'] = $result['content']['id']; // 创建后的信息ID
+                                $this->result['content']['message'] = $result['content'];
+                                //$this->result['content']['coupon_id'] = $result['content']['id']; // 创建后的信息ID
                                 unset($params, $result); // 释放内存
 
                                 // 更新退款详情
@@ -393,7 +394,12 @@
                                     'status' => '已退款',
                                     'total_payed' => $refund_item['total_approved'],
                                 );
-                                @$this->basic_model->edit($id, $data_to_edit);
+                                $this->basic_model->edit($id, $data_to_edit);
+
+                                $this->switch_model('order', 'order_id');
+                                $this->basic_model->edit($order['order_id'], ['status'=>'已退款','total_refund'=>$refund_item['total_approved']]);
+                                $this->switch_model('refund', 'refund_id');
+
                                 unset($refund_item); // 释放内存
 
                                 // 短信通知
@@ -409,9 +415,11 @@
                                 );
 
                             else:
-                                // 若创建失败，则进行提示
-                                $this->result['content']['error']['message'] .= '退款ID'.$id.'/订单ID'.$order['order_id'].'自动退款失败，请通知财务介入';
-
+                                if ($result['content']) {
+                                    $this->result['content']['error']['message'] = $result['content'];
+                                } else {
+                                    $this->result['content']['error']['message'] .= '退款ID'.$id.'/订单ID'.$order['order_id'].'自动退款失败，请通知财务介入';  
+                                }
                                 // 更新相应订单商品退款状态
                                 $data_to_edit = array(
                                     // 'refund_status' => $target_status, // TODO 待ERP等可追踪货物情况系统接入或开发前，暂时默认为"待退款"

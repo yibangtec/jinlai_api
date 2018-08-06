@@ -125,7 +125,7 @@
             $condition['to'] = [current($type_refer) => intval($this->input->post(current($type_refer)))];
             //最后一条id
             $condition['message_id'] = intval($this->input->post('message_id'));
-            if ($condition['message_id'] <= 0) {
+            if ($condition['message_id'] < 0) {
             	$this->result['status'] = 500;
             	$this->result['content']['error']['message'] = '缺少message_id';
             	exit();
@@ -134,14 +134,35 @@
 
             $res = $this->message_model->index($condition, $originKey, $this->basic_model);
 
-            if ($res) {
-            	$this->result['content'] = $res;
-            	$this->result['status'] = 200;
-            } else {
-            	$this->result['status'] = 400;
-            	$this->result['content']['error']['message'] = '没有符合条件的数据';
-            }
-        }
+            $this->result['content'] = $res;
+            $this->result['status'] = 200;
+         }
+
+        // 加载列表
+        public function record(){
+        	// 操作可能需要检查客户端及设备信息
+            $type_allowed = array('biz', 'client'); // 客户端类型
+            $this->client_check($type_allowed);
+
+            $type_refer = ['biz'=>'biz_id', 'client' => 'user_id'];
+            $originKey  = $type_refer[$this->app_type];
+            unset($type_refer[$this->app_type]);
+            //发给我的
+            $condition['me'] = [$originKey => intval($this->input->post($originKey))];                 
+            //我发给他的
+            $condition['to'] = [current($type_refer) => intval($this->input->post(current($type_refer)))];
+            //已读 未读
+            $condition['read'] = intval($this->input->post('read'));
+          	if ($condition['read'] != 0) {
+          		$condition['read'] = $condition['read'] == 1 ? 1 : 2;
+          	}
+            $this->load->model('message_model');
+
+            $res = $this->message_model->record($condition, $originKey, $this->basic_model);
+
+            $this->result['content'] = $res;
+            $this->result['status'] = 200;
+        } 
 
         // // 打招呼
         public function hi(){

@@ -125,26 +125,44 @@
                 $items = $this->basic_model->select_by_ids($ids);
             endif;
 
+            $nature = $this->input->post('nature');
+            $item_status = $this->input->post('item_status');
+            $statusMap = ['未付款','未消费','已过期','已关闭','已使用','已退款', ''];
+            if (!in_array($item_status, $statusMap)) {
+            	$item_status = '';
+            }
+            if (!empty($nature)) {
+				$nature = $nature != '服务' ? '商品' : '服务';
+            }
 			// 获取列表；默认可获取已删除项
+			$res = [];
 			if ( !empty($items) ):
                 if ( empty($ids) ):
                     // 获取订单商品记录
                     $this->switch_model('order_items', 'record_id');
                     $this->basic_model->limit = $this->basic_model->offset = 0;
-                    for ($i=0;$i<count($items);$i++):
-                        $condition = array('order_id' => $items[$i]['order_id']);
-                        $items[$i]['order_items'] = $this->basic_model->select($condition, NULL);
-                    endfor;
+                    foreach ($items as $key => $value) {
+                    	$condition = array('order_id' => $items[$key]['order_id']);
+                    	if ($nature)
+                    		$condition['nature'] = $nature;
+                    	if ($item_status)
+                    		$condition['status'] = $item_status;
+                        $items[$key]['order_items'] = $this->basic_model->select($condition, NULL);
+                        if(!empty($items[$key]['order_items'])) {
+                        	$res[] = $items[$key];
+                        }
+                    }
                 endif;
-
-				$this->result['status'] = 200;
-				$this->result['content'] = $items;
-
-			else:
-				$this->result['status'] = 414;
-				$this->result['content']['error']['message'] = '没有符合条件的数据';
-			
+                if (!empty($items)) {
+                	$this->result['status'] = 200;
+					$this->result['content'] = $res;
+					return true;
+                }
 			endif;
+
+			$this->result['status'] = 414;
+			$this->result['content']['error']['message'] = '没有符合条件的数据';
+			
 		} // end index
 
 		/**
@@ -188,6 +206,60 @@
 			endif;
 		} // end detail
 
+
+		/**
+		 * 2 详情
+		 */
+		public function detailitem()
+		{
+			// 检查必要参数是否已传入
+			$id = $this->input->post('id');
+			$record_id = $this->input->post('record_id');
+			if ( empty($id) || empty($record_id)):
+				$this->result['status'] = 400;
+				$this->result['content']['error']['message'] = '必要的请求参数未传入';
+				exit();
+			endif;
+
+			// 获取特定项；默认可获取已删除项
+            $this->load->model('order_model');
+			$item = $this->order_model->select_by_id($id);
+
+			if ( !empty($item) ):
+				$item['tel_public'] = '4008820532';
+				// 获取订单商品信息
+                $this->switch_model('order_items', 'record_id');
+				$condition = array(
+					'order_id' => $item['order_id'],
+					'record_id' => $record_id
+				);
+				$item['order_items'] = $this->basic_model->select($condition, NULL);
+				if ($item['order_items'][0])
+					$item['order_items'][0]['verify_code'] = substr($item['order_items'][0]['verify_code'], 0, 4) . ' ' . substr($item['order_items'][0]['verify_code'], 4, 4) . ' ' . substr($item['order_items'][0]['verify_code'], 8, 2);
+
+                // 若请求并非来自客户端，一并获取用户信息
+                if ($this->app_type !== 'client'):
+                    $this->switch_model('user', 'user_id');
+                    $this->db->select('user_id, nickname, avatar');
+                    $item['user'] = $this->basic_model->select_by_id($item['user_id']);
+                endif;
+                
+                $this->switch_model('biz', 'biz_id');
+                $this->db->select('biz_id, tel_public');
+                $bizdetail = $this->basic_model->select_by_id($item['biz_id']);
+                if($bizdetail)
+               		$item['tel_public'] = $bizdetail['tel_public'];
+                
+                
+				$this->result['status'] = 200;
+				$this->result['content'] = $item;
+
+			else:
+				$this->result['status'] = 414;
+				$this->result['content']['error']['message'] = '没有符合条件的数据';
+
+			endif;
+		} // end detail
 		/**
 		 * 3 创建
 		 */
@@ -271,14 +343,19 @@
 				$common_meta = array_merge($common_meta, $this->order_address);
 				unset($this->order_address); // 释放内存资源，下同
 
+				//服务类分类
+				$this->load->model('item_category_model');
+				$serviceCategory = $this->item_category_model->getserivcecid();
+
                 // 计算待生成子订单总数，即订单相关商家数
                 $bizs_count = count($this->order_data);
-
+              		
                 // 以商家为单位生成订单
 				for ($i=0; $i<$bizs_count; $i++):
 					// 合并通用订单及每笔订单数据
 					$data_to_create = array_merge($common_meta, $this->order_data[$i]);
 
+				
 					// 取出订单商品数据，稍后存入订单商品信息表
 					$order_items = $data_to_create['order_items'];
 					unset($data_to_create['order_items']);
@@ -361,7 +438,7 @@
                     unset($data_to_create['weight_gross']);
                     unset($data_to_create['weight_volume']);
                     // end 计算运费
-
+           
 					// 生成订单记录
 					$this->reset_model();// 重置数据库参数
 					$result = $this->basic_model->create($data_to_create, TRUE);
@@ -381,18 +458,28 @@
                             $result = $this->basic_model->edit($coupon['coupon_id'], $data_to_edit);
                         endif;
 
+							
 						// 创建订单商品
 						$this->switch_model('order_items', 'record_id');
+
 						foreach ($order_items as $order_item):
+							$order_item['time_create'] = time();
 							$order_item['order_id'] = $order_id;
 							$order_item['user_id'] = $user_id;
-							$order_item['time_create'] = time();
+							if (isset($serviceCategory[$order_item['category_id']])) {
+								$order_item['nature'] = '服务';
+								$this->addServiceInfo($order_item);
+							} else {
+								$order_item['nature'] = '商品';
+							}
+							unset($order_item['category_id']);
+							$order_item['status'] = '待付款';
 							$result = $this->basic_model->create($order_item, TRUE);
 						endforeach;
 
                         // 更新商品/SKU库存
                         // 若要调整成付款减库存，需要去掉各付款渠道控制器中同名方法的注释
-                        @$this->stocks_update($order_id);
+                        $this->stocks_update($order_id);
 
 					else:
 						$this->result['status'] = 424;
@@ -406,6 +493,27 @@
 
 			endif;
 		} // end create
+		private function addServiceInfo(&$orderitem){
+			//时间戳最后一位如果是0 ，改成3
+			$start = substr($orderitem['time_create'], -1, 1);
+			$start = intval($start) == 0 ? 3 : $start;
+			//核销码 前5位
+			//bizid * itemid * 时间戳最后一位 取前5位 如果不够，使用乘积的最后一位从后补
+			$res = intval($orderitem['biz_id']) * intval($orderitem['item_id']) * intval($start);
+			if ($res > 99999) {
+				$res = substr($res, 0, 5);
+			} elseif($res < 10000 ) {
+				$patch = substr($res, -1, 1);
+				$left = 5 - strlen($res);
+				$format = "%{$left}d";
+				$res = sprintf("%d" . $format, $res, $patch) . '';
+			}
+			//核销码后5位 时间戳最后一位 作为开始位，最后翻转
+			$tail  = strrev(substr($orderitem['time_create'] . $orderitem['order_id'] . $orderitem['time_create'], intval($start), 5)) . '';
+			//合并 排序 
+			$orderitem['verify_code'] = $res . $tail;
+			$orderitem['time_expire'] = strtotime("+1 month", $orderitem['time_create']);
+		}
 
         /**
          * 更新实物订单相关商品/规格的库存值
@@ -632,7 +740,7 @@
 
 			// 获取待下单商品信息
 			$this->cart_decode($cart_string);
-
+			
             // 计算待生成子订单总数，即订单相关商家数
             $bizs_count = count($this->order_data);
             // 若没有可生成的子订单（即所有商品/规格均无法下单），则不预生成订单数据
@@ -890,7 +998,7 @@
                 'slogan' => $item['slogan'],
                 'tag_price' => $item['tag_price'],
                 'price' => $item['price'],
-
+                'category_id' => $item['category_id'], //平台分类的id
                 'count' => $count,
                 'weight_net' => $item['weight_net'] * $count,
                 'weight_gross' => $item['weight_gross'] * $count,
@@ -968,6 +1076,7 @@
 
                     //'coupon_id' => $item['coupon_id'], // 优惠券ID
                     //'discount_coupon' => $discount_coupon, // 优惠券折抵金额
+                    
                     'count' => $order_item['count'],
                     'weight_net' => $weight_net,
                     'weight_gross' => $weight_gross,

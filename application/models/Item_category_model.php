@@ -62,6 +62,17 @@
             return $query->result_array();
         }
 
+        public function getserivcecid(){
+            $res = $this->db->query('select nature,category_id from ' . $this->table_name  . ' where nature=\'服务\'');
+            $data = $res->result_array();
+            $format = [];
+            foreach ($data as $key => $value) {
+                $value['category_id'] = '' . $value['category_id'];
+                $format[$value['category_id']] = $value['category_id'];
+            }
+            return $format;
+
+        }
 	} // end class Item_category_model
 
 /* End of file Item_category_model.php */
