@@ -649,7 +649,9 @@
 			$data_to_search['time_delete'] = NULL; // 仅获取有效的员工关系
 			
 			$this->switch_model('stuff', 'stuff_id');
+		
             $stuff = $this->basic_model->match($data_to_search);
+         
 
             // 默认用户非员工
             $this->result['status'] = 415;

@@ -122,12 +122,33 @@
 				$order = $this->order_model->select_by_id($order_id);
 			endif;
 			*/
+           // 获取订单信息备用 out_trade_no最多32个字符串，固定长度占了21个
+            //如果订单号是连续的，用|
+            //不连续的只取第一个
+            $orderarr = explode(',', $order_id);
+            $orders   = [];
+            $ammount  = 0;
+            $first = intval(current($orderarr)) - 1;
+            $last  = end($orderarr);
+            $mark  = '';
+            if (count($orderarr) >= 2 && $first + count($orderarr) == $last) {
+                foreach ($orderarr as $key => $value) {
+                    $temp = $this->get_order_detail(intval($value));
+                    $ammount += $temp['total'];
+                    $orders[] = $temp;
+                }
+                $mark = ($first + 1) . "|" . $last;
+            } else {
+                $temp = $this->get_order_detail($order_id);
+                $ammount = $temp['total'];
+                $mark = $order_id;
+            }
 
-			// 获取订单信息备用
-            $order = $this->get_order_detail($order_id);
+            
+			
             $order_data = array(
 				'body' => SITE_NAME. ($type === 'order'? '商品订单': '充值订单'),
-                'total_fee' => $order['total'], // 待付款金额
+                'total_fee' => $ammount, // 待付款金额
 			);
 
             // API
@@ -139,8 +160,8 @@
             $params['notify_url'] = base_url('alipay/notify');
 
 			// 参与签名的参数
-			$out_trade_no = date('YmdHis').'_'. $type.'_'. $order_id; // 拼装订单号，64个字符以内
-			$subject = $order_data['body']. ' 编号'. $order_id;
+			$out_trade_no = date('YmdHis').'_'. $type .'_'. $mark ; // 拼装订单号，64个字符以内
+			$subject = $order_data['body']. ' 编号'. $mark;
 			$body = $order_data['body']. $out_trade_no;
 			$request_params = array(
 				'out_trade_no' => $out_trade_no,
@@ -171,7 +192,26 @@
             // 手动析构函数
             $this->manual_destruct();
 		} // end create
-		
+		public function ntest(){
+            $data_to_edit['payment_type'] = '支付宝'; // 支付方式
+            $data_to_edit['payment_account'] = '186***@163.com'; // 付款账号；支付宝账号
+            $data_to_edit['payment_id'] = '2018080821001004300514436697'; // 支付流水号；支付宝订单号
+            $data_to_edit['total_payed'] = 8.00; // 已支付金额(这是所有订单的总金额，具体到每个订单需要把金额分开)
+            $order_id = '37|38';
+            $type = 'order';
+            // 更新订单信息 多个订单更新 或者单个更新
+            if (strpos($order_id, '|')) {
+                list($opoid, $lastoid) = explode('|', $order_id);
+
+                for($oid = intval($opoid); $oid <= intval($lastoid); $oid++) {
+                    $oneOrder = $this->get_order_detail($oid);
+                    $data_to_edit['total_payed'] = $oneOrder['total'];
+                    $this->order_update($data_to_edit, $type, $oid);
+                }
+            } else {
+                $this->order_update($data_to_edit, $type, $order_id);
+            }
+        }
 		/**
 		 * 4 接收订单通知并更新相关信息
 		 */
@@ -199,10 +239,20 @@
                     $data_to_edit['payment_type'] = '支付宝'; // 支付方式
                     $data_to_edit['payment_account'] = $_POST['buyer_logon_id']; // 付款账号；支付宝账号
                     $data_to_edit['payment_id'] = $_POST['trade_no']; // 支付流水号；支付宝订单号
-                    $data_to_edit['total_payed'] = $_POST['receipt_amount']; // 已支付金额
+                    $data_to_edit['total_payed'] = $_POST['receipt_amount']; // 已支付金额(这是所有订单的总金额，具体到每个订单需要把金额分开)
 
-                    // 更新订单信息
-                    $this->order_update($data_to_edit, $type, $order_id);
+                
+                    // 更新订单信息 多个订单更新 或者单个更新
+                    if (strpos($order_id, '|')) {
+                        list($opoid, $lastoid) = explode('|', $order_id);
+                        for($oid = intval($opoid); $oid <= intval($lastoid); $oid++) {
+                            $oneOrder = $this->get_order_detail($oid);
+                            $data_to_edit['total_payed'] = $oneOrder['total'];
+                            $this->order_update($data_to_edit, $type, $oid);
+                        }
+                    } else {
+                        $this->order_update($data_to_edit, $type, $order_id);
+                    }
 
                     // 发送短信通知（调试用）
                 /*
@@ -285,7 +335,7 @@
                     $this->manual_destruct();
                     exit();
 
-                elseif ( $order['total_payed'] === $order['total_refund'] ):
+                elseif ( $order['total_payed'] === $order['total_refund'] && $total_refund > 0 ):
                     $this->result['status'] = 414;
                     $this->result['content']['error']['message'] = '该订单已全额退款';
                     $this->manual_destruct();
@@ -389,7 +439,6 @@
             $this->switch_model('order', 'order_id');
             $this->db->select('total, total_payed, total_refund, payment_type, payment_id, status');
             $result = $this->basic_model->find('order_id', $order_id);
-
             return $result;
         } // end get_order_detail
 

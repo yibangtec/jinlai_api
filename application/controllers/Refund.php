@@ -380,6 +380,7 @@
 
                             // 向API服务器发送待创建数据
                             $this->load->library('curl');
+
                             $result = $this->curl->go($url, $params, 'array');
                             //$result = ['status'=>200 ,'content'=>'123'];
                             if ($this->input->post('test_mode') == 'on')
@@ -397,7 +398,7 @@
                                 $this->basic_model->edit($id, $data_to_edit);
 
                                 $this->switch_model('order', 'order_id');
-                                $this->basic_model->edit($order['order_id'], ['status'=>'已退款','total_refund'=>$refund_item['total_approved']]);
+                                $this->basic_model->edit($order['order_id'], ['status'=>'已退款', 'total_refund'=>$refund_item['total_approved'] + $order['total_refund'] ]);
                                 $this->switch_model('refund', 'refund_id');
 
                                 unset($refund_item); // 释放内存
@@ -415,8 +416,10 @@
                                 );
 
                             else:
+                                $this->result['content']['error']['test'] = $result['content'];
                                 if ($result['content']) {
                                     $this->result['content']['error']['message'] = $result['content'];
+                                    
                                 } else {
                                     $this->result['content']['error']['message'] .= '退款ID'.$id.'/订单ID'.$order['order_id'].'自动退款失败，请通知财务介入';  
                                 }

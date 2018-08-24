@@ -23,7 +23,7 @@
 		protected $names_to_return = array(
 			'biz_id', 'identity_id', 'category_id', 'name', 'brief_name', 'url_name', 'url_logo', 'slogan', 'description', 'notification',
 			'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
-            'url_image_product', 'url_image_produce', 'url_image_retail',
+            'url_image_product', 'url_image_produce', 'url_image_retail', 'url_image_service', 'address',
             'freight_template_id', 'ornament_id',
 			'time_create', 'time_delete', 'time_edit', 'creator_id', 'operator_id', 'status',
 		);
@@ -50,7 +50,7 @@
 		protected $names_edit_allowed = array(
             'category_id', 'name', 'brief_name', 'url_name', 'url_logo', 'slogan', 'description', 'notification',
 			'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
-			'url_image_product', 'url_image_produce', 'url_image_retail',
+			'url_image_product', 'url_image_produce', 'url_image_retail','url_image_service', 'address',
             'freight_template_id', 'ornament_id',
 		);
 
@@ -125,8 +125,8 @@
             $condition = $this->advanced_sorter($condition);
 
 			// 排序条件
-            $order_by['index_id'] = 'ASC'; // 按索引值
-            $order_by['time_edit'] = 'DESC'; // 临时性调序，主要用于演示视频生成
+            $order_by['index_id'] = 'DESC'; // 按索引值
+            //$order_by['time_edit'] = 'DESC'; // 临时性调序，主要用于演示视频生成
 
             // 获取列表；默认可获取已删除项
             $ids = $this->input->post('ids'); // 可以CSV格式指定需要获取的信息ID们
@@ -177,6 +177,10 @@
 			endif;
 
 			if ( !empty($item) ):
+				if (is_null($item['url_image_service']))
+					$item['url_image_service'] = 'product/201808/0809/111507.png';
+				if (is_null($item['address']))
+					$item['address'] = '青岛市 崂山区=东海东路 麦岛金岸青岛意帮网络科技有限公司';
 				$this->result['status'] = 200;
 				$this->result['content'] = $item;
                 $this->result['content']['ornament'] = new stdClass(); // 若无装修方案，返回一个空对象
@@ -430,7 +434,7 @@
 				$data_need_no_prepare = array(
                     'category_id', 'name', 'brief_name', 'url_logo', 'slogan', 'description', 'notification',
 					'tel_public', 'tel_protected_biz', 'tel_protected_fiscal', 'tel_protected_order',
-                    'url_image_product', 'url_image_produce', 'url_image_retail',
+                    'url_image_product', 'url_image_produce', 'url_image_retail','url_image_service','address',
                     'freight_template_id', 'ornament_id',
 				);
 				foreach ($data_need_no_prepare as $name)

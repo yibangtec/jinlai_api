@@ -119,17 +119,38 @@
             endif;
             */
 
-            // 获取订单信息备用
-            $order = $this->get_order_detail($order_id);
+             // 获取订单信息备用 out_trade_no最多32个字符串，固定长度占了21个
+            //如果订单号是连续的，用|
+            //不连续的只取第一个
+            $orderarr = explode(',', $order_id);
+            $orders   = [];
+            $ammount  = 0;
+  			$first = intval(current($orderarr)) - 1;
+  			$last  = end($orderarr);
+  			$mark  = '';
+  			if (count($orderarr) >= 2 && $first + count($orderarr) == $last) {
+  				foreach ($orderarr as $key => $value) {
+	                $temp = $this->get_order_detail(intval($value));
+	                $ammount += $temp['total'];
+	                $orders[] = $temp;
+	            }
+	            $mark = ($first + 1). "|" . $last;;
+  			} else {
+  				$temp = $this->get_order_detail($order_id);
+  				$ammount = $temp['total'];
+  				$mark = $order_id;
+  			}
+
             $order_data = array(
                 'body' => SITE_NAME. ($type === 'order'? '商品订单': '充值订单'),
-                'total_fee' => $order['total'], // 待付款金额
+                'total_fee' => $ammount, // 待付款金额
             );
 
 			// 重组请求参数
-			$this->parameters['out_trade_no'] = date('YmdHis').'_order_'.$order_id;
+			
+			$this->parameters['out_trade_no'] = date('YmdHis').'_order_'.$mark;
 			$this->parameters['body'] = $order_data['body'];
-			$this->parameters['total_fee'] = $order_data['total_fee'] * 100; // 默认以分为货币单位
+			$this->parameters['total_fee'] = $ammount * 100; // 默认以分为货币单位
 
 			$this->url = 'https://api.mch.weixin.qq.com/pay/unifiedorder';
 		   	$this->parameters['appid'] = $this->app_id; // 公众账号ID
@@ -216,8 +237,18 @@
 					$data_to_edit['payment_id'] = $this->data['transaction_id']; // 支付流水号；微信支付订单号
 					$data_to_edit['total_payed'] = $this->data['total_fee'] / 100; // 将货币单位由“分”换算为“元”
 
-					// 更新订单信息
-					$this->order_update($data_to_edit, $type, $order_id);
+					// 更新订单信息 多个订单更新 或者单个更新
+                    if (strpos($order_id, '|')) {
+                        list($opoid, $lastoid) = explode('|', $order_id);
+                        for($oid = intval($opoid); $oid <= intval($lastoid); $oid++) {
+                            $oneOrder = $this->get_order_detail($oid);
+                            $data_to_edit['total_payed'] = $oneOrder['total'];
+                            $this->order_update($data_to_edit, $type, $oid);
+                        }
+                    } else {
+                        $this->order_update($data_to_edit, $type, $order_id);
+                    }
+					
 
                     // 发送短信通知（调试用）
                 /*
@@ -275,6 +306,12 @@
 
                 // 获取订单信息备用
                 $order = $this->get_order_detail($order_id);
+                // 尝试获取总价格
+                $total = $this->get_order_total($order['payment_id']);
+                if ($order['wepay_from'] != 'APP') {
+                	$this->switchweb();
+                }
+
                 if ($this->input->post('test_mode') == 'on') var_dump($order);
                 if ( empty($order) ):
                     $this->result['status'] = 414;
@@ -313,7 +350,7 @@
                 // 重组请求参数
                 $this->parameters['out_refund_no'] = date('YmdHis').'_orderrefund_'.$order_id; // 退款单号
                 $this->parameters['transaction_id'] = $order['payment_id'];
-                $this->parameters['total_fee'] = $order['total_payed'] * 100; // 默认以分为货币单位
+                $this->parameters['total_fee'] = $total * 100; // 默认以分为货币单位
                 $this->parameters['refund_fee'] = ($total_to_refund === 'all')? $order['total_payed']: $total_to_refund; // 全额或部分退款
                 $this->parameters['refund_fee'] *= 100; // 默认以分为货币单位
 
@@ -340,10 +377,12 @@
                     // var_dump($result);
                     if ($result['result_code'] === 'FAIL'):
                         $this->result['content'] = ($result['err_code'] === 'ERROR')? $result['err_code_des']: $result['err_code'];
+                        // $this->result['content'] = json_encode($result);
+                        // $this->result['xml'] = json_encode($this->parameters);
 
                     else:
                         $this->result['content'] = '退款失败';
-
+                        $this->result['test'] =  json_encode($result);
                     endif;
 
                 endif;
@@ -367,12 +406,18 @@
         private function get_order_detail($order_id)
         {
             $this->switch_model('order', 'order_id');
-            $this->db->select('total, total_payed, total_refund, payment_type, payment_id, status');
-            $result = $this->basic_model->find('order_id', $order_id);
-
+            $this->db->select('order_id, total, total_payed, total_refund, payment_type, payment_id, `status`, wepay_from');
+            $result = $this->basic_model->find('order_id', intval($order_id));
             return $result;
         } // end get_order_detail
 
+
+        private function get_order_total($payment_id)
+        {	
+            $res = $this->db->query('select sum(total) as tt from `order` where payment_id=\'' .  $payment_id . '\'');
+            $total = $res->result_array();
+            return isset($total[0]['tt']) ? $total[0]['tt'] : 0.0;
+        } // end get_order_detail
         /**
          * 更新订单信息
          *
@@ -717,6 +762,16 @@
 		{
 			echo $this->createNoncestr();
 		} // end index
+
+		public function switchweb(){
+			//修改为web端公众号的支付账号
+			$this->app_id = 'wxba173a67df14c087';
+			$this->mch_id = '1488874732';
+			$this->key = 'OHLAt2qyVdNVHqWWoWoc5Q4UbpFycpH6';
+			//protected $app_secret = WEPAY_APP_SECRET;
+			$this->sslcert_path = './payment/wepay/public_cert/apiclient_cert.pem';
+			$this->sslkey_path = './payment/wepay/public_cert/apiclient_key.pem';
+		}
 
 	} // end class Wepay
 

@@ -241,8 +241,10 @@
 				$data_need_no_prepare = array(
 					'biz_id', 'category_id', 'category_biz_id', 'item_id', 'name', 'description',
 				);
+
 				foreach ($data_need_no_prepare as $name)
 					$data_to_create[$name] = empty($this->input->post($name))? NULL: $this->input->post($name);
+
 				// 根据客户端类型等条件筛选可操作的字段名
                 if ($this->app_type === 'biz'):
                     unset($data_to_create['category_id']);
@@ -254,7 +256,7 @@
 					$this->result['content']['id'] = $result;
 					$this->result['content']['message'] = '创建成功';
 					if ($this->app_type === 'biz') :
-						$this->update_coupon($data_need_no_prepare['biz_id']);
+						$this->update_coupon($data_to_create['biz_id']);
 					else :
 						$this->update_coupon();
 					endif;
@@ -490,7 +492,6 @@
         		$this->myredis->set("have_coupon", 1);
         		$this->myredis->delete("coupon_hash");
         	else :
-        		var_dump(123);
         		$this->myredis->give("have_coupon_biz", $biz_id, 1);
 				$this->myredis->delete("coupon_template_hash_{$biz_id}");
         	endif;

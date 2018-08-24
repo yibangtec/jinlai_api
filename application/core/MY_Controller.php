@@ -64,9 +64,9 @@
 				'get' => array(), // GET请求参数
 				'post' => array(), // POST请求参数
 			), // 接收到的请求参数
-			// 'timestamp' => null, // 返回时时间戳
-			// 'datetime' => null, // 返回时可读日期
-			// 'timezone' => null, // 服务器本地时区
+			'timestamp' => null, // 返回时时间戳
+			'datetime' => null, // 返回时可读日期
+			'timezone' => null, // 服务器本地时区
 			'elapsed_time' => null, // 处理业务请求时间
 		);
 
@@ -80,7 +80,7 @@
         public $user_agent = array();
 
 		// 客户端类型
-		protected $app_type;
+		public $app_type;
 
 		// 客户端版本号
 		protected $app_version;
@@ -137,20 +137,20 @@
 		public function __destruct()
 		{
             // 仅以JSON格式返回响应内容
-		    // header("Content-type:application/json;charset=utf-8");
+		    header("Content-type:application/json;charset=utf-8");
 
 		    // 若返回了错误信息，则标注为服务端错误信息
-            if ( ! empty($this->result['content']['error']['message']))
-                $this->result['content']['error']['message'] .= ' ERROR_API';
+            // if ( ! empty($this->result['content']['error']['message']) && !is_array($this->result['content']['error']['message']))
+            	// $this->result['content']['error']['message'] .= ' ERROR_API';
 
 			// 将请求参数一并返回以便调试
-			$this->result['param']['get'] = count($this->input->get());
-			$this->result['param']['post'] = count($this->input->post());
+			$this->result['param']['get'] = $this->input->get();
+			$this->result['param']['post'] = $this->input->post();
 
 			// 返回服务器端时间信息
-			//$this->result['timestamp'] = time();
-			//$this->result['datetime'] = date('Y-m-d H:i:s');
-			//$this->result['timezone'] = date_default_timezone_get();
+			$this->result['timestamp'] = time();
+			$this->result['datetime'] = date('Y-m-d H:i:s');
+			$this->result['timezone'] = date_default_timezone_get();
 
 			// 统计业务逻辑运行时间终点
 			$this->benchmark->mark('end');

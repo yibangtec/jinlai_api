@@ -32,7 +32,7 @@
 
 			$sql = $sql1 . " where {$key}={$condtion} and `read`=1 union ";
 			$sql .= $sql1 ." where s_{$key}={$condtion} and `read`=1 ";
-			$query = "select * from ({$sql}) as tb order by message_id asc limit 0, 100";
+			$query = "select * from ({$sql}) as tb order by message_id asc limit 0, 300";
 			$res = $this->db->query($query);
 			$data = $res->result_array();
 			unset($res);

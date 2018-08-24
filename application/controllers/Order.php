@@ -349,7 +349,8 @@
 
                 // 计算待生成子订单总数，即订单相关商家数
                 $bizs_count = count($this->order_data);
-              		
+              	
+
                 // 以商家为单位生成订单
 				for ($i=0; $i<$bizs_count; $i++):
 					// 合并通用订单及每笔订单数据
@@ -368,7 +369,7 @@
                         $discount_coupon = !empty($coupon['amount'])? $coupon['amount']: $data_to_create['subtotal']*$coupon['rate'];
 
                         $data_to_create['coupon_id'] = $coupon['coupon_id'];
-                        $data_to_create['discount_coupon'] = $discount_coupon;
+                        $data_to_create['discount_coupon'] = round($discount_coupon, 2, PHP_ROUND_HALF_DOWN);
                         $data_to_create['total'] -= $discount_coupon;
                     endif;
 
@@ -438,7 +439,7 @@
                     unset($data_to_create['weight_gross']);
                     unset($data_to_create['weight_volume']);
                     // end 计算运费
-           
+           			$data_to_create['wepay_from'] = $this->input->post('wepay_from') == '公众号' ? '公众号' : 'APP';
 					// 生成订单记录
 					$this->reset_model();// 重置数据库参数
 					$result = $this->basic_model->create($data_to_create, TRUE);
@@ -487,12 +488,24 @@
 
 					endif; // 生成订单记录
 				endfor;
-				
 				// 转换已创建订单ID数组为CSV字符串
-				$this->result['content']['ids'] = implode($this->result['content']['ids'], ',');
+				$this->result['content']['ids'] = implode(',',$this->result['content']['ids']);
 
 			endif;
 		} // end create
+
+        /**
+         * 核销码生成规则
+         * 开始位 ： 当前时间戳的最后一位，如果是0 则改成3
+         * 前5位 bizid x itemid x 开始位，结果取前五位
+         * 如果不够5位，使用乘积结果的最后一位补足5位
+         *
+         * 后5位 时间戳 + order_id + 时间戳 ，从开始位的位置截取5个长度的字符串
+         *
+         * 最后拼接为核销码
+         *
+         *
+         */
 		private function addServiceInfo(&$orderitem){
 			//时间戳最后一位如果是0 ，改成3
 			$start = substr($orderitem['time_create'], -1, 1);
@@ -749,20 +762,41 @@
                 exit;
             endif;
 
+            $price_list = ['origin_price'=>[],'discount_ammount'=>[],'sum'=>0];
             // 以商家为单位预生成订单数据
             for ($i=0; $i<$bizs_count; $i++):
+
                 // 获取用户面额最高的有效商家优惠券（若有）
+                // $this->load->model('coupon_model');
+                // $coupon = $this->coupon_model->get_max_valid($user_id, $this->order_data[$i]['biz_id'], $this->order_data[$i]['subtotal']);
+                // if ( ! empty($coupon) )
+                //     $this->order_data[$i]['total'] -= $coupon['amount'];
+
+                // 应用用户面额最高的有效商家优惠券（若有）
                 $this->load->model('coupon_model');
                 $coupon = $this->coupon_model->get_max_valid($user_id, $this->order_data[$i]['biz_id'], $this->order_data[$i]['subtotal']);
-                if ( ! empty($coupon) )
-                    $this->order_data[$i]['total'] -= $coupon['amount'];
+                if (is_array($coupon) && !empty($coupon) ):
+                    // 计算优惠券抵扣额
+                    $this->order_data[$i]['discount_ammount'] = !empty($coupon['amount'])? $coupon['amount']: $this->order_data[$i]['total'] * $coupon['rate'];
+                    $this->order_data[$i]['discount_ammount'] = round($this->order_data[$i]['discount_ammount'], 2, PHP_ROUND_HALF_DOWN);
+                    $this->order_data[$i]['coupon_id'] = $coupon['coupon_id'];
+                    $this->order_data[$i]['discount_total'] = $this->order_data[$i]['total'] - $this->order_data[$i]['discount_ammount'];
+                else :
+	                // 无论是否有相应优惠券，均生成相应返回信息字段
+	                $this->order_data[$i]['coupon_id'] = null;
+	                $this->order_data[$i]['coupon_name'] = null;
+	                $this->order_data[$i]['discount_coupon'] = null;
+	                $this->order_data[$i]['discount_total'] = $this->order_data[$i]['total'];
+	                $this->order_data[$i]['discount_ammount'] = 0.0;
+                endif;
 
-                // 无论是否有相应优惠券，均生成相应返回信息字段
-                $this->order_data[$i]['coupon_id'] = $coupon['coupon_id'];
-                $this->order_data[$i]['coupon_name'] = $coupon['name'];
-                $this->order_data[$i]['discount_coupon'] = $coupon['amount'];
+                $price_list['origin_price'][]     = $this->order_data[$i]['total'];
+                $price_list['discount_ammount'][] = $this->order_data[$i]['discount_ammount'];
             endfor;
 
+            $price_list['origin_price'][] = array_sum($price_list['origin_price']);
+            $price_list['discount_ammount'][] = array_sum($price_list['discount_ammount']);
+            $price_list['sum'] = end($price_list['origin_price']) - end($price_list['discount_ammount']);
             // 获取当前用户可用地址信息
             $conditions = array(
                 'user_id' => $user_id,
@@ -773,6 +807,7 @@
 			$this->result['status'] = 200;
 			$this->result['content']['addresses'] = $addresses;
 			$this->result['content']['order_data'] = $this->order_data;
+			$this->result['content']['price_list'] = $price_list;
 		} // end prepare
 
 		/**
@@ -965,9 +1000,9 @@
             $sku_and_item_no_stock = empty($item['stocks']) && empty($sku['stocks']);
             $item_not_published = empty($item['time_publish']) || !empty($item['time_delete']);
             if (empty($item) || $sku_and_item_no_stock || $item_not_published || $item['stocks'] < $count):
-                // echo '该商品库存不足或未上架';
-                //exit();
-                return;
+                $this->result['status'] = 411;
+                $this->result['content']['error']['message'] = '商品库存不足，未上架，或超出限购数量';
+                exit;
             endif;
 
             // 若超出终身限购数，则不可购买
@@ -997,6 +1032,7 @@
                 'item_image' => $item['url_image_main'],
                 'slogan' => $item['slogan'],
                 'tag_price' => $item['tag_price'],
+                'settle_price' => $item['settle_price'],
                 'price' => $item['price'],
                 'category_id' => $item['category_id'], //平台分类的id
                 'count' => $count,
@@ -1088,6 +1124,37 @@
                 );
             endif;
         } // end generate_single_item
+
+        public function price_total(){
+        	// 检查必要参数是否已传入
+			$order_ids = $this->input->post('order_ids');
+			if ( empty($order_ids) ):
+				$this->result['status'] = 400;
+				$this->result['content']['error']['message'] = '必要的请求参数未传入';
+				exit();
+			endif;
+		
+            $orderarr = explode(',', $order_ids);
+            $orders = [];
+            $ammount = 0;
+
+            foreach ($orderarr as $key => $value) {
+                $temp = $this->get_order_detail(intval($value));
+                $ammount += $temp['total'];
+                $orders[] = $temp;
+            }
+
+            $this->result['content']['total'] = $ammount;
+            $this->result['status'] = 200;
+        }
+        private function get_order_detail($order_id)
+        {
+            $this->switch_model('order', 'order_id');
+            $this->db->select('order_id, total');
+            $result = $this->basic_model->find('order_id', $order_id);
+
+            return $result;
+        } 
 
 		/**
 		 * 用户取消

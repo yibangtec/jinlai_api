@@ -196,7 +196,7 @@
         // 通过身份验证的，保存到redis
 		public function cache_client($client){
 			if ($this->init_redis()) {
-				$validTime = 1800;//60 过期时间 暂定30分钟，正式运行时1分钟 甚至更短
+				$validTime = 30;//60 过期时间 暂定30分钟，正式运行时1分钟 甚至更短
 				return $this->myredis->savehash($client['token'], $client, $validTime);
 			}
 			return false;
