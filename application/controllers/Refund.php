@@ -401,6 +401,7 @@
                                 $this->basic_model->edit($order['order_id'], ['status'=>'已退款', 'total_refund'=>$refund_item['total_approved'] + $order['total_refund'] ]);
                                 $this->switch_model('refund', 'refund_id');
 
+
                                 unset($refund_item); // 释放内存
 
                                 // 短信通知
@@ -414,7 +415,8 @@
                                 $data_to_edit = array(
                                     'refund_status' => '已退款',
                                 );
-
+                                $this->switch_model('order_items', 'record_id');
+                                $this->basic_model->edit($record_id, ['status'=>'已退款']);
                             else:
                                 $this->result['content']['error']['test'] = $result['content'];
                                 if ($result['content']) {

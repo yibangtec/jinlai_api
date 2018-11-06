@@ -188,9 +188,7 @@
 		{
 			// 默认可返回已删除项
 			if ($allow_deleted === FALSE) $this->db->where('time_delete', NULL);
-
 			$this->db->where($this->id_name, $id);
-
 			$query = $this->db->get($this->table_name);
 			return $query->row_array();
 		} // end select_by_id

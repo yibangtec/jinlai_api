@@ -84,6 +84,7 @@
             if ( empty($ids) ):
                 $this->load->model('coupon_model');
                 $items = $this->coupon_model->select($condition, $order_by);
+                
             else:
                 $items = $this->basic_model->select_by_ids($ids);
             endif;
@@ -338,8 +339,9 @@
                     );
                     $count = $this->basic_model->count($condition);
                     if ($count >= $template['max_amount_user']):
-                        $this->result['content']['error']['message'] = '每位用户限领'.$template['max_amount_user'].'次';
-                        $is_valid = FALSE;
+                        $this->result['content']['error']['message'] = '已经领过了，不要太贪心哦～';
+                        $this->result['status'] = 414;
+                        exit;
                     endif;
                 endif;
 
@@ -352,6 +354,7 @@
                     );
                     $count = $this->basic_model->count($condition);
                     if ($count >= $template['max_amount']):
+                        $this->result['status'] = 414;
                         $this->result['content']['error']['message'] = '优惠券已经被抢光了';
                         $is_valid = FALSE;
                     endif;

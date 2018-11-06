@@ -150,13 +150,28 @@
 
         public function update_status($where, $status){
             if (array_key_exists('order_id', $where)) {
-                $query = $this->db->query("update order_items set status='" . $status . "'  where nature='服务' and order_id=" . $where['order_id']);
+                $query = $this->db->query("update order_items set status='未消费' where nature='服务' and order_id=" . $where['order_id']);
             } elseif (array_key_exists('record_id', $status)) {
-                $query = $this->db->query("update order_items set status='" . $status . "'  where nature='服务' and order_id=" . $where['order_id']);
+                $query = $this->db->query("update order_items set status='未消费' where nature='服务' and order_id=" . $where['order_id']);
             } else {
                 return 0;
             }
             return $query;
+        }
+
+        public function get_pagination($status,$allow_deleted = FALSE){
+            if( $allow_deleted === FALSE ){
+                $this->db->where('time_delete IS NULL');
+            }
+
+            if( $status){
+                $this->db->where(['status'=>$status]);
+            }
+
+            $this->db->order_by('order_id','DESC');
+            $count = $this->db->from('order')->count_all_results();
+
+            return $count;
         }
 	} // end class Order_model
 

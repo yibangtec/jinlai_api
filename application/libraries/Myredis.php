@@ -243,6 +243,13 @@
 			endforeach;
 			return $data;
 		}
+
+
+		public function increase($key, $step = 1){
+
+			return $this->_redis->incr($key, $step);
+
+		}
 		//list,sorted set to be continued
 
 	} //endmyredisclass

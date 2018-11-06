@@ -137,7 +137,7 @@
                 'time_delete' => 'NULL', // 未被删除
                 'order_id' => 'NULL', // 未被使用
                 'user_id' => $user_id,
-                'min_subtotal <' => $subtotal, // 起用金额低于订单小计
+                'min_subtotal <=' => $subtotal, // 起用金额低于订单小计
                 'time_end >' => time(),
             );
             foreach ($condition as $name => $value):

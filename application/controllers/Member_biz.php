@@ -108,7 +108,7 @@
 
 			// 排序条件
 			$order_by = NULL;
-
+			$condition['time_delete'] = null;
 			// 获取列表；默认可获取已删除项
             $this->load->model('member_biz_model');
             $items = $this->member_biz_model->select($condition, $order_by);

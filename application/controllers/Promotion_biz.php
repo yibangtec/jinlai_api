@@ -256,8 +256,6 @@
 					$this->result['content']['id'] = $result;
 					$this->result['content']['message'] = '创建成功';
 
-					//处理redis缓存
-					$this->update_promotion_biz($user_id);
 				else:
 					$this->result['status'] = 424;
 					$this->result['content']['error']['message'] = '创建失败';
@@ -344,8 +342,7 @@
 					$this->result['status'] = 200;
                     $this->result['content']['id'] = $id;
 					$this->result['content']['message'] = '编辑成功';
-					//处理redis缓存
-					$this->update_promotion_biz($user_id);
+
 				else:
 					$this->result['status'] = 434;
 					$this->result['content']['error']['message'] = '编辑失败';
@@ -420,8 +417,7 @@
 						$this->result['status'] = 434;
 						$this->result['content']['row_failed'][] = $id;
 					endif;
-					//处理redis缓存
-					$this->update_promotion_biz($user_id);
+
 				endforeach;
 
 				// 添加全部操作成功后的提示
@@ -470,16 +466,6 @@
             $this->form_validation->set_message('time_start', '尾款支付开始时间需详细到分，且晚于预付款支付结束时间');
             $this->form_validation->set_message('time_end', '尾款支付结束时间需详细到分，且晚于开始时间（若有）');
         } // end validate_times
-
-       /**
-        *
-        * 清除redis缓存
-        */
-        private function update_promotion_biz($biz_id){
-        	$this->init_redis();
-			$this->myredis->give("have_promotion_biz", $biz_id, 1);
-			$this->myredis->delete("promotion_biz_{$biz_id}");
-        } // end update_promotion_biz
 
 	} // end class Promotion_biz
 

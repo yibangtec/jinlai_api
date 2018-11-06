@@ -15,7 +15,7 @@
 		 */
 		protected $names_to_sort = array(
 			'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'code_biz', 'barcode', 'tag_price', 'price', 'sku_price_min', 'sku_price_max', 'sold_overall', 'sold_monthly', 'sold_daily', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'limit_lifetime', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id', 'status',
-			'time_create', 'time_delete', 'time_publish', 'time_suspend', 'time_edit', 'creator_id', 'operator_id','sold_display','settle_price'
+			'time_create', 'time_delete', 'time_publish', 'time_suspend', 'time_edit', 'creator_id', 'operator_id','sold_display','settle_price', 'allow_sold'
 		);
 
         /**
@@ -44,7 +44,7 @@
 		 */
 		protected $names_to_return = array(
 			'item_id', 'category_id', 'brand_id', 'biz_id', 'category_biz_id', 'index_id', 'code_biz', 'barcode', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'sold_overall', 'sold_monthly', 'sold_daily', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'limit_lifetime', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id',
-			'time_create', 'time_delete', 'time_publish', 'time_suspend', 'time_edit', 'creator_id', 'operator_id', 'note_admin', 'status','sold_display','settle_price'
+			'time_create', 'time_delete', 'time_publish', 'time_suspend', 'time_edit', 'creator_id', 'operator_id', 'note_admin', 'status','sold_display','settle_price', 'allow_sold'
 		);
 
 		/**
@@ -58,7 +58,7 @@
 		 * 可被编辑的字段名
 		 */
 		protected $names_edit_allowed = array(
-			'category_id','category_biz_id', 'index_id', 'code_biz', 'barcode', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'limit_lifetime', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id', 'status','sold_display','settle_price'
+			'category_id','category_biz_id', 'index_id', 'code_biz', 'barcode', 'url_image_main', 'figure_image_urls', 'figure_video_urls', 'name', 'slogan', 'description', 'tag_price', 'price', 'unit_name', 'weight_net', 'weight_gross', 'weight_volume', 'stocks', 'quantity_max', 'quantity_min', 'limit_lifetime', 'coupon_allowed', 'discount_credit', 'commission_rate', 'time_to_publish', 'time_to_suspend', 'promotion_id', 'freight_template_id', 'status','sold_display','settle_price', 'allow_sold'
 		);
 
 		/**
@@ -300,7 +300,11 @@
                     );
                     $this->load->model('comment_item_model');
                     $this->result['content']['comments'] = $this->comment_item_model->select($conditions, NULL);
-
+                    foreach ($this->result['content']['comments'] as $key => $value) {
+                    	if (is_null($value['avatar'])) {
+                    		$this->result['content']['comments'][$key]['avatar'] = '';
+                    	}
+                    }
                 endif;
 
 			else:
@@ -581,14 +585,16 @@
 			$this->form_validation->set_rules('description', '商品描述', 'trim|max_length[20000]');
 			$this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[99999.99]');
             $this->form_validation->set_rules('price', '商城价/现价（元）', 'trim|required|greater_than_equal_to[0.10]|less_than_equal_to[99999.99]');
-            $this->form_validation->set_rules('settle_price', '结算价格', 'trim|required|greater_than_equal_to[0.10]|less_than_equal_to[99999.99]');
+            $this->form_validation->set_rules('settle_price', '结算价格', 'trim|required|greater_than_equal_to[0.00]|less_than_equal_to[99999.99]');
             $this->form_validation->set_rules('stocks', '库存量（单位）', 'trim|greater_than_equal_to[0]|less_than_equal_to[65535]');
+
+            $this->form_validation->set_rules('allow_sold', '允许购买的最大数量', 'trim|greater_than_equal_to[0]|less_than_equal_to[65535]');
             $this->form_validation->set_rules('sold_display', '显示销量', 'trim|is_natural');
 			$this->form_validation->set_rules('unit_name', '销售单位', 'trim|max_length[10]');
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
-            $this->form_validation->set_rules('quantity_max', '每单最高限量（份）', 'trim|greater_than_equal_to[0]|less_than_equal_to[50]');
+            $this->form_validation->set_rules('quantity_max', '每单最高限量（份）', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
             $this->form_validation->set_rules('quantity_min', '每单最低限量（份）', 'trim|greater_than_equal_to[0]|less_than_equal_to[50]');
             $this->form_validation->set_rules('limit_lifetime', '终身限购数量（份）', 'trim|greater_than_equal_to[0]|less_than_equal_to[255]');
 			$this->form_validation->set_rules('coupon_allowed', '是否可用优惠券', 'trim|in_list[0,1]');
@@ -618,7 +624,7 @@
 					//'figure_video_urls' => trim($this->input->post('figure_video_urls'), ','),
 
 					'tag_price' => empty($this->input->post('tag_price'))? '0.00': $this->input->post('tag_price'),
-					'settle_price' => empty($this->input->post('settle_price'))? '0.00': $this->input->post('settle_price'),
+					'settle_price' => empty($this->input->post('settle_price'))? 0.0: $this->input->post('settle_price'),
                     'stocks' => empty($this->input->post('stocks'))? 0: $this->input->post('stocks'),
 					'unit_name' => empty($this->input->post('unit_name'))? '份': $this->input->post('unit_name'),
                     'weight_net' => empty($this->input->post('weight_net'))? '0.00': $this->input->post('weight_net'),
@@ -632,7 +638,8 @@
 					'commission_rate' => empty($this->input->post('commission_rate'))? '0.00': $this->input->post('commission_rate'),
 					'time_to_publish' => empty($time_to_publish)? NULL: $time_to_publish,
 					'time_to_suspend' => empty($this->input->post('time_to_suspend'))? NULL: $this->input->post('time_to_suspend'),
-					'sold_display'    =>empty($this->input->post('sold_display'))? 0: $this->input->post('sold_display'),
+					'sold_display'    => empty($this->input->post('sold_display'))? 0: $this->input->post('sold_display'),
+					'allow_sold'      => empty($this->input->post('allow_sold'))? 0: intval($this->input->post('allow_sold')),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
@@ -650,6 +657,9 @@
 
 				$result = $this->basic_model->create($data_to_create, TRUE);
 				if ($result !== FALSE):
+					if ($data_to_create['allow_sold'] > 0) {
+						$this->setMaxSoldRedis($result, $data_to_create['allow_sold']);
+					}
 					$this->result['status'] = 200;
 					$this->result['content']['id'] = $result;
 					$this->result['content']['message'] = '创建成功';
@@ -701,15 +711,16 @@
 			$this->form_validation->set_rules('slogan', '商品宣传语/卖点', 'trim|max_length[30]');
 			$this->form_validation->set_rules('description', '商品描述', 'trim|max_length[20000]');
 			$this->form_validation->set_rules('tag_price', '标签价/原价（元）', 'trim|greater_than_equal_to[0]|less_than_equal_to[99999.99]');
-            $this->form_validation->set_rules('price', '商城价/现价（元）', 'trim|required|greater_than_equal_to[1]|less_than_equal_to[99999.99]');
-            $this->form_validation->set_rules('settle_price', '结算价格', 'trim|required|greater_than_equal_to[1]|less_than_equal_to[99999.99]');
+            $this->form_validation->set_rules('price', '商城价/现价（元）', 'trim|required|greater_than_equal_to[0.01]|less_than_equal_to[99999.99]');
+            $this->form_validation->set_rules('settle_price', '结算价格', 'trim|required|greater_than_equal_to[0.0]|less_than_equal_to[99999.99]');
             $this->form_validation->set_rules('stocks', '库存量（单位）', 'trim|greater_than_equal_to[0]|less_than_equal_to[65535]');
+            $this->form_validation->set_rules('allow_sold', '允许购买的最大数量', 'trim|greater_than_equal_to[0]|less_than_equal_to[65535]');
             $this->form_validation->set_rules('sold_display', '显示销量', 'trim|is_natural');
 			$this->form_validation->set_rules('unit_name', '销售单位', 'trim|max_length[10]');
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
-            $this->form_validation->set_rules('quantity_max', '每单最高限量（份）', 'trim|greater_than_equal_to[0]|less_than_equal_to[50]');
+            $this->form_validation->set_rules('quantity_max', '每单最高限量（份）', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
             $this->form_validation->set_rules('quantity_min', '每单最低限量（份）', 'trim|greater_than_equal_to[0]|less_than_equal_to[50]');
             $this->form_validation->set_rules('limit_lifetime', '终身限购数量（份）', 'trim|greater_than_equal_to[0]|less_than_equal_to[255]');
 			$this->form_validation->set_rules('coupon_allowed', '是否可用优惠券', 'trim|in_list[0,1]');
@@ -739,25 +750,26 @@
 					//'figure_video_urls' => trim($this->input->post('figure_video_urls'), ','),
 
 					'tag_price' => empty($this->input->post('tag_price'))? '0.00': $this->input->post('tag_price'),
-					'settle_price' => empty($this->input->post('settle_price'))? '0.00': $this->input->post('settle_price'),
+					'settle_price' => empty($this->input->post('settle_price'))? 0.0: $this->input->post('settle_price'),
                     'stocks' => empty($this->input->post('stocks'))? 0: $this->input->post('stocks'),
 					'unit_name' => empty($this->input->post('unit_name'))? '份': $this->input->post('unit_name'),
                     'weight_net' => empty($this->input->post('weight_net'))? '0.00': $this->input->post('weight_net'),
                     'weight_gross' => empty($this->input->post('weight_gross'))? '0.00': $this->input->post('weight_gross'),
                     'weight_volume' => empty($this->input->post('weight_volume'))? '0.00': $this->input->post('weight_volume'),
-					'quantity_max' => empty($this->input->post('quantity_max'))? '50': $this->input->post('quantity_max'),
-					'quantity_min' => empty($this->input->post('quantity_min'))? 1: $this->input->post('quantity_min'),
-                    'limit_lifetime' => empty($this->input->post('limit_lifetime'))? 0: $this->input->post('limit_lifetime'),
-                    'coupon_allowed' => empty($this->input->post('coupon_allowed'))? 1: $this->input->post('coupon_allowed'), // 默认允许使用优惠券
+					'quantity_max'    => empty($this->input->post('quantity_max'))? '50': $this->input->post('quantity_max'),
+					'quantity_min'    => empty($this->input->post('quantity_min'))? 1: $this->input->post('quantity_min'),
+                    'limit_lifetime'  => empty($this->input->post('limit_lifetime'))? 0: $this->input->post('limit_lifetime'),
+                    'coupon_allowed'  => empty($this->input->post('coupon_allowed'))? 1: $this->input->post('coupon_allowed'), // 默认允许使用优惠券
                     'discount_credit' => empty($this->input->post('discount_credit'))? '0.00': $this->input->post('discount_credit'),
 					'commission_rate' => empty($this->input->post('commission_rate'))? '0.00': $this->input->post('commission_rate'),
 					'time_to_publish' => empty($time_to_publish)? NULL: $time_to_publish,
 					'time_to_suspend' => empty($this->input->post('time_to_suspend'))? NULL: $this->input->post('time_to_suspend'),
-					'sold_display'    =>empty($this->input->post('sold_display'))? 0: $this->input->post('sold_display'),
+					'sold_display'    => empty($this->input->post('sold_display'))? 0 : $this->input->post('sold_display'),
+					'allow_sold'      => empty($this->input->post('allow_sold'))? 0 : intval($this->input->post('allow_sold')),
 				);
 				// 自动生成无需特别处理的数据
 				$data_need_no_prepare = array(
-					'category_biz_id', 'code_biz', 'barcode', 'url_image_main', 'name', 'slogan', 'description', 'price', 'promotion_id','category_id'
+					'category_biz_id', 'code_biz', 'barcode', 'url_image_main', 'name', 'slogan', 'description', 'price', 'promotion_id', 'category_id'
 				);
 				foreach ($data_need_no_prepare as $name)
 					$data_to_edit[$name] = $this->input->post($name);
@@ -771,10 +783,14 @@
 				
 				// 商家仅可操作自己的数据
 				if ($this->app_type === 'biz') $this->db->where('biz_id', $this->input->post('biz_id'));
+
 				$result = $this->basic_model->edit($id, $data_to_edit);
 				
 				
 				if ($result !== FALSE):
+					if ($data_to_edit['allow_sold'] > 0) {
+						$this->setMaxSoldRedis($id, $data_to_edit['allow_sold']);
+					}
                     $this->result['status'] = 200;
                     $this->result['content']['id'] = $id;
                     $this->result['content']['message'] = '编辑成功';
@@ -844,7 +860,7 @@
 			$this->form_validation->set_rules('weight_net', '净重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_gross', '毛重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
 			$this->form_validation->set_rules('weight_volume', '体积重（KG）', 'trim|greater_than_equal_to[0]|less_than_equal_to[999.99]');
-            $this->form_validation->set_rules('quantity_max', '每单最高限量（份）', 'trim|greater_than_equal_to[0]|less_than_equal_to[50]');
+            $this->form_validation->set_rules('quantity_max', '每单最高限量（份）', 'trim|greater_than_equal_to[0]|less_than_equal_to[9999]');
             $this->form_validation->set_rules('quantity_min', '每单最低限量（份）', 'trim|greater_than_equal_to[0]|less_than_equal_to[50]');
 			$this->form_validation->set_rules('coupon_allowed', '是否可用优惠券', 'trim|in_list[0,1]');
 			$this->form_validation->set_rules('discount_credit', '积分抵扣率', 'trim|less_than_equal_to[0.5]');
@@ -1057,7 +1073,7 @@
                 $slogan .= '，'. date('Y-m-d H:i:s', $data_to_edit['time_to_suspend']). '后下架';
 
             // 若有限购信息，反映限购信息
-            if ( ! empty($this->input->post('quantity_max')) && $this->input->post('quantity_max') != 50):
+            if ( ! empty($this->input->post('quantity_max')) && intval($this->input->post('quantity_max')) > 99):
                 $slogan .= '，限购'. $this->input->post('quantity_max'). $data_to_edit['unit_name'];
             elseif ( ! empty($this->input->post('quantity_min')) && $this->input->post('quantity_min') != 1):
                 $slogan .= '，'. $this->input->post('quantity_min'). $data_to_edit['unit_name']. '起售';
@@ -1087,6 +1103,77 @@
 			// var_dump($r);
 			return TRUE;
         }
+
+        public function setMaxSoldRedis($id, $ammount){
+        	$this->load->library('Myredis');
+        	$this->myredis->set('allow_sold_item:' . $id, $ammount);
+
+        }
+
+		public function get_second_sku_list(){
+			$sku_list = [];
+			$item_id = $this->input->post('item_id');
+			$label = $this->input->post('label');
+			$res = $this->db->distinct()->select('name_second')->where(['item_id'=>$item_id,'name_first'=>$label])->order_by('name_second','ASC')->get('sku')->result_array();
+			if( $res ){
+				foreach( $res as $key=>$value ){
+					if( $value['name_second'] ){
+						$sku_list[] = $value['name_second'];
+					}
+				}
+			}
+			$this->result['status'] = 400;
+
+			if( $sku_list ){
+				$this->result['status'] = 200;
+			}
+			$this->result['content']['sku_list'] = $sku_list;
+			$this->result['content']['message'] = '获取数据';
+
+		}
+
+		public function get_third_sku_list(){
+			$sku_list = [];
+			$item_id = $this->input->post('item_id');
+			$name_first = $this->input->post('name_first');
+			$name_second = $this->input->post('name_second');
+			$res = $this->db->distinct()->select('name_third')->where(['item_id'=>$item_id,'name_first'=>$name_first,'name_second'=>$name_second])->order_by('name_second','ASC')->get('sku')->result_array();
+			if( $res ){
+				foreach( $res as $key=>$value ){
+					if( $value['name_third'] ){
+						$sku_list[] = $value['name_third'];
+					}
+				}
+			}
+			$this->result['status'] = 400;
+
+			if( $sku_list ){
+				$this->result['status'] = 200;
+			}
+			$this->result['content']['sku_list'] = $sku_list;
+			$this->result['content']['message'] = '获取数据';
+
+		}		
+
+		#获取最终价格
+		public function get_price_by_sku(){
+			$condition = [];
+			$item_id     = $this->input->post('item_id');
+			$name_first  = $this->input->post('name_first');
+			$name_second = $this->input->post('name_second');
+			$name_third  = $this->input->post('name_third');
+
+			$item_id?$condition['item_id']         = $item_id:'';
+			$name_first?$condition['name_first']   = $name_first:'';
+			$name_second?$condition['name_second'] = $name_second:'';
+			$name_third?$condition['name_third']   = $name_third:'';
+
+			$res = $this->db->select('biz_id,stocks,price,sku_id')->where($condition)->get('sku')->row_array();
+
+			$this->result['status'] = 200;
+			$this->result['content']['sku_info'] = $res;
+			$this->result['content']['message'] = '获取数据';
+		} 
 	} // end class Item
 
 /* End of file Item.php */

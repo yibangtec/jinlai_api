@@ -445,7 +445,7 @@
 					$data_to_edit['status'] = '待发货';
 					//$this->stocks_update($order_id); // 当前已调整为下单减库存
 			endswitch;
-
+            $data_to_edit['note_stuff'] = $type;
 			// 更新订单信息
 			$this->switch_model($type, 'order_id');
 			$this->basic_model->edit($order_id, $data_to_edit);

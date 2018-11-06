@@ -105,9 +105,9 @@
 		 * 5 单项修改/上传
 		 */
 		public function sync_up()
-		{	
+		{
 			// 检查必要参数是否已传入
-			$required_params = array('id', 'name', 'value');
+			$required_params = array('id', 'name', 'value',);
 			foreach ($required_params as $param):
 				${$param} = trim($this->input->post($param));
 				if ( $param !== 'value' && empty( ${$param} ) ): // value 可以为空；必要字段会在字段验证中另行检查
@@ -160,42 +160,20 @@
 							continue;
 						}
 						$this->switch_model('item', 'item_id');
-
-						$pid = $item[1];
 						//item2为sku的ID
 						$item[2] = intval($item[2]); 
 						if ($item[2] != 0) {
-							$pid = $item[2];
 							$this->switch_model('sku', 'sku_id');
 						}
-
 						//产品的库存
-						$saved_pdt = $this->basic_model->select_by_id($pid, FALSE);
+						$saved_pdt = $this->basic_model->select_by_id($item[1], FALSE);
 						
 						if (is_array($saved_pdt) && $saved_pdt['stocks'] >= intval($item[3])) {
-							$all_item[$key] = $saved_pdt['biz_id'] . '|' . $saved_pdt['item_id'] . '|' . $item[2] . '|' . $item[3];
+							$all_item[$key] = $saved_pdt['biz_id'] . '|' . $saved_pdt['item_id'] . '|0|' . $item[3];
 						} else {
 							$this->result['status'] = 434;
 							$this->result['content']['error']['message'] = '库存不足！';
 							exit;
-						}
-
-						#检查最大限购数量，如果是减少购物车，则不进行验证
-						$op_type = $this->input->post['op_type'];
-						if( $op_type != 'reduce' ){
-							$res = $this->db->select('quantity_max')->where(['item_id'=>$item[1]])->get('item')->row_array();
-							$quantity_max = $res['quantity_max'];
-
-							#检测用户购物车
-							$item = explode('|', $value);
-
-							$current_cart_num = $item[3];
-
-							if( $current_cart_num > $quantity_max ){
-								$this->result['status'] = 434;
-								$this->result['content']['error']['message'] = '超出限购数量，每人限购'.$quantity_max.'件';
-								exit;				
-							}
 						}
 					}
 				}

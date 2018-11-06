@@ -1,6 +1,5 @@
 <?php
 	defined('BASEPATH') OR exit('此文件不可被直接访问');
-
 	/**
 	* Curl 类
 	*
@@ -23,7 +22,6 @@
 		{
 		    $curl = curl_init();
 		    curl_setopt($curl, CURLOPT_URL, $url);
-
 		    // 设置cURL参数，要求结果保存到字符串中还是输出到屏幕上。
 		    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 		    curl_setopt($curl, CURLOPT_ENCODING, 'UTF-8');
@@ -32,14 +30,11 @@
 			if ($method === 'post'):
                 // 引用原始CodeIgniter对象
                 $this->CI =& get_instance();
-
                 // 发送当前应用类型
 			    $params['app_type'] = $this->CI->app_type;
-
 			    // 若未传入商家ID，则发送当前商家ID（若有）
-                if ( ! isset($params['biz_id']))
+                if ( ! isset($params['biz_id']) && isset($this->CI->session->biz_id))
                     $params['biz_id'] = $this->CI->session->biz_id;
-
 				curl_setopt($curl, CURLOPT_POST, count($params));
 				curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
 			endif;
@@ -49,17 +44,14 @@
 			
 			// 输出CURL请求头以便调试
 			//var_dump(curl_getinfo($curl));
-
 			// 关闭URL请求
 		    curl_close($curl);
-
 			// 转换返回的json数据为相应格式并返回
 			if ($return === 'object'):
 				$result = json_decode($result);
 			elseif ($return === 'array'):
 				$result = json_decode($result, TRUE);
 			endif;
-
 			return $result;
 		} // end go
 		
