@@ -1,0 +1,103 @@
+{
+    "content": [
+        {
+            "router_id": "7",
+            "name": "商家详情页",
+            "light_preg": "biz/detail",
+            "preg": "biz/detail",
+            "controller": "biz",
+            "function": "detail",
+            "params": "id",
+            "url_native_ios": "BizIndexViewController",
+            "url_native_android": "biz.detail.BizDetailActivity"
+        },
+        {
+            "router_id": "8",
+            "name": "商品详情页",
+            "light_preg": "item/detail",
+            "preg": "item/detail",
+            "controller": "item",
+            "function": "detail",
+            "params": "id",
+            "url_native_ios": "DetailViewController",
+            "url_native_android": "item.ItemDetailActivity"
+        },
+        {
+            "router_id": "9",
+            "name": "领取优惠券页",
+            "light_preg": "coupon/create",
+            "preg": "coupon/create",
+            "controller": "coupon",
+            "function": "create",
+            "params": "",
+            "url_native_ios": "CouponTemplateViewController",
+            "url_native_android": "coupon.CouponTemplateActivity"
+        },
+        {
+            "router_id": "10",
+            "name": "订单详情页",
+            "light_preg": "order/detail",
+            "preg": "order/detail",
+            "controller": "order",
+            "function": "detail",
+            "params": "id",
+            "url_native_ios": "OrderDetailViewController",
+            "url_native_android": "orders.OrderDetailsActivity"
+        },
+        {
+            "router_id": "11",
+            "name": "优惠券模板列表页",
+            "light_preg": "coupon_template/index",
+            "preg": "coupon_template/index",
+            "controller": "coupon_template",
+            "function": "index",
+            "params": null,
+            "url_native_ios": "CouponTemplateViewController",
+            "url_native_android": "coupon.CouponTemplateActivity"
+        },
+        {
+            "router_id": "12",
+            "name": "文章详情页",
+            "light_preg": "article/detail",
+            "preg": "article/detail",
+            "controller": "article",
+            "function": "detail",
+            "params": "id",
+            "url_native_ios": "articleDetialViewController",
+            "url_native_android": "web.ArticalWebActivity"
+        },
+        {
+            "router_id": "13",
+            "name": "页面详情页",
+            "light_preg": "page/detail",
+            "preg": "page/detail",
+            "controller": "page",
+            "function": "detail",
+            "params": "id",
+            "url_native_ios": "PageDetialViewController",
+            "url_native_android": "web.PageWebActivity"
+        },
+        {
+            "router_id": "14",
+            "name": "商家文章详情页",
+            "light_preg": "article_biz/detail",
+            "preg": "article_biz/detail",
+            "controller": "article_biz",
+            "function": "detail",
+            "params": "id",
+            "url_native_ios": "ArticleBizViewController",
+            "url_native_android": "web.ArticalBizWebActivity"
+        },
+        {
+            "router_id": "15",
+            "name": "商家页面详情页",
+            "light_preg": "page_biz/detail",
+            "preg": "page_biz/detail",
+            "controller": "page_biz",
+            "function": "detail",
+            "params": "id",
+            "url_native_ios": "PageBizViewController ",
+            "url_native_android": "web.PageBizWebActivity"
+        }
+    ]
+}
